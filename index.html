@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BERACORE — Digital Experience Studio</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#060810;--bg2:#0a0e1a;--accent:#6366f1;--accent2:#818cf8;--cyan:#38bdf8;
+  --t1:#eef0f6;--t2:#9195a8;--t3:#555970;--border:rgba(255,255,255,0.05);
+  --ease:cubic-bezier(0.16,1,0.3,1);--ease-smooth:cubic-bezier(0.4,0,0.2,1);
+}
+html{scroll-behavior:smooth;scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased}
+a,button,input,textarea{cursor:none;text-decoration:none;color:inherit;font-family:inherit}
+h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
+
+/* CURSOR */
+.cur{position:fixed;width:32px;height:32px;border:1.5px solid rgba(99,102,241,0.35);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .3s var(--ease),height .3s var(--ease),background .3s ease,border-color .3s ease}
+.cur.h{width:52px;height:52px;background:rgba(99,102,241,0.06);border-color:rgba(99,102,241,0.5)}
+.cur-d{position:fixed;width:4px;height:4px;background:var(--t1);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:opacity .2s}
+.cur-d.h{opacity:0}
+
+/* PRELOADER */
+.pre{position:fixed;inset:0;background:var(--bg);z-index:100000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2rem}
+.pre.done{opacity:0;visibility:hidden;transition:opacity .8s ease .15s,visibility .8s ease .15s}
+.pre-logo{font-family:'Space Grotesk';font-size:.7rem;font-weight:600;letter-spacing:.5em;text-transform:uppercase;color:var(--t3);opacity:0;animation:fi .5s ease .1s forwards}
+.pre-bar{width:140px;height:1px;background:var(--border);overflow:hidden;opacity:0;animation:fi .5s ease .2s forwards}
+.pre-fill{height:100%;width:0;background:var(--accent);animation:fb 1.8s var(--ease) .4s forwards}
+@keyframes fi{to{opacity:1}}
+@keyframes fb{to{width:100%}}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:9000;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;transition:all .4s ease;border-bottom:1px solid transparent}
+.nav.s{background:rgba(6,8,16,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom-color:var(--border)}
+.nav-logo{font-family:'Space Grotesk';font-size:1rem;font-weight:700;letter-spacing:.1em}
+.nav-r{display:flex;align-items:center;gap:2.5rem}
+.nav-r a{font-size:.78rem;font-weight:500;color:var(--t2);transition:color .3s}
+.nav-r a:hover{color:var(--t1)}
+.nav-cta{font-size:.75rem;font-weight:600;padding:.45rem 1.15rem;border:1px solid rgba(255,255,255,0.1);border-radius:6px;transition:all .3s var(--ease)}
+.nav-cta:hover{background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.3)}
+.mbtn{display:none;width:26px;height:16px;flex-direction:column;justify-content:space-between;background:none;border:none}
+.mbtn span{width:100%;height:1.5px;background:var(--t1);transition:all .3s var(--ease);transform-origin:center}
+.mbtn.o span:nth-child(1){transform:translateY(7.25px) rotate(45deg)}
+.mbtn.o span:nth-child(2){opacity:0}
+.mbtn.o span:nth-child(3){transform:translateY(-7.25px) rotate(-45deg)}
+.mmenu{position:fixed;inset:0;background:rgba(6,8,16,0.97);backdrop-filter:blur(30px);z-index:8999;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .5s var(--ease)}
+.mmenu.o{opacity:1;visibility:visible}
+.mmenu ul{list-style:none;text-align:center;display:flex;flex-direction:column;gap:1.5rem}
+.mmenu a{font-family:'Space Grotesk';font-size:1.8rem;font-weight:600;opacity:0;transform:translateY(20px);transition:all .4s var(--ease)}
+.mmenu.o a{opacity:1;transform:translateY(0)}
+.mmenu.o li:nth-child(1) a{transition-delay:.05s}
+.mmenu.o li:nth-child(2) a{transition-delay:.1s}
+.mmenu.o li:nth-child(3) a{transition-delay:.15s}
+.mmenu.o li:nth-child(4) a{transition-delay:.2s}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:6rem 2rem 4rem}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(99,102,241,0.04),transparent 70%),radial-gradient(ellipse 40% 40% at 50% 65%,rgba(56,189,248,0.02),transparent 60%),linear-gradient(180deg,var(--bg),var(--bg2),var(--bg));pointer-events:none}
+
+/* HERO TEXT */
+.hero-center{position:relative;z-index:3;text-align:center;max-width:900px;margin-bottom:3rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .9rem;border-radius:100px;border:1px solid rgba(99,102,241,0.12);background:rgba(99,102,241,0.04);font-size:.65rem;font-weight:600;color:var(--accent2);letter-spacing:.08em;margin-bottom:2.5rem;opacity:0;animation:hu .8s var(--ease) 2.4s forwards}
+.bdot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:dp 2.5s ease-in-out infinite}
+@keyframes dp{0%,100%{opacity:1}50%{opacity:.3}}
+
+.hero h1{font-size:clamp(2.8rem,6.5vw,5.6rem);font-weight:700;line-height:1.04;letter-spacing:-.04em;margin-bottom:1.5rem}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero h1 .li{display:block;transform:translateY(115%);opacity:0}
+.hero h1 .ac{background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.75;color:var(--t2);max-width:520px;margin:0 auto 2rem;opacity:0;transform:translateY(18px)}
+@keyframes hu{to{opacity:1;transform:translateY(0)}}
+
+/* 3D STAGE */
+.stage{position:relative;z-index:2;width:100%;max-width:900px;margin:0 auto}
+.stage-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70%;height:70%;border-radius:50%;filter:blur(70px);pointer-events:none;transition:background 1.5s var(--ease);background:radial-gradient(circle,rgba(139,92,246,0.2),transparent 70%)}
+#cvs{width:100%;height:520px;display:block;opacity:0;transition:opacity 1s ease}
+#cvs.show{opacity:1}
+.stage-hint{text-align:center;margin-top:1rem;font-size:.6rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--t3);opacity:0;animation:fi .6s ease 4.4s forwards}
+
+/* SERVICE SELECTOR */
+.svc-sel{display:flex;justify-content:center;gap:10px;margin-top:2.5rem;position:relative;z-index:4;opacity:0;animation:hu .7s var(--ease) 4s forwards;flex-wrap:wrap}
+.svc-btn{padding:.65rem 1.4rem .65rem 1.1rem;font-size:.8rem;font-weight:600;color:var(--t3);background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;transition:all .5s var(--ease);letter-spacing:.02em;position:relative;overflow:hidden;white-space:nowrap;display:inline-flex;align-items:center;gap:.55rem}
+.svc-btn .svc-ico{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .5s var(--ease);background:rgba(255,255,255,0.04);flex-shrink:0}
+.svc-btn::before{content:'';position:absolute;inset:0;border-radius:10px;opacity:0;transition:opacity .6s ease;z-index:-1}
+.svc-btn::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:2px;border-radius:1px;transition:all .5s var(--ease)}
+.svc-btn:hover{color:var(--t2);border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);transform:translateY(-1px)}
+.svc-btn.on{color:var(--t1);border-color:rgba(99,102,241,0.4);background:rgba(99,102,241,0.07);box-shadow:0 4px 24px rgba(99,102,241,0.12),inset 0 1px 0 rgba(255,255,255,0.05)}
+.svc-btn.on::before{opacity:1;background:linear-gradient(135deg,rgba(99,102,241,0.06),rgba(56,189,248,0.03))}
+.svc-btn.on::after{width:60%;background:linear-gradient(90deg,var(--accent),var(--cyan))}
+.svc-btn.on .svc-ico{background:rgba(99,102,241,0.15);color:var(--accent2)}
+/* Per-service active colors */
+.svc-btn[data-s="uiux"].on{border-color:rgba(6,182,212,0.4);background:rgba(6,182,212,0.07);box-shadow:0 4px 24px rgba(6,182,212,0.12),inset 0 1px 0 rgba(255,255,255,0.05)}
+.svc-btn[data-s="uiux"].on::after{background:linear-gradient(90deg,#06b6d4,#38bdf8)}
+.svc-btn[data-s="uiux"].on .svc-ico{background:rgba(6,182,212,0.15);color:#22d3ee}
+.svc-btn[data-s="dev"].on{border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.07);box-shadow:0 4px 24px rgba(168,85,247,0.12),inset 0 1px 0 rgba(255,255,255,0.05)}
+.svc-btn[data-s="dev"].on::after{background:linear-gradient(90deg,#a855f7,#c084fc)}
+.svc-btn[data-s="dev"].on .svc-ico{background:rgba(168,85,247,0.15);color:#c084fc}
+.svc-btn[data-s="ecom"].on{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.07);box-shadow:0 4px 24px rgba(16,185,129,0.12),inset 0 1px 0 rgba(255,255,255,0.05)}
+.svc-btn[data-s="ecom"].on::after{background:linear-gradient(90deg,#10b981,#34d399)}
+.svc-btn[data-s="ecom"].on .svc-ico{background:rgba(16,185,129,0.15);color:#34d399}
+.svc-btn[data-s="seo"].on{border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.07);box-shadow:0 4px 24px rgba(245,158,11,0.12),inset 0 1px 0 rgba(255,255,255,0.05)}
+.svc-btn[data-s="seo"].on::after{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.svc-btn[data-s="seo"].on .svc-ico{background:rgba(245,158,11,0.15);color:#fbbf24}
+
+/* SERVICE DESC BAR */
+.svc-desc-bar{text-align:center;margin-top:2rem;min-height:60px;position:relative;z-index:4}
+.svc-desc-text{font-size:.88rem;line-height:1.7;color:var(--t2);max-width:480px;margin:0 auto;opacity:0;transform:translateY(10px);transition:all .7s var(--ease)}
+.svc-desc-text.show{opacity:1;transform:translateY(0)}
+
+/* CTA ROW */
+.cta-row{display:flex;justify-content:center;align-items:center;gap:1.5rem;margin-top:2.5rem;position:relative;z-index:4;opacity:0;animation:hu .7s var(--ease) 4.2s forwards}
+.cta-a{display:inline-flex;align-items:center;gap:.6rem;padding:.7rem 1.75rem;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:.82rem;font-weight:600;transition:all .4s var(--ease);position:relative;overflow:hidden}
+.cta-a::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent2),var(--accent));opacity:0;transition:opacity .4s}
+.cta-a:hover{transform:translateY(-1px);box-shadow:0 10px 36px rgba(99,102,241,0.25)}
+.cta-a:hover::before{opacity:1}
+.cta-a span{position:relative;z-index:1;display:flex;align-items:center;gap:.6rem}
+.cta-a svg{transition:transform .3s var(--ease)}
+.cta-a:hover svg{transform:translateX(2px)}
+.cta-b{font-size:.82rem;font-weight:500;color:var(--t2);display:flex;align-items:center;gap:.4rem;transition:color .3s}
+.cta-b:hover{color:var(--t1)}
+
+/* SCROLL */
+.scroll-cue{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.6rem;z-index:5;opacity:0;animation:fi .6s ease 4.6s forwards}
+.scroll-cue span{font-size:.55rem;font-weight:500;letter-spacing:.25em;text-transform:uppercase;color:var(--t3)}
+.sc-line{width:1px;height:36px;position:relative;overflow:hidden;background:var(--border)}
+.sc-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:50%;background:var(--accent);animation:sca 2.2s ease-in-out infinite}
+@keyframes sca{0%{top:-50%}100%{top:100%}}
+
+/* ===== SERVICE OVERLAY PAGE ===== */
+.svc-page{position:fixed;inset:0;z-index:10000;background:var(--bg);opacity:0;visibility:hidden;transition:opacity .8s var(--ease-smooth),visibility .8s var(--ease-smooth);overflow-y:auto;scrollbar-width:none}
+.svc-page::-webkit-scrollbar{display:none}
+.svc-page.open{opacity:1;visibility:visible}
+.svc-page-inner{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6rem 2rem;text-align:center;position:relative}
+.svc-page-bg{position:absolute;inset:0;pointer-events:none;transition:background 1s ease}
+.svc-back{position:fixed;top:1.5rem;left:2rem;z-index:10001;display:flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);background:rgba(6,8,16,0.7);backdrop-filter:blur(12px);padding:.5rem 1rem;border-radius:6px;border:1px solid var(--border);opacity:0;transform:translateX(-20px);transition:all .5s var(--ease);cursor:none}
+.svc-page.open .svc-back{opacity:1;transform:translateX(0);transition-delay:.4s}
+.svc-back:hover{color:var(--t1);border-color:rgba(99,102,241,0.3)}
+.svc-page-label{font-size:.6rem;font-weight:600;letter-spacing:.35em;text-transform:uppercase;color:var(--accent2);margin-bottom:2rem;opacity:0;transform:translateY(16px);transition:all .7s var(--ease) .5s}
+.svc-page.open .svc-page-label{opacity:1;transform:translateY(0)}
+.svc-page-title{font-family:'Space Grotesk';font-size:clamp(2.5rem,5vw,4.5rem);font-weight:700;letter-spacing:-.035em;line-height:1.08;margin-bottom:1.5rem;opacity:0;transform:translateY(24px);transition:all .8s var(--ease) .6s}
+.svc-page.open .svc-page-title{opacity:1;transform:translateY(0)}
+.svc-page-body{font-size:1rem;line-height:1.8;color:var(--t2);max-width:560px;margin:0 auto;opacity:0;transform:translateY(16px);transition:all .7s var(--ease) .8s}
+.svc-page.open .svc-page-body{opacity:1;transform:translateY(0)}
+.svc-page-canvas{width:100%;max-width:500px;height:320px;margin:3rem auto 0;opacity:0;transform:scale(.92);transition:all 1s var(--ease) .7s}
+.svc-page.open .svc-page-canvas{opacity:1;transform:scale(1)}
+
+/* ===== BELOW HERO SECTIONS ===== */
+.sect{min-height:100vh;display:flex;align-items:center;padding:6rem 3rem;position:relative;overflow:hidden}
+.sect-num{font-family:'Space Grotesk';font-size:clamp(7rem,16vw,14rem);font-weight:700;position:absolute;right:-2%;top:50%;transform:translateY(-50%);color:rgba(99,102,241,0.015);pointer-events:none;line-height:1;user-select:none}
+.sect-in{max-width:780px;position:relative;z-index:2}
+.sect-lbl{font-size:.6rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--accent2);margin-bottom:1.5rem;opacity:0;transform:translateY(14px)}
+.sect-lbl.v{opacity:1;transform:translateY(0);transition:all .7s var(--ease)}
+.sect-h{font-size:clamp(2rem,4vw,3.2rem);font-weight:700;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:1.5rem;line-height:1.1}
+.sect-h .w{display:inline-block;overflow:hidden;vertical-align:top;margin-right:.2em}
+.sect-h .wi{display:inline-block;transform:translateY(110%);transition:transform .7s var(--ease)}
+.sect-h .wi.v{transform:translateY(0)}
+.sect-h .ac{color:var(--accent2)}
+.sect-ln{width:40px;height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan));margin-bottom:1.5rem;transform:scaleX(0);transform-origin:left;transition:transform .8s var(--ease) .2s}
+.sect-ln.v{transform:scaleX(1)}
+.sect-p{font-size:.95rem;line-height:1.8;color:var(--t2);max-width:560px;opacity:0;transform:translateY(16px);transition:all .7s var(--ease) .3s}
+.sect-p.v{opacity:1;transform:translateY(0)}
+.svc-list{margin-top:2rem}
+.svc-r{padding:1.1rem 0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;opacity:0;transform:translateX(-20px);transition:all .6s var(--ease)}
+.svc-r:first-child{border-top:1px solid var(--border)}
+.svc-r.v{opacity:1;transform:translateX(0)}
+.svc-r-l{display:flex;align-items:center;gap:1.2rem}
+.svc-r-n{font-family:'Space Grotesk';font-size:.65rem;font-weight:500;color:var(--accent2);opacity:.5;min-width:20px}
+.svc-r h3{font-family:'Space Grotesk';font-size:clamp(.9rem,1.5vw,1.15rem);font-weight:600;text-transform:uppercase;letter-spacing:.01em;transition:color .3s}
+.svc-r:hover h3{color:var(--accent2)}
+.svc-r-a{color:var(--accent2);opacity:0;transform:translateX(-6px);transition:all .3s var(--ease);font-size:.8rem}
+.svc-r:hover .svc-r-a{opacity:1;transform:translateX(0)}
+
+/* MARQUEE */
+.marq{padding:2.5rem 0;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.marq-in{display:flex;gap:3rem;animation:md 28s linear infinite;width:max-content}
+.marq-w{font-family:'Space Grotesk';font-size:clamp(1.6rem,3.5vw,3rem);font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;color:transparent;-webkit-text-stroke:1px rgba(99,102,241,0.1);transition:all .3s}
+.marq-w:hover{-webkit-text-stroke-color:rgba(99,102,241,0.3)}
+.marq-d{font-size:clamp(1.6rem,3.5vw,3rem);color:var(--accent);opacity:.12}
+@keyframes md{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* PROJECTS */
+.proj-sec{padding:6rem 3rem}
+.proj-hd{text-align:center;margin-bottom:5rem}
+.proj-c{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-bottom:7rem;opacity:0;transform:translateY(36px);transition:all .9s var(--ease)}
+.proj-c.v{opacity:1;transform:translateY(0)}
+.proj-c:nth-child(even){direction:rtl}
+.proj-c:nth-child(even)>*{direction:ltr}
+.proj-c:last-child{margin-bottom:0}
+.proj-th{position:relative;height:360px;border-radius:10px;overflow:hidden}
+.proj-th-bg{position:absolute;inset:0;transition:transform .8s var(--ease)}
+.proj-c:hover .proj-th-bg{transform:scale(1.04)}
+.proj-th-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(6,8,16,.2),rgba(6,8,16,.5))}
+.proj-th-cta{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:.6rem 1.5rem;border:1px solid rgba(255,255,255,0.25);border-radius:6px;opacity:0;transition:opacity .3s}
+.proj-c:hover .proj-th-cta{opacity:1}
+.proj-i{padding:1rem 0}
+.proj-tag{font-size:.6rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);margin-bottom:.75rem}
+.proj-i h3{font-family:'Space Grotesk';font-size:clamp(1.3rem,2vw,1.8rem);font-weight:700;text-transform:uppercase;letter-spacing:-.01em;margin-bottom:.75rem}
+.proj-i p{font-size:.88rem;line-height:1.7;color:var(--t2);margin-bottom:1rem}
+.proj-lk{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;color:var(--accent2);letter-spacing:.04em;transition:gap .3s var(--ease)}
+.proj-lk:hover{gap:.8rem}
+
+/* CTA SECTION */
+.cta-sec{min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;position:relative}
+.cta-sec::before{content:'';position:absolute;width:450px;height:450px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,0.06),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;filter:blur(20px)}
+.cta-i{position:relative;z-index:2}
+.cta-i h2{font-size:clamp(2.2rem,5vw,4rem);font-weight:700;text-transform:uppercase;letter-spacing:-.03em;line-height:1.08;margin-bottom:1rem}
+.cta-i h2 .ln{display:block;overflow:hidden}
+.cta-i h2 .wi{display:block;transform:translateY(110%);transition:transform .8s var(--ease)}
+.cta-i h2 .wi.v{transform:translateY(0)}
+.cta-i>p{font-size:.95rem;color:var(--t2);margin-bottom:2rem;opacity:0;transform:translateY(10px);transition:all .7s var(--ease) .2s}
+.cta-i>p.v{opacity:1;transform:translateY(0)}
+.cta-big{display:inline-flex;align-items:center;gap:.7rem;padding:.85rem 2.2rem;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:.84rem;font-weight:600;transition:all .4s var(--ease);opacity:0;transform:translateY(10px)}
+.cta-big.v{opacity:1;transform:translateY(0);transition:all .7s var(--ease) .35s}
+.cta-big:hover{box-shadow:0 12px 40px rgba(99,102,241,0.28);transform:translateY(-2px)}
+
+/* FOOTER */
+.ft{padding:5rem 3rem 2rem;border-top:1px solid var(--border)}
+.ft-g{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:4rem}
+.ft-br p{font-size:.82rem;color:var(--t2);line-height:1.7;margin-top:1rem;max-width:280px}
+.ft-c h4{font-family:'Space Grotesk';font-size:.6rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;margin-bottom:1.2rem}
+.ft-c a{display:block;font-size:.82rem;color:var(--t2);padding:.3rem 0;transition:color .3s}
+.ft-c a:hover{color:var(--accent2)}
+.ft-b{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;border-top:1px solid var(--border);font-size:.7rem;color:var(--t3)}
+.ft-so{display:flex;gap:1.5rem}
+.ft-so a{font-size:.65rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);transition:color .3s}
+.ft-so a:hover{color:var(--accent2)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .hero,.sect,.proj-sec,.ft{padding-left:1.5rem;padding-right:1.5rem}
+  .nav{padding:0 1.5rem}
+  .sect-num{display:none}
+  .ft-g{grid-template-columns:1fr 1fr}
+  .proj-c{gap:2rem}
+}
+@media(max-width:768px){
+  body{cursor:auto}.cur,.cur-d{display:none}a,button,.svc-btn{cursor:pointer}
+  .nav-r{display:none}.mbtn{display:flex}
+  .hero{padding:5rem 1rem 3rem}
+  .hero h1{font-size:2.4rem}
+  .svc-sel{flex-wrap:wrap;gap:6px;justify-content:center}
+  .svc-btn{padding:.45rem .8rem .45rem .6rem;font-size:.68rem}
+  #cvs{height:340px}
+  .sect{min-height:auto;padding:4rem 1rem}
+  .proj-c{grid-template-columns:1fr}.proj-c:nth-child(even){direction:ltr}.proj-th{height:220px}
+  .ft-g{grid-template-columns:1fr;gap:2rem}.ft-b{flex-direction:column;gap:.75rem;text-align:center}
+  .svc-page-inner{padding:5rem 1.5rem}
+  .svc-back{top:1rem;left:1rem}
+}
+</style>
+</head>
+<body>
+
+<div class="pre" id="pre"><div class="pre-logo">BERACORE</div><div class="pre-bar"><div class="pre-fill"></div></div></div>
+<div class="cur" id="cr"></div><div class="cur-d" id="cd"></div>
+
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo" data-h>BERACORE</a>
+  <div class="nav-r">
+    <a href="#hero" data-h>Ana Sayfa</a>
+    <a href="#s1" data-h>Hizmetler</a>
+    <a href="#proj" data-h>Projeler</a>
+    <a href="#cta" class="nav-cta" data-h>İletişim</a>
+  </div>
+  <button class="mbtn" id="mb" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mmenu" id="mm"><ul>
+  <li><a href="#hero" data-h>Ana Sayfa</a></li>
+  <li><a href="#s1" data-h>Hizmetler</a></li>
+  <li><a href="#proj" data-h>Projeler</a></li>
+  <li><a href="#cta" data-h>İletişim</a></li>
+</ul></div>
+
+<!-- ===== SERVICE OVERLAY PAGES ===== -->
+<div class="svc-page" id="pg-web">
+  <a class="svc-back" data-h onclick="closePage()">← Ana Sayfa</a>
+  <div class="svc-page-inner">
+    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(99,102,241,0.05),transparent 70%)"></div>
+    <div class="svc-page-label">Web Tasarım</div>
+    <h2 class="svc-page-title">Dijital Dünyada<br><span class="ac">Fark Yaratan</span> Tasarımlar</h2>
+    <p class="svc-page-body">Estetik ve kullanıcı odaklı, markanızı en iyi şekilde yansıtan modern web tasarımları. Her piksel bilinçli yerleştirilir, her etkileşim özenle kurgulanır.</p>
+    <canvas class="svc-page-canvas" id="pc-web"></canvas>
+  </div>
+</div>
+<div class="svc-page" id="pg-uiux">
+  <a class="svc-back" data-h onclick="closePage()">← Ana Sayfa</a>
+  <div class="svc-page-inner">
+    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(56,189,248,0.05),transparent 70%)"></div>
+    <div class="svc-page-label">UI/UX Tasarım</div>
+    <h2 class="svc-page-title">Kullanıcı Deneyimini<br><span class="ac">Sanat Eserine</span> Dönüştürün</h2>
+    <p class="svc-page-body">Araştırma, test ve iterasyon süreçleriyle mükemmel kullanıcı deneyimleri tasarlıyoruz. Her akış, her mikro-etkileşim amacına hizmet eder.</p>
+    <canvas class="svc-page-canvas" id="pc-uiux"></canvas>
+  </div>
+</div>
+<div class="svc-page" id="pg-dev">
+  <a class="svc-back" data-h onclick="closePage()">← Ana Sayfa</a>
+  <div class="svc-page-inner">
+    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(129,140,248,0.05),transparent 70%)"></div>
+    <div class="svc-page-label">Yazılım Geliştirme</div>
+    <h2 class="svc-page-title">Güçlü Altyapı,<br><span class="ac">Kusursuz</span> Mühendislik</h2>
+    <p class="svc-page-body">Ölçeklenebilir, güvenli ve yüksek performanslı yazılım çözümleri. Temiz mimari, modern teknolojiler ve sürdürülebilir kod tabanı.</p>
+    <canvas class="svc-page-canvas" id="pc-dev"></canvas>
+  </div>
+</div>
+<div class="svc-page" id="pg-ecom">
+  <a class="svc-back" data-h onclick="closePage()">← Ana Sayfa</a>
+  <div class="svc-page-inner">
+    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(52,211,153,0.04),transparent 70%)"></div>
+    <div class="svc-page-label">E-Ticaret</div>
+    <h2 class="svc-page-title">Satışlarınızı<br><span class="ac">Dijitale</span> Taşıyın</h2>
+    <p class="svc-page-body">Güçlü altyapı ve kullanıcı dostu arayüzlerle dönüşüm oranlarınızı artıran e-ticaret platformları. Entegre ödeme, envanter ve analitik.</p>
+    <canvas class="svc-page-canvas" id="pc-ecom"></canvas>
+  </div>
+</div>
+<div class="svc-page" id="pg-seo">
+  <a class="svc-back" data-h onclick="closePage()">← Ana Sayfa</a>
+  <div class="svc-page-inner">
+    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(251,191,36,0.04),transparent 70%)"></div>
+    <div class="svc-page-label">SEO & Dijital Pazarlama</div>
+    <h2 class="svc-page-title">Arama Motorlarında<br><span class="ac">Zirveye</span> Çıkın</h2>
+    <p class="svc-page-body">Organik trafik, ücretli reklam stratejileri ve veri odaklı dijital pazarlama ile markanızı hedef kitlenize ulaştırıyoruz.</p>
+    <canvas class="svc-page-canvas" id="pc-seo"></canvas>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-center">
+    <div class="hero-badge" data-h><span class="bdot"></span>Digital Experience Studio</div>
+    <h1>
+      <span class="ln"><span class="li">Teknolojiyi</span></span>
+      <span class="ln"><span class="li"><span class="ac">SANATA</span> Dönüştüren</span></span>
+      <span class="ln"><span class="li">Yazılım Stüdyosu.</span></span>
+    </h1>
+    <p class="hero-desc">Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üretiyoruz.</p>
+  </div>
+  <div class="stage">
+    <div class="stage-glow" id="sg"></div>
+    <canvas id="cvs"></canvas>
+    <div class="stage-hint">Sürükle &middot; Döndür &middot; Keşfet</div>
+  </div>
+  <div class="svc-sel" id="stabs">
+    <button class="svc-btn on" data-s="web" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>Web Tasarım</button>
+    <button class="svc-btn" data-s="uiux" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 018 0"/><circle cx="12" cy="10" r="1.5" fill="currentColor" stroke="none"/></svg></span>UI/UX</button>
+    <button class="svc-btn" data-s="dev" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>Yazılım</button>
+    <button class="svc-btn" data-s="ecom" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></span>E-Ticaret</button>
+    <button class="svc-btn" data-s="seo" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></span>SEO</button>
+  </div>
+  <div class="svc-desc-bar"><p class="svc-desc-text show" id="sdesc">Estetik ve kullanıcı odaklı, markanızı yansıtan modern web deneyimleri tasarlıyoruz.</p></div>
+  <div class="cta-row">
+    <a href="#cta" class="cta-a" data-h><span>Keşfetmeye Başla <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    <a href="#s1" class="cta-b" data-h>Nasıl Çalışırız <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+  </div>
+  <div class="scroll-cue"><span>Scroll</span><div class="sc-line"></div></div>
+</section>
+
+<!-- SECTIONS -->
+<section class="sect" id="s1">
+  <div class="sect-num">01</div>
+  <div class="sect-in">
+    <div class="sect-lbl" data-r>01 — Vizyonumuz</div>
+    <h2 class="sect-h" data-rw>Hassas, Yenilikçi <span class="ac">Zanaat.</span></h2>
+    <div class="sect-ln" data-r></div>
+    <p class="sect-p" data-r>Her BERACORE deneyimi özel teknolojik araçlar ve kişiye özel geliştirme ile başlar. Detaylara olan takıntılı dikkatimizi ve mükemmelliğe olan bağlılığımızı ekleyin; gerçek dijital sihir elde edersiniz.</p>
+  </div>
+</section>
+<section class="sect">
+  <div class="sect-num">02</div>
+  <div class="sect-in">
+    <div class="sect-lbl" data-r>02 — Felsefemiz</div>
+    <h2 class="sect-h" data-rw>Sınırsız <span class="ac">Yaratıcılık.</span></h2>
+    <div class="sect-ln" data-r></div>
+    <p class="sect-p" data-r>Hikayenizi hedeflerinize uyacak şekilde inşa ediyoruz. BERACORE'da imkansız bir mazeret değil, bir sonraki hedefimizdir.</p>
+  </div>
+</section>
+<section class="sect" style="min-height:auto;padding-bottom:5rem">
+  <div class="sect-num">03</div>
+  <div class="sect-in" style="max-width:900px">
+    <div class="sect-lbl" data-r>03 — Uzmanlıklarımız</div>
+    <h2 class="sect-h" data-rw>Tam Kapsamlı <span class="ac">Teknik Ustalık.</span></h2>
+    <div class="sect-ln" data-r></div>
+    <p class="sect-p" data-r>Ekibimiz karmaşık dijital dilleri güvenle konuşur.</p>
+    <div class="svc-list">
+      <div class="svc-r" data-rs><div class="svc-r-l"><span class="svc-r-n">01</span><h3>UX & UI Web Deneyim Tasarımı</h3></div><span class="svc-r-a">→</span></div>
+      <div class="svc-r" data-rs><div class="svc-r-l"><span class="svc-r-n">02</span><h3>Kurumsal Web Sitesi Geliştirme</h3></div><span class="svc-r-a">→</span></div>
+      <div class="svc-r" data-rs><div class="svc-r-l"><span class="svc-r-n">03</span><h3>E-Ticaret Platform Çözümleri</h3></div><span class="svc-r-a">→</span></div>
+      <div class="svc-r" data-rs><div class="svc-r-l"><span class="svc-r-n">04</span><h3>Mobil Uygulama Geliştirme</h3></div><span class="svc-r-a">→</span></div>
+      <div class="svc-r" data-rs><div class="svc-r-l"><span class="svc-r-n">05</span><h3>SEO & Dijital Pazarlama</h3></div><span class="svc-r-a">→</span></div>
+      <div class="svc-r" data-rs><div class="svc-r-l"><span class="svc-r-n">06</span><h3>Kurumsal Kimlik & Marka Tasarımı</h3></div><span class="svc-r-a">→</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="marq"><div class="marq-in">
+  <span class="marq-w" data-h>Web Tasarım</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>Mobil Uygulama</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>UI/UX</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>E-Ticaret</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>SEO</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>Yazılım</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>Web Tasarım</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>Mobil Uygulama</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>UI/UX</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>E-Ticaret</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>SEO</span><span class="marq-d">✦</span>
+  <span class="marq-w" data-h>Yazılım</span><span class="marq-d">✦</span>
+</div></section>
+
+<section class="proj-sec" id="proj">
+  <div class="proj-hd"><div class="sect-lbl" data-r>Seçili Çalışmalar</div><h2 class="sect-h" data-rw>Öne Çıkan <span class="ac">Projelerimiz.</span></h2></div>
+  <div class="proj-c" data-rp><div class="proj-th"><div class="proj-th-bg" style="background:linear-gradient(135deg,#0e0528,#2a1560,#0e0528)"></div><div class="proj-th-ov"></div><div class="proj-th-cta" data-h>Keşfet</div></div><div class="proj-i"><div class="proj-tag">E-Ticaret</div><h3>LuxBrand Commerce</h3><p>Premium moda markası için özel e-ticaret platformu.</p><a href="#" class="proj-lk" data-h>İncele <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a></div></div>
+  <div class="proj-c" data-rp><div class="proj-th"><div class="proj-th-bg" style="background:linear-gradient(135deg,#061428,#0d3060,#061428)"></div><div class="proj-th-ov"></div><div class="proj-th-cta" data-h>Keşfet</div></div><div class="proj-i"><div class="proj-tag">Kurumsal</div><h3>TechVision Corporate</h3><p>Uluslararası teknoloji şirketi için kurumsal web sitesi.</p><a href="#" class="proj-lk" data-h>İncele <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a></div></div>
+  <div class="proj-c" data-rp><div class="proj-th"><div class="proj-th-bg" style="background:linear-gradient(135deg,#140620,#3a1260,#140620)"></div><div class="proj-th-ov"></div><div class="proj-th-cta" data-h>Keşfet</div></div><div class="proj-i"><div class="proj-tag">Mobil Uygulama</div><h3>FinTrack Mobile</h3><p>Fintech sektörü için iOS ve Android mobil uygulama.</p><a href="#" class="proj-lk" data-h>İncele <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a></div></div>
+</section>
+
+<section class="cta-sec" id="cta">
+  <div class="cta-i">
+    <h2><span class="ln"><span class="wi" data-rc>Hikayeniz</span></span><span class="ln"><span class="wi" data-rc>Nereye <span class="ac">Gidecek?</span></span></span></h2>
+    <p data-rc>Birlikte bulalım. Projenizi konuşmaya hazırız.</p>
+    <a href="mailto:info@beracore.com" class="cta-big" data-rc data-h>Bize Ulaşın <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</section>
+
+<footer class="ft">
+  <div class="ft-g">
+    <div class="ft-br"><a href="#" class="nav-logo" data-h>BERACORE</a><p>Yaratıcı tasarım ve kusursuz mühendislikle dijital deneyimler üretiyoruz.</p></div>
+    <div class="ft-c"><h4>Sayfalar</h4><a href="#hero" data-h>Ana Sayfa</a><a href="#s1" data-h>Hizmetler</a><a href="#proj" data-h>Projeler</a><a href="#cta" data-h>İletişim</a></div>
+    <div class="ft-c"><h4>Hizmetler</h4><a href="#" data-h>Web Tasarım</a><a href="#" data-h>Web Yazılım</a><a href="#" data-h>Mobil Uygulama</a><a href="#" data-h>E-Ticaret</a></div>
+    <div class="ft-c"><h4>İletişim</h4><a href="mailto:info@beracore.com" data-h>info@beracore.com</a><a href="tel:+908503026950" data-h>0850 302 69 50</a><a data-h>İstanbul, Türkiye</a></div>
+  </div>
+  <div class="ft-b"><span>&copy; 2026 BERACORE. Tüm hakları saklıdır.</span><div class="ft-so"><a href="#" data-h>Instagram</a><a href="#" data-h>LinkedIn</a><a href="#" data-h>X</a></div></div>
+</footer>
+
+<script>
+// ===== PRELOADER =====
+setTimeout(()=>document.getElementById('pre').classList.add('done'),2200);
+
+// ===== CURSOR =====
+const cr=document.getElementById('cr'),cd=document.getElementById('cd');
+let crx=0,cry=0,cpx=0,cpy=0;
+document.addEventListener('mousemove',e=>{cpx=e.clientX;cpy=e.clientY;cd.style.left=cpx+'px';cd.style.top=cpy+'px'});
+(function cl(){crx+=(cpx-crx)*.09;cry+=(cpy-cry)*.09;cr.style.left=crx+'px';cr.style.top=cry+'px';requestAnimationFrame(cl)})();
+document.querySelectorAll('[data-h]').forEach(e=>{e.addEventListener('mouseenter',()=>{cr.classList.add('h');cd.classList.add('h')});e.addEventListener('mouseleave',()=>{cr.classList.remove('h');cd.classList.remove('h')})});
+
+// ===== CINEMATIC TEXT REVEAL =====
+const heroLines=document.querySelectorAll('.hero h1 .li');
+function revealHeroText(){
+  heroLines.forEach((l,i)=>{
+    setTimeout(()=>{
+      l.style.transition=`transform 1.4s cubic-bezier(0.16,1,0.3,1),opacity 1.2s ease`;
+      l.style.transform='translateY(0)';
+      l.style.opacity='1';
+    },2400+i*200);
+  });
+  // Description
+  setTimeout(()=>{
+    const d=document.querySelector('.hero-desc');
+    d.style.transition='all 1s var(--ease)';
+    d.style.opacity='1';
+    d.style.transform='translateY(0)';
+  },3200);
+}
+revealHeroText();
+
+// ===== NAV =====
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('s',scrollY>50));
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'});closeMM()}));
+
+// Mobile
+const mb=document.getElementById('mb'),mm=document.getElementById('mm');
+function closeMM(){mb.classList.remove('o');mm.classList.remove('o')}
+mb.addEventListener('click',()=>{mb.classList.toggle('o');mm.classList.toggle('o')});
+mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMM));
+
+// ===== SCROLL REVEAL =====
+document.querySelectorAll('[data-rw]').forEach(el=>{
+  el.innerHTML=el.innerHTML.replace(/(<[^>]+>)|(\S+)/g,(m,tag,word)=>tag||`<span class="w"><span class="wi">${word}</span></span>`);
+});
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target;
+  if(el.hasAttribute('data-r'))el.classList.add('v');
+  if(el.hasAttribute('data-rw'))el.querySelectorAll('.wi').forEach((w,i)=>setTimeout(()=>w.classList.add('v'),i*65));
+  if(el.hasAttribute('data-rp'))el.classList.add('v');
+  if(el.hasAttribute('data-rc'))el.classList.add('v');
+  obs.unobserve(el);
+})},{threshold:.12,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('[data-r],[data-rw],[data-rp],[data-rc]').forEach(el=>obs.observe(el));
+const srs=document.querySelectorAll('[data-rs]');
+const sObs=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;srs.forEach((r,i)=>setTimeout(()=>r.classList.add('v'),i*80));sObs.unobserve(e.target)})},{threshold:.1});
+if(srs[0])sObs.observe(srs[0]);
+
+// ===== SERVICE PAGE SYSTEM =====
+let openPage=null;
+function openServicePage(name){
+  const pg=document.getElementById('pg-'+name);
+  if(!pg)return;
+  openPage=pg;
+  pg.classList.add('open');
+  document.body.style.overflow='hidden';
+  // Init page canvas if not already
+  initPageCanvas(name);
+}
+function closePage(){
+  if(!openPage)return;
+  openPage.classList.remove('open');
+  document.body.style.overflow='';
+  openPage=null;
+}
+
+// ===== SERVICE DESCRIPTIONS =====
+const svcDescs={
+  web:'Estetik ve kullanıcı odaklı, markanızı yansıtan modern web deneyimleri tasarlıyoruz.',
+  uiux:'Araştırma ve test süreçleriyle mükemmel kullanıcı deneyimleri yaratıyoruz.',
+  dev:'Ölçeklenebilir, güvenli ve yüksek performanslı yazılım çözümleri geliştiriyoruz.',
+  ecom:'Satışlarınızı artıran güçlü ve kullanıcı dostu e-ticaret platformları kuruyoruz.',
+  seo:'Organik trafik ve dijital stratejilerle markanızı hedef kitlenize ulaştırıyoruz.'
+};
+
+// ===== THREE.JS CENTERPIECE =====
+(function(){
+const canvas=document.getElementById('cvs');
+const container=canvas.parentElement;
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(38,1,.1,100);
+camera.position.set(0,.2,5);
+
+const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setClearColor(0x000000,0);
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.1;
+
+function resize(){
+  const w=container.clientWidth,h=520;
+  camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);
+}
+resize();window.addEventListener('resize',resize);
+setTimeout(()=>{resize();canvas.classList.add('show')},500);
+
+// Studio lighting — brighter, more vivid
+scene.add(new THREE.AmbientLight(0x4050a0,0.5));
+const keyL=new THREE.DirectionalLight(0x8090ff,0.8);keyL.position.set(4,5,6);scene.add(keyL);
+const fillL=new THREE.DirectionalLight(0x38bdf8,0.5);fillL.position.set(-5,2,4);scene.add(fillL);
+const rimL=new THREE.PointLight(0x7c3aed,1.2,16);rimL.position.set(0,-4,5);scene.add(rimL);
+const topL=new THREE.PointLight(0xa78bfa,0.7,12);topL.position.set(0,6,0);scene.add(topL);
+const backL=new THREE.PointLight(0x06b6d4,0.6,14);backL.position.set(0,0,-5);scene.add(backL);
+
+const N=2048;
+const mat=new THREE.MeshPhysicalMaterial({color:0x7c3aed,metalness:0.2,roughness:0.15,clearcoat:0.6,clearcoatRoughness:0.2,transparent:true,opacity:0.35,side:THREE.DoubleSide,emissive:0x2d1b69,emissiveIntensity:0.15});
+const wMat=new THREE.MeshBasicMaterial({color:0xa78bfa,wireframe:true,transparent:true,opacity:0.55});
+
+// ===== PURE GEOMETRIC SHAPES — ALL SAME BOUNDING SIZE =====
+// Every shape is normalized to fit inside a sphere of radius S
+const S=1.4;
+
+// Helper: distribute N points on a polyhedron's faces
+function polyPoints(verts,faces,N,scale){
+  const a=new Float32Array(N*3);
+  const nf=faces.length,perFace=Math.ceil(N/nf);
+  for(let i=0;i<N;i++){
+    const fi=Math.min(Math.floor(i/perFace),nf-1),f=faces[fi];
+    const li=i-fi*perFace,sd=Math.ceil(Math.sqrt(perFace));
+    let u=(li%sd)/(sd-1),v=Math.floor(li/sd)/(sd-1);
+    if(u+v>1){u=1-u;v=1-v}
+    const w=1-u-v,p0=verts[f[0]],p1=verts[f[1]],p2=verts[f[2]];
+    a[i*3]=(p0[0]*w+p1[0]*u+p2[0]*v)*scale;
+    a[i*3+1]=(p0[1]*w+p1[1]*u+p2[1]*v)*scale;
+    a[i*3+2]=(p0[2]*w+p1[2]*u+p2[2]*v)*scale;
+  }
+  return a;
+}
+
+// Web Tasarım → CUBE — bounding corner is at sqrt(3)≈1.73 from center, scale to fit S
+function sWeb(){
+  const a=new Float32Array(N*3),scale=S/1.0; // cube half-side = S
+  const perFace=Math.ceil(N/6),sd=Math.ceil(Math.sqrt(perFace));
+  for(let i=0;i<N;i++){
+    const face=Math.min(Math.floor(i*6/N),5);
+    const idx=i-Math.floor(face*N/6);
+    const u=(idx%sd)/(sd-1)*2-1,v=Math.floor(idx/sd)/(sd-1)*2-1;
+    let x,y,z;
+    switch(face){
+      case 0:x=1;y=u;z=v;break;case 1:x=-1;y=u;z=v;break;
+      case 2:x=u;y=1;z=v;break;case 3:x=u;y=-1;z=v;break;
+      case 4:x=u;y=v;z=1;break;default:x=u;y=v;z=-1;break;
+    }
+    a[i*3]=x*scale;a[i*3+1]=y*scale;a[i*3+2]=z*scale;
+  }
+  return a;
+}
+
+// UI/UX → SPHERE — radius exactly S
+function sUiux(){
+  const a=new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    const phi=Math.acos(1-2*(i+.5)/N),th=Math.PI*(1+Math.sqrt(5))*i;
+    a[i*3]=Math.sin(phi)*Math.cos(th)*S;
+    a[i*3+1]=Math.sin(phi)*Math.sin(th)*S;
+    a[i*3+2]=Math.cos(phi)*S;
+  }
+  return a;
+}
+
+// Yazılım → TORUS — outer radius = S
+function sDev(){
+  const a=new Float32Array(N*3);
+  const majorR=S*0.7,minorR=S*0.35; // outer edge = majorR+minorR ≈ S*1.05
+  const sc=S/(majorR+minorR); // normalize so outer = S
+  for(let i=0;i<N;i++){
+    const u=(i/N)*Math.PI*2,golden=Math.PI*(1+Math.sqrt(5)),v=(i*golden)%(Math.PI*2);
+    a[i*3]=(majorR+minorR*Math.cos(v))*Math.cos(u)*sc;
+    a[i*3+1]=minorR*Math.sin(v)*sc;
+    a[i*3+2]=(majorR+minorR*Math.cos(v))*Math.sin(u)*sc;
+  }
+  return a;
+}
+
+// E-Ticaret → OCTAHEDRON — tip-to-tip = 2*S
+function sEcom(){
+  const verts=[[0,1,0],[1,0,0],[0,0,1],[-1,0,0],[0,0,-1],[0,-1,0]];
+  const faces=[[0,1,2],[0,2,3],[0,3,4],[0,4,1],[5,2,1],[5,3,2],[5,4,3],[5,1,4]];
+  return polyPoints(verts,faces,N,S);
+}
+
+// SEO → ICOSAHEDRON — vertex-to-center normalized to S
+function sSeo(){
+  const t=(1+Math.sqrt(5))/2;
+  const iv=[[-1,t,0],[1,t,0],[-1,-t,0],[1,-t,0],[0,-1,t],[0,1,t],[0,-1,-t],[0,1,-t],[t,0,-1],[t,0,1],[-t,0,-1],[-t,0,1]];
+  iv.forEach(v=>{const l=Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);v[0]/=l;v[1]/=l;v[2]/=l});
+  const faces=[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
+  return polyPoints(iv,faces,N,S);
+}
+
+const gens={web:sWeb,uiux:sUiux,dev:sDev,ecom:sEcom,seo:sSeo};
+const glows={
+  web:'rgba(139,92,246,0.22)',
+  uiux:'rgba(6,182,212,0.22)',
+  dev:'rgba(168,85,247,0.22)',
+  ecom:'rgba(16,185,129,0.2)',
+  seo:'rgba(245,158,11,0.2)'
+};
+const matColors={web:0x7c3aed,uiux:0x06b6d4,dev:0xa855f7,ecom:0x10b981,seo:0xf59e0b};
+const emissiveColors={web:0x2d1b69,uiux:0x0c4a6e,dev:0x3b0764,ecom:0x064e3b,seo:0x713f12};
+
+const pos=sWeb();
+const geo=new THREE.BufferGeometry();
+geo.setAttribute('position',new THREE.BufferAttribute(pos.slice(),3));
+const solid=new THREE.Mesh(geo,mat);
+const wire=new THREE.Mesh(geo,wMat);
+const grp=new THREE.Group();grp.add(solid);grp.add(wire);scene.add(grp);
+
+// Particles
+const pN=80,pG=new THREE.BufferGeometry(),pP=new Float32Array(pN*3);
+for(let i=0;i<pN;i++){const p=Math.acos(2*Math.random()-1),t=Math.random()*Math.PI*2,r=2.8+Math.random()*1.2;
+  pP[i*3]=r*Math.sin(p)*Math.cos(t);pP[i*3+1]=r*Math.sin(p)*Math.sin(t);pP[i*3+2]=r*Math.cos(p);}
+pG.setAttribute('position',new THREE.BufferAttribute(pP,3));
+const pM=new THREE.PointsMaterial({color:0x7c3aed,size:.018,transparent:true,opacity:.5,blending:THREE.AdditiveBlending});
+const pts=new THREE.Points(pG,pM);scene.add(pts);
+
+// Morph system
+let curTarget=pos.slice(),morphFrom=pos.slice(),morphTo=pos.slice(),morphT=1,curShape='web';
+
+function setShape(name){
+  if(name===curShape||morphT<1)return;
+  curShape=name;morphFrom=curTarget.slice();morphTo=gens[name]();morphT=0;
+  document.querySelectorAll('.svc-btn').forEach(b=>b.classList.toggle('on',b.dataset.s===name));
+  document.getElementById('sg').style.background='radial-gradient(circle,'+glows[name]+',transparent 70%)';
+  mat.color.setHex(matColors[name]);mat.emissive.setHex(emissiveColors[name]||0x000000);wMat.color.setHex(matColors[name]);pM.color.setHex(matColors[name]);
+  // Update description with cinematic fade
+  const desc=document.getElementById('sdesc');
+  desc.classList.remove('show');
+  setTimeout(()=>{desc.textContent=svcDescs[name];desc.classList.add('show')},400);
+}
+
+// Tab clicks — double click opens page
+let lastClickShape='',lastClickTime=0;
+document.querySelectorAll('.svc-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const s=btn.dataset.s;
+    const now=Date.now();
+    if(s===lastClickShape&&now-lastClickTime<600){
+      openServicePage(s);
+    }else{
+      setShape(s);
+    }
+    lastClickShape=s;lastClickTime=now;
+  });
+});
+
+// Drag
+let drag=false,pm={x:0,y:0},vx=0,vy=0;
+canvas.addEventListener('mousedown',e=>{drag=true;pm={x:e.clientX,y:e.clientY}});
+canvas.addEventListener('mousemove',e=>{if(!drag)return;vy+=(e.clientX-pm.x)*.003;vx+=(e.clientY-pm.y)*.003;pm={x:e.clientX,y:e.clientY}});
+canvas.addEventListener('mouseup',()=>drag=false);canvas.addEventListener('mouseleave',()=>drag=false);
+canvas.addEventListener('touchstart',e=>{drag=true;pm={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
+canvas.addEventListener('touchmove',e=>{if(!drag)return;vy+=(e.touches[0].clientX-pm.x)*.003;vx+=(e.touches[0].clientY-pm.y)*.003;pm={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
+canvas.addEventListener('touchend',()=>drag=false);
+
+let t=0;
+function animate(){
+  requestAnimationFrame(animate);t+=.006;
+
+  // Morph (cinematic ~1.2s, ease-in-out)
+  if(morphT<1){
+    morphT=Math.min(morphT+.012,1);
+    const e=morphT<.5?4*morphT*morphT*morphT:1-Math.pow(-2*morphT+2,3)/2;
+    const pa=geo.attributes.position;
+    for(let i=0;i<N*3;i++)curTarget[i]=morphFrom[i]+(morphTo[i]-morphFrom[i])*e;
+    pa.array.set(curTarget);pa.needsUpdate=true;
+  }
+
+  // Subtle idle deformation
+  const pa=geo.attributes.position;
+  for(let i=0;i<N;i++){
+    const idx=i*3,ox=curTarget[idx],oy=curTarget[idx+1],oz=curTarget[idx+2];
+    const d=Math.sqrt(ox*ox+oy*oy+oz*oz);
+    const n=Math.sin(t*1+ox*2.5+oy*3)*.003+Math.cos(t*.8+oz*2.8)*.002;
+    if(d>.01){pa.array[idx]=ox+(ox/d)*n;pa.array[idx+1]=oy+(oy/d)*n;pa.array[idx+2]=oz+(oz/d)*n}
+  }
+  pa.needsUpdate=true;
+
+  // Rotation — slow, cinematic
+  if(!drag)vy+=.0008;
+  vx*=.97;vy*=.97;
+  grp.rotation.x+=vx;grp.rotation.y+=vy;
+  grp.position.y=Math.sin(t*.5)*.06;
+
+  wMat.opacity=.45+Math.sin(t*1.1)*.1;
+  pts.rotation.y=t*.025;pts.rotation.x=Math.sin(t*.15)*.08;
+  rimL.position.x=Math.sin(t*.3)*3.5;rimL.position.z=Math.cos(t*.3)*3.5;
+
+  renderer.render(scene,camera);
+}
+animate();
+})();
+
+// ===== SERVICE PAGE CANVASES (mini 3D) =====
+const pageCanvasInited={};
+function initPageCanvas(name){
+  if(pageCanvasInited[name])return;
+  pageCanvasInited[name]=true;
+  const canvas=document.getElementById('pc-'+name);
+  if(!canvas)return;
+  const sc=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(35,canvas.clientWidth/canvas.clientHeight||1.5,.1,100);
+  cam.position.set(0,0,5);
+  const ren=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  ren.setPixelRatio(Math.min(devicePixelRatio,2));
+  ren.setClearColor(0,0);ren.toneMapping=THREE.ACESFilmicToneMapping;
+
+  function rs(){const w=canvas.clientWidth||500,h=canvas.clientHeight||320;cam.aspect=w/h;cam.updateProjectionMatrix();ren.setSize(w,h)}
+  rs();window.addEventListener('resize',rs);
+
+  sc.add(new THREE.AmbientLight(0x404060,.4));
+  const l1=new THREE.DirectionalLight(0x8888ff,.5);l1.position.set(3,4,5);sc.add(l1);
+  const l2=new THREE.PointLight(0x6366f1,.6,12);l2.position.set(0,-3,4);sc.add(l2);
+
+  const colors={web:0x6366f1,uiux:0x38bdf8,dev:0x818cf8,ecom:0x34d399,seo:0xfbbf24};
+  let geo;
+  switch(name){
+    case'web':geo=new THREE.PlaneGeometry(3,3,48,48);break;
+    case'uiux':geo=new THREE.SphereGeometry(1.2,48,48);break;
+    case'dev':geo=new THREE.TorusKnotGeometry(.8,.3,120,20);break;
+    case'ecom':geo=new THREE.BoxGeometry(1.5,1.5,1.5,6,6,6);break;
+    case'seo':geo=new THREE.TorusGeometry(1,.35,28,80);break;
+    default:geo=new THREE.SphereGeometry(1,32,32);
+  }
+  const m=new THREE.MeshPhysicalMaterial({color:colors[name]||0x6366f1,metalness:.12,roughness:.22,clearcoat:.4,transparent:true,opacity:.2,side:THREE.DoubleSide});
+  const wm=new THREE.MeshBasicMaterial({color:colors[name]||0x6366f1,wireframe:true,transparent:true,opacity:.3});
+  const g=new THREE.Group();g.add(new THREE.Mesh(geo,m));g.add(new THREE.Mesh(geo,wm));sc.add(g);
+
+  let tm=0;
+  function anim(){
+    requestAnimationFrame(anim);tm+=.005;
+    g.rotation.x+=.002;g.rotation.y+=.003;
+    g.position.y=Math.sin(tm*.6)*.05;
+
+    // Deform for web (wave)
+    if(name==='web'){
+      const pa=geo.attributes.position;
+      for(let i=0;i<pa.count;i++){
+        const x=pa.getX(i),z=pa.getZ(i),d=Math.sqrt(x*x+z*z);
+        pa.setY(i,Math.sin(d*2.5-tm*2)*.3*Math.exp(-d*.3));
+      }
+      pa.needsUpdate=true;
+    }
+    l2.position.x=Math.sin(tm*.3)*3;l2.position.z=Math.cos(tm*.3)*3;
+    ren.render(sc,cam);
+  }
+  anim();
+}
+
+// Parallax
+window.addEventListener('scroll',()=>{document.querySelectorAll('.sect-num').forEach(n=>{const r=n.parentElement.getBoundingClientRect();n.style.transform=`translateY(calc(-50% + ${r.top*.04}px))`})});
+</script>
+</body>
+</html>
