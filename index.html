@@ -288,6 +288,150 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
   .svc-page-inner{padding:5rem 1.5rem}
   .svc-back{top:1rem;left:1rem}
 }
+
+/* ========== STATS BAR ========== */
+.stats{padding:5rem 3rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:linear-gradient(180deg,transparent,rgba(99,102,241,0.015),transparent)}
+.stats-g{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;max-width:1200px;margin:0 auto}
+.stat{text-align:center;padding:1rem;opacity:0;transform:translateY(20px);transition:all .8s var(--ease)}
+.stat.v{opacity:1;transform:translateY(0)}
+.stat-n{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.6rem,5vw,4rem);font-weight:700;line-height:1;background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.03em;margin-bottom:.6rem}
+.stat-l{font-size:.7rem;font-weight:500;color:var(--t2);letter-spacing:.12em;text-transform:uppercase}
+
+/* ========== RESULT CARDS (Vaka rakamları) ========== */
+.results{padding:7rem 3rem;position:relative}
+.results-hd{text-align:center;margin-bottom:5rem}
+.results-g{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1200px;margin:0 auto}
+.r-card{padding:2.5rem 2rem;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,rgba(99,102,241,0.025),rgba(255,255,255,0.005));position:relative;overflow:hidden;transition:all .5s var(--ease);opacity:0;transform:translateY(30px)}
+.r-card.v{opacity:1;transform:translateY(0)}
+.r-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(99,102,241,0.06),transparent 60%);opacity:0;transition:opacity .6s ease;pointer-events:none}
+.r-card:hover{border-color:rgba(99,102,241,0.25);transform:translateY(-4px)}
+.r-card:hover::before{opacity:1}
+.r-brand{font-family:'Space Grotesk',sans-serif;font-size:.65rem;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--t3);margin-bottom:1.5rem}
+.r-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(3rem,5.5vw,4.5rem);font-weight:700;line-height:1;letter-spacing:-.04em;background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem}
+.r-desc{font-size:.85rem;line-height:1.6;color:var(--t2);margin-bottom:1.5rem}
+.r-link{display:inline-flex;align-items:center;gap:.5rem;font-size:.7rem;font-weight:600;color:var(--accent2);letter-spacing:.05em;text-transform:uppercase;transition:gap .3s var(--ease)}
+.r-link:hover{gap:.8rem}
+
+/* ========== LOGO WALL ========== */
+.logos{padding:4rem 3rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.logos-l{font-size:.6rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--t3);text-align:center;margin-bottom:2.5rem}
+.logos-g{display:grid;grid-template-columns:repeat(6,1fr);gap:2rem;max-width:1200px;margin:0 auto;align-items:center}
+.logo-i{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:.03em;color:var(--t3);text-align:center;opacity:.5;transition:all .4s var(--ease);text-transform:uppercase}
+.logo-i:hover{opacity:1;color:var(--t1);transform:scale(1.05)}
+
+/* ========== PAIN POINTS (Sorun → Çözüm) ========== */
+.pain{padding:7rem 3rem}
+.pain-hd{text-align:center;margin-bottom:5rem;max-width:780px;margin-left:auto;margin-right:auto}
+.pain-list{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:2rem}
+.pain-c{display:grid;grid-template-columns:1fr 1.5fr;gap:3rem;padding:2.5rem;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,0.005);align-items:center;opacity:0;transform:translateY(30px);transition:all .8s var(--ease)}
+.pain-c.v{opacity:1;transform:translateY(0)}
+.pain-c:hover{border-color:rgba(99,102,241,0.2)}
+.pain-q{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:600;line-height:1.25;letter-spacing:-.01em}
+.pain-q .ac{color:var(--accent2)}
+.pain-r p{font-size:.92rem;line-height:1.7;color:var(--t2);margin-bottom:1.25rem}
+.pain-bullets{display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.5rem}
+.pain-bullets li{font-size:.82rem;color:var(--t1);display:flex;align-items:center;gap:.65rem;font-weight:500}
+.pain-bullets li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent2);flex-shrink:0;box-shadow:0 0 12px rgba(129,140,248,0.5)}
+.pain-cta{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;transition:gap .3s var(--ease)}
+.pain-cta:hover{gap:.8rem}
+
+/* ========== PROCESS (Süreç) ========== */
+.process{padding:7rem 3rem;background:linear-gradient(180deg,transparent,rgba(99,102,241,0.015),transparent)}
+.process-hd{text-align:center;margin-bottom:5rem;max-width:780px;margin-left:auto;margin-right:auto}
+.process-g{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:1200px;margin:0 auto;position:relative}
+.process-g::before{content:'';position:absolute;top:35px;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);z-index:0}
+.proc-c{position:relative;text-align:center;padding:1rem;opacity:0;transform:translateY(30px);transition:all .8s var(--ease)}
+.proc-c.v{opacity:1;transform:translateY(0)}
+.proc-num{display:inline-flex;align-items:center;justify-content:center;width:70px;height:70px;border-radius:50%;background:var(--bg);border:1px solid rgba(99,102,241,0.3);font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:var(--accent2);margin-bottom:1.75rem;position:relative;z-index:2;box-shadow:0 0 0 6px var(--bg),0 8px 24px rgba(99,102,241,0.12)}
+.proc-h{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:-.01em;text-transform:uppercase;margin-bottom:.75rem}
+.proc-p{font-size:.86rem;line-height:1.7;color:var(--t2);max-width:280px;margin:0 auto}
+
+/* ========== WHY US ========== */
+.why{padding:7rem 3rem}
+.why-hd{text-align:center;margin-bottom:5rem;max-width:780px;margin-left:auto;margin-right:auto}
+.why-g{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;max-width:1100px;margin:0 auto}
+.why-c{padding:2.25rem;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,0.005);transition:all .5s var(--ease);opacity:0;transform:translateY(20px);position:relative;overflow:hidden}
+.why-c.v{opacity:1;transform:translateY(0)}
+.why-c::after{content:'';position:absolute;top:0;left:0;width:0;height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan));transition:width .6s var(--ease)}
+.why-c:hover{border-color:rgba(99,102,241,0.25);transform:translateY(-3px)}
+.why-c:hover::after{width:100%}
+.why-ic{width:46px;height:46px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;color:var(--accent2);margin-bottom:1.5rem}
+.why-h{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:-.01em;text-transform:uppercase;margin-bottom:.75rem}
+.why-p{font-size:.88rem;line-height:1.7;color:var(--t2)}
+
+/* ========== TESTIMONIALS ========== */
+.test{padding:7rem 3rem;background:linear-gradient(180deg,transparent,rgba(99,102,241,0.015),transparent)}
+.test-hd{text-align:center;margin-bottom:5rem;max-width:780px;margin-left:auto;margin-right:auto}
+.test-g{display:grid;grid-template-columns:repeat(3,1fr);gap:1.75rem;max-width:1200px;margin:0 auto}
+.test-c{padding:2.25rem;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,0.005);transition:all .5s var(--ease);opacity:0;transform:translateY(25px);display:flex;flex-direction:column;position:relative}
+.test-c.v{opacity:1;transform:translateY(0)}
+.test-c:hover{border-color:rgba(99,102,241,0.25);transform:translateY(-3px)}
+.test-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.25rem}
+.test-tag{font-size:.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);padding:.3rem .7rem;border:1px solid rgba(99,102,241,0.2);border-radius:100px;background:rgba(99,102,241,0.04)}
+.test-q{font-size:.95rem;line-height:1.75;color:var(--t1);margin-bottom:1.75rem;flex-grow:1;font-style:italic}
+.test-q::before{content:'"';font-family:'Space Grotesk',sans-serif;font-size:2.5rem;line-height:0;color:var(--accent);opacity:.4;display:block;margin-bottom:.5rem}
+.test-by{display:flex;flex-direction:column;gap:.2rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.test-name{font-family:'Space Grotesk',sans-serif;font-size:.85rem;font-weight:700;color:var(--t1)}
+.test-role{font-size:.72rem;color:var(--t2)}
+
+/* ========== FAQ ========== */
+.faq{padding:7rem 3rem}
+.faq-hd{text-align:center;margin-bottom:4rem;max-width:780px;margin-left:auto;margin-right:auto}
+.faq-list{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:.75rem}
+.faq-i{border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.005);overflow:hidden;transition:all .4s var(--ease);opacity:0;transform:translateY(15px)}
+.faq-i.v{opacity:1;transform:translateY(0)}
+.faq-i:hover{border-color:rgba(99,102,241,0.2)}
+.faq-i.o{border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.025)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.4rem 1.75rem;font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:600;letter-spacing:-.005em;background:none;border:none;width:100%;text-align:left;color:var(--t1);transition:color .3s ease}
+.faq-i.o .faq-q{color:var(--accent2)}
+.faq-icon{width:18px;height:18px;flex-shrink:0;position:relative;margin-left:1rem}
+.faq-icon::before,.faq-icon::after{content:'';position:absolute;background:currentColor;border-radius:1px;transition:transform .4s var(--ease)}
+.faq-icon::before{top:50%;left:0;right:0;height:1.5px;transform:translateY(-50%)}
+.faq-icon::after{left:50%;top:0;bottom:0;width:1.5px;transform:translateX(-50%)}
+.faq-i.o .faq-icon::after{transform:translateX(-50%) rotate(90deg);opacity:0}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
+.faq-i.o .faq-a{max-height:600px}
+.faq-a-in{padding:0 1.75rem 1.5rem;font-size:.88rem;line-height:1.75;color:var(--t2)}
+
+/* ========== FREE REPORT BAND ========== */
+.report{padding:5rem 3rem;position:relative;overflow:hidden}
+.report-i{max-width:1100px;margin:0 auto;padding:3.5rem 3rem;border:1px solid rgba(99,102,241,0.15);border-radius:18px;background:linear-gradient(135deg,rgba(99,102,241,0.05),rgba(56,189,248,0.02));display:grid;grid-template-columns:1.4fr 1fr;gap:3rem;align-items:center;position:relative;overflow:hidden}
+.report-i::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,0.1),transparent 70%);top:-50%;right:-10%;filter:blur(40px);pointer-events:none}
+.report-l{position:relative;z-index:2}
+.report-lbl{font-size:.6rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem}
+.report-h{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;line-height:1.15;letter-spacing:-.02em;margin-bottom:1rem}
+.report-h .ac{background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.report-p{font-size:.92rem;line-height:1.7;color:var(--t2)}
+.report-r{position:relative;z-index:2;display:flex;flex-direction:column;gap:.85rem;align-items:flex-start}
+.report-btn{display:inline-flex;align-items:center;gap:.65rem;padding:.95rem 2rem;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:.85rem;font-weight:600;letter-spacing:.01em;transition:all .4s var(--ease);width:100%;justify-content:center}
+.report-btn:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(99,102,241,0.3)}
+.report-note{font-size:.7rem;color:var(--t3);text-align:center;width:100%}
+
+/* ========== HERO TWIN CTA UPDATE ========== */
+.cta-c{font-size:.82rem;font-weight:600;color:var(--t1);padding:.7rem 1.55rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;transition:all .4s var(--ease);display:inline-flex;align-items:center;gap:.6rem}
+.cta-c:hover{background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.3);color:var(--t1)}
+
+/* ========== RESPONSIVE for new sections ========== */
+@media(max-width:1024px){
+  .stats-g{grid-template-columns:repeat(2,1fr)}
+  .results-g,.test-g,.process-g{grid-template-columns:1fr}
+  .process-g::before{display:none}
+  .pain-c{grid-template-columns:1fr;gap:1.5rem}
+  .logos-g{grid-template-columns:repeat(3,1fr)}
+  .why-g{grid-template-columns:1fr}
+  .report-i{grid-template-columns:1fr;padding:2.5rem 2rem;gap:2rem}
+  .stats,.results,.pain,.process,.why,.test,.faq,.report{padding-left:1.5rem;padding-right:1.5rem}
+  .logos{padding:3rem 1.5rem}
+}
+@media(max-width:640px){
+  .stats-g{grid-template-columns:1fr 1fr;gap:1.25rem}
+  .logos-g{grid-template-columns:repeat(2,1fr);gap:1.5rem}
+  .stats,.results,.pain,.process,.why,.test,.faq,.report{padding:4rem 1rem}
+  .pain-c,.r-card,.why-c,.test-c{padding:1.75rem 1.5rem}
+  .report-i{padding:2rem 1.25rem}
+  .faq-q{padding:1.1rem 1.25rem;font-size:.88rem}
+  .faq-a-in{padding:0 1.25rem 1.25rem}
+}
 </style>
 </head>
 <body>
@@ -301,7 +445,9 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
   <div class="nav-r">
     <a href="#hero" data-h>Ana Sayfa</a>
     <a href="#s1" data-h>Hizmetler</a>
+    <a href="#process" data-h>Süreç</a>
     <a href="#proj" data-h>Projeler</a>
+    <a href="#faq" data-h>SSS</a>
     <a href="#cta" class="nav-cta" data-h>İletişim</a>
   </div>
   <button class="mbtn" id="mb" aria-label="Menüyü aç/kapat" aria-expanded="false" aria-controls="mm"><span></span><span></span><span></span></button>
@@ -309,7 +455,9 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
 <div class="mmenu" id="mm" aria-hidden="true"><ul>
   <li><a href="#hero" data-h>Ana Sayfa</a></li>
   <li><a href="#s1" data-h>Hizmetler</a></li>
+  <li><a href="#process" data-h>Süreç</a></li>
   <li><a href="#proj" data-h>Projeler</a></li>
+  <li><a href="#faq" data-h>SSS</a></li>
   <li><a href="#cta" data-h>İletişim</a></li>
 </ul></div>
 
@@ -370,13 +518,13 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
 <section class="hero" id="hero" aria-label="Tanıtım">
   <div class="hero-bg"></div>
   <div class="hero-center">
-    <div class="hero-badge" data-h><span class="bdot"></span>Digital Experience Studio</div>
+    <div class="hero-badge" data-h><span class="bdot"></span>Digital Experience Studio · İstanbul</div>
     <h1>
-      <span class="ln"><span class="li">Teknolojiyi</span></span>
-      <span class="ln"><span class="li"><span class="ac">SANATA</span> Dönüştüren</span></span>
-      <span class="ln"><span class="li">Yazılım Stüdyosu.</span></span>
+      <span class="ln"><span class="li">Performansı Önceleyen</span></span>
+      <span class="ln"><span class="li"><span class="ac">Uçtan Uca</span> Dijital</span></span>
+      <span class="ln"><span class="li">Çözümler.</span></span>
     </h1>
-    <p class="hero-desc">Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üretiyoruz.</p>
+    <p class="hero-desc">Yaratıcı tasarım, güçlü mühendislik ve veriye dayalı stratejilerle ulusal ve uluslararası markaların dijital büyüme yolculuğuna eşlik ediyoruz.</p>
   </div>
   <div class="stage">
     <div class="stage-glow" id="sg"></div>
@@ -392,10 +540,61 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
   </div>
   <div class="svc-desc-bar"><p class="svc-desc-text show" id="sdesc">Estetik ve kullanıcı odaklı, markanızı yansıtan modern web deneyimleri tasarlıyoruz.</p></div>
   <div class="cta-row">
-    <a href="#cta" class="cta-a" data-h><span>Keşfetmeye Başla <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
-    <a href="#s1" class="cta-b" data-h>Nasıl Çalışırız <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+    <a href="#cta" class="cta-a" data-h><span>Proje Başlat <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    <a href="#report" class="cta-c" data-h>Ücretsiz Analiz Al <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></a>
   </div>
   <div class="scroll-cue"><span>Scroll</span><div class="sc-line"></div></div>
+</section>
+
+<!-- ===== STATS BAR ===== -->
+<section class="stats" aria-label="Rakamlarla Beracore">
+  <div class="stats-g">
+    <div class="stat" data-rstat><div class="stat-n">120<span style="background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">+</span></div><div class="stat-l">Tamamlanan Proje</div></div>
+    <div class="stat" data-rstat><div class="stat-n">25<span style="background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">+</span></div><div class="stat-l">Uzman Ekip Üyesi</div></div>
+    <div class="stat" data-rstat><div class="stat-n">%97</div><div class="stat-l">Müşteri Memnuniyeti</div></div>
+    <div class="stat" data-rstat><div class="stat-n">5<span style="background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">+</span></div><div class="stat-l">Yıl Sektör Tecrübesi</div></div>
+  </div>
+</section>
+
+<!-- ===== CASE RESULT CARDS ===== -->
+<section class="results" id="results">
+  <div class="results-hd">
+    <div class="sect-lbl" data-r>Çalıştığımız markalardan rakamlar</div>
+    <h2 class="sect-h" data-rw>Müşterilerimize <span class="ac">Nasıl Güç Kattık.</span></h2>
+  </div>
+  <div class="results-g">
+    <article class="r-card" data-rcard>
+      <div class="r-brand">LuxBrand Commerce</div>
+      <div class="r-num">+%142</div>
+      <p class="r-desc">Yeniden tasarlanan e-ticaret altyapısı ve performans optimizasyonu sonrası satışa dönüş oranı artışı.</p>
+      <a href="#proj" class="r-link" data-h>Çalışmayı incele <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </article>
+    <article class="r-card" data-rcard>
+      <div class="r-brand">TechVision Corporate</div>
+      <div class="r-num">+%218</div>
+      <p class="r-desc">Kurumsal site SEO ve içerik mimarisi yenilemesinin ardından organik görünürlükte artış.</p>
+      <a href="#proj" class="r-link" data-h>Çalışmayı incele <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </article>
+    <article class="r-card" data-rcard>
+      <div class="r-brand">FinTrack Mobile</div>
+      <div class="r-num">+%64</div>
+      <p class="r-desc">Mobil uygulamanın UX yeniden tasarımı sonrası kullanıcı tutundurma (retention) oranındaki gelişim.</p>
+      <a href="#proj" class="r-link" data-h>Çalışmayı incele <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </article>
+  </div>
+</section>
+
+<!-- ===== LOGO WALL ===== -->
+<section class="logos" aria-label="Hizmet verdiğimiz markalar">
+  <div class="logos-l">Hizmet verdiğimiz markalar</div>
+  <div class="logos-g">
+    <div class="logo-i">LUXBRAND</div>
+    <div class="logo-i">TECHVISION</div>
+    <div class="logo-i">FINTRACK</div>
+    <div class="logo-i">NORDWAVE</div>
+    <div class="logo-i">VERTEXIA</div>
+    <div class="logo-i">AURORA·CO</div>
+  </div>
 </section>
 
 <!-- SECTIONS -->
@@ -435,6 +634,54 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
   </div>
 </section>
 
+<!-- ===== PAIN POINTS (Sorun → Çözüm) ===== -->
+<section class="pain" id="pain">
+  <div class="pain-hd">
+    <div class="sect-lbl" data-r>Sizi anlıyoruz</div>
+    <h2 class="sect-h" data-rw>Size <span class="ac">Tanıdık Geliyor mu?</span></h2>
+  </div>
+  <div class="pain-list">
+    <article class="pain-c" data-rpain>
+      <div class="pain-q">"Web sitemiz <span class="ac">marka</span> kimliğimizi yeterince yansıtmıyor."</div>
+      <div class="pain-r">
+        <p>Bir web sitesi sahibi olmak artık tek başına yeterli değil. Modern, hızlı ve markanızı doğru anlatan bir dijital vitrin, ilk izlenimde rakiplerinizden ayrışmanın en güçlü yoludur. Beracore olarak markanızı uçtan uca yeniden tasarlayıp, hikayenizi dijitale taşıyoruz.</p>
+        <ul class="pain-bullets"><li>Markanıza özel kurgulanmış tasarım sistemi</li><li>Hızlı, ölçeklenebilir ve SEO uyumlu altyapı</li><li>Kullanıcıyı dönüşüme götüren akış tasarımı</li></ul>
+        <a href="#cta" class="pain-cta" data-h>Web Tasarım Çözümleri <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </article>
+    <article class="pain-c" data-rpain>
+      <div class="pain-q">"Yatırım yapıyoruz ama <span class="ac">sonuç</span> ölçemiyoruz."</div>
+      <div class="pain-r">
+        <p>Tasarıma ya da yazılıma kaynak ayırıyor, fakat sonuçların beklentinizin altında kaldığını mı düşünüyorsunuz? Birçok marka, dijital dönüşümün karmaşık dünyasında benzer zorluklar yaşıyor. Beracore, veriye dayalı kararlarla ölçülebilir hedefler belirler ve maliyet verimliliğini en üst seviyeye taşır.</p>
+        <ul class="pain-bullets"><li>Markanıza özel ölçümlenebilir KPI'lar</li><li>Veriye dayalı tasarım ve geliştirme kararları</li><li>Şeffaf raporlama ve yatırım getirisi takibi</li></ul>
+        <a href="#cta" class="pain-cta" data-h>Dijital Danışmanlık <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </article>
+    <article class="pain-c" data-rpain>
+      <div class="pain-q">"Ekibimizin dijital projeleri yönetmeye <span class="ac">vakti</span> yok."</div>
+      <div class="pain-r">
+        <p>Sayısız tedarikçi, paralel akışlar ve teknik detaylar… Dijital projelerin koordinasyonu ekibinizin enerjisini tüketebilir. Beracore, tasarım–yazılım–lansman sürecini tek elden, alanında uzman bir ekiple yöneterek size yalnızca odaklanılması gereken kararları bırakır.</p>
+        <ul class="pain-bullets"><li>Tek noktadan, uçtan uca proje yönetimi</li><li>En güncel araçlar, modern teknoloji yığını</li><li>Sprint bazlı şeffaf ilerleme ve teslimat</li></ul>
+        <a href="#cta" class="pain-cta" data-h>Yazılım Geliştirme <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== PROCESS ===== -->
+<section class="process" id="process">
+  <div class="process-hd">
+    <div class="sect-lbl" data-r>Çalışma Sürecimiz</div>
+    <h2 class="sect-h" data-rw>Fikirden <span class="ac">Lansmana</span> Üç Adım.</h2>
+    <p class="sect-p" data-r style="margin:1.5rem auto 0;text-align:center">Her projede aynı titizlikle ilerlediğimiz, şeffaf ve ölçülebilir bir akış takip ederiz.</p>
+  </div>
+  <div class="process-g">
+    <div class="proc-c" data-rproc><div class="proc-num">01</div><h3 class="proc-h">Keşif & Strateji</h3><p class="proc-p">Markanızı, hedef kitlenizi ve rakiplerinizi inceleyip projenin iskeletini birlikte oluşturuyoruz.</p></div>
+    <div class="proc-c" data-rproc><div class="proc-num">02</div><h3 class="proc-h">Tasarım & Geliştirme</h3><p class="proc-p">UX araştırmasından piksel-perfect tasarıma, modern mühendislikten kapsamlı testlere uzanan üretim aşaması.</p></div>
+    <div class="proc-c" data-rproc><div class="proc-num">03</div><h3 class="proc-h">Lansman & Büyütme</h3><p class="proc-p">Yayına almayla bitmez; performans takibi, optimizasyon ve sürekli iyileştirme ile büyümenizi sürdürürüz.</p></div>
+  </div>
+</section>
+
 <section class="marq"><div class="marq-in">
   <span class="marq-w" data-h>Web Tasarım</span><span class="marq-d">✦</span>
   <span class="marq-w" data-h>Mobil Uygulama</span><span class="marq-d">✦</span>
@@ -457,11 +704,97 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
   <div class="proj-c" data-rp><div class="proj-th"><div class="proj-th-bg" style="background:linear-gradient(135deg,#140620,#3a1260,#140620)"></div><div class="proj-th-ov"></div><div class="proj-th-cta" data-h>Keşfet</div></div><div class="proj-i"><div class="proj-tag">Mobil Uygulama</div><h3>FinTrack Mobile</h3><p>Fintech sektörü için iOS ve Android mobil uygulama.</p><a href="#" class="proj-lk" data-h>İncele <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a></div></div>
 </section>
 
+<!-- ===== WHY US ===== -->
+<section class="why" id="why">
+  <div class="why-hd">
+    <div class="sect-lbl" data-r>Neden Beracore?</div>
+    <h2 class="sect-h" data-rw>Markanızın <span class="ac">Geleceğini</span> İnşa Ediyoruz.</h2>
+    <p class="sect-p" data-r style="margin:1.5rem auto 0;text-align:center">Tasarım ve mühendislikteki deneyimimizi sizin için sahaya sürüyoruz.</p>
+  </div>
+  <div class="why-g">
+    <article class="why-c" data-rwhy>
+      <div class="why-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l3-3 4 4 7-7 4 4"/><path d="M3 21h18"/></svg></div>
+      <h3 class="why-h">Sonuç Odaklı Yaklaşım</h3>
+      <p class="why-p">Her tasarım kararı ve her satır kod, ölçülebilir bir hedefe hizmet eder. Çıktıyı değil, etkiyi raporlarız.</p>
+    </article>
+    <article class="why-c" data-rwhy>
+      <div class="why-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg></div>
+      <h3 class="why-h">Şeffaf İş Süreci</h3>
+      <p class="why-p">Her aşamada sizinle birlikteyiz. Sprint planları, demo toplantıları ve canlı erişimle her detayı sizinle paylaşıyoruz.</p>
+    </article>
+    <article class="why-c" data-rwhy>
+      <div class="why-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg></div>
+      <h3 class="why-h">Modern Teknoloji Yığını</h3>
+      <p class="why-p">React, Next.js, Node, headless CMS, edge deployment… En güncel araçlarla ölçeklenebilir altyapı kuruyoruz.</p>
+    </article>
+    <article class="why-c" data-rwhy>
+      <div class="why-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+      <h3 class="why-h">Bütçe Dostu Esneklik</h3>
+      <p class="why-p">Her marka için aynı paketi sunmuyoruz. Projenizin gerçek ihtiyaçlarına göre özel kapsam ve şeffaf bütçeleme.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="test" id="testimonials">
+  <div class="test-hd">
+    <div class="sect-lbl" data-r>Müşterilerimizin Yorumları</div>
+    <h2 class="sect-h" data-rw>Birlikte <span class="ac">Çalıştığımız Markalar.</span></h2>
+  </div>
+  <div class="test-g">
+    <article class="test-c" data-rtest>
+      <div class="test-tags"><span class="test-tag">Web Tasarım</span><span class="test-tag">SEO</span></div>
+      <p class="test-q">Beracore ekibi, markamızın dijital görünürlüğünü tamamen başka bir seviyeye taşıdı. Sadece tasarım değil, sonuçları ölçülebilir bir iş ortağı bulmuş olduk.</p>
+      <div class="test-by"><span class="test-name">Mert K.</span><span class="test-role">Pazarlama Direktörü, LuxBrand</span></div>
+    </article>
+    <article class="test-c" data-rtest>
+      <div class="test-tags"><span class="test-tag">UI/UX</span><span class="test-tag">Yazılım</span></div>
+      <p class="test-q">Sürecin başından sonuna kadar şeffaf bir iletişim kurdular. Tahmin yerine veriyle karar veren bir ekip ile çalışmak beklentimizin çok üzerindeydi.</p>
+      <div class="test-by"><span class="test-name">Burak Ö.</span><span class="test-role">CEO, TechVision</span></div>
+    </article>
+    <article class="test-c" data-rtest>
+      <div class="test-tags"><span class="test-tag">E-Ticaret</span><span class="test-tag">Mobil</span></div>
+      <p class="test-q">Bizi en çok etkileyen, beklentilerimizi anlamak için gösterdikleri içtenlikti. Sonuç: kısa sürede hedeflediğimiz büyümeyi yakaladık.</p>
+      <div class="test-by"><span class="test-name">Mustafa K.</span><span class="test-role">Kurucu Ortak, FinTrack</span></div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="faq" id="faq">
+  <div class="faq-hd">
+    <div class="sect-lbl" data-r>Sıkça Sorulan Sorular</div>
+    <h2 class="sect-h" data-rw>Aklınızdaki <span class="ac">Sorular.</span></h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-i" data-rfaq><button class="faq-q" type="button" data-h>Profesyonel bir dijital deneyim stüdyosu markama ne kazandırır?<span class="faq-icon" aria-hidden="true"></span></button><div class="faq-a"><div class="faq-a-in">Yetkin bir dijital stüdyo, markanızın yalnızca görünürlüğünü değil; ticari karlılığını, kullanıcı deneyimini ve marka algısını da güçlendirir. Beracore olarak süreçlerimizde hedef kitle analizi, doğru teknoloji seçimi ve veri odaklı tasarım kararlarıyla markanızı potansiyel müşterilerinizle buluşturuyoruz.</div></div></div>
+    <div class="faq-i" data-rfaq><button class="faq-q" type="button" data-h>Doğru dijital ajansı seçerken nelere dikkat etmeliyim?<span class="faq-icon" aria-hidden="true"></span></button><div class="faq-a"><div class="faq-a-in">Doğru partneri seçmek, markanızın geleceği için kritiktir. Sektörel deneyime, şeffaf raporlama altyapısına, ekipte gerçek uzmanların yer alıp almadığına ve daha önce yapılmış işlerin sonuçlarına bakmalısınız. Beracore, her projesinde uçtan uca üretim süreci ve şeffaf iş ortaklığı sunar.</div></div></div>
+    <div class="faq-i" data-rfaq><button class="faq-q" type="button" data-h>360° dijital deneyim hizmeti neleri kapsar?<span class="faq-icon" aria-hidden="true"></span></button><div class="faq-a"><div class="faq-a-in">UX araştırmasından UI tasarımına, frontend & backend geliştirmeden SEO optimizasyonuna ve lansman sonrası performans iyileştirmeye kadar tüm aşamaları kapsar. Beracore olarak bu disiplinleri tek bir çatı altında, birbirini besleyen entegre bir süreçle yönetiyoruz.</div></div></div>
+    <div class="faq-i" data-rfaq><button class="faq-q" type="button" data-h>Bir proje ne kadar sürede teslim edilir?<span class="faq-icon" aria-hidden="true"></span></button><div class="faq-a"><div class="faq-a-in">Proje süresi kapsama göre değişir. Kurumsal bir web projesi tipik olarak 4–8 hafta, özel bir e-ticaret ya da mobil uygulama 8–16 hafta sürer. Keşif görüşmesinin ardından net bir takvim ve sprint planı sunuyoruz.</div></div></div>
+    <div class="faq-i" data-rfaq><button class="faq-q" type="button" data-h>Fiyatlandırma nasıl belirleniyor?<span class="faq-icon" aria-hidden="true"></span></button><div class="faq-a"><div class="faq-a-in">Sabit paketler yerine projenin gerçek kapsamına göre özel bir bütçeleme yapıyoruz. Her marka farklıdır; biz de fiyatlandırmayı hedeflerinize, rekabete ve teknik kapsama göre kuruyoruz. İlk görüşme ve teklif süreci tamamen ücretsizdir.</div></div></div>
+  </div>
+</section>
+
+<!-- ===== FREE REPORT BAND ===== -->
+<section class="report" id="report">
+  <div class="report-i">
+    <div class="report-l">
+      <div class="report-lbl">Ücretsiz Analiz</div>
+      <h3 class="report-h">Web siteniz için <span class="ac">ücretsiz performans</span> raporu sunalım.</h3>
+      <p class="report-p">Müşterilerinizle buluştuğunuz dijital vitrininizin hız, SEO, erişilebilirlik ve dönüşüm performansını analiz edip detaylı bir raporu sizinle paylaşalım.</p>
+    </div>
+    <div class="report-r">
+      <a href="mailto:info@beracore.com?subject=Ücretsiz%20Analiz%20Talebi" class="report-btn" data-h>Ücretsiz Raporu Talep Et <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <span class="report-note">24 saat içinde dönüş yapıyoruz</span>
+    </div>
+  </div>
+</section>
+
 <section class="cta-sec" id="cta">
   <div class="cta-i">
-    <h2><span class="ln"><span class="wi" data-rc>Hikayeniz</span></span><span class="ln"><span class="wi" data-rc>Nereye <span class="ac">Gidecek?</span></span></span></h2>
-    <p data-rc>Birlikte bulalım. Projenizi konuşmaya hazırız.</p>
-    <a href="mailto:info@beracore.com" class="cta-big" data-rc data-h>Bize Ulaşın <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    <h2><span class="ln"><span class="wi" data-rc>Tanışalım,</span></span><span class="ln"><span class="wi" data-rc>Birlikte <span class="ac">Üretelim.</span></span></span></h2>
+    <p data-rc>E-posta ya da telefon aracılığıyla iletişime geçelim — ya da stüdyomuzda birer kahve içelim.</p>
+    <a href="mailto:info@beracore.com" class="cta-big" data-rc data-h>Projenizi Konuşalım <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
   </div>
 </section>
 
@@ -469,9 +802,9 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
 
 <footer class="ft">
   <div class="ft-g">
-    <div class="ft-br"><a href="#" class="nav-logo" data-h>BERACORE</a><p>Yaratıcı tasarım ve kusursuz mühendislikle dijital deneyimler üretiyoruz.</p></div>
-    <div class="ft-c"><h4>Sayfalar</h4><a href="#hero" data-h>Ana Sayfa</a><a href="#s1" data-h>Hizmetler</a><a href="#proj" data-h>Projeler</a><a href="#cta" data-h>İletişim</a></div>
-    <div class="ft-c"><h4>Hizmetler</h4><a href="#" data-h>Web Tasarım</a><a href="#" data-h>Web Yazılım</a><a href="#" data-h>Mobil Uygulama</a><a href="#" data-h>E-Ticaret</a></div>
+    <div class="ft-br"><a href="#" class="nav-logo" data-h>BERACORE</a><p>Yaratıcı tasarım, güçlü mühendislik ve veriye dayalı stratejilerle markanız için unutulmaz dijital deneyimler üretiyoruz.</p></div>
+    <div class="ft-c"><h4>Hizmetler</h4><a href="#s1" data-h>Web Tasarım</a><a href="#s1" data-h>UI / UX Tasarım</a><a href="#s1" data-h>Yazılım Geliştirme</a><a href="#s1" data-h>E-Ticaret Çözümleri</a><a href="#s1" data-h>SEO & Dijital Pazarlama</a><a href="#s1" data-h>Mobil Uygulama</a></div>
+    <div class="ft-c"><h4>Stüdyo</h4><a href="#process" data-h>Sürecimiz</a><a href="#proj" data-h>Çalışmalar</a><a href="#why" data-h>Neden Beracore</a><a href="#faq" data-h>SSS</a><a href="#cta" data-h>İletişim</a></div>
     <div class="ft-c"><h4>İletişim</h4><a href="mailto:info@beracore.com" data-h>info@beracore.com</a><a href="tel:+908503026950" data-h>0850 302 69 50</a><a data-h>İstanbul, Türkiye</a></div>
   </div>
   <div class="ft-b"><span>&copy; 2026 BERACORE. Tüm hakları saklıdır.</span><div class="ft-so" role="list"><a href="#" data-h aria-label="BERACORE Instagram" rel="noopener">Instagram</a><a href="#" data-h aria-label="BERACORE LinkedIn" rel="noopener">LinkedIn</a><a href="#" data-h aria-label="BERACORE X / Twitter" rel="noopener">X</a></div></div>
@@ -540,9 +873,33 @@ const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)retu
   if(el.hasAttribute('data-rw'))el.querySelectorAll('.wi').forEach((w,i)=>setTimeout(()=>w.classList.add('v'),i*65));
   if(el.hasAttribute('data-rp'))el.classList.add('v');
   if(el.hasAttribute('data-rc'))el.classList.add('v');
+  if(el.hasAttribute('data-rcard'))el.classList.add('v');
+  if(el.hasAttribute('data-rpain'))el.classList.add('v');
+  if(el.hasAttribute('data-rwhy'))el.classList.add('v');
+  if(el.hasAttribute('data-rtest'))el.classList.add('v');
   obs.unobserve(el);
 })},{threshold:.12,rootMargin:'0px 0px -30px 0px'});
-document.querySelectorAll('[data-r],[data-rw],[data-rp],[data-rc]').forEach(el=>obs.observe(el));
+document.querySelectorAll('[data-r],[data-rw],[data-rp],[data-rc],[data-rcard],[data-rpain],[data-rwhy],[data-rtest]').forEach(el=>obs.observe(el));
+
+// Staggered reveals (stats / process / faq)
+function stagger(sel,delay){
+  const items=document.querySelectorAll(sel);if(!items.length)return;
+  const o=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;items.forEach((it,i)=>setTimeout(()=>it.classList.add('v'),i*delay));o.unobserve(e.target)})},{threshold:.15});
+  o.observe(items[0]);
+}
+stagger('[data-rstat]',120);
+stagger('[data-rproc]',180);
+stagger('[data-rfaq]',90);
+
+// FAQ accordion
+document.querySelectorAll('.faq-i').forEach(item=>{
+  const btn=item.querySelector('.faq-q');
+  btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click',()=>{
+    const open=item.classList.toggle('o');
+    btn.setAttribute('aria-expanded',open?'true':'false');
+  });
+});
 const srs=document.querySelectorAll('[data-rs]');
 const sObs=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;srs.forEach((r,i)=>setTimeout(()=>r.classList.add('v'),i*80));sObs.unobserve(e.target)})},{threshold:.1});
 if(srs[0])sObs.observe(srs[0]);
