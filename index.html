@@ -60,9 +60,10 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 /* NAV */
 .nav{position:fixed;top:0;left:0;right:0;z-index:9000;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;transition:all .4s ease;border-bottom:1px solid transparent}
 .nav.s{background:rgba(26,26,26,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom-color:var(--border)}
-.nav-logo{font-family:'Space Grotesk';font-size:1rem;font-weight:700;letter-spacing:.1em;display:inline-flex;align-items:center;gap:.55rem;text-decoration:none}
-.nav-logo img{height:30px;width:auto;display:block;filter:drop-shadow(0 0 18px rgba(255,169,249,0.18))}
-.nav-logo .lt{background:linear-gradient(135deg,var(--yellow),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-logo{display:inline-flex;align-items:center;text-decoration:none;line-height:0}
+.nav-logo img{height:38px;width:auto;display:block;filter:drop-shadow(0 0 22px rgba(255,169,249,0.22));transition:filter .4s var(--ease),transform .4s var(--ease)}
+.nav-logo:hover img{filter:drop-shadow(0 0 28px rgba(255,169,249,0.4));transform:scale(1.03)}
+.ft-br .nav-logo img{height:54px}
 .nav-r{display:flex;align-items:center;gap:2.5rem}
 .nav-r a{font-size:.78rem;font-weight:500;color:var(--t2);transition:color .3s}
 .nav-r a:hover{color:var(--t1)}
@@ -446,7 +447,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
 <div class="cur" id="cr" aria-hidden="true"></div><div class="cur-d" id="cd" aria-hidden="true"></div>
 
 <nav class="nav" id="nav" aria-label="Ana navigasyon">
-  <a href="#hero" class="nav-logo" data-h aria-label="BERACORE — Ana sayfa"><img src="2.png" alt="" width="30" height="31" loading="eager"><span class="lt">BERACORE</span></a>
+  <a href="#hero" class="nav-logo" data-h aria-label="BERACORE — Ana sayfa"><img src="1.png" alt="BERACORE" width="58" height="38" loading="eager"></a>
   <div class="nav-r">
     <a href="#hero" data-h>Ana Sayfa</a>
     <a href="#s1" data-h>Hizmetler</a>
@@ -807,7 +808,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
 
 <footer class="ft">
   <div class="ft-g">
-    <div class="ft-br"><a href="#hero" class="nav-logo" data-h aria-label="BERACORE"><img src="2.png" alt="" width="34" height="35"><span class="lt">BERACORE</span></a><p>Yaratıcı tasarım, güçlü mühendislik ve veriye dayalı stratejilerle markanız için unutulmaz dijital deneyimler üretiyoruz.</p></div>
+    <div class="ft-br"><a href="#hero" class="nav-logo" data-h aria-label="BERACORE"><img src="1.png" alt="BERACORE" width="83" height="54"></a><p>Yaratıcı tasarım, güçlü mühendislik ve veriye dayalı stratejilerle markanız için unutulmaz dijital deneyimler üretiyoruz.</p></div>
     <div class="ft-c"><h4>Hizmetler</h4><a href="#s1" data-h>Web Tasarım</a><a href="#s1" data-h>UI / UX Tasarım</a><a href="#s1" data-h>Yazılım Geliştirme</a><a href="#s1" data-h>E-Ticaret Çözümleri</a><a href="#s1" data-h>SEO & Dijital Pazarlama</a><a href="#s1" data-h>Mobil Uygulama</a></div>
     <div class="ft-c"><h4>Stüdyo</h4><a href="#process" data-h>Sürecimiz</a><a href="#proj" data-h>Çalışmalar</a><a href="#why" data-h>Neden Beracore</a><a href="#faq" data-h>SSS</a><a href="#cta" data-h>İletişim</a></div>
     <div class="ft-c"><h4>İletişim</h4><a href="mailto:info@beracore.com" data-h>info@beracore.com</a><a href="tel:+908503026950" data-h>0850 302 69 50</a><a data-h>İstanbul, Türkiye</a></div>
