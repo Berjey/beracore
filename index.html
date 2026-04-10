@@ -2,10 +2,31 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#060810">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="BERACORE — Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üreten dijital deneyim stüdyosu.">
+<meta name="keywords" content="web tasarım, ui ux, yazılım geliştirme, e-ticaret, seo, dijital pazarlama, beracore, dijital ajans, istanbul">
+<meta name="author" content="BERACORE">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:title" content="BERACORE — Digital Experience Studio">
+<meta property="og:description" content="Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler.">
+<meta property="og:site_name" content="BERACORE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BERACORE — Digital Experience Studio">
+<meta name="twitter:description" content="Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler.">
 <title>BERACORE — Digital Experience Studio</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23060810'/%3E%3Cpath d='M10 9h7a4 4 0 0 1 0 8h-7zm0 8h8a4 4 0 0 1 0 8h-8z' fill='none' stroke='%236366f1' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"BERACORE","alternateName":"Beracore Digital Experience Studio","url":"https://beracore.com","description":"Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üreten dijital deneyim stüdyosu.","email":"info@beracore.com","telephone":"+908503026950","address":{"@type":"PostalAddress","addressLocality":"İstanbul","addressCountry":"TR"},"sameAs":[]}
+</script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -30,7 +51,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .pre.done{opacity:0;visibility:hidden;transition:opacity .8s ease .15s,visibility .8s ease .15s}
 .pre-logo{font-family:'Space Grotesk';font-size:.7rem;font-weight:600;letter-spacing:.5em;text-transform:uppercase;color:var(--t3);opacity:0;animation:fi .5s ease .1s forwards}
 .pre-bar{width:140px;height:1px;background:var(--border);overflow:hidden;opacity:0;animation:fi .5s ease .2s forwards}
-.pre-fill{height:100%;width:0;background:var(--accent);animation:fb 1.8s var(--ease) .4s forwards}
+.pre-fill{height:100%;width:0;background:var(--accent);animation:fb .8s var(--ease) .15s forwards}
 @keyframes fi{to{opacity:1}}
 @keyframes fb{to{width:100%}}
 
@@ -64,7 +85,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 
 /* HERO TEXT */
 .hero-center{position:relative;z-index:3;text-align:center;max-width:900px;margin-bottom:3rem}
-.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .9rem;border-radius:100px;border:1px solid rgba(99,102,241,0.12);background:rgba(99,102,241,0.04);font-size:.65rem;font-weight:600;color:var(--accent2);letter-spacing:.08em;margin-bottom:2.5rem;opacity:0;animation:hu .8s var(--ease) 2.4s forwards}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .9rem;border-radius:100px;border:1px solid rgba(99,102,241,0.12);background:rgba(99,102,241,0.04);font-size:.65rem;font-weight:600;color:var(--accent2);letter-spacing:.08em;margin-bottom:2.5rem;opacity:0;animation:hu .7s var(--ease) .9s forwards}
 .bdot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:dp 2.5s ease-in-out infinite}
 @keyframes dp{0%,100%{opacity:1}50%{opacity:.3}}
 
@@ -80,10 +101,10 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .stage-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70%;height:70%;border-radius:50%;filter:blur(70px);pointer-events:none;transition:background 1.5s var(--ease);background:radial-gradient(circle,rgba(139,92,246,0.2),transparent 70%)}
 #cvs{width:100%;height:520px;display:block;opacity:0;transition:opacity 1s ease}
 #cvs.show{opacity:1}
-.stage-hint{text-align:center;margin-top:1rem;font-size:.6rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--t3);opacity:0;animation:fi .6s ease 4.4s forwards}
+.stage-hint{text-align:center;margin-top:1rem;font-size:.6rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--t3);opacity:0;animation:fi .6s ease 2s forwards}
 
 /* SERVICE SELECTOR */
-.svc-sel{display:flex;justify-content:center;gap:10px;margin-top:2.5rem;position:relative;z-index:4;opacity:0;animation:hu .7s var(--ease) 4s forwards;flex-wrap:wrap}
+.svc-sel{display:flex;justify-content:center;gap:10px;margin-top:2.5rem;position:relative;z-index:4;opacity:0;animation:hu .7s var(--ease) 1.7s forwards;flex-wrap:wrap}
 .svc-btn{padding:.65rem 1.4rem .65rem 1.1rem;font-size:.8rem;font-weight:600;color:var(--t3);background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;transition:all .5s var(--ease);letter-spacing:.02em;position:relative;overflow:hidden;white-space:nowrap;display:inline-flex;align-items:center;gap:.55rem}
 .svc-btn .svc-ico{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .5s var(--ease);background:rgba(255,255,255,0.04);flex-shrink:0}
 .svc-btn::before{content:'';position:absolute;inset:0;border-radius:10px;opacity:0;transition:opacity .6s ease;z-index:-1}
@@ -113,7 +134,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .svc-desc-text.show{opacity:1;transform:translateY(0)}
 
 /* CTA ROW */
-.cta-row{display:flex;justify-content:center;align-items:center;gap:1.5rem;margin-top:2.5rem;position:relative;z-index:4;opacity:0;animation:hu .7s var(--ease) 4.2s forwards}
+.cta-row{display:flex;justify-content:center;align-items:center;gap:1.5rem;margin-top:2.5rem;position:relative;z-index:4;opacity:0;animation:hu .7s var(--ease) 1.85s forwards}
 .cta-a{display:inline-flex;align-items:center;gap:.6rem;padding:.7rem 1.75rem;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:.82rem;font-weight:600;transition:all .4s var(--ease);position:relative;overflow:hidden}
 .cta-a::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent2),var(--accent));opacity:0;transition:opacity .4s}
 .cta-a:hover{transform:translateY(-1px);box-shadow:0 10px 36px rgba(99,102,241,0.25)}
@@ -125,7 +146,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .cta-b:hover{color:var(--t1)}
 
 /* SCROLL */
-.scroll-cue{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.6rem;z-index:5;opacity:0;animation:fi .6s ease 4.6s forwards}
+.scroll-cue{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.6rem;z-index:5;opacity:0;animation:fi .6s ease 2.15s forwards}
 .scroll-cue span{font-size:.55rem;font-weight:500;letter-spacing:.25em;text-transform:uppercase;color:var(--t3)}
 .sc-line{width:1px;height:36px;position:relative;overflow:hidden;background:var(--border)}
 .sc-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:50%;background:var(--accent);animation:sca 2.2s ease-in-out infinite}
@@ -230,6 +251,21 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .ft-so a{font-size:.65rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);transition:color .3s}
 .ft-so a:hover{color:var(--accent2)}
 
+/* SKIP LINK & A11Y */
+.skip{position:absolute;top:-100px;left:1rem;z-index:100001;background:var(--accent);color:#fff;padding:.6rem 1rem;border-radius:6px;font-size:.78rem;font-weight:600;text-decoration:none;transition:top .3s var(--ease)}
+.skip:focus{top:1rem;outline:2px solid var(--accent2);outline-offset:2px}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:3px;border-radius:4px}
+.cur,.cur-d,button:focus,a:focus{outline:none}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-offset:3px}
+
+/* REDUCED MOTION */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .pre{display:none}
+  .hero h1 .li{transform:translateY(0)!important;opacity:1!important}
+  .hero-desc,.hero-badge,.svc-sel,.cta-row,.stage-hint,.scroll-cue{opacity:1!important;transform:none!important}
+}
+
 /* RESPONSIVE */
 @media(max-width:1024px){
   .hero,.sect,.proj-sec,.ft{padding-left:1.5rem;padding-right:1.5rem}
@@ -256,10 +292,11 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 </head>
 <body>
 
-<div class="pre" id="pre"><div class="pre-logo">BERACORE</div><div class="pre-bar"><div class="pre-fill"></div></div></div>
-<div class="cur" id="cr"></div><div class="cur-d" id="cd"></div>
+<a href="#hero" class="skip">İçeriğe geç</a>
+<div class="pre" id="pre" aria-hidden="true"><div class="pre-logo">BERACORE</div><div class="pre-bar"><div class="pre-fill"></div></div></div>
+<div class="cur" id="cr" aria-hidden="true"></div><div class="cur-d" id="cd" aria-hidden="true"></div>
 
-<nav class="nav" id="nav">
+<nav class="nav" id="nav" aria-label="Ana navigasyon">
   <a href="#" class="nav-logo" data-h>BERACORE</a>
   <div class="nav-r">
     <a href="#hero" data-h>Ana Sayfa</a>
@@ -267,9 +304,9 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
     <a href="#proj" data-h>Projeler</a>
     <a href="#cta" class="nav-cta" data-h>İletişim</a>
   </div>
-  <button class="mbtn" id="mb" aria-label="Menu"><span></span><span></span><span></span></button>
+  <button class="mbtn" id="mb" aria-label="Menüyü aç/kapat" aria-expanded="false" aria-controls="mm"><span></span><span></span><span></span></button>
 </nav>
-<div class="mmenu" id="mm"><ul>
+<div class="mmenu" id="mm" aria-hidden="true"><ul>
   <li><a href="#hero" data-h>Ana Sayfa</a></li>
   <li><a href="#s1" data-h>Hizmetler</a></li>
   <li><a href="#proj" data-h>Projeler</a></li>
@@ -329,7 +366,8 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 </div>
 
 <!-- ===== HERO ===== -->
-<section class="hero" id="hero">
+<main id="main">
+<section class="hero" id="hero" aria-label="Tanıtım">
   <div class="hero-bg"></div>
   <div class="hero-center">
     <div class="hero-badge" data-h><span class="bdot"></span>Digital Experience Studio</div>
@@ -342,15 +380,15 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
   </div>
   <div class="stage">
     <div class="stage-glow" id="sg"></div>
-    <canvas id="cvs"></canvas>
+    <canvas id="cvs" aria-label="3D etkileşimli geometrik form" role="img"></canvas>
     <div class="stage-hint">Sürükle &middot; Döndür &middot; Keşfet</div>
   </div>
-  <div class="svc-sel" id="stabs">
-    <button class="svc-btn on" data-s="web" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>Web Tasarım</button>
-    <button class="svc-btn" data-s="uiux" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 018 0"/><circle cx="12" cy="10" r="1.5" fill="currentColor" stroke="none"/></svg></span>UI/UX</button>
-    <button class="svc-btn" data-s="dev" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>Yazılım</button>
-    <button class="svc-btn" data-s="ecom" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></span>E-Ticaret</button>
-    <button class="svc-btn" data-s="seo" data-h><span class="svc-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></span>SEO</button>
+  <div class="svc-sel" id="stabs" role="tablist" aria-label="Hizmet kategorileri">
+    <button class="svc-btn on" data-s="web" data-h role="tab" aria-selected="true" aria-label="Web Tasarım hizmeti"><span class="svc-ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>Web Tasarım</button>
+    <button class="svc-btn" data-s="uiux" data-h role="tab" aria-selected="false" aria-label="UI/UX hizmeti"><span class="svc-ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 018 0"/><circle cx="12" cy="10" r="1.5" fill="currentColor" stroke="none"/></svg></span>UI/UX</button>
+    <button class="svc-btn" data-s="dev" data-h role="tab" aria-selected="false" aria-label="Yazılım Geliştirme hizmeti"><span class="svc-ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>Yazılım</button>
+    <button class="svc-btn" data-s="ecom" data-h role="tab" aria-selected="false" aria-label="E-Ticaret hizmeti"><span class="svc-ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></span>E-Ticaret</button>
+    <button class="svc-btn" data-s="seo" data-h role="tab" aria-selected="false" aria-label="SEO ve Dijital Pazarlama hizmeti"><span class="svc-ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></span>SEO</button>
   </div>
   <div class="svc-desc-bar"><p class="svc-desc-text show" id="sdesc">Estetik ve kullanıcı odaklı, markanızı yansıtan modern web deneyimleri tasarlıyoruz.</p></div>
   <div class="cta-row">
@@ -427,6 +465,8 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
   </div>
 </section>
 
+</main>
+
 <footer class="ft">
   <div class="ft-g">
     <div class="ft-br"><a href="#" class="nav-logo" data-h>BERACORE</a><p>Yaratıcı tasarım ve kusursuz mühendislikle dijital deneyimler üretiyoruz.</p></div>
@@ -434,49 +474,62 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
     <div class="ft-c"><h4>Hizmetler</h4><a href="#" data-h>Web Tasarım</a><a href="#" data-h>Web Yazılım</a><a href="#" data-h>Mobil Uygulama</a><a href="#" data-h>E-Ticaret</a></div>
     <div class="ft-c"><h4>İletişim</h4><a href="mailto:info@beracore.com" data-h>info@beracore.com</a><a href="tel:+908503026950" data-h>0850 302 69 50</a><a data-h>İstanbul, Türkiye</a></div>
   </div>
-  <div class="ft-b"><span>&copy; 2026 BERACORE. Tüm hakları saklıdır.</span><div class="ft-so"><a href="#" data-h>Instagram</a><a href="#" data-h>LinkedIn</a><a href="#" data-h>X</a></div></div>
+  <div class="ft-b"><span>&copy; 2026 BERACORE. Tüm hakları saklıdır.</span><div class="ft-so" role="list"><a href="#" data-h aria-label="BERACORE Instagram" rel="noopener">Instagram</a><a href="#" data-h aria-label="BERACORE LinkedIn" rel="noopener">LinkedIn</a><a href="#" data-h aria-label="BERACORE X / Twitter" rel="noopener">X</a></div></div>
 </footer>
 
 <script>
-// ===== PRELOADER =====
-setTimeout(()=>document.getElementById('pre').classList.add('done'),2200);
+// ===== PRELOADER (load-aware) =====
+const prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const preEl=document.getElementById('pre');
+const removePre=()=>preEl&&preEl.classList.add('done');
+if(prefersReduced){removePre()}
+else if(document.readyState==='complete'){setTimeout(removePre,200)}
+else{window.addEventListener('load',()=>setTimeout(removePre,200),{once:true})}
 
-// ===== CURSOR =====
+// ===== CURSOR (desktop only) =====
 const cr=document.getElementById('cr'),cd=document.getElementById('cd');
-let crx=0,cry=0,cpx=0,cpy=0;
-document.addEventListener('mousemove',e=>{cpx=e.clientX;cpy=e.clientY;cd.style.left=cpx+'px';cd.style.top=cpy+'px'});
-(function cl(){crx+=(cpx-crx)*.09;cry+=(cpy-cry)*.09;cr.style.left=crx+'px';cr.style.top=cry+'px';requestAnimationFrame(cl)})();
-document.querySelectorAll('[data-h]').forEach(e=>{e.addEventListener('mouseenter',()=>{cr.classList.add('h');cd.classList.add('h')});e.addEventListener('mouseleave',()=>{cr.classList.remove('h');cd.classList.remove('h')})});
+const isTouch=matchMedia('(hover:none)').matches||window.innerWidth<=768;
+if(!isTouch){
+  let crx=0,cry=0,cpx=0,cpy=0;
+  document.addEventListener('mousemove',e=>{cpx=e.clientX;cpy=e.clientY;cd.style.left=cpx+'px';cd.style.top=cpy+'px'},{passive:true});
+  (function cl(){crx+=(cpx-crx)*.09;cry+=(cpy-cry)*.09;cr.style.left=crx+'px';cr.style.top=cry+'px';requestAnimationFrame(cl)})();
+  document.querySelectorAll('[data-h]').forEach(e=>{e.addEventListener('mouseenter',()=>{cr.classList.add('h');cd.classList.add('h')});e.addEventListener('mouseleave',()=>{cr.classList.remove('h');cd.classList.remove('h')})});
+}
 
 // ===== CINEMATIC TEXT REVEAL =====
 const heroLines=document.querySelectorAll('.hero h1 .li');
 function revealHeroText(){
   heroLines.forEach((l,i)=>{
     setTimeout(()=>{
-      l.style.transition=`transform 1.4s cubic-bezier(0.16,1,0.3,1),opacity 1.2s ease`;
+      l.style.transition=`transform 1.1s cubic-bezier(0.16,1,0.3,1),opacity 1s ease`;
       l.style.transform='translateY(0)';
       l.style.opacity='1';
-    },2400+i*200);
+    },300+i*160);
   });
-  // Description
   setTimeout(()=>{
     const d=document.querySelector('.hero-desc');
-    d.style.transition='all 1s var(--ease)';
+    d.style.transition='all .9s var(--ease)';
     d.style.opacity='1';
     d.style.transform='translateY(0)';
-  },3200);
+  },900);
 }
 revealHeroText();
 
-// ===== NAV =====
-window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('s',scrollY>50));
-document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'});closeMM()}));
+// ===== NAV (rAF-throttled) =====
+const navEl=document.getElementById('nav');
+let navTick=false;
+window.addEventListener('scroll',()=>{
+  if(navTick)return;navTick=true;
+  requestAnimationFrame(()=>{navEl.classList.toggle('s',scrollY>50);navTick=false});
+},{passive:true});
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const h=a.getAttribute('href');if(h.length<2)return;e.preventDefault();const t=document.querySelector(h);if(t)t.scrollIntoView({behavior:'smooth'});closeMM()}));
 
 // Mobile
 const mb=document.getElementById('mb'),mm=document.getElementById('mm');
-function closeMM(){mb.classList.remove('o');mm.classList.remove('o')}
-mb.addEventListener('click',()=>{mb.classList.toggle('o');mm.classList.toggle('o')});
+function closeMM(){mb.classList.remove('o');mm.classList.remove('o');mb.setAttribute('aria-expanded','false');mm.setAttribute('aria-hidden','true')}
+mb.addEventListener('click',()=>{const open=mb.classList.toggle('o');mm.classList.toggle('o',open);mb.setAttribute('aria-expanded',open?'true':'false');mm.setAttribute('aria-hidden',open?'false':'true')});
 mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMM));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMM();if(openPage)closePage()}});
 
 // ===== SCROLL REVEAL =====
 document.querySelectorAll('[data-rw]').forEach(el=>{
@@ -539,8 +592,16 @@ function resize(){
   const w=container.clientWidth,h=520;
   camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);
 }
-resize();window.addEventListener('resize',resize);
-setTimeout(()=>{resize();canvas.classList.add('show')},500);
+resize();
+let rsTick=false;
+window.addEventListener('resize',()=>{if(rsTick)return;rsTick=true;requestAnimationFrame(()=>{resize();rsTick=false})},{passive:true});
+setTimeout(()=>{resize();canvas.classList.add('show')},300);
+
+// Pause render when off-screen
+let canvasVisible=true;
+const visObs=new IntersectionObserver(es=>{canvasVisible=es[0].isIntersecting},{threshold:0});
+visObs.observe(canvas);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)canvasVisible=false;else canvasVisible=true});
 
 // Studio lighting — brighter, more vivid
 scene.add(new THREE.AmbientLight(0x4050a0,0.5));
@@ -668,7 +729,7 @@ let curTarget=pos.slice(),morphFrom=pos.slice(),morphTo=pos.slice(),morphT=1,cur
 function setShape(name){
   if(name===curShape||morphT<1)return;
   curShape=name;morphFrom=curTarget.slice();morphTo=gens[name]();morphT=0;
-  document.querySelectorAll('.svc-btn').forEach(b=>b.classList.toggle('on',b.dataset.s===name));
+  document.querySelectorAll('.svc-btn').forEach(b=>{const on=b.dataset.s===name;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
   document.getElementById('sg').style.background='radial-gradient(circle,'+glows[name]+',transparent 70%)';
   mat.color.setHex(matColors[name]);mat.emissive.setHex(emissiveColors[name]||0x000000);wMat.color.setHex(matColors[name]);pM.color.setHex(matColors[name]);
   // Update description with cinematic fade
@@ -701,9 +762,11 @@ canvas.addEventListener('touchstart',e=>{drag=true;pm={x:e.touches[0].clientX,y:
 canvas.addEventListener('touchmove',e=>{if(!drag)return;vy+=(e.touches[0].clientX-pm.x)*.003;vx+=(e.touches[0].clientY-pm.y)*.003;pm={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
 canvas.addEventListener('touchend',()=>drag=false);
 
-let t=0;
+let t=0,fc=0;
 function animate(){
-  requestAnimationFrame(animate);t+=.006;
+  requestAnimationFrame(animate);
+  if(!canvasVisible&&morphT>=1)return; // pause when hidden, but finish active morphs
+  t+=.006;fc++;
 
   // Morph (cinematic ~1.2s, ease-in-out)
   if(morphT<1){
@@ -714,15 +777,17 @@ function animate(){
     pa.array.set(curTarget);pa.needsUpdate=true;
   }
 
-  // Subtle idle deformation
-  const pa=geo.attributes.position;
-  for(let i=0;i<N;i++){
-    const idx=i*3,ox=curTarget[idx],oy=curTarget[idx+1],oz=curTarget[idx+2];
-    const d=Math.sqrt(ox*ox+oy*oy+oz*oz);
-    const n=Math.sin(t*1+ox*2.5+oy*3)*.003+Math.cos(t*.8+oz*2.8)*.002;
-    if(d>.01){pa.array[idx]=ox+(ox/d)*n;pa.array[idx+1]=oy+(oy/d)*n;pa.array[idx+2]=oz+(oz/d)*n}
+  // Subtle idle deformation — every other frame to halve CPU
+  if(fc%2===0){
+    const pa=geo.attributes.position;
+    for(let i=0;i<N;i++){
+      const idx=i*3,ox=curTarget[idx],oy=curTarget[idx+1],oz=curTarget[idx+2];
+      const d=Math.sqrt(ox*ox+oy*oy+oz*oz);
+      const n=Math.sin(t*1+ox*2.5+oy*3)*.003+Math.cos(t*.8+oz*2.8)*.002;
+      if(d>.01){pa.array[idx]=ox+(ox/d)*n;pa.array[idx+1]=oy+(oy/d)*n;pa.array[idx+2]=oz+(oz/d)*n}
+    }
+    pa.needsUpdate=true;
   }
-  pa.needsUpdate=true;
 
   // Rotation — slow, cinematic
   if(!drag)vy+=.0008;
@@ -776,7 +841,10 @@ function initPageCanvas(name){
 
   let tm=0;
   function anim(){
-    requestAnimationFrame(anim);tm+=.005;
+    requestAnimationFrame(anim);
+    // Only render while this page is open
+    if(!document.getElementById('pg-'+name).classList.contains('open'))return;
+    tm+=.005;
     g.rotation.x+=.002;g.rotation.y+=.003;
     g.position.y=Math.sin(tm*.6)*.05;
 
@@ -795,8 +863,16 @@ function initPageCanvas(name){
   anim();
 }
 
-// Parallax
-window.addEventListener('scroll',()=>{document.querySelectorAll('.sect-num').forEach(n=>{const r=n.parentElement.getBoundingClientRect();n.style.transform=`translateY(calc(-50% + ${r.top*.04}px))`})});
+// Parallax (rAF-throttled, cached nodes)
+const sectNums=document.querySelectorAll('.sect-num');
+let plxTick=false;
+window.addEventListener('scroll',()=>{
+  if(plxTick)return;plxTick=true;
+  requestAnimationFrame(()=>{
+    sectNums.forEach(n=>{const r=n.parentElement.getBoundingClientRect();n.style.transform=`translateY(calc(-50% + ${r.top*.04}px))`});
+    plxTick=false;
+  });
+},{passive:true});
 </script>
 </body>
 </html>
