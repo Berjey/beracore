@@ -136,19 +136,19 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .svc-btn.on::before{opacity:1;background:linear-gradient(135deg,rgba(255,169,249,0.06),rgba(255,247,173,0.03))}
 .svc-btn.on::after{width:60%;background:linear-gradient(90deg,var(--accent),var(--cyan))}
 .svc-btn.on .svc-ico{background:rgba(255,169,249,0.15);color:var(--accent2)}
-/* Per-service active colors — 5 farklı sarı↔pembe varyantı */
+/* Per-service active colors — 5 ayrı pastel renk */
 .svc-btn[data-s="uiux"].on{border-color:rgba(255,247,173,0.5);background:rgba(255,247,173,0.07);box-shadow:0 4px 24px rgba(255,247,173,0.14),inset 0 1px 0 rgba(255,255,255,0.05)}
 .svc-btn[data-s="uiux"].on::after{background:linear-gradient(90deg,#fff7ad,#ffe8a8)}
 .svc-btn[data-s="uiux"].on .svc-ico{background:rgba(255,247,173,0.18);color:#fff7ad}
-.svc-btn[data-s="dev"].on{border-color:rgba(255,123,229,0.5);background:rgba(255,123,229,0.07);box-shadow:0 4px 24px rgba(255,123,229,0.14),inset 0 1px 0 rgba(255,255,255,0.05)}
-.svc-btn[data-s="dev"].on::after{background:linear-gradient(90deg,#ffa9f9,#ff7be5)}
-.svc-btn[data-s="dev"].on .svc-ico{background:rgba(255,123,229,0.18);color:#ff7be5}
-.svc-btn[data-s="ecom"].on{border-color:rgba(255,209,128,0.5);background:rgba(255,209,128,0.07);box-shadow:0 4px 24px rgba(255,209,128,0.14),inset 0 1px 0 rgba(255,255,255,0.05)}
-.svc-btn[data-s="ecom"].on::after{background:linear-gradient(90deg,#fff7ad,#ffd180)}
-.svc-btn[data-s="ecom"].on .svc-ico{background:rgba(255,209,128,0.18);color:#ffd180}
-.svc-btn[data-s="seo"].on{border-color:rgba(255,196,243,0.5);background:rgba(255,196,243,0.07);box-shadow:0 4px 24px rgba(255,196,243,0.14),inset 0 1px 0 rgba(255,255,255,0.05)}
-.svc-btn[data-s="seo"].on::after{background:linear-gradient(90deg,#ffc4f3,#ffa9f9)}
-.svc-btn[data-s="seo"].on .svc-ico{background:rgba(255,196,243,0.18);color:#ffc4f3}
+.svc-btn[data-s="dev"].on{border-color:rgba(179,224,255,0.5);background:rgba(179,224,255,0.07);box-shadow:0 4px 24px rgba(179,224,255,0.16),inset 0 1px 0 rgba(255,255,255,0.05)}
+.svc-btn[data-s="dev"].on::after{background:linear-gradient(90deg,#cdeaff,#b3e0ff)}
+.svc-btn[data-s="dev"].on .svc-ico{background:rgba(179,224,255,0.2);color:#b3e0ff}
+.svc-btn[data-s="ecom"].on{border-color:rgba(179,255,212,0.5);background:rgba(179,255,212,0.07);box-shadow:0 4px 24px rgba(179,255,212,0.16),inset 0 1px 0 rgba(255,255,255,0.05)}
+.svc-btn[data-s="ecom"].on::after{background:linear-gradient(90deg,#cdfde0,#b3ffd4)}
+.svc-btn[data-s="ecom"].on .svc-ico{background:rgba(179,255,212,0.2);color:#b3ffd4}
+.svc-btn[data-s="seo"].on{border-color:rgba(212,179,255,0.5);background:rgba(212,179,255,0.07);box-shadow:0 4px 24px rgba(212,179,255,0.16),inset 0 1px 0 rgba(255,255,255,0.05)}
+.svc-btn[data-s="seo"].on::after{background:linear-gradient(90deg,#e3cdff,#d4b3ff)}
+.svc-btn[data-s="seo"].on .svc-ico{background:rgba(212,179,255,0.2);color:#d4b3ff}
 
 /* SERVICE DESC BAR */
 .svc-desc-bar{text-align:center;margin-top:2rem;min-height:60px;position:relative;z-index:4}
@@ -508,7 +508,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
 <div class="svc-page" id="pg-dev">
   <a class="svc-back" data-h onclick="closePage()">← Ana Sayfa</a>
   <div class="svc-page-inner">
-    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(255,169,249,0.07),transparent 70%)"></div>
+    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(179,224,255,0.07),transparent 70%)"></div>
     <div class="svc-page-label">Yazılım Geliştirme</div>
     <h2 class="svc-page-title">Güçlü Altyapı,<br><span class="ac">Kusursuz</span> Mühendislik</h2>
     <p class="svc-page-body">Ölçeklenebilir, güvenli ve yüksek performanslı yazılım çözümleri. Temiz mimari, modern teknolojiler ve sürdürülebilir kod tabanı.</p>
@@ -518,7 +518,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
 <div class="svc-page" id="pg-ecom">
   <a class="svc-back" data-h onclick="closePage()">← Ana Sayfa</a>
   <div class="svc-page-inner">
-    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(255,247,173,0.07),transparent 70%)"></div>
+    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(179,255,212,0.07),transparent 70%)"></div>
     <div class="svc-page-label">E-Ticaret</div>
     <h2 class="svc-page-title">Satışlarınızı<br><span class="ac">Dijitale</span> Taşıyın</h2>
     <p class="svc-page-body">Güçlü altyapı ve kullanıcı dostu arayüzlerle dönüşüm oranlarınızı artıran e-ticaret platformları. Entegre ödeme, envanter ve analitik.</p>
@@ -528,7 +528,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-of
 <div class="svc-page" id="pg-seo">
   <a class="svc-back" data-h onclick="closePage()">← Ana Sayfa</a>
   <div class="svc-page-inner">
-    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(255,169,249,0.07),transparent 70%)"></div>
+    <div class="svc-page-bg" style="background:radial-gradient(ellipse 50% 50% at 50% 40%,rgba(212,179,255,0.07),transparent 70%)"></div>
     <div class="svc-page-label">SEO & Dijital Pazarlama</div>
     <h2 class="svc-page-title">Arama Motorlarında<br><span class="ac">Zirveye</span> Çıkın</h2>
     <p class="svc-page-body">Organik trafik, ücretli reklam stratejileri ve veri odaklı dijital pazarlama ile markanızı hedef kitlenize ulaştırıyoruz.</p>
@@ -960,7 +960,7 @@ const canvas=document.getElementById('cvs');
 const container=canvas.parentElement;
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(38,1,.1,100);
-camera.position.set(0,.2,5);
+camera.position.set(0,.2,7.6);
 
 const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -995,9 +995,11 @@ const N=2048;
 const mat=new THREE.MeshPhysicalMaterial({color:0xffa9f9,metalness:0.2,roughness:0.15,clearcoat:0.6,clearcoatRoughness:0.2,transparent:true,opacity:0.4,side:THREE.DoubleSide,emissive:0x6a2855,emissiveIntensity:0.18});
 const wMat=new THREE.MeshBasicMaterial({color:0xfff7ad,wireframe:true,transparent:true,opacity:0.55});
 
-// ===== PURE GEOMETRIC SHAPES — ALL SAME BOUNDING SIZE =====
-// Every shape is normalized to fit inside a sphere of radius S
+// ===== PURE GEOMETRIC SHAPES — Cube is the size reference =====
+// Cube has half-side S; every other shape fills the cube's circumscribed
+// sphere (radius RAD = S·√3) so they appear visually the same size.
 const S=1.4;
+const RAD=S*Math.sqrt(3);
 
 // Helper: distribute N points on a polyhedron's faces
 function polyPoints(verts,faces,N,scale){
@@ -1016,9 +1018,9 @@ function polyPoints(verts,faces,N,scale){
   return a;
 }
 
-// Web Tasarım → CUBE — half-side scaled so corner-to-center distance = S (matches sphere bound)
+// Web Tasarım → CUBE — referans şekil. half-side = S, corner = S·√3 = RAD
 function sWeb(){
-  const a=new Float32Array(N*3),scale=S/Math.sqrt(3); // cube corner = S
+  const a=new Float32Array(N*3),scale=S; // half-side = S
   const perFace=Math.ceil(N/6),sd=Math.ceil(Math.sqrt(perFace));
   for(let i=0;i<N;i++){
     const face=Math.min(Math.floor(i*6/N),5);
@@ -1035,23 +1037,23 @@ function sWeb(){
   return a;
 }
 
-// UI/UX → SPHERE — radius exactly S
+// UI/UX → SPHERE — radius = RAD (cube'un köşegen küresi)
 function sUiux(){
   const a=new Float32Array(N*3);
   for(let i=0;i<N;i++){
     const phi=Math.acos(1-2*(i+.5)/N),th=Math.PI*(1+Math.sqrt(5))*i;
-    a[i*3]=Math.sin(phi)*Math.cos(th)*S;
-    a[i*3+1]=Math.sin(phi)*Math.sin(th)*S;
-    a[i*3+2]=Math.cos(phi)*S;
+    a[i*3]=Math.sin(phi)*Math.cos(th)*RAD;
+    a[i*3+1]=Math.sin(phi)*Math.sin(th)*RAD;
+    a[i*3+2]=Math.cos(phi)*RAD;
   }
   return a;
 }
 
-// Yazılım → TORUS — outer radius = S
+// Yazılım → TORUS — outer radius = RAD
 function sDev(){
   const a=new Float32Array(N*3);
-  const majorR=S*0.7,minorR=S*0.35; // outer edge = majorR+minorR ≈ S*1.05
-  const sc=S/(majorR+minorR); // normalize so outer = S
+  const majorR=RAD*0.7,minorR=RAD*0.35;
+  const sc=RAD/(majorR+minorR); // normalize so outer = RAD
   for(let i=0;i<N;i++){
     const u=(i/N)*Math.PI*2,golden=Math.PI*(1+Math.sqrt(5)),v=(i*golden)%(Math.PI*2);
     a[i*3]=(majorR+minorR*Math.cos(v))*Math.cos(u)*sc;
@@ -1061,33 +1063,33 @@ function sDev(){
   return a;
 }
 
-// E-Ticaret → OCTAHEDRON — tip-to-tip = 2*S
+// E-Ticaret → OCTAHEDRON — vertex-to-center = RAD
 function sEcom(){
   const verts=[[0,1,0],[1,0,0],[0,0,1],[-1,0,0],[0,0,-1],[0,-1,0]];
   const faces=[[0,1,2],[0,2,3],[0,3,4],[0,4,1],[5,2,1],[5,3,2],[5,4,3],[5,1,4]];
-  return polyPoints(verts,faces,N,S);
+  return polyPoints(verts,faces,N,RAD);
 }
 
-// SEO → ICOSAHEDRON — vertex-to-center normalized to S
+// SEO → ICOSAHEDRON — vertex-to-center = RAD
 function sSeo(){
   const t=(1+Math.sqrt(5))/2;
   const iv=[[-1,t,0],[1,t,0],[-1,-t,0],[1,-t,0],[0,-1,t],[0,1,t],[0,-1,-t],[0,1,-t],[t,0,-1],[t,0,1],[-t,0,-1],[-t,0,1]];
   iv.forEach(v=>{const l=Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);v[0]/=l;v[1]/=l;v[2]/=l});
   const faces=[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
-  return polyPoints(iv,faces,N,S);
+  return polyPoints(iv,faces,N,RAD);
 }
 
 const gens={web:sWeb,uiux:sUiux,dev:sDev,ecom:sEcom,seo:sSeo};
-// 5 farklı renk — sarı↔pembe brand ekseninde varyantlar
+// 5 farklı pastel renk — logodan pembe/sarı + 3 yeni açık ton
 const glows={
-  web:'rgba(255,169,249,0.30)',   // saf pembe
-  uiux:'rgba(255,247,173,0.30)',  // saf sarı
-  dev:'rgba(255,123,229,0.30)',   // magenta
-  ecom:'rgba(255,209,128,0.28)',  // şeftali
-  seo:'rgba(255,196,243,0.28)'    // açık pembe
+  web:'rgba(255,169,249,0.32)',   // pembe (logo)
+  uiux:'rgba(255,247,173,0.32)',  // sarı (logo)
+  dev:'rgba(179,224,255,0.32)',   // açık mavi
+  ecom:'rgba(179,255,212,0.30)',  // açık yeşil / mint
+  seo:'rgba(212,179,255,0.30)'    // açık lavanta
 };
-const matColors={web:0xffa9f9,uiux:0xfff7ad,dev:0xff7be5,ecom:0xffd180,seo:0xffc4f3};
-const emissiveColors={web:0x6a2855,uiux:0x6a5a14,dev:0x4d1a40,ecom:0x6a4815,seo:0x4d2a45};
+const matColors={web:0xffa9f9,uiux:0xfff7ad,dev:0xb3e0ff,ecom:0xb3ffd4,seo:0xd4b3ff};
+const emissiveColors={web:0x6a2855,uiux:0x6a5a14,dev:0x1a3a55,ecom:0x1a553a,seo:0x3a1a55};
 
 const pos=sWeb();
 const geo=new THREE.BufferGeometry();
@@ -1206,7 +1208,7 @@ function initPageCanvas(name){
   const l1=new THREE.DirectionalLight(0xfff7ad,.6);l1.position.set(3,4,5);sc.add(l1);
   const l2=new THREE.PointLight(0xffa9f9,.7,12);l2.position.set(0,-3,4);sc.add(l2);
 
-  const colors={web:0xffa9f9,uiux:0xfff7ad,dev:0xff7be5,ecom:0xffd180,seo:0xffc4f3};
+  const colors={web:0xffa9f9,uiux:0xfff7ad,dev:0xb3e0ff,ecom:0xb3ffd4,seo:0xd4b3ff};
   let geo;
   switch(name){
     case'web':geo=new THREE.PlaneGeometry(3,3,48,48);break;
