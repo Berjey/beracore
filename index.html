@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1a1a1a">
+<meta name="theme-color" content="#0f0d16">
 <meta name="color-scheme" content="dark">
 <meta name="description" content="BERACORE — Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üreten dijital deneyim stüdyosu.">
 <meta name="keywords" content="web tasarım, ui ux, yazılım geliştirme, e-ticaret, seo, dijital pazarlama, beracore, dijital ajans, istanbul">
@@ -18,7 +18,7 @@
 <meta name="twitter:title" content="BERACORE — Digital Experience Studio">
 <meta name="twitter:description" content="Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler.">
 <title>BERACORE — Digital Experience Studio</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fff7ad'/%3E%3Cstop offset='100%25' stop-color='%23ffa9f9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='url(%23g)' stroke-width='2.6'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='url(%23g)'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fff7ad'/%3E%3Cstop offset='100%25' stop-color='%23ffa9f9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%230f0d16'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='url(%23g)' stroke-width='2.6'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='url(%23g)'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -30,14 +30,24 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#1a1a1a;--bg2:#1f1f1f;--accent:#ffa9f9;--accent2:#fff7ad;--cyan:#ffa9f9;
-  --pink:#ffa9f9;--yellow:#fff7ad;
+  --bg:#0f0d16;--bg2:#14121c;--accent:#ffa9f9;--accent2:#fff7ad;--cyan:#00e3fd;
+  --pink:#ffa9f9;--yellow:#fff7ad;--peach:#ffbfa0;
   --t1:#f6f0ee;--t2:#a39ba0;--t3:#6a5f66;--border:rgba(255,247,173,0.06);
   --ease:cubic-bezier(0.16,1,0.3,1);--ease-smooth:cubic-bezier(0.4,0,0.2,1);
+  --ease-soft:cubic-bezier(0.22,1,0.36,1);
 }
 html{scroll-behavior:smooth;scrollbar-width:none}
 html::-webkit-scrollbar{display:none}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 45% at 78% 22%,rgba(255,191,160,0.08),transparent 60%),
+    radial-gradient(ellipse 42% 35% at 82% 18%,rgba(255,169,249,0.06),transparent 55%),
+    radial-gradient(ellipse 90% 60% at 50% 100%,rgba(255,191,160,0.035),transparent 65%);
+  background-attachment:fixed;
+  color:var(--t1);overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased
+}
 a,button,input,textarea{cursor:none;text-decoration:none;color:inherit;font-family:inherit}
 h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 
@@ -64,7 +74,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 
 /* NAV */
 .nav{position:fixed;top:0;left:0;right:0;z-index:9000;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;transition:all .4s ease;border-bottom:1px solid transparent}
-.nav.s{background:rgba(26,26,26,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom-color:var(--border)}
+.nav.s{background:rgba(15,13,22,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom-color:var(--border)}
 .nav-logo{display:inline-flex;align-items:center;text-decoration:none;line-height:0}
 .nav-logo img{height:38px;width:auto;display:block;filter:drop-shadow(0 0 22px rgba(255,169,249,0.22));transition:filter .4s var(--ease),transform .4s var(--ease);clip-path:inset(0 0 0 0);animation:logoSlide 1.1s var(--ease) .15s both}
 .nav-logo:hover img{filter:drop-shadow(0 0 30px rgba(255,169,249,0.45));transform:scale(1.03);animation:logoShimmer .8s var(--ease)}
@@ -90,7 +100,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .mbtn.o span:nth-child(1){transform:translateY(7.25px) rotate(45deg)}
 .mbtn.o span:nth-child(2){opacity:0}
 .mbtn.o span:nth-child(3){transform:translateY(-7.25px) rotate(-45deg)}
-.mmenu{position:fixed;inset:0;background:rgba(26,26,26,0.97);backdrop-filter:blur(30px);z-index:8999;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .5s var(--ease)}
+.mmenu{position:fixed;inset:0;background:rgba(15,13,22,0.97);backdrop-filter:blur(30px);z-index:8999;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .5s var(--ease)}
 .mmenu.o{opacity:1;visibility:visible}
 .mmenu ul{list-style:none;text-align:center;display:flex;flex-direction:column;gap:1.5rem}
 .mmenu a{font-family:'Space Grotesk';font-size:1.8rem;font-weight:600;opacity:0;transform:translateY(20px);transition:all .4s var(--ease)}
@@ -102,7 +112,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 
 /* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:6rem 2rem 4rem}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(255,169,249,0.04),transparent 70%),radial-gradient(ellipse 40% 40% at 50% 65%,rgba(255,247,173,0.02),transparent 60%),linear-gradient(180deg,var(--bg),var(--bg2),var(--bg));pointer-events:none}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 72% 32%,rgba(255,191,160,0.10),transparent 62%),radial-gradient(ellipse 40% 38% at 76% 28%,rgba(255,169,249,0.07),transparent 56%),radial-gradient(ellipse 60% 40% at 30% 75%,rgba(0,227,253,0.04),transparent 65%),linear-gradient(180deg,var(--bg),var(--bg2),var(--bg));pointer-events:none}
 
 /* HERO TEXT */
 .hero-center{position:relative;z-index:3;text-align:center;max-width:900px;margin-bottom:3rem}
@@ -180,7 +190,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .svc-page.open{opacity:1;visibility:visible}
 .svc-page-inner{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6rem 2rem;text-align:center;position:relative}
 .svc-page-bg{position:absolute;inset:0;pointer-events:none;transition:background 1s ease}
-.svc-back{position:fixed;top:1.5rem;left:2rem;z-index:10001;display:flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);background:rgba(26,26,26,0.7);backdrop-filter:blur(12px);padding:.5rem 1rem;border-radius:6px;border:1px solid var(--border);opacity:0;transform:translateX(-20px);transition:all .5s var(--ease);cursor:none}
+.svc-back{position:fixed;top:1.5rem;left:2rem;z-index:10001;display:flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);background:rgba(15,13,22,0.7);backdrop-filter:blur(12px);padding:.5rem 1rem;border-radius:6px;border:1px solid var(--border);opacity:0;transform:translateX(-20px);transition:all .5s var(--ease);cursor:none}
 .svc-page.open .svc-back{opacity:1;transform:translateX(0);transition-delay:.4s}
 .svc-back:hover{color:var(--t1);border-color:rgba(255,169,249,0.3)}
 .svc-page-label{font-size:.6rem;font-weight:600;letter-spacing:.35em;text-transform:uppercase;color:var(--accent2);margin-bottom:2rem;opacity:0;transform:translateY(16px);transition:all .7s var(--ease) .5s}
@@ -237,7 +247,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .proj-th{position:relative;height:360px;border-radius:10px;overflow:hidden}
 .proj-th-bg{position:absolute;inset:0;transition:transform .8s var(--ease)}
 .proj-c:hover .proj-th-bg{transform:scale(1.04)}
-.proj-th-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,26,26,.2),rgba(26,26,26,.5))}
+.proj-th-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,13,22,.2),rgba(15,13,22,.5))}
 .proj-th-cta{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:.6rem 1.5rem;border:1px solid rgba(255,255,255,0.25);border-radius:6px;opacity:0;transition:opacity .3s}
 .proj-c:hover .proj-th-cta{opacity:1}
 .proj-i{padding:1rem 0}
@@ -852,22 +862,23 @@ if(!isTouch){
   document.querySelectorAll('[data-h]').forEach(e=>{e.addEventListener('mouseenter',()=>{cr.classList.add('h');cd.classList.add('h')});e.addEventListener('mouseleave',()=>{cr.classList.remove('h');cd.classList.remove('h')})});
 }
 
-// ===== CINEMATIC TEXT REVEAL =====
+// ===== CINEMATIC TEXT REVEAL (mask reveal + soft ease) =====
 const heroLines=document.querySelectorAll('.hero h1 .li');
 function revealHeroText(){
   heroLines.forEach((l,i)=>{
     setTimeout(()=>{
-      l.style.transition=`transform 1.1s cubic-bezier(0.16,1,0.3,1),opacity 1s ease`;
+      // Mask-reveal: .ln wrapper overflow:hidden, .li translateY(115%)→0
+      l.style.transition='transform 1.4s cubic-bezier(0.22,1,0.36,1),opacity 1.2s cubic-bezier(0.22,1,0.36,1)';
       l.style.transform='translateY(0)';
       l.style.opacity='1';
-    },300+i*160);
+    },400+i*220);
   });
   setTimeout(()=>{
     const d=document.querySelector('.hero-desc');
-    d.style.transition='all .9s var(--ease)';
+    d.style.transition='transform 1.2s cubic-bezier(0.22,1,0.36,1),opacity 1.1s cubic-bezier(0.22,1,0.36,1)';
     d.style.opacity='1';
     d.style.transform='translateY(0)';
-  },900);
+  },1200);
 }
 revealHeroText();
 
@@ -993,7 +1004,7 @@ const backL=new THREE.PointLight(0xffa9f9,0.65,14);backL.position.set(0,0,-5);sc
 
 const N=2048;
 const mat=new THREE.MeshPhysicalMaterial({color:0xffa9f9,metalness:0.2,roughness:0.15,clearcoat:0.6,clearcoatRoughness:0.2,transparent:true,opacity:0.4,side:THREE.DoubleSide,emissive:0x6a2855,emissiveIntensity:0.18});
-const wMat=new THREE.MeshBasicMaterial({color:0xfff7ad,wireframe:true,transparent:true,opacity:0.55});
+const wMat=new THREE.MeshBasicMaterial({color:0x00e3fd,wireframe:true,transparent:true,opacity:0.72,blending:THREE.AdditiveBlending});
 
 // ===== PURE GEOMETRIC SHAPES — görsel olarak eşit boy =====
 // Küp half-side = S. Diğer şekillerin yarıçapları küp ile aynı görsel
@@ -1104,6 +1115,10 @@ geo.setAttribute('position',new THREE.BufferAttribute(pos.slice(),3));
 const solid=new THREE.Mesh(geo,mat);
 const wire=new THREE.Mesh(geo,wMat);
 const grp=new THREE.Group();grp.add(solid);grp.add(wire);scene.add(grp);
+// Sıfır boyuttan spring ile açılış
+grp.scale.setScalar(0);
+let introT=0,introActive=false;
+setTimeout(()=>{introActive=true},1500); // metinler yerleştikten sonra
 
 // Particles
 const pN=80,pG=new THREE.BufferGeometry(),pP=new Float32Array(pN*3);
@@ -1121,7 +1136,8 @@ function setShape(name){
   curShape=name;morphFrom=curTarget.slice();morphTo=gens[name]();morphT=0;
   document.querySelectorAll('.svc-btn').forEach(b=>{const on=b.dataset.s===name;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
   document.getElementById('sg').style.background='radial-gradient(circle,'+glows[name]+',transparent 70%)';
-  mat.color.setHex(matColors[name]);mat.emissive.setHex(emissiveColors[name]||0x000000);wMat.color.setHex(matColors[name]);pM.color.setHex(matColors[name]);
+  mat.color.setHex(matColors[name]);mat.emissive.setHex(emissiveColors[name]||0x000000);pM.color.setHex(matColors[name]);
+  // Wireframe rengi cyan sabit — koyu zeminle kontrast
   // Update description with cinematic fade
   const desc=document.getElementById('sdesc');
   desc.classList.remove('show');
@@ -1179,13 +1195,22 @@ function animate(){
     pa.needsUpdate=true;
   }
 
-  // Rotation — slow, cinematic
-  if(!drag)vy+=.0008;
+  // Spring intro — easeOutBack (scale 0 → 1 with subtle overshoot)
+  if(introActive&&introT<1){
+    introT=Math.min(introT+0.012,1);
+    const c1=1.70158,c3=c1+1,x=introT;
+    const eased=1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);
+    grp.scale.setScalar(eased);
+  }
+
+  // Rotation — sürekli, çok yavaş (idle constant Y + hafif drag)
+  if(!drag){vy+=.0008}
   vx*=.97;vy*=.97;
-  grp.rotation.x+=vx;grp.rotation.y+=vy;
+  grp.rotation.x+=vx;
+  grp.rotation.y+=vy+0.0018; // idle constant rotation (kesintisiz)
   grp.position.y=Math.sin(t*.5)*.06;
 
-  wMat.opacity=.45+Math.sin(t*1.1)*.1;
+  wMat.opacity=.55+Math.sin(t*1.1)*.12;
   pts.rotation.y=t*.025;pts.rotation.x=Math.sin(t*.15)*.08;
   rimL.position.x=Math.sin(t*.3)*3.5;rimL.position.z=Math.cos(t*.3)*3.5;
 
