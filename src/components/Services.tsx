@@ -103,15 +103,24 @@ export default function Services({ onOpenDetail }: ServicesProps) {
           {/* Left arrow */}
           <button
             onClick={() => goTo(activeIndex - 1)}
-            className={`group w-14 h-14 rounded-full flex items-center justify-center transition-all duration-400
-              bg-gradient-to-b from-white/[0.04] to-transparent border border-white/[0.06]
-              hover:border-accent/30 hover:from-accent/[0.06] hover:scale-110 max-md:w-11 max-md:h-11
+            className={`group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
+              border border-accent/20 hover:border-accent/50 hover:scale-110 active:scale-95
+              max-md:w-11 max-md:h-11
               ${transitioning ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}
-            style={{ transition: 'opacity 0.6s ease, transform 0.6s ease' }}
+            style={{ transition: 'opacity 0.6s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
             aria-label="Önceki hizmet"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="transition-transform duration-300 group-hover:-translate-x-0.5">
-              <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-t3 group-hover:text-accent transition-colors" />
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/[0.08] via-accent2/[0.04] to-transparent group-hover:from-accent/[0.18] group-hover:via-accent2/[0.10] transition-all duration-500" />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{ boxShadow: 'inset 0 0 20px rgba(255,169,249,0.08), 0 0 24px rgba(255,169,249,0.12)' }} />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative z-10 transition-transform duration-300 group-hover:-translate-x-0.5">
+              <defs>
+                <linearGradient id="arrowGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffa9f9" />
+                  <stop offset="100%" stopColor="#fff7ad" />
+                </linearGradient>
+              </defs>
+              <path d="M15 6l-6 6 6 6" stroke="url(#arrowGradL)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60 group-hover:opacity-100 transition-opacity" />
             </svg>
           </button>
 
@@ -133,15 +142,24 @@ export default function Services({ onOpenDetail }: ServicesProps) {
           {/* Right arrow */}
           <button
             onClick={() => goTo(activeIndex + 1)}
-            className={`group w-14 h-14 rounded-full flex items-center justify-center transition-all duration-400
-              bg-gradient-to-b from-white/[0.04] to-transparent border border-white/[0.06]
-              hover:border-accent/30 hover:from-accent/[0.06] hover:scale-110 max-md:w-11 max-md:h-11
+            className={`group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
+              border border-accent/20 hover:border-accent/50 hover:scale-110 active:scale-95
+              max-md:w-11 max-md:h-11
               ${transitioning ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}
-            style={{ transition: 'opacity 0.6s ease, transform 0.6s ease' }}
+            style={{ transition: 'opacity 0.6s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
             aria-label="Sonraki hizmet"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5">
-              <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-t3 group-hover:text-accent transition-colors" />
+            <div className="absolute inset-0 bg-gradient-to-bl from-accent/[0.08] via-accent2/[0.04] to-transparent group-hover:from-accent/[0.18] group-hover:via-accent2/[0.10] transition-all duration-500" />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{ boxShadow: 'inset 0 0 20px rgba(255,169,249,0.08), 0 0 24px rgba(255,169,249,0.12)' }} />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-0.5">
+              <defs>
+                <linearGradient id="arrowGradR" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffa9f9" />
+                  <stop offset="100%" stopColor="#fff7ad" />
+                </linearGradient>
+              </defs>
+              <path d="M9 6l6 6-6 6" stroke="url(#arrowGradR)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60 group-hover:opacity-100 transition-opacity" />
             </svg>
           </button>
         </div>
