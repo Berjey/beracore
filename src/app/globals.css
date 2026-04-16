@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+/* ===== BERACORE Design Tokens ===== */
+@theme {
+  --color-bg: #1a1a1a;
+  --color-accent: #ffa9f9;
+  --color-accent2: #fff7ad;
+  --color-t1: #f2f0ed;
+  --color-t2: #9a9a9a;
+  --color-t3: #5a5a5a;
+  --color-border: rgba(255, 169, 249, 0.08);
+
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== Base ===== */
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar { display: none; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-t1);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* ===== Custom Cursor ===== */
+.cursor-custom { cursor: none; }
+.cursor-custom a, .cursor-custom button, .cursor-custom input, .cursor-custom textarea { cursor: none; }
+
+@media (hover: none), (max-width: 768px) {
+  body, a, button, input, textarea { cursor: auto !important; }
+  a, button { cursor: pointer !important; }
+}
+
+/* ===== Gradient Text ===== */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-reverse {
+  background: linear-gradient(135deg, var(--color-accent2), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== Keyframes ===== */
+@keyframes fi { to { opacity: 1; } }
+
+@keyframes logoSlide {
+  0% { clip-path: inset(0 100% 0 0); opacity: 0; transform: translateX(-10px); }
+  60% { opacity: 1; }
+  100% { clip-path: inset(0 0 0 0); opacity: 1; transform: translateX(0); }
+}
+
+@keyframes coreGlow {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
+}
+
+@keyframes preLogoIn {
+  0% { opacity: 0; transform: scale(0.94) translateY(8px); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes preSpin { to { transform: rotate(360deg); } }
+
+@keyframes preArc {
+  0%, 100% { stroke-dasharray: 14 100; stroke-dashoffset: 0; }
+  50% { stroke-dasharray: 60 100; stroke-dashoffset: -30; }
+}
+
+/* ===== Skip Link ===== */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 100001;
+  transition: top 0.3s var(--ease-out-expo);
+}
+.skip-link:focus { top: 1rem; }
+
+/* ===== Focus ===== */
+:focus-visible {
+  outline: 2px solid var(--color-accent2);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+button:focus, a:focus { outline: none; }
+button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--color-accent2);
+  outline-offset: 3px;
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
