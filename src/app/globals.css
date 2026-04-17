@@ -6,8 +6,8 @@
   --color-accent: #ffa9f9;
   --color-accent2: #fff7ad;
   --color-t1: #f2f0ed;
-  --color-t2: #9a9a9a;
-  --color-t3: #5a5a5a;
+  --color-t2: #c0bdb8;
+  --color-t3: #8a8784;
   --color-border: rgba(255, 169, 249, 0.08);
 
   --font-heading: 'Space Grotesk', sans-serif;
@@ -80,6 +80,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes preSpin { to { transform: rotate(360deg); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
 @keyframes preArc {
   0%, 100% { stroke-dasharray: 14 100; stroke-dashoffset: 0; }

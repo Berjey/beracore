@@ -6,7 +6,7 @@ export interface ShapeSceneAPI {
   dispose: () => void;
 }
 
-const PARTICLES = 5000;
+const PARTICLES = 8000;
 
 // ===== Generate particle positions on shape surface =====
 function generatePositions(shape: string, count: number): Float32Array {
@@ -722,7 +722,7 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
   controls.enablePan = false;
   controls.rotateSpeed = 0.8;
   controls.autoRotate = true;
-  controls.autoRotateSpeed = 0.8;
+  controls.autoRotateSpeed = 0.5;
   controls.minPolarAngle = 0;
   controls.maxPolarAngle = Math.PI;
 
@@ -737,7 +737,7 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
   });
 
   // Particle system
-  const glowTex = makeGlowTex(isSub);
+  const glowTex = makeGlowTex(true); // always sharp — net şekiller
   const positions = generatePositions('sphere', particleCount);
   const seeds = new Float32Array(particleCount);
   for (let i = 0; i < particleCount; i++) seeds[i] = Math.random();
@@ -746,13 +746,13 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
   geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geo.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
 
-  // Sub: küçük sıkı parçacıklar, düşük glow → şekil net belli olsun
-  const ptSizeBase = isSub ? 4.0 : 10.0;
-  const ptSizeVar = isSub ? 0.5 : 2.5;
-  const ptScale = isSub ? 1.2 : 2.2;
-  const alphaBase = isSub ? 0.75 : 0.5;
-  const alphaVar = isSub ? 0.2 : 0.5;
-  const alphaMult = isSub ? 0.7 : 0.95;
+  // Küçük sıkı parçacıklar, keskin glow → şekil net belli olsun
+  const ptSizeBase = isSub ? 3.5 : 5.5;
+  const ptSizeVar = isSub ? 0.4 : 0.8;
+  const ptScale = isSub ? 1.0 : 1.5;
+  const alphaBase = isSub ? 0.8 : 0.75;
+  const alphaVar = isSub ? 0.15 : 0.2;
+  const alphaMult = isSub ? 0.75 : 0.92;
 
   const mat = new THREE.ShaderMaterial({
     uniforms: {
@@ -832,10 +832,10 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
     controls.update();
 
     // Float
-    points.position.y = Math.sin(t * 0.5) * 0.03;
+    points.position.y = Math.sin(t * 0.5) * 0.02;
 
     // Breathing
-    const breath = 1 + Math.sin(t * 0.7) * 0.01;
+    const breath = 1 + Math.sin(t * 0.7) * 0.008;
 
     // Morph transition
     if (transitioning) {

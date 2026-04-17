@@ -1,14 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { services } from '@/lib/services-data';
 import { createShapeScene, type ShapeSceneAPI } from '@/lib/service-shapes';
 
-interface ServicesProps {
-  onOpenDetail: (key: string) => void;
-}
-
-export default function Services({ onOpenDetail }: ServicesProps) {
+export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,6 +16,7 @@ export default function Services({ onOpenDetail }: ServicesProps) {
   const [transitioning, setTransitioning] = useState(false);
 
   const svc = services[activeIndex];
+  const router = useRouter();
 
   // Scroll-driven header
   useEffect(() => {
@@ -71,15 +69,19 @@ export default function Services({ onOpenDetail }: ServicesProps) {
     setTransitioning(true);
   }, [transitioning]);
 
+  // Back button ile dönünce transitioning reset
+  useEffect(() => {
+    setTransitioning(false);
+  }, []);
+
   // After zoom animation completes, open the detail page
   useEffect(() => {
     if (!transitioning) return;
     const timer = setTimeout(() => {
-      onOpenDetail(svc.key);
-      setTimeout(() => setTransitioning(false), 200);
-    }, 1400);
+      router.push(`/hizmetler/${svc.key}/${svc.subServices[0].slug}`);
+    }, 1200);
     return () => clearTimeout(timer);
-  }, [transitioning, svc.key, onOpenDetail]);
+  }, [transitioning, svc, router]);
 
   return (
     <section
@@ -173,12 +175,13 @@ export default function Services({ onOpenDetail }: ServicesProps) {
           <div className="text-center mb-4">
             <button
               onClick={handleOpen}
-              className="group relative inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-body text-[0.95rem] font-semibold tracking-wide transition-all duration-500
-                bg-gradient-to-b from-white/[0.05] to-transparent border border-white/[0.08]
-                hover:-translate-y-1 hover:border-accent/40 hover:from-accent/[0.08] hover:shadow-[0_8px_32px_rgba(255,169,249,0.12)]
+              className="group relative inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-body text-[1.05rem] font-bold tracking-wide transition-all duration-500 overflow-hidden
+                border border-accent/25
+                hover:-translate-y-1 hover:border-accent/50 hover:shadow-[0_8px_32px_rgba(255,169,249,0.2)]
                 max-md:text-sm max-md:px-7 max-md:py-3"
+              style={{ background: 'linear-gradient(135deg, rgba(255,169,249,0.1), rgba(255,247,173,0.06))' }}
             >
-              <span className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_rgba(255,169,249,0.5)]" />
+              <span className="w-3 h-3 rounded-full shrink-0" style={{ background: 'linear-gradient(135deg, #ffa9f9, #fff7ad)', boxShadow: '0 0 14px rgba(255,169,249,0.6)' }} />
               <span className="gradient-text">{svc.title}</span>
             </button>
           </div>

@@ -11,22 +11,23 @@ const CORP_PINK = '#ffa9f9';
 const CORP_YELLOW = '#fff7ad';
 
 function makeLineMat(): THREE.LineBasicMaterial {
-  return new THREE.LineBasicMaterial({ color: CORP_PINK, transparent: true, opacity: 0.95 });
+  return new THREE.LineBasicMaterial({ color: CORP_PINK, transparent: true, opacity: 1.0 });
 }
 
 function makeLineMatAccent(): THREE.LineBasicMaterial {
-  return new THREE.LineBasicMaterial({ color: CORP_YELLOW, transparent: true, opacity: 0.85 });
+  return new THREE.LineBasicMaterial({ color: CORP_YELLOW, transparent: true, opacity: 0.95 });
 }
 
 function makeFillMat(): THREE.MeshPhongMaterial {
   return new THREE.MeshPhongMaterial({
     color: CORP_PINK,
     emissive: new THREE.Color(CORP_PINK),
-    emissiveIntensity: 0.15,
+    emissiveIntensity: 0.25,
     transparent: true,
-    opacity: 0.12,
+    opacity: 0.2,
     side: THREE.DoubleSide,
-    shininess: 80,
+    shininess: 120,
+    specular: new THREE.Color('#ffffff'),
   });
 }
 
@@ -34,11 +35,12 @@ function makeFillMatAccent(): THREE.MeshPhongMaterial {
   return new THREE.MeshPhongMaterial({
     color: CORP_YELLOW,
     emissive: new THREE.Color(CORP_YELLOW),
-    emissiveIntensity: 0.12,
+    emissiveIntensity: 0.2,
     transparent: true,
-    opacity: 0.10,
+    opacity: 0.16,
     side: THREE.DoubleSide,
-    shininess: 80,
+    shininess: 120,
+    specular: new THREE.Color('#ffffff'),
   });
 }
 
@@ -461,6 +463,7 @@ function buildShape(name: string, _color: string): THREE.Group {
     }
   }
 
+  g.scale.setScalar(1.4);
   return g;
 }
 
@@ -469,17 +472,20 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
   const scene = new THREE.Scene();
 
   // Ambient + directional light for depth
-  const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
   scene.add(ambient);
-  const dirLight = new THREE.DirectionalLight(0xffa9f9, 0.6);
+  const dirLight = new THREE.DirectionalLight(0xffa9f9, 0.9);
   dirLight.position.set(2, 3, 4);
   scene.add(dirLight);
-  const rimLight = new THREE.DirectionalLight(0xfff7ad, 0.3);
+  const rimLight = new THREE.DirectionalLight(0xfff7ad, 0.6);
   rimLight.position.set(-2, -1, -3);
   scene.add(rimLight);
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+  fillLight.position.set(-3, 2, -1);
+  scene.add(fillLight);
 
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-  camera.position.set(0, 0, 3.8);
+  camera.position.set(0, 0, 4.2);
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
