@@ -518,6 +518,9 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
   let currentGroup: THREE.Group | null = null as THREE.Group | null;
   let targetGroup: THREE.Group | null = null as THREE.Group | null;
   let morphProgress = -1;
+  // Morph başlangıcında mevcut şeklin rotasyonunu sakla (idle salınımından devralma)
+  let morphBaseRotY = 0;
+  let morphBaseRotX = 0;
   // İlk yüklemede 0 → 1 yumuşak intro
   let introProgress = 0;
   let introActive = false;
@@ -554,14 +557,72 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
   (function loop() {
     raf = requestAnimationFrame(loop);
     if (!vis) return;
-    const t = clock.getElapsedTime();
+    const dt = Math.min(clock.getDelta(), 0.05);
+    const t = clock.elapsedTime;
 
     controls.update();
 
-    if (currentGroup !== null) {
+    // ============ MORPH HAS PRIORITY ============
+    // Morph sırasında idle/intro atlanır, rotation/scale doğrudan morph tarafından yönetilir
+    if (morphProgress >= 0) {
+      // Delta-time based (60fps'te eski 0.03 hızına yakın, ama framerate-bağımsız)
+      morphProgress += 1.8 * dt;
+
+      if (morphProgress < 0.5 && currentGroup) {
+        // Phase 1: eski şekil küçülür + döner + kaybolur
+        const p = morphProgress / 0.5;
+        const easeOut = 1 - (1 - p) * (1 - p);
+        currentGroup.scale.setScalar(BASE_SCALE * (1 - easeOut * 0.55));
+        currentGroup.rotation.y = morphBaseRotY + easeOut * Math.PI * 0.6;
+        currentGroup.rotation.x = morphBaseRotX * (1 - easeOut);
+        currentGroup.position.y = -easeOut * 0.15;
+        traverseMaterials(currentGroup, m => {
+          m.opacity = (m.userData.baseOpacity ?? m.opacity) * (1 - easeOut);
+        });
+      } else if (morphProgress >= 0.5 && targetGroup && !targetGroup.parent) {
+        // Swap point — yeni şekil giriyor
+        if (currentGroup) {
+          scene.remove(currentGroup);
+          disposeGroup(currentGroup);
+        }
+        currentGroup = targetGroup;
+        scene.add(currentGroup);
+        currentGroup.scale.setScalar(BASE_SCALE * 0.45);
+        currentGroup.rotation.set(0, -Math.PI * 0.6, 0);
+        currentGroup.position.y = 0.15;
+        targetGroup = null;
+      }
+
+      if (morphProgress >= 0.5 && currentGroup) {
+        // Phase 2: yeni şekil büyür + dönerek merkeze gelir + görünür olur
+        const p = Math.min(1, (morphProgress - 0.5) / 0.5);
+        const easeIn = p * p * (3 - 2 * p);
+        currentGroup.scale.setScalar(BASE_SCALE * (0.45 + easeIn * 0.55));
+        currentGroup.rotation.y = -Math.PI * 0.6 * (1 - easeIn);
+        currentGroup.position.y = 0.15 * (1 - easeIn);
+        traverseMaterials(currentGroup, m => {
+          m.opacity = (m.userData.baseOpacity ?? m.opacity) * easeIn;
+        });
+      }
+
+      if (morphProgress >= 1) {
+        morphProgress = -1;
+        if (currentGroup) {
+          currentGroup.scale.setScalar(BASE_SCALE);
+          currentGroup.rotation.set(0, 0, 0);
+          currentGroup.position.y = 0;
+          morphBaseRotY = 0;
+          morphBaseRotX = 0;
+          traverseMaterials(currentGroup, m => {
+            m.opacity = m.userData.baseOpacity ?? m.opacity;
+          });
+        }
+      }
+    } else if (currentGroup !== null) {
+      // ============ NORMAL LIFECYCLE (morph aktif değilken) ============
       const cg = currentGroup as THREE.Group;
 
-      // Idle animasyon — kullanıcı dokunmadığında
+      // Idle rotation salınımı
       if (!userInteracting) {
         cg.rotation.y = Math.sin(t * 0.3) * 0.4;
         cg.rotation.x = Math.sin(t * 0.2 + 1) * 0.1;
@@ -571,8 +632,8 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
       cg.position.y = Math.sin(t * 0.6) * 0.025;
 
       // İlk yükleme intro'su (0 → 1, ~0.6s)
-      if (introActive && morphProgress < 0) {
-        introProgress = Math.min(1, introProgress + 0.033);
+      if (introActive) {
+        introProgress = Math.min(1, introProgress + 2 * dt);
         const easeOut = 1 - Math.pow(1 - introProgress, 3);
         cg.scale.setScalar(BASE_SCALE * easeOut);
         traverseMaterials(cg, m => {
@@ -584,56 +645,10 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
             m.opacity = m.userData.baseOpacity ?? m.opacity;
           });
         }
-      } else if (morphProgress < 0) {
+      } else {
         // Breathing scale (idle)
         const breath = 1 + Math.sin(t * 0.8) * 0.015;
         cg.scale.setScalar(BASE_SCALE * breath);
-      }
-    }
-
-    // Morph transition
-    if (morphProgress >= 0) {
-      morphProgress += 0.03;
-
-      if (morphProgress < 0.5 && currentGroup) {
-        const p = morphProgress / 0.5;
-        const easeOut = 1 - (1 - p) * (1 - p);
-        currentGroup.scale.setScalar(BASE_SCALE * (1 - easeOut * 0.4));
-        currentGroup.rotation.y += 0.05;
-        traverseMaterials(currentGroup, m => {
-          m.opacity = (m.userData.baseOpacity ?? m.opacity) * (1 - easeOut);
-        });
-      } else if (morphProgress >= 0.5 && targetGroup && !targetGroup.parent) {
-        if (currentGroup) {
-          scene.remove(currentGroup);
-          disposeGroup(currentGroup);
-        }
-        currentGroup = targetGroup;
-        scene.add(currentGroup);
-        currentGroup.scale.setScalar(BASE_SCALE * 0.6);
-        currentGroup.rotation.y = -0.3;
-        targetGroup = null;
-      }
-
-      if (morphProgress >= 0.5 && currentGroup) {
-        const p = Math.min(1, (morphProgress - 0.5) / 0.5);
-        const easeIn = p * p * (3 - 2 * p);
-        currentGroup.scale.setScalar(BASE_SCALE * (0.6 + easeIn * 0.4));
-        currentGroup.rotation.y = -0.3 + easeIn * 0.3;
-        traverseMaterials(currentGroup, m => {
-          m.opacity = (m.userData.baseOpacity ?? m.opacity) * easeIn;
-        });
-      }
-
-      if (morphProgress >= 1) {
-        morphProgress = -1;
-        if (currentGroup) {
-          currentGroup.scale.setScalar(BASE_SCALE);
-          currentGroup.rotation.set(0, 0, 0);
-          traverseMaterials(currentGroup, m => {
-            m.opacity = m.userData.baseOpacity ?? m.opacity;
-          });
-        }
       }
     }
 
@@ -667,6 +682,10 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
         introProgress = 0;
         introActive = true;
       } else {
+        // Morph başlıyor — mevcut şeklin idle salınım değerini yakala ki
+        // devamlılık bozulmasın (zıplama yerine akıcı geçiş)
+        morphBaseRotY = currentGroup.rotation.y;
+        morphBaseRotX = currentGroup.rotation.x;
         targetGroup = newGroup;
         morphProgress = 0;
       }

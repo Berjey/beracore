@@ -7,6 +7,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { services } from '@/lib/services-data';
 import { createSubScene, type SubShapeAPI } from '@/lib/sub-shapes';
+import ScrollText from '@/components/ScrollText';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -570,34 +571,29 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
         </section>
 
         {/* ===== OVERVIEW ===== */}
-        <section data-sp="overview" className="py-24 px-6">
+        <section data-sp="overview" className="py-28 px-6 max-md:py-20">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 mb-6">
-              <div className="w-8 h-px bg-accent/40" />
-              <span className="font-body text-[0.7rem] font-semibold tracking-[0.4em] uppercase text-accent/60">Detaylı Bakış</span>
-              <div className="w-8 h-px bg-accent/40" />
-            </div>
-            <h2 className="font-body text-[clamp(1.6rem,3.5vw,2.4rem)] font-semibold mb-10">
-              <span className="gradient-text">{sub.title}</span>
-              <span className="text-t1"> Hizmetleri</span>
+            <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent/60 mb-4">
+              Detaylı Bakış
+            </span>
+            <h2 className="font-body text-[clamp(1.8rem,3.8vw,2.6rem)] font-light tracking-tight leading-[1.2] mb-10 max-md:mb-8">
+              <ScrollText before={`${sub.title} `} accent="Hizmetleri." />
             </h2>
-            <p className="font-body text-[clamp(1.05rem,2vw,1.2rem)] text-t2 font-light leading-[1.9]">
+            <p className="font-body text-[clamp(1rem,1.6vw,1.08rem)] text-t2 font-light leading-[1.9]">
               {sub.longDescription}
             </p>
           </div>
         </section>
 
         {/* ===== FEATURES ===== */}
-        <section data-sp="features" className="py-24 px-6">
+        <section data-sp="features" className="py-28 px-6 max-md:py-20">
           <div className="max-w-5xl mx-auto">
-            <div className="sp-head text-center mb-14">
-              <div className="inline-flex items-center gap-2 mb-6">
-                <div className="w-8 h-px bg-accent2/40" />
-                <span className="font-body text-[0.7rem] font-semibold tracking-[0.4em] uppercase text-accent2/60">Yetenekler</span>
-                <div className="w-8 h-px bg-accent2/40" />
-              </div>
-              <h2 className="font-body text-[clamp(1.6rem,3.5vw,2.4rem)] font-semibold">
-                <span className="gradient-text">Özellikler & Kapsamı</span>
+            <div className="sp-head text-center mb-16 max-md:mb-12">
+              <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-4">
+                Yetenekler
+              </span>
+              <h2 className="font-body text-[clamp(1.8rem,3.8vw,2.6rem)] font-light tracking-tight leading-[1.2]">
+                <ScrollText before="Özellikler " accent="& Kapsamı." />
               </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" style={{ perspective: '1400px' }}>
@@ -651,16 +647,14 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
         </section>
 
         {/* ===== PROCESS ===== */}
-        <section data-sp="process" className="py-24 px-6">
+        <section data-sp="process" className="py-28 px-6 max-md:py-20">
           <div className="max-w-3xl mx-auto">
-            <div className="sp-head text-center mb-16">
-              <div className="inline-flex items-center gap-2 mb-6">
-                <div className="w-8 h-px bg-accent/40" />
-                <span className="font-body text-[0.7rem] font-semibold tracking-[0.4em] uppercase text-accent/60">Süreç</span>
-                <div className="w-8 h-px bg-accent/40" />
-              </div>
-              <h2 className="font-body text-[clamp(1.6rem,3.5vw,2.4rem)] font-semibold">
-                <span className="gradient-text">Çalışma Sürecimiz</span>
+            <div className="sp-head text-center mb-16 max-md:mb-12">
+              <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent/60 mb-4">
+                Süreç
+              </span>
+              <h2 className="font-body text-[clamp(1.8rem,3.8vw,2.6rem)] font-light tracking-tight leading-[1.2]">
+                <ScrollText before="Çalışma " accent="sürecimiz." />
               </h2>
             </div>
             <div className="relative" style={{ perspective: '1400px' }}>
@@ -702,16 +696,14 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
         </section>
 
         {/* ===== BENEFITS ===== */}
-        <section data-sp="benefits" className="py-24 px-6">
+        <section data-sp="benefits" className="py-28 px-6 max-md:py-20">
           <div className="max-w-3xl mx-auto">
-            <div className="sp-head text-center mb-14">
-              <div className="inline-flex items-center gap-2 mb-6">
-                <div className="w-8 h-px bg-accent2/40" />
-                <span className="font-body text-[0.7rem] font-semibold tracking-[0.4em] uppercase text-accent2/60">Avantajlar</span>
-                <div className="w-8 h-px bg-accent2/40" />
-              </div>
-              <h2 className="font-body text-[clamp(1.6rem,3.5vw,2.4rem)] font-semibold">
-                <span className="gradient-text">Neden BERACORE?</span>
+            <div className="sp-head text-center mb-16 max-md:mb-12">
+              <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-4">
+                Avantajlar
+              </span>
+              <h2 className="font-body text-[clamp(1.8rem,3.8vw,2.6rem)] font-light tracking-tight leading-[1.2]">
+                <ScrollText before="Neden " accent="BERACORE?" />
               </h2>
             </div>
             <div className="space-y-5" style={{ perspective: '1400px' }}>
@@ -754,16 +746,14 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
         </div>
 
         {/* ===== FAQ ===== */}
-        <section data-sp="faq" className="py-24 px-6">
+        <section data-sp="faq" className="py-28 px-6 max-md:py-20">
           <div className="max-w-3xl mx-auto">
-            <div className="sp-head text-center mb-14">
-              <div className="inline-flex items-center gap-2 mb-6">
-                <div className="w-8 h-px bg-accent/40" />
-                <span className="font-body text-[0.7rem] font-semibold tracking-[0.4em] uppercase text-accent/60">SSS</span>
-                <div className="w-8 h-px bg-accent/40" />
-              </div>
-              <h2 className="font-body text-[clamp(1.6rem,3.5vw,2.4rem)] font-semibold">
-                <span className="gradient-text">Sıkça Sorulan Sorular</span>
+            <div className="sp-head text-center mb-14 max-md:mb-10">
+              <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent/60 mb-4">
+                Sık Sorulanlar
+              </span>
+              <h2 className="font-body text-[clamp(1.8rem,3.8vw,2.6rem)] font-light tracking-tight leading-[1.2]">
+                <ScrollText before="Sıkça sorulan " accent="sorular." />
               </h2>
             </div>
             <div className="space-y-3">
@@ -819,16 +809,14 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
 
         {/* ===== RELATED ===== */}
         {otherSubs.length > 0 && (
-          <section data-sp="related" className="py-24 px-6">
+          <section data-sp="related" className="py-28 px-6 max-md:py-20">
             <div className="max-w-5xl mx-auto">
-              <div className="sp-head text-center mb-14">
-                <div className="inline-flex items-center gap-2 mb-6">
-                  <div className="w-8 h-px bg-accent2/40" />
-                  <span className="font-body text-[0.7rem] font-semibold tracking-[0.4em] uppercase text-accent2/60">Keşfet</span>
-                  <div className="w-8 h-px bg-accent2/40" />
-                </div>
-                <h2 className="font-body text-[clamp(1.6rem,3.5vw,2.4rem)] font-semibold">
-                  <span className="gradient-text">Diğer {service.title} Hizmetlerimiz</span>
+              <div className="sp-head text-center mb-16 max-md:mb-12">
+                <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-4">
+                  Keşfet
+                </span>
+                <h2 className="font-body text-[clamp(1.8rem,3.8vw,2.6rem)] font-light tracking-tight leading-[1.2]">
+                  <ScrollText before={`Diğer ${service.title} `} accent="hizmetlerimiz." />
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5" style={{ perspective: '1400px' }}>
@@ -873,16 +861,14 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
         )}
 
         {/* ===== CTA ===== */}
-        <section data-sp="cta" className="py-28 px-6 text-center relative">
+        <section data-sp="cta" className="py-28 px-6 text-center relative max-md:py-20">
           <div className="absolute inset-0 -z-10" style={{ background: 'radial-gradient(ellipse at 50% 60%, rgba(255,169,249,0.05) 0%, rgba(255,247,173,0.02) 30%, transparent 65%)' }} />
           <div className="max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 mb-6">
-              <div className="w-8 h-px bg-accent/40" />
-              <span className="font-body text-[0.7rem] font-semibold tracking-[0.4em] uppercase text-accent/60">İletişim</span>
-              <div className="w-8 h-px bg-accent/40" />
-            </div>
-            <h2 className="font-body text-[clamp(1.8rem,4vw,2.8rem)] font-semibold mb-6">
-              <span className="gradient-text">Projenizi Hayata Geçirelim</span>
+            <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent/60 mb-4">
+              İletişim
+            </span>
+            <h2 className="font-body text-[clamp(1.8rem,4vw,2.8rem)] font-light tracking-tight leading-[1.2] mb-6">
+              <ScrollText before="Projenizi hayata " accent="geçirelim." />
             </h2>
             <p className="font-body text-[1.1rem] text-t2 font-light mb-12 leading-relaxed">
               {sub.title} ihtiyaçlarınız için uzman ekibimizle tanışın.
