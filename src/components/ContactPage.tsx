@@ -49,10 +49,10 @@ const METHODS: ContactMethod[] = [
 ];
 
 const QUICK_STATS = [
-  { value: '< 4 sa.', label: 'İlk geri dönüş' },
-  { value: '48 sa.', label: 'Detaylı teklif' },
-  { value: '0 ₺', label: 'Keşif görüşmesi' },
-  { value: 'NDA', label: 'İsteğe bağlı' },
+  { value: 'Aynı gün', label: 'İlk geri dönüş' },
+  { value: '3 — 5 gün', label: 'Detaylı teklif' },
+  { value: 'Ücretsiz', label: 'Keşif görüşmesi' },
+  { value: 'Talep üzerine', label: 'NDA sözleşmesi' },
 ];
 
 const BUDGETS = [
@@ -75,29 +75,29 @@ const PROCESS_STEPS = [
   {
     step: '01',
     title: 'Talebiniz bize ulaşır',
-    time: '0 saat',
-    desc: 'Formu gönderdiğiniz anda çekirdek ekibimize düşer; proje uzmanımız dosyanızı açar.',
+    time: 'Aynı gün',
+    desc: 'Formu gönderdiğiniz anda çekirdek ekibimize düşer; proje uzmanımız dosyanızı açar ve ilk değerlendirmeyi yapar.',
     iconPath: 'M22 2L11 13 M22 2l-7 20-4-9-9-4 20-7z',
   },
   {
     step: '02',
     title: 'Keşif görüşmesi',
-    time: '24 saat',
-    desc: '30 dakikalık ücretsiz keşif görüşmesinde hedefinizi, kısıtlarınızı ve beklentilerinizi dinliyoruz.',
+    time: '1 — 2 gün',
+    desc: '30 dakikalık ücretsiz online keşif görüşmesinde hedefinizi, kısıtlarınızı ve beklentilerinizi dinliyoruz.',
     iconPath: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
   },
   {
     step: '03',
     title: 'Detaylı teklif',
-    time: '48 saat',
+    time: '3 — 5 gün',
     desc: 'Kapsam, süreç, ekip yapısı, yatırım ve teslim takvimini içeren bağlayıcı bir teklif hazırlıyoruz.',
     iconPath: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
   },
   {
     step: '04',
     title: 'Projeye başlangıç',
-    time: '1 hafta',
-    desc: 'Sözleşme imzası sonrası kick-off toplantısı; tüm kanallarınız açılır, ilk sprint başlar.',
+    time: '1 — 2 hafta',
+    desc: 'Sözleşme imzası sonrası kick-off toplantısı; iletişim kanallarınız açılır, ekip atanır ve ilk sprint başlar.',
     iconPath: 'M5 12h14 M12 5l7 7-7 7',
   },
 ];
@@ -251,14 +251,6 @@ export default function ContactPage() {
             scrollTrigger: { trigger: '.ct-form-section', start: 'top 75%', toggleActions: 'play none none reverse' },
           });
 
-        // Progress line on form
-        gsap.fromTo('.ct-form-progress',
-          { scaleY: 0 },
-          {
-            scaleY: 1, ease: 'none',
-            scrollTrigger: { trigger: '.ct-form-progress-wrap', start: 'top 70%', end: 'bottom 60%', scrub: 0.3 },
-          });
-
         // ===== PROCESS TIMELINE =====
         gsap.fromTo('.ct-process-head',
           { y: 30, opacity: 0 },
@@ -270,10 +262,9 @@ export default function ContactPage() {
             scaleY: 1, ease: 'none',
             scrollTrigger: { trigger: '.ct-process', start: 'top 70%', end: 'bottom 60%', scrub: 0.3 },
           });
-        container.querySelectorAll<HTMLElement>('.ct-process-step').forEach((el, idx) => {
-          const isLeft = idx % 2 === 0;
+        container.querySelectorAll<HTMLElement>('.ct-process-step').forEach((el) => {
           gsap.fromTo(el,
-            { opacity: 0, x: isLeft ? -60 : 60, y: 30 },
+            { opacity: 0, x: 40, y: 20 },
             {
               opacity: 1, x: 0, y: 0, ease: 'power3.out',
               scrollTrigger: { trigger: el, start: 'top 85%', end: 'top 55%', scrub: 0.5 },
@@ -493,7 +484,7 @@ export default function ContactPage() {
           </h1>
 
           <p className="ct-hero-desc font-body text-[clamp(1rem,1.8vw,1.15rem)] text-t2 font-light leading-[1.8] max-w-2xl mx-auto">
-            Fikrinizi <span className="text-t1 font-medium">48 saat içinde</span> somut bir teklife dönüştürüyoruz.
+            Fikrinizi <span className="text-t1 font-medium">birkaç gün içinde</span> somut bir teklife dönüştürüyoruz.
             Keşif görüşmesi ücretsiz, tamamen bağlayıcı değildir — sadece dinlemek için yanınızdayız.
           </p>
 
@@ -644,47 +635,14 @@ export default function ContactPage() {
               <ScrollText before="Hikâyenizi " accent="anlatın." />
             </h2>
             <p className="font-body text-[0.95rem] text-t2 font-light max-w-xl mx-auto leading-relaxed">
-              4 adım, 2 dakika. Formu doldurun; 4 saat içinde sizinle iletişime geçelim.
+              4 adım, 2 dakika. Formu gönderin; aynı gün içinde size geri dönelim.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="relative grid grid-cols-[auto,1fr] gap-6 max-md:grid-cols-1 max-md:gap-4">
-            {/* Step progress rail (vertical on desktop) */}
-            <div className="ct-form-progress-wrap relative max-md:hidden">
-              <div className="absolute left-[22px] top-2 bottom-2 w-px bg-white/[0.06]" />
-              <div
-                className="ct-form-progress absolute left-[22px] top-2 bottom-2 w-px origin-top"
-                style={{ background: 'linear-gradient(180deg, #ffa9f9, #fff7ad)' }}
-              />
-              <div className="relative flex flex-col gap-[280px] pt-2 max-lg:gap-[320px]">
-                {['01', '02', '03', '04'].map((n, i) => {
-                  const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
-                  return (
-                    <div key={n} className="relative flex items-center">
-                      <span className="w-11 h-11 rounded-full flex items-center justify-center font-heading text-[0.78rem] font-bold border relative z-10"
-                        style={{
-                          background: 'var(--color-bg)',
-                          color: accent,
-                          borderColor: `${accent}44`,
-                          boxShadow: `0 0 0 3px rgba(26,26,26,1), 0 0 18px ${accent}44`,
-                        }}>
-                        {n}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Steps content */}
-            <div className="flex flex-col gap-10">
+          <form onSubmit={handleSubmit} className="relative">
+            <div className="flex flex-col gap-12 max-md:gap-10">
               {/* Step 01 — Kim konuşuyor */}
-              <div className="ct-form-step">
-                <div className="flex items-baseline gap-3 mb-5">
-                  <span className="font-heading text-[0.72rem] font-bold tracking-[0.2em] uppercase text-accent md:hidden">01 /</span>
-                  <h3 className="font-heading text-[1.15rem] font-semibold text-t1">Sizi tanıyalım</h3>
-                  <span className="font-body text-[0.7rem] text-t3 font-light">Zorunlu alanlar *</span>
-                </div>
+              <FormStep index={0} title="Sizi tanıyalım" hint="Zorunlu alanlar *">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FieldInput type="text" placeholder="Ad Soyad *" required value={formData.name}
                     onChange={(v) => setFormData(p => ({ ...p, name: v }))} />
@@ -695,15 +653,10 @@ export default function ContactPage() {
                   <FieldInput type="text" placeholder="Şirket Adı" value={formData.company}
                     onChange={(v) => setFormData(p => ({ ...p, company: v }))} />
                 </div>
-              </div>
+              </FormStep>
 
               {/* Step 02 — Hizmet */}
-              <div className="ct-form-step">
-                <div className="flex items-baseline gap-3 mb-5">
-                  <span className="font-heading text-[0.72rem] font-bold tracking-[0.2em] uppercase text-accent2 md:hidden">02 /</span>
-                  <h3 className="font-heading text-[1.15rem] font-semibold text-t1">İlgilendiğiniz hizmet</h3>
-                  <span className="font-body text-[0.7rem] text-t3 font-light">Birden fazla olabilir</span>
-                </div>
+              <FormStep index={1} title="İlgilendiğiniz hizmet" hint="Bir tanesini seçin">
                 <div className="flex flex-wrap gap-2">
                   {services.map((svc) => {
                     const active = selectedService === svc.title;
@@ -721,65 +674,61 @@ export default function ContactPage() {
                     );
                   })}
                 </div>
-              </div>
+              </FormStep>
 
               {/* Step 03 — Bütçe + Takvim */}
-              <div className="ct-form-step grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <div className="flex items-baseline gap-3 mb-5">
-                    <span className="font-heading text-[0.72rem] font-bold tracking-[0.2em] uppercase text-accent md:hidden">03 /</span>
-                    <h3 className="font-heading text-[1.05rem] font-semibold text-t1">Öngörülen Bütçe</h3>
+              <FormStep index={2} title="Bütçe ve zaman çizelgesi" hint="Yaklaşık değerler yeterli">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-md:gap-6">
+                  <div>
+                    <div className="font-body text-[0.72rem] font-semibold tracking-[0.2em] uppercase text-t3 mb-3">
+                      Öngörülen Bütçe
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {BUDGETS.map((b) => {
+                        const active = selectedBudget === b;
+                        return (
+                          <button key={b} type="button" onClick={() => setSelectedBudget(active ? '' : b)}
+                            className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
+                              ${active
+                                ? 'border-accent/40 bg-accent/10 text-accent'
+                                : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent/20 hover:text-t1'}`}>
+                            {b}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {BUDGETS.map((b) => {
-                      const active = selectedBudget === b;
-                      return (
-                        <button key={b} type="button" onClick={() => setSelectedBudget(active ? '' : b)}
-                          className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
-                            ${active
-                              ? 'border-accent/40 bg-accent/10 text-accent'
-                              : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent/20 hover:text-t1'}`}>
-                          {b}
-                        </button>
-                      );
-                    })}
+                  <div>
+                    <div className="font-body text-[0.72rem] font-semibold tracking-[0.2em] uppercase text-t3 mb-3">
+                      Zaman Çizelgesi
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {TIMELINES.map((t) => {
+                        const active = selectedTimeline === t;
+                        return (
+                          <button key={t} type="button" onClick={() => setSelectedTimeline(active ? '' : t)}
+                            className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
+                              ${active
+                                ? 'border-accent2/40 bg-accent2/10 text-accent2'
+                                : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent2/20 hover:text-t1'}`}>
+                            {t}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="flex items-baseline gap-3 mb-5">
-                    <h3 className="font-heading text-[1.05rem] font-semibold text-t1">Zaman Çizelgesi</h3>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {TIMELINES.map((t) => {
-                      const active = selectedTimeline === t;
-                      return (
-                        <button key={t} type="button" onClick={() => setSelectedTimeline(active ? '' : t)}
-                          className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
-                            ${active
-                              ? 'border-accent2/40 bg-accent2/10 text-accent2'
-                              : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent2/20 hover:text-t1'}`}>
-                          {t}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
+              </FormStep>
 
               {/* Step 04 — Detay */}
-              <div className="ct-form-step">
-                <div className="flex items-baseline gap-3 mb-5">
-                  <span className="font-heading text-[0.72rem] font-bold tracking-[0.2em] uppercase text-accent2 md:hidden">04 /</span>
-                  <h3 className="font-heading text-[1.15rem] font-semibold text-t1">Projeniz hakkında</h3>
-                  <span className="font-body text-[0.7rem] text-t3 font-light">Zorunlu *</span>
-                </div>
+              <FormStep index={3} title="Projeniz hakkında" hint="Zorunlu *">
                 <FieldTextarea
                   placeholder="Kısaca hedefinizi, mevcut durumu ve beklentilerinizi paylaşın. Detaylı teklif için referans bağlantılar varsa ekleyebilirsiniz."
                   required
                   value={formData.message}
                   onChange={(v) => setFormData(p => ({ ...p, message: v }))}
                 />
-              </div>
+              </FormStep>
 
               {/* Submit */}
               <div className="pt-2">
@@ -815,7 +764,7 @@ export default function ContactPage() {
 
       {/* ========== PROCESS TIMELINE ========== */}
       <section className="ct-process relative py-28 px-6 overflow-hidden max-md:py-20">
-        <div className="max-w-[1100px] mx-auto">
+        <div className="max-w-[880px] mx-auto">
           <div className="ct-process-head text-center mb-16 max-md:mb-12">
             <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent/60 mb-4">
               Süreç
@@ -829,52 +778,48 @@ export default function ContactPage() {
           </div>
 
           <div className="relative">
-            {/* Vertical center line */}
-            <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-px bg-white/[0.05] max-md:hidden" />
+            {/* Rail line (desktop & mobile) */}
+            <div className="pointer-events-none absolute left-[22px] top-4 bottom-4 w-px bg-white/[0.05]" />
             <div
-              className="ct-process-line pointer-events-none absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-px origin-top max-md:hidden"
+              className="ct-process-line pointer-events-none absolute left-[22px] top-4 bottom-4 w-px origin-top"
               style={{ background: 'linear-gradient(180deg, transparent, #ffa9f9, #fff7ad, transparent)' }}
             />
 
-            <div className="relative space-y-14 max-md:space-y-10">
+            <div className="relative space-y-10 max-md:space-y-7">
               {PROCESS_STEPS.map((s, i) => {
-                const isLeft = i % 2 === 0;
                 const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
                 return (
-                  <div key={s.step} className="ct-process-step relative grid grid-cols-[1fr,auto,1fr] gap-6 max-md:grid-cols-1 max-md:gap-4">
-                    {/* Left / card (desktop alternates) */}
-                    <div className={`${isLeft ? 'md:order-1' : 'md:order-3'} max-md:order-2`}>
-                      <div className="relative p-7 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.15] transition-all duration-400 max-md:p-5"
-                        style={{ '--accent': accent } as React.CSSProperties}>
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                            style={{ background: `${accent}14`, boxShadow: `0 0 0 1px ${accent}30 inset` }}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                              <path d={s.iconPath} />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="font-body text-[0.65rem] font-semibold tracking-[0.25em] uppercase" style={{ color: `${accent}aa` }}>
-                              Adım {s.step} · {s.time}
-                            </div>
-                            <h3 className="font-heading text-[1.1rem] font-semibold text-t1 mt-0.5">{s.title}</h3>
-                          </div>
-                        </div>
-                        <p className="font-body text-[0.9rem] text-t2 font-light leading-[1.7]">{s.desc}</p>
-                      </div>
-                    </div>
-
-                    {/* Center dot */}
-                    <div className="order-2 md:order-2 relative w-11 flex justify-center max-md:hidden">
-                      <span className="ct-process-dot absolute top-6 w-4 h-4 rounded-full"
+                  <div key={s.step} className="ct-process-step relative grid grid-cols-[auto,1fr] gap-6 max-md:gap-4">
+                    {/* Dot (aligned with rail) */}
+                    <div className="relative flex justify-center w-11 shrink-0 pt-5">
+                      <span
+                        className="ct-process-dot relative z-10 w-4 h-4 rounded-full"
                         style={{
                           background: `radial-gradient(circle, ${accent} 0%, ${accent}66 60%, transparent 100%)`,
-                          boxShadow: `0 0 0 3px rgba(26,26,26,1), 0 0 18px ${accent}88`,
+                          boxShadow: `0 0 0 4px var(--color-bg), 0 0 18px ${accent}88`,
                         }} />
                     </div>
 
-                    {/* Empty balance side */}
-                    <div className={`${isLeft ? 'md:order-3' : 'md:order-1'} max-md:hidden`} />
+                    {/* Card */}
+                    <div
+                      className="relative p-7 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.15] transition-all duration-400 max-md:p-5 min-w-0"
+                      style={{ '--accent': accent } as React.CSSProperties}>
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                          style={{ background: `${accent}14`, boxShadow: `0 0 0 1px ${accent}30 inset` }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                            <path d={s.iconPath} />
+                          </svg>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-body text-[0.65rem] font-semibold tracking-[0.25em] uppercase" style={{ color: `${accent}aa` }}>
+                            Adım {s.step} · {s.time}
+                          </div>
+                          <h3 className="font-heading text-[1.1rem] font-semibold text-t1 mt-0.5 max-md:text-[1rem]">{s.title}</h3>
+                        </div>
+                      </div>
+                      <p className="font-body text-[0.9rem] text-t2 font-light leading-[1.7] max-md:text-[0.85rem]">{s.desc}</p>
+                    </div>
                   </div>
                 );
               })}
@@ -991,6 +936,54 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+// ======== Form step with inline numbered badge ========
+function FormStep({
+  index, title, hint, children,
+}: {
+  index: number;
+  title: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  const accent = index % 2 === 0 ? '#ffa9f9' : '#fff7ad';
+  const num = String(index + 1).padStart(2, '0');
+  return (
+    <div className="ct-form-step grid grid-cols-[auto,1fr] gap-5 max-md:gap-4">
+      {/* Number badge column */}
+      <div className="relative flex flex-col items-center">
+        <span
+          className="relative z-10 w-11 h-11 rounded-full flex items-center justify-center font-heading text-[0.78rem] font-bold border shrink-0"
+          style={{
+            background: 'var(--color-bg)',
+            color: accent,
+            borderColor: `${accent}44`,
+            boxShadow: `0 0 0 3px var(--color-bg), 0 0 18px ${accent}44`,
+          }}>
+          {num}
+        </span>
+        {/* Connector line to next step (fades at last) */}
+        <span
+          aria-hidden="true"
+          className="flex-1 w-px mt-2 mb-[-3rem]"
+          style={{
+            background: `linear-gradient(180deg, ${accent}44, transparent)`,
+          }} />
+      </div>
+
+      {/* Step content */}
+      <div className="pt-2.5 min-w-0">
+        <div className="flex items-baseline gap-3 mb-4 flex-wrap">
+          <h3 className="font-heading text-[1.1rem] font-semibold text-t1 max-md:text-[1rem]">{title}</h3>
+          {hint && (
+            <span className="font-body text-[0.7rem] text-t3 font-light">{hint}</span>
+          )}
+        </div>
+        {children}
+      </div>
     </div>
   );
 }
