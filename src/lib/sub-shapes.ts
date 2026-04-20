@@ -10,6 +10,9 @@ export interface SubShapeAPI {
 const CORP_PINK = '#ffa9f9';
 const CORP_YELLOW = '#fff7ad';
 
+// Şeklin tüm yaşam döngüsünde kullanılan taban ölçek (idle ve morph içinde çarpan)
+const BASE_SCALE = 1.4;
+
 function makeLineMat(): THREE.LineBasicMaterial {
   return new THREE.LineBasicMaterial({ color: CORP_PINK, transparent: true, opacity: 1.0 });
 }
@@ -463,7 +466,7 @@ function buildShape(name: string, _color: string): THREE.Group {
     }
   }
 
-  g.scale.setScalar(1.4);
+  // Not: BASE_SCALE render döngüsünde uygulanır; burada şekil 1.0'da kalır.
   return g;
 }
 
@@ -515,6 +518,9 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
   let currentGroup: THREE.Group | null = null as THREE.Group | null;
   let targetGroup: THREE.Group | null = null as THREE.Group | null;
   let morphProgress = -1;
+  // İlk yüklemede 0 → 1 yumuşak intro
+  let introProgress = 0;
+  let introActive = false;
 
   function traverseMaterials(group: THREE.Group, fn: (m: THREE.Material) => void) {
     group.traverse((c: THREE.Object3D) => {
@@ -557,7 +563,6 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
 
       // Idle animasyon — kullanıcı dokunmadığında
       if (!userInteracting) {
-        // Yavaş salınım rotasyonu (ön yüz görünür kalır)
         cg.rotation.y = Math.sin(t * 0.3) * 0.4;
         cg.rotation.x = Math.sin(t * 0.2 + 1) * 0.1;
       }
@@ -565,10 +570,24 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
       // Yumuşak float
       cg.position.y = Math.sin(t * 0.6) * 0.025;
 
-      // Breathing scale
-      const breath = 1 + Math.sin(t * 0.8) * 0.015;
-      if (morphProgress < 0) {
-        cg.scale.setScalar(breath);
+      // İlk yükleme intro'su (0 → 1, ~0.6s)
+      if (introActive && morphProgress < 0) {
+        introProgress = Math.min(1, introProgress + 0.033);
+        const easeOut = 1 - Math.pow(1 - introProgress, 3);
+        cg.scale.setScalar(BASE_SCALE * easeOut);
+        traverseMaterials(cg, m => {
+          m.opacity = (m.userData.baseOpacity ?? m.opacity) * easeOut;
+        });
+        if (introProgress >= 1) {
+          introActive = false;
+          traverseMaterials(cg, m => {
+            m.opacity = m.userData.baseOpacity ?? m.opacity;
+          });
+        }
+      } else if (morphProgress < 0) {
+        // Breathing scale (idle)
+        const breath = 1 + Math.sin(t * 0.8) * 0.015;
+        cg.scale.setScalar(BASE_SCALE * breath);
       }
     }
 
@@ -579,7 +598,7 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
       if (morphProgress < 0.5 && currentGroup) {
         const p = morphProgress / 0.5;
         const easeOut = 1 - (1 - p) * (1 - p);
-        currentGroup.scale.setScalar((1 - easeOut * 0.4));
+        currentGroup.scale.setScalar(BASE_SCALE * (1 - easeOut * 0.4));
         currentGroup.rotation.y += 0.05;
         traverseMaterials(currentGroup, m => {
           m.opacity = (m.userData.baseOpacity ?? m.opacity) * (1 - easeOut);
@@ -591,7 +610,7 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
         }
         currentGroup = targetGroup;
         scene.add(currentGroup);
-        currentGroup.scale.setScalar(0.6);
+        currentGroup.scale.setScalar(BASE_SCALE * 0.6);
         currentGroup.rotation.y = -0.3;
         targetGroup = null;
       }
@@ -599,7 +618,7 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
       if (morphProgress >= 0.5 && currentGroup) {
         const p = Math.min(1, (morphProgress - 0.5) / 0.5);
         const easeIn = p * p * (3 - 2 * p);
-        currentGroup.scale.setScalar(0.6 + easeIn * 0.4);
+        currentGroup.scale.setScalar(BASE_SCALE * (0.6 + easeIn * 0.4));
         currentGroup.rotation.y = -0.3 + easeIn * 0.3;
         traverseMaterials(currentGroup, m => {
           m.opacity = (m.userData.baseOpacity ?? m.opacity) * easeIn;
@@ -609,7 +628,7 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
       if (morphProgress >= 1) {
         morphProgress = -1;
         if (currentGroup) {
-          currentGroup.scale.setScalar(1);
+          currentGroup.scale.setScalar(BASE_SCALE);
           currentGroup.rotation.set(0, 0, 0);
           traverseMaterials(currentGroup, m => {
             m.opacity = m.userData.baseOpacity ?? m.opacity;
@@ -640,8 +659,13 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
       });
 
       if (!currentGroup) {
+        // İlk yükleme — intro animasyonu başlat
         currentGroup = newGroup;
+        currentGroup.scale.setScalar(0);
+        traverseMaterials(currentGroup, m => { m.opacity = 0; });
         scene.add(currentGroup);
+        introProgress = 0;
+        introActive = true;
       } else {
         targetGroup = newGroup;
         morphProgress = 0;
