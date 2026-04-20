@@ -9,6 +9,10 @@ import { services } from '@/lib/services-data';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ============================================================
+// DATA
+// ============================================================
+
 type ContactMethod = {
   key: string;
   label: string;
@@ -27,7 +31,7 @@ const METHODS: ContactMethod[] = [
     href: 'mailto:info@beracore.com',
     copyValue: 'info@beracore.com',
     iconPath: 'M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6',
-    detail: '24 saat içinde yanıt',
+    detail: 'Aynı gün içinde yanıt',
   },
   {
     key: 'phone',
@@ -125,20 +129,199 @@ const FAQ = [
   },
 ];
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const STORAGE_KEY = 'beracore-contact-form-v1';
+
+type FormState = {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  service: string;
+  budget: string;
+  timeline: string;
+  message: string;
+  consent: boolean;
+};
+
+type FieldErrors = Partial<Record<keyof FormState, string>>;
+type SubmitState = 'idle' | 'loading' | 'success' | 'error';
+
+const INITIAL_FORM: FormState = {
+  name: '', email: '', phone: '', company: '',
+  service: '', budget: '', timeline: '',
+  message: '', consent: false,
+};
+
+// ============================================================
+// MAIN COMPONENT
+// ============================================================
+
 export default function ContactPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const submitBtnRef = useRef<HTMLButtonElement>(null);
 
-  const [selectedService, setSelectedService] = useState('');
-  const [selectedBudget, setSelectedBudget] = useState('');
-  const [selectedTimeline, setSelectedTimeline] = useState('');
-  const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', company: '', message: '',
-  });
+  const [form, setForm] = useState<FormState>(INITIAL_FORM);
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [submitState, setSubmitState] = useState<SubmitState>('idle');
+  const [submitError, setSubmitError] = useState<string>('');
   const [copied, setCopied] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  // ========== GSAP MASTER EFFECT ==========
+  // ----- sessionStorage persistence -----
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<FormState>;
+        setForm(prev => ({ ...prev, ...parsed }));
+      }
+    } catch { /* noop */ }
+  }, []);
+
+  useEffect(() => {
+    if (submitState === 'success') return;
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+    } catch { /* noop */ }
+  }, [form, submitState]);
+
+  // ----- Helpers -----
+  const set = <K extends keyof FormState>(k: K, v: FormState[K]) => {
+    setForm(prev => ({ ...prev, [k]: v }));
+    if (errors[k]) setErrors(prev => ({ ...prev, [k]: undefined }));
+  };
+
+  const validate = (): FieldErrors => {
+    const e: FieldErrors = {};
+    if (form.name.trim().length < 2) e.name = 'Ad Soyad en az 2 karakter olmalı.';
+    if (!EMAIL_RE.test(form.email.trim())) e.email = 'Geçerli bir e-posta adresi girin.';
+    if (form.message.trim().length < 10) e.message = 'Mesaj en az 10 karakter olmalı.';
+    if (!form.consent) e.consent = 'KVKK aydınlatma metnini onaylamalısınız.';
+    return e;
+  };
+
+  // ----- Submit -----
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (submitState === 'loading') return;
+
+    const v = validate();
+    setErrors(v);
+    if (Object.keys(v).length > 0) {
+      // Scroll to first error
+      const firstKey = Object.keys(v)[0];
+      const el = containerRef.current?.querySelector<HTMLElement>(`[data-field="${firstKey}"]`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Shake submit
+      gsap.fromTo(submitBtnRef.current, { x: 0 },
+        { x: 0, duration: 0.4, keyframes: [{ x: -8 }, { x: 8 }, { x: -6 }, { x: 6 }, { x: 0 }] });
+      return;
+    }
+
+    setSubmitState('loading');
+    setSubmitError('');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          company: form.company.trim(),
+          service: form.service,
+          budget: form.budget,
+          timeline: form.timeline,
+          message: form.message.trim(),
+          consent: form.consent,
+          hp: '',
+        }),
+      });
+
+      if (res.ok) {
+        setSubmitState('success');
+        try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+        return;
+      }
+
+      const data: { error?: string; fields?: FieldErrors } = await res.json().catch(() => ({}));
+      if (res.status === 422 && data.fields) {
+        setErrors(data.fields);
+        setSubmitState('idle');
+        return;
+      }
+      const msg =
+        data.error === 'mail_not_configured'
+          ? 'Mail sunucusu henüz yapılandırılmadı. Lütfen info@beracore.com adresine yazın.'
+          : 'Talep gönderilemedi. Birkaç saniye sonra tekrar deneyin ya da info@beracore.com adresine yazın.';
+      setSubmitError(msg);
+      setSubmitState('error');
+    } catch {
+      setSubmitError('Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin.');
+      setSubmitState('error');
+    }
+  };
+
+  const resetForm = () => {
+    setForm(INITIAL_FORM);
+    setErrors({});
+    setSubmitState('idle');
+    setSubmitError('');
+    try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+  };
+
+  // ----- Copy to clipboard with fallback -----
+  const handleCopy = async (value: string, key: string) => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = value;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setCopied(key);
+      setTimeout(() => setCopied(null), 1800);
+    } catch { /* noop */ }
+  };
+
+  // ----- Tilt + magnetic -----
+  const handleTilt = (e: React.MouseEvent<HTMLElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const rx = ((y / rect.height) - 0.5) * -8;
+    const ry = ((x / rect.width) - 0.5) * 10;
+    gsap.to(card, { rotationX: rx, rotationY: ry, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
+    card.style.setProperty('--mx', `${x}px`);
+    card.style.setProperty('--my', `${y}px`);
+  };
+  const handleTiltLeave = (e: React.MouseEvent<HTMLElement>) => {
+    gsap.to(e.currentTarget, { rotationX: 0, rotationY: 0, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+  };
+  const handleMagneticMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const btn = submitBtnRef.current;
+    if (!btn) return;
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    gsap.to(btn, { x: x * 0.18, y: y * 0.18, duration: 0.4, ease: 'power2.out' });
+  };
+  const handleMagneticLeave = () => {
+    if (!submitBtnRef.current) return;
+    gsap.to(submitBtnRef.current, { x: 0, y: 0, duration: 0.55, ease: 'elastic.out(1, 0.4)' });
+  };
+
+  // ============================================================
+  // GSAP MASTER TIMELINE
+  // ============================================================
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -146,7 +329,7 @@ export default function ContactPage() {
 
     const timer = setTimeout(() => {
       ctx = gsap.context(() => {
-        // ===== HERO intro timeline =====
+        // ===== HERO =====
         const heroTl = gsap.timeline({ delay: 0.15 });
         heroTl
           .fromTo('.ct-hero-label',
@@ -177,18 +360,13 @@ export default function ContactPage() {
             { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out', stagger: 0.08 },
             '-=0.9');
 
-        // Orbital rings
         gsap.to('.ct-orbit-1', { rotation: 360, duration: 80, repeat: -1, ease: 'none' });
         gsap.to('.ct-orbit-2', { rotation: -360, duration: 110, repeat: -1, ease: 'none' });
         gsap.to('.ct-orbit-3', { rotation: 360, duration: 150, repeat: -1, ease: 'none' });
-
-        // Floating orbs
         gsap.to('.ct-orb', {
           y: '+=24', duration: 3.5, yoyo: true, repeat: -1, ease: 'sine.inOut',
           stagger: { each: 0.4, from: 'random' },
         });
-
-        // Core breathing
         gsap.to('.ct-core', {
           scale: 1.55, opacity: 0.7, duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut', delay: 1.4,
         });
@@ -196,7 +374,7 @@ export default function ContactPage() {
           opacity: 0.6, scale: 1.15, duration: 2.8, yoyo: true, repeat: -1, ease: 'sine.inOut', delay: 2,
         });
 
-        // ===== HERO scroll exit =====
+        // Hero exit
         gsap.to('.ct-hero', {
           y: -80, scale: 0.92, opacity: 0, filter: 'blur(6px)',
           scrollTrigger: { trigger: '.ct-hero-section', start: 'top top', end: 'bottom 40%', scrub: 0.5 },
@@ -244,14 +422,18 @@ export default function ContactPage() {
           { y: 30, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
             scrollTrigger: { trigger: '.ct-form-section', start: 'top 85%', toggleActions: 'play none none reverse' } });
+        gsap.fromTo('.ct-form-card',
+          { y: 50, opacity: 0, scale: 0.97 },
+          { y: 0, opacity: 1, scale: 1, duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: '.ct-form-section', start: 'top 75%', toggleActions: 'play none none reverse' } });
         gsap.fromTo('.ct-form-step',
           { y: 40, opacity: 0 },
           {
-            y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.15,
-            scrollTrigger: { trigger: '.ct-form-section', start: 'top 75%', toggleActions: 'play none none reverse' },
+            y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.12,
+            scrollTrigger: { trigger: '.ct-form-section', start: 'top 70%', toggleActions: 'play none none reverse' },
           });
 
-        // ===== PROCESS TIMELINE =====
+        // ===== PROCESS =====
         gsap.fromTo('.ct-process-head',
           { y: 30, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
@@ -304,69 +486,20 @@ export default function ContactPage() {
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 
-  // ========== Hover tilt for method cards ==========
-  const handleTilt = (e: React.MouseEvent<HTMLElement>) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const rx = ((y / rect.height) - 0.5) * -8;
-    const ry = ((x / rect.width) - 0.5) * 10;
-    gsap.to(card, { rotationX: rx, rotationY: ry, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
-    card.style.setProperty('--mx', `${x}px`);
-    card.style.setProperty('--my', `${y}px`);
-  };
-  const handleTiltLeave = (e: React.MouseEvent<HTMLElement>) => {
-    gsap.to(e.currentTarget, { rotationX: 0, rotationY: 0, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
-  };
-
-  // ========== Magnetic submit button ==========
-  const handleMagneticMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const btn = submitBtnRef.current;
-    if (!btn) return;
-    const rect = btn.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    gsap.to(btn, { x: x * 0.22, y: y * 0.22, duration: 0.4, ease: 'power2.out' });
-  };
-  const handleMagneticLeave = () => {
-    if (!submitBtnRef.current) return;
-    gsap.to(submitBtnRef.current, { x: 0, y: 0, duration: 0.55, ease: 'elastic.out(1, 0.4)' });
-  };
-
-  // ========== Copy handler ==========
-  const handleCopy = async (value: string, key: string) => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(key);
-      setTimeout(() => setCopied(null), 1800);
-    } catch {
-      /* noop */
-    }
-  };
-
-  // ========== Form submit ==========
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const subject = encodeURIComponent(`Teklif Talebi${selectedService ? ` — ${selectedService}` : ''}`);
-    const body = encodeURIComponent(
-      `Ad Soyad: ${formData.name}\n` +
-      `E-posta: ${formData.email}\n` +
-      `Telefon: ${formData.phone}\n` +
-      `Şirket: ${formData.company}\n` +
-      `Hizmet: ${selectedService || 'Belirtilmedi'}\n` +
-      `Bütçe: ${selectedBudget || 'Belirtilmedi'}\n` +
-      `Takvim: ${selectedTimeline || 'Belirtilmedi'}\n\n` +
-      `Proje Detayları:\n${formData.message}`
-    );
-    window.location.href = `mailto:info@beracore.com?subject=${subject}&body=${body}`;
-  };
+  // Progress counter (completed fields in core steps)
+  const completed = [
+    form.name.trim().length >= 2,
+    EMAIL_RE.test(form.email.trim()),
+    form.service.length > 0,
+    form.message.trim().length >= 10,
+  ].filter(Boolean).length;
 
   return (
     <div ref={containerRef}>
-      {/* ========== HERO ========== */}
+      {/* ========================================================
+          HERO
+          ======================================================== */}
       <section className="ct-hero-section relative min-h-[92vh] flex flex-col items-center justify-center text-center px-6 pt-32 pb-24 overflow-hidden">
-        {/* Ambient glow */}
         <div
           className="ct-hero-ambient pointer-events-none absolute inset-0 -z-30"
           style={{
@@ -375,20 +508,14 @@ export default function ContactPage() {
           }}
         />
 
-        {/* Orbital rings */}
         <div className="ct-hero-orbits pointer-events-none absolute inset-0 -z-20 flex items-center justify-center">
-          {/* Core */}
-          <div
-            className="ct-core absolute rounded-full"
+          <div className="ct-core absolute rounded-full"
             style={{
               width: 8, height: 8,
               background: 'radial-gradient(circle, #ffffff 0%, #ffa9f9 50%, transparent 80%)',
               boxShadow: '0 0 24px rgba(255,169,249,0.8), 0 0 60px rgba(255,247,173,0.4)',
-            }}
-            aria-hidden="true"
-          />
+            }} aria-hidden="true" />
 
-          {/* Ring 1 */}
           <div className="ct-orbit-1 absolute max-md:!w-[360px] max-md:!h-[360px]" style={{ width: 480, height: 480 }}>
             <div className="w-full h-full rounded-full" style={{ border: '1px solid rgba(255,247,173,0.14)' }} />
             {[0, 120, 240].map((angle) => (
@@ -398,8 +525,6 @@ export default function ContactPage() {
               </div>
             ))}
           </div>
-
-          {/* Ring 2 */}
           <div className="ct-orbit-2 absolute max-md:!w-[520px] max-md:!h-[520px]" style={{ width: 700, height: 700 }}>
             <div className="w-full h-full rounded-full" style={{ border: '1px dashed rgba(255,169,249,0.12)' }} />
             {[60, 180, 300].map((angle) => (
@@ -409,8 +534,6 @@ export default function ContactPage() {
               </div>
             ))}
           </div>
-
-          {/* Ring 3 */}
           <div className="ct-orbit-3 absolute max-md:!w-[720px] max-md:!h-[720px]" style={{ width: 950, height: 950 }}>
             <div className="w-full h-full rounded-full"
               style={{
@@ -425,7 +548,6 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Floating orbs */}
         <div className="ct-hero-orbs pointer-events-none absolute inset-0 -z-10">
           {[
             { t: '12%', l: '8%',  s: 1.5, c: '#ffa9f9', o: 0.6, b: 8 },
@@ -438,8 +560,6 @@ export default function ContactPage() {
             { t: '82%', l: '30%', s: 1,   c: '#ffa9f9', o: 0.55, b: 6 },
             { t: '88%', l: '58%', s: 1.5, c: '#fff7ad', o: 0.5, b: 8 },
             { t: '18%', l: '64%', s: 1,   c: '#fff7ad', o: 0.5, b: 6 },
-            { t: '55%', l: '42%', s: 0.8, c: '#ffa9f9', o: 0.4, b: 4 },
-            { t: '38%', l: '68%', s: 1,   c: '#ffa9f9', o: 0.5, b: 6 },
           ].map((orb, i) => (
             <span key={i} className="ct-orb absolute rounded-full"
               style={{
@@ -453,7 +573,6 @@ export default function ContactPage() {
           ))}
         </div>
 
-        {/* Hero content */}
         <div className="ct-hero relative max-w-4xl mx-auto">
           <span className="ct-hero-label inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/70 mb-7">
             İletişim
@@ -488,7 +607,6 @@ export default function ContactPage() {
             Keşif görüşmesi ücretsiz, tamamen bağlayıcı değildir — sadece dinlemek için yanınızdayız.
           </p>
 
-          {/* Quick stats */}
           <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
             {QUICK_STATS.map((s, i) => {
               const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
@@ -511,7 +629,9 @@ export default function ContactPage() {
           style={{ background: 'linear-gradient(90deg, transparent, var(--color-accent), var(--color-accent2), transparent)' }} />
       </section>
 
-      {/* ========== CONTACT METHODS ========== */}
+      {/* ========================================================
+          CONTACT METHODS
+          ======================================================== */}
       <section className="ct-methods relative py-24 px-6 max-md:py-16">
         <div className="max-w-[1100px] mx-auto">
           <div className="ct-methods-head text-center mb-14 max-md:mb-10">
@@ -526,27 +646,21 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ perspective: '1400px' }}>
             {METHODS.map((m, i) => {
               const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
-              const Wrapper: React.ElementType = m.href ? 'a' : 'div';
               return (
-                <Wrapper
+                <div
                   key={m.key}
-                  {...(m.href ? { href: m.href } : {})}
                   onMouseMove={handleTilt}
                   onMouseLeave={handleTiltLeave}
-                  className="ct-method group relative p-8 rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden transition-all duration-400 hover:border-white/[0.18] hover:bg-white/[0.035] cursor-pointer max-md:p-6"
+                  className="ct-method group relative p-8 rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden transition-all duration-400 hover:border-white/[0.18] hover:bg-white/[0.035] max-md:p-6"
                   style={{ '--accent': accent, transformStyle: 'preserve-3d' } as React.CSSProperties}
                 >
-                  {/* Accent border glow hover */}
                   <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{ boxShadow: `0 0 0 1px ${accent} inset, 0 0 24px ${accent}44, 0 0 50px ${accent}1a` }}
                     aria-hidden="true" />
-
-                  {/* Cursor radial */}
                   <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{ background: `radial-gradient(280px circle at var(--mx) var(--my), ${accent}14, transparent 70%)` }}
                     aria-hidden="true" />
 
-                  {/* Corner brackets */}
                   {([
                     ['top-2.5 left-2.5', 'TL'],
                     ['top-2.5 right-2.5', 'TR'],
@@ -566,7 +680,6 @@ export default function ContactPage() {
                   ))}
 
                   <div className="relative flex flex-col items-start gap-4">
-                    {/* Icon */}
                     <div className="inline-flex w-12 h-12 rounded-xl items-center justify-center transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-6"
                       style={{ background: `${accent}14`, boxShadow: `0 0 0 1px ${accent}30 inset, 0 0 24px ${accent}22` }}>
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -574,25 +687,31 @@ export default function ContactPage() {
                       </svg>
                     </div>
 
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0 w-full">
                       <div className="font-body text-[0.65rem] font-semibold tracking-[0.3em] uppercase mb-2" style={{ color: `${accent}99` }}>
                         {m.label}
                       </div>
-                      <div className="font-heading text-[1.15rem] font-semibold text-t1 mb-1.5 transition-colors duration-400 group-hover:text-[color:var(--accent)]">
-                        {m.value}
-                      </div>
+                      {m.href ? (
+                        <a href={m.href}
+                          className="font-heading text-[1.1rem] font-semibold text-t1 mb-1.5 transition-colors duration-400 hover:text-[color:var(--accent)] block truncate">
+                          {m.value}
+                        </a>
+                      ) : (
+                        <div className="font-heading text-[1.1rem] font-semibold text-t1 mb-1.5">
+                          {m.value}
+                        </div>
+                      )}
                       <div className="font-body text-[0.78rem] text-t3 font-light">
                         {m.detail}
                       </div>
                     </div>
 
-                    {/* Footer row: copy + arrow */}
                     <div className="w-full pt-4 mt-2 flex items-center justify-between border-t transition-colors duration-400"
                       style={{ borderColor: `${accent}1a` }}>
                       {m.copyValue ? (
                         <button
                           type="button"
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleCopy(m.copyValue!, m.key); }}
+                          onClick={() => handleCopy(m.copyValue!, m.key)}
                           className="font-body text-[0.7rem] font-semibold tracking-[0.15em] uppercase transition-colors duration-400 hover:text-t1"
                           style={{ color: `${accent}aa` }}>
                           {copied === m.key ? 'Kopyalandı ✓' : 'Kopyala'}
@@ -604,30 +723,34 @@ export default function ContactPage() {
                       )}
 
                       {m.href && (
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-400 ease-out group-hover:translate-x-1 group-hover:scale-110"
+                        <a href={m.href}
+                          aria-label={`${m.label} aç`}
+                          className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-400 ease-out hover:translate-x-1 hover:scale-110"
                           style={{ background: `${accent}14`, boxShadow: `0 0 0 1px ${accent}33 inset` }}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M5 12h14M12 5l7 7-7 7" />
                           </svg>
-                        </div>
+                        </a>
                       )}
                     </div>
                   </div>
-                </Wrapper>
+                </div>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* ========== FORM (multi-step in one view) ========== */}
+      {/* ========================================================
+          FORM — consolidated card
+          ======================================================== */}
       <section className="ct-form-section relative py-28 px-6 border-t border-b border-border overflow-hidden max-md:py-20"
         style={{ background: 'linear-gradient(180deg, transparent, rgba(255,169,249,0.025) 50%, transparent)' }}>
         <div className="pointer-events-none absolute inset-0 -z-10"
           style={{ background: 'radial-gradient(900px 400px at 50% 50%, rgba(255,169,249,0.05), transparent 70%)' }} />
 
-        <div className="max-w-[980px] mx-auto">
-          <div className="ct-form-head text-center mb-14 max-md:mb-10">
+        <div className="max-w-[880px] mx-auto">
+          <div className="ct-form-head text-center mb-12 max-md:mb-10">
             <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-4">
               Teklif Formu
             </span>
@@ -635,134 +758,272 @@ export default function ContactPage() {
               <ScrollText before="Hikâyenizi " accent="anlatın." />
             </h2>
             <p className="font-body text-[0.95rem] text-t2 font-light max-w-xl mx-auto leading-relaxed">
-              4 adım, 2 dakika. Formu gönderin; aynı gün içinde size geri dönelim.
+              4 alanı doldurun, 2 dakika sürer. Talebiniz aynı gün içinde ekibimize ulaşır.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="relative">
-            <div className="flex flex-col gap-12 max-md:gap-10">
-              {/* Step 01 — Kim konuşuyor */}
-              <FormStep index={0} title="Sizi tanıyalım" hint="Zorunlu alanlar *">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FieldInput type="text" placeholder="Ad Soyad *" required value={formData.name}
-                    onChange={(v) => setFormData(p => ({ ...p, name: v }))} />
-                  <FieldInput type="email" placeholder="E-posta *" required value={formData.email}
-                    onChange={(v) => setFormData(p => ({ ...p, email: v }))} />
-                  <FieldInput type="tel" placeholder="Telefon" value={formData.phone}
-                    onChange={(v) => setFormData(p => ({ ...p, phone: v }))} />
-                  <FieldInput type="text" placeholder="Şirket Adı" value={formData.company}
-                    onChange={(v) => setFormData(p => ({ ...p, company: v }))} />
-                </div>
-              </FormStep>
+          {/* Form Card */}
+          <div className="ct-form-card relative rounded-3xl border border-white/[0.08] overflow-hidden"
+            style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005))' }}>
+            {/* Corner glow */}
+            <span className="pointer-events-none absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-60 blur-[80px]"
+              style={{ background: 'radial-gradient(circle, rgba(255,169,249,0.18), transparent 70%)' }} aria-hidden="true" />
+            <span className="pointer-events-none absolute -bottom-20 -right-20 w-64 h-64 rounded-full opacity-50 blur-[80px]"
+              style={{ background: 'radial-gradient(circle, rgba(255,247,173,0.14), transparent 70%)' }} aria-hidden="true" />
 
-              {/* Step 02 — Hizmet */}
-              <FormStep index={1} title="İlgilendiğiniz hizmet" hint="Bir tanesini seçin">
-                <div className="flex flex-wrap gap-2">
-                  {services.map((svc) => {
-                    const active = selectedService === svc.title;
-                    return (
-                      <button
-                        key={svc.key}
-                        type="button"
-                        onClick={() => setSelectedService(active ? '' : svc.title)}
-                        className={`px-4 py-2.5 rounded-xl font-body text-[0.82rem] font-medium border transition-all duration-300
-                          ${active
-                            ? 'border-accent/40 bg-accent/10 text-accent -translate-y-0.5'
-                            : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent/20 hover:text-t1 hover:-translate-y-0.5'}`}>
-                        {svc.title}
-                      </button>
-                    );
-                  })}
-                </div>
-              </FormStep>
-
-              {/* Step 03 — Bütçe + Takvim */}
-              <FormStep index={2} title="Bütçe ve zaman çizelgesi" hint="Yaklaşık değerler yeterli">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-md:gap-6">
-                  <div>
-                    <div className="font-body text-[0.72rem] font-semibold tracking-[0.2em] uppercase text-t3 mb-3">
-                      Öngörülen Bütçe
+            {/* Success state overlay */}
+            {submitState === 'success' ? (
+              <SuccessState name={form.name} onReset={resetForm} />
+            ) : (
+              <form onSubmit={handleSubmit} className="relative p-10 max-md:p-6" noValidate>
+                {/* Progress summary */}
+                <div className="mb-10 flex items-center justify-between gap-4 flex-wrap max-md:mb-8">
+                  <div className="flex items-center gap-3">
+                    <span className="font-body text-[0.7rem] font-semibold tracking-[0.3em] uppercase text-t3">
+                      İlerleme
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {[0, 1, 2, 3].map((i) => (
+                        <span key={i}
+                          className="w-6 h-1 rounded-full transition-all duration-500"
+                          style={{
+                            background: i < completed
+                              ? 'linear-gradient(90deg, #ffa9f9, #fff7ad)'
+                              : 'rgba(255,255,255,0.08)',
+                            boxShadow: i < completed ? '0 0 8px rgba(255,169,249,0.5)' : 'none',
+                          }} />
+                      ))}
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {BUDGETS.map((b) => {
-                        const active = selectedBudget === b;
-                        return (
-                          <button key={b} type="button" onClick={() => setSelectedBudget(active ? '' : b)}
-                            className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
-                              ${active
-                                ? 'border-accent/40 bg-accent/10 text-accent'
-                                : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent/20 hover:text-t1'}`}>
-                            {b}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <span className="font-heading text-[0.78rem] font-bold gradient-text">
+                      {completed}/4
+                    </span>
                   </div>
-                  <div>
-                    <div className="font-body text-[0.72rem] font-semibold tracking-[0.2em] uppercase text-t3 mb-3">
-                      Zaman Çizelgesi
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {TIMELINES.map((t) => {
-                        const active = selectedTimeline === t;
-                        return (
-                          <button key={t} type="button" onClick={() => setSelectedTimeline(active ? '' : t)}
-                            className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
-                              ${active
-                                ? 'border-accent2/40 bg-accent2/10 text-accent2'
-                                : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent2/20 hover:text-t1'}`}>
-                            {t}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </FormStep>
-
-              {/* Step 04 — Detay */}
-              <FormStep index={3} title="Projeniz hakkında" hint="Zorunlu *">
-                <FieldTextarea
-                  placeholder="Kısaca hedefinizi, mevcut durumu ve beklentilerinizi paylaşın. Detaylı teklif için referans bağlantılar varsa ekleyebilirsiniz."
-                  required
-                  value={formData.message}
-                  onChange={(v) => setFormData(p => ({ ...p, message: v }))}
-                />
-              </FormStep>
-
-              {/* Submit */}
-              <div className="pt-2">
-                <button
-                  ref={submitBtnRef}
-                  type="submit"
-                  onMouseMove={handleMagneticMove}
-                  onMouseLeave={handleMagneticLeave}
-                  className="group relative w-full py-5 rounded-2xl font-body text-[0.9rem] font-semibold tracking-[0.15em] uppercase
-                    bg-gradient-to-r from-accent to-accent2 text-bg overflow-hidden transition-shadow duration-500
-                    hover:shadow-[0_16px_48px_rgba(255,169,249,0.28)]">
-                  <span className="relative z-10 inline-flex items-center justify-center gap-3">
-                    Teklif Talebini Gönder
-                    <svg className="transition-transform duration-400 group-hover:translate-x-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
+                  <span className="font-body text-[0.7rem] text-t3 font-light">
+                    * işaretli alanlar zorunlu
                   </span>
-                  {/* Shimmer */}
-                  <span className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{ background: 'linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%)' }} />
-                </button>
+                </div>
 
-                <p className="mt-5 text-center font-body text-[0.78rem] text-t3 font-light">
-                  veya doğrudan{' '}
-                  <a href="mailto:info@beracore.com" className="text-accent hover:underline">info@beracore.com</a>
-                  {' '}adresine yazın · Verileriniz yalnızca teklif sürecinde kullanılır.
-                </p>
-              </div>
-            </div>
-          </form>
+                {/* Honeypot */}
+                <div className="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none" aria-hidden="true">
+                  <label>
+                    Leave empty
+                    <input type="text" name="hp" tabIndex={-1} autoComplete="off" />
+                  </label>
+                </div>
+
+                {/* Step 01 — İletişim */}
+                <FormStep index={0} title="Sizi tanıyalım" hint="Zorunlu alanlar *">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-md:gap-4">
+                    <FloatingInput
+                      id="f-name"
+                      label="Ad Soyad"
+                      type="text"
+                      required
+                      value={form.name}
+                      onChange={(v) => set('name', v)}
+                      error={errors.name}
+                      autoComplete="name"
+                    />
+                    <FloatingInput
+                      id="f-email"
+                      label="E-posta"
+                      type="email"
+                      required
+                      value={form.email}
+                      onChange={(v) => set('email', v)}
+                      error={errors.email}
+                      autoComplete="email"
+                    />
+                    <FloatingInput
+                      id="f-phone"
+                      label="Telefon"
+                      type="tel"
+                      value={form.phone}
+                      onChange={(v) => set('phone', v)}
+                      error={errors.phone}
+                      autoComplete="tel"
+                    />
+                    <FloatingInput
+                      id="f-company"
+                      label="Şirket Adı"
+                      type="text"
+                      value={form.company}
+                      onChange={(v) => set('company', v)}
+                      error={errors.company}
+                      autoComplete="organization"
+                    />
+                  </div>
+                </FormStep>
+
+                {/* Step 02 — Hizmet */}
+                <FormStep index={1} title="İlgilendiğiniz hizmet" hint="Bir tanesini seçin">
+                  <div className="flex flex-wrap gap-2" data-field="service">
+                    {services.map((svc) => {
+                      const active = form.service === svc.title;
+                      return (
+                        <button
+                          key={svc.key}
+                          type="button"
+                          onClick={() => set('service', active ? '' : svc.title)}
+                          className={`px-4 py-2.5 rounded-xl font-body text-[0.82rem] font-medium border transition-all duration-300
+                            ${active
+                              ? 'border-accent/40 bg-accent/10 text-accent -translate-y-0.5 shadow-[0_4px_16px_rgba(255,169,249,0.15)]'
+                              : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent/20 hover:text-t1 hover:-translate-y-0.5'}`}>
+                          {svc.title}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </FormStep>
+
+                {/* Step 03 — Bütçe + Takvim */}
+                <FormStep index={2} title="Bütçe ve zaman çizelgesi" hint="Yaklaşık değerler yeterli">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-7 max-md:gap-5">
+                    <div>
+                      <div className="font-body text-[0.7rem] font-semibold tracking-[0.2em] uppercase text-t3 mb-3">
+                        Öngörülen Bütçe
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {BUDGETS.map((b) => {
+                          const active = form.budget === b;
+                          return (
+                            <button key={b} type="button" onClick={() => set('budget', active ? '' : b)}
+                              className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
+                                ${active
+                                  ? 'border-accent/40 bg-accent/10 text-accent'
+                                  : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent/20 hover:text-t1'}`}>
+                              {b}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-body text-[0.7rem] font-semibold tracking-[0.2em] uppercase text-t3 mb-3">
+                        Zaman Çizelgesi
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {TIMELINES.map((t) => {
+                          const active = form.timeline === t;
+                          return (
+                            <button key={t} type="button" onClick={() => set('timeline', active ? '' : t)}
+                              className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
+                                ${active
+                                  ? 'border-accent2/40 bg-accent2/10 text-accent2'
+                                  : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent2/20 hover:text-t1'}`}>
+                              {t}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </FormStep>
+
+                {/* Step 04 — Detay */}
+                <FormStep index={3} title="Projeniz hakkında" hint="Zorunlu *" last>
+                  <FloatingTextarea
+                    id="f-message"
+                    label="Kısaca hedefinizi, mevcut durumu ve beklentilerinizi paylaşın. Referans bağlantılar varsa ekleyebilirsiniz."
+                    required
+                    value={form.message}
+                    onChange={(v) => set('message', v)}
+                    error={errors.message}
+                    maxLength={2000}
+                  />
+                </FormStep>
+
+                {/* KVKK consent */}
+                <div className="mt-4 ml-[56px] max-md:ml-0" data-field="consent">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <span className="relative mt-0.5 shrink-0">
+                      <input
+                        type="checkbox"
+                        checked={form.consent}
+                        onChange={(e) => set('consent', e.target.checked)}
+                        className="peer sr-only"
+                      />
+                      <span className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-300
+                        ${form.consent ? 'border-accent bg-accent/20' : errors.consent ? 'border-red-400/60 bg-red-500/5' : 'border-white/15 bg-white/[0.02] group-hover:border-accent/40'}`}>
+                        {form.consent && (
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffa9f9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        )}
+                      </span>
+                    </span>
+                    <span className="font-body text-[0.8rem] text-t2 leading-relaxed font-light max-md:text-[0.78rem]">
+                      <Link href="/kvkk" className="text-accent hover:underline">KVKK aydınlatma metni</Link>
+                      {' '}kapsamında, paylaştığım bilgilerin yalnızca teklif süreci için kullanılmasına onay veriyorum.
+                    </span>
+                  </label>
+                  {errors.consent && (
+                    <p className="mt-2 ml-8 font-body text-[0.75rem] text-red-400/90">{errors.consent}</p>
+                  )}
+                </div>
+
+                {/* Error banner */}
+                {submitState === 'error' && submitError && (
+                  <div className="mt-6 ml-[56px] max-md:ml-0 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
+                    <div className="flex items-start gap-3">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                      </svg>
+                      <p className="font-body text-[0.85rem] text-red-300 leading-relaxed">{submitError}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Submit */}
+                <div className="mt-8 ml-[56px] max-md:ml-0">
+                  <button
+                    ref={submitBtnRef}
+                    type="submit"
+                    disabled={submitState === 'loading'}
+                    onMouseMove={handleMagneticMove}
+                    onMouseLeave={handleMagneticLeave}
+                    className="group relative w-full py-5 rounded-2xl font-body text-[0.9rem] font-semibold tracking-[0.15em] uppercase
+                      bg-gradient-to-r from-accent to-accent2 text-bg overflow-hidden transition-shadow duration-500
+                      hover:shadow-[0_16px_48px_rgba(255,169,249,0.28)] disabled:opacity-70 disabled:cursor-not-allowed">
+                    <span className="relative z-10 inline-flex items-center justify-center gap-3">
+                      {submitState === 'loading' ? (
+                        <>
+                          <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="rgba(26,26,26,0.25)" strokeWidth="3" />
+                            <path d="M22 12a10 10 0 01-10 10" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+                          </svg>
+                          Gönderiliyor…
+                        </>
+                      ) : (
+                        <>
+                          Teklif Talebini Gönder
+                          <svg className="transition-transform duration-400 group-hover:translate-x-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </>
+                      )}
+                    </span>
+                    <span className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{ background: 'linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%)' }} />
+                  </button>
+
+                  <p className="mt-5 text-center font-body text-[0.78rem] text-t3 font-light">
+                    veya doğrudan{' '}
+                    <a href="mailto:info@beracore.com" className="text-accent hover:underline">info@beracore.com</a>
+                    {' '}adresine yazın · Verileriniz yalnızca teklif sürecinde kullanılır.
+                  </p>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* ========== PROCESS TIMELINE ========== */}
+      {/* ========================================================
+          PROCESS TIMELINE
+          ======================================================== */}
       <section className="ct-process relative py-28 px-6 overflow-hidden max-md:py-20">
         <div className="max-w-[880px] mx-auto">
           <div className="ct-process-head text-center mb-16 max-md:mb-12">
@@ -778,7 +1039,6 @@ export default function ContactPage() {
           </div>
 
           <div className="relative">
-            {/* Rail line (desktop & mobile) */}
             <div className="pointer-events-none absolute left-[22px] top-4 bottom-4 w-px bg-white/[0.05]" />
             <div
               className="ct-process-line pointer-events-none absolute left-[22px] top-4 bottom-4 w-px origin-top"
@@ -790,7 +1050,6 @@ export default function ContactPage() {
                 const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
                 return (
                   <div key={s.step} className="ct-process-step relative grid grid-cols-[auto,1fr] gap-6 max-md:gap-4">
-                    {/* Dot (aligned with rail) */}
                     <div className="relative flex justify-center w-11 shrink-0 pt-5">
                       <span
                         className="ct-process-dot relative z-10 w-4 h-4 rounded-full"
@@ -800,7 +1059,6 @@ export default function ContactPage() {
                         }} />
                     </div>
 
-                    {/* Card */}
                     <div
                       className="relative p-7 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.15] transition-all duration-400 max-md:p-5 min-w-0"
                       style={{ '--accent': accent } as React.CSSProperties}>
@@ -828,7 +1086,9 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ========== FAQ ========== */}
+      {/* ========================================================
+          FAQ
+          ======================================================== */}
       <section className="ct-faq relative py-28 px-6 border-t border-border max-md:py-20">
         <div className="max-w-3xl mx-auto">
           <div className="ct-faq-head text-center mb-14 max-md:mb-10">
@@ -889,7 +1149,9 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ========== CTA ========== */}
+      {/* ========================================================
+          CTA
+          ======================================================== */}
       <section className="ct-cta relative py-28 px-6 overflow-hidden max-md:py-20">
         <div className="pointer-events-none absolute inset-0 -z-10"
           style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(255,169,249,0.06) 0%, transparent 60%)' }} />
@@ -940,20 +1202,92 @@ export default function ContactPage() {
   );
 }
 
-// ======== Form step with inline numbered badge ========
+// ============================================================
+// SUCCESS STATE
+// ============================================================
+function SuccessState({ name, onReset }: { name: string; onReset: () => void }) {
+  return (
+    <div className="relative p-14 text-center max-md:p-8">
+      {/* Celebration orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        {[
+          { t: '12%', l: '18%', s: 3, c: '#ffa9f9' },
+          { t: '24%', l: '82%', s: 2, c: '#fff7ad' },
+          { t: '76%', l: '14%', s: 2.5, c: '#fff7ad' },
+          { t: '80%', l: '78%', s: 2, c: '#ffa9f9' },
+        ].map((o, i) => (
+          <span key={i} className="absolute rounded-full animate-pulse"
+            style={{
+              top: o.t, left: o.l,
+              width: `${o.s * 4}px`, height: `${o.s * 4}px`,
+              background: o.c,
+              boxShadow: `0 0 14px ${o.c}`,
+              animationDelay: `${i * 0.3}s`,
+            }} />
+        ))}
+      </div>
+
+      <div className="relative">
+        {/* Check badge */}
+        <div className="inline-flex w-20 h-20 rounded-full items-center justify-center mb-7"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,169,249,0.2) 0%, rgba(255,247,173,0.1) 50%, transparent 70%)',
+            boxShadow: '0 0 0 1px rgba(255,169,249,0.3), 0 0 40px rgba(255,169,249,0.25)',
+          }}>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="url(#gradcheck)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <defs>
+              <linearGradient id="gradcheck" x1="0" y1="0" x2="24" y2="24">
+                <stop offset="0" stopColor="#ffa9f9" />
+                <stop offset="1" stopColor="#fff7ad" />
+              </linearGradient>
+            </defs>
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+
+        <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/70 mb-4">
+          Talep Alındı
+        </span>
+        <h3 className="font-body text-[clamp(1.6rem,3.2vw,2.2rem)] font-light tracking-tight leading-[1.2] mb-4">
+          <span className="text-t1">Teşekkürler{name ? `, ${name.split(' ')[0]}` : ''} — </span>
+          <span className="gradient-text font-semibold">ulaştık.</span>
+        </h3>
+        <p className="font-body text-[0.95rem] text-t2 font-light max-w-md mx-auto leading-[1.8] mb-8">
+          Talebiniz ekibimize düştü. Aynı gün içinde size özel bir mesajla döneceğiz.
+          Lütfen e-posta kutunuzu ve spam klasörünüzü kontrol edin.
+        </p>
+
+        <div className="flex items-center gap-3 justify-center flex-wrap">
+          <button type="button" onClick={onReset}
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 text-t1 transition-all duration-400 hover:-translate-y-0.5 hover:border-accent/30 hover:text-accent">
+            Yeni Talep Gönder
+          </button>
+          <Link href="/hakkimizda"
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 text-t1 transition-all duration-400 hover:-translate-y-0.5 hover:border-accent2/30 hover:text-accent2">
+            Biz Kimiz
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// FORM STEP WITH NUMBERED BADGE
+// ============================================================
 function FormStep({
-  index, title, hint, children,
+  index, title, hint, last, children,
 }: {
   index: number;
   title: string;
   hint?: string;
+  last?: boolean;
   children: React.ReactNode;
 }) {
   const accent = index % 2 === 0 ? '#ffa9f9' : '#fff7ad';
   const num = String(index + 1).padStart(2, '0');
   return (
-    <div className="ct-form-step grid grid-cols-[auto,1fr] gap-5 max-md:gap-4">
-      {/* Number badge column */}
+    <div className="ct-form-step grid grid-cols-[auto,1fr] gap-5 mb-8 max-md:gap-4 max-md:mb-6 last:mb-0">
       <div className="relative flex flex-col items-center">
         <span
           className="relative z-10 w-11 h-11 rounded-full flex items-center justify-center font-heading text-[0.78rem] font-bold border shrink-0"
@@ -965,16 +1299,13 @@ function FormStep({
           }}>
           {num}
         </span>
-        {/* Connector line to next step (fades at last) */}
-        <span
-          aria-hidden="true"
-          className="flex-1 w-px mt-2 mb-[-3rem]"
-          style={{
-            background: `linear-gradient(180deg, ${accent}44, transparent)`,
-          }} />
+        {!last && (
+          <span
+            aria-hidden="true"
+            className="flex-1 w-px mt-2 mb-[-2rem]"
+            style={{ background: `linear-gradient(180deg, ${accent}44, transparent)` }} />
+        )}
       </div>
-
-      {/* Step content */}
       <div className="pt-2.5 min-w-0">
         <div className="flex items-baseline gap-3 mb-4 flex-wrap">
           <h3 className="font-heading text-[1.1rem] font-semibold text-t1 max-md:text-[1rem]">{title}</h3>
@@ -988,54 +1319,106 @@ function FormStep({
   );
 }
 
-// ======== Reusable inputs (with inline focus animation) ========
-function FieldInput({
-  type, placeholder, required, value, onChange,
+// ============================================================
+// FLOATING LABEL INPUT
+// ============================================================
+function FloatingInput({
+  id, label, type, value, onChange, required, error, autoComplete,
 }: {
+  id: string;
+  label: string;
   type: string;
-  placeholder: string;
-  required?: boolean;
   value: string;
   onChange: (v: string) => void;
+  required?: boolean;
+  error?: string;
+  autoComplete?: string;
 }) {
+  const hasValue = value.length > 0;
+  const field = id.replace(/^f-/, '');
   return (
-    <div className="relative group">
-      <input
-        type={type}
-        placeholder={placeholder}
-        required={required}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full px-5 py-4 rounded-xl font-body text-[0.9rem] text-t1 bg-white/[0.03] border border-white/[0.08] placeholder:text-t3/60
-          focus:border-accent/40 focus:bg-white/[0.05] focus:outline-none transition-all duration-300"
-      />
-      <span className="pointer-events-none absolute left-5 right-5 bottom-[11px] h-px origin-left scale-x-0 group-focus-within:scale-x-100 transition-transform duration-500 ease-out"
-        style={{ background: 'linear-gradient(90deg, #ffa9f9, #fff7ad)' }} />
+    <div className="relative" data-field={field}>
+      <div className={`relative rounded-xl border transition-all duration-300
+        ${error ? 'border-red-400/50 bg-red-500/[0.02]' : 'border-white/[0.08] bg-white/[0.03] focus-within:border-accent/40 focus-within:bg-white/[0.05]'}`}>
+        <input
+          id={id}
+          type={type}
+          value={value}
+          required={required}
+          autoComplete={autoComplete}
+          onChange={(e) => onChange(e.target.value)}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-err` : undefined}
+          className="peer w-full px-5 pt-6 pb-2 bg-transparent font-body text-[0.9rem] text-t1 outline-none"
+        />
+        <label
+          htmlFor={id}
+          className={`pointer-events-none absolute left-5 font-body transition-all duration-200 ease-out
+            ${hasValue
+              ? 'top-2 text-[0.65rem] font-semibold tracking-[0.2em] uppercase text-t3'
+              : 'top-1/2 -translate-y-1/2 text-[0.9rem] text-t3/70'}
+            peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.65rem] peer-focus:font-semibold peer-focus:tracking-[0.2em] peer-focus:uppercase peer-focus:text-accent`}>
+          {label}{required ? ' *' : ''}
+        </label>
+        <span className="pointer-events-none absolute left-5 right-5 bottom-[9px] h-px origin-left scale-x-0 peer-focus:scale-x-100 transition-transform duration-500 ease-out"
+          style={{ background: 'linear-gradient(90deg, #ffa9f9, #fff7ad)' }} />
+      </div>
+      {error && (
+        <p id={`${id}-err`} role="alert" className="mt-1.5 font-body text-[0.75rem] text-red-400/90">{error}</p>
+      )}
     </div>
   );
 }
 
-function FieldTextarea({
-  placeholder, required, value, onChange,
+// ============================================================
+// FLOATING LABEL TEXTAREA (with character counter)
+// ============================================================
+function FloatingTextarea({
+  id, label, value, onChange, required, error, maxLength,
 }: {
-  placeholder: string;
-  required?: boolean;
+  id: string;
+  label: string;
   value: string;
   onChange: (v: string) => void;
+  required?: boolean;
+  error?: string;
+  maxLength?: number;
 }) {
+  const hasValue = value.length > 0;
+  const field = id.replace(/^f-/, '');
   return (
-    <div className="relative group">
-      <textarea
-        placeholder={placeholder}
-        required={required}
-        rows={6}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full px-5 py-4 rounded-xl font-body text-[0.9rem] text-t1 bg-white/[0.03] border border-white/[0.08] placeholder:text-t3/60 resize-none
-          focus:border-accent/40 focus:bg-white/[0.05] focus:outline-none transition-all duration-300"
-      />
-      <span className="pointer-events-none absolute left-5 right-5 bottom-[11px] h-px origin-left scale-x-0 group-focus-within:scale-x-100 transition-transform duration-500 ease-out"
-        style={{ background: 'linear-gradient(90deg, #ffa9f9, #fff7ad)' }} />
+    <div className="relative" data-field={field}>
+      <div className={`relative rounded-xl border transition-all duration-300
+        ${error ? 'border-red-400/50 bg-red-500/[0.02]' : 'border-white/[0.08] bg-white/[0.03] focus-within:border-accent/40 focus-within:bg-white/[0.05]'}`}>
+        <textarea
+          id={id}
+          rows={6}
+          required={required}
+          maxLength={maxLength}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-err` : undefined}
+          className="peer w-full px-5 pt-7 pb-3 bg-transparent font-body text-[0.9rem] text-t1 outline-none resize-none"
+        />
+        <label
+          htmlFor={id}
+          className={`pointer-events-none absolute left-5 right-14 font-body transition-all duration-200 ease-out
+            ${hasValue
+              ? 'top-2 text-[0.65rem] font-semibold tracking-[0.2em] uppercase text-t3'
+              : 'top-5 text-[0.88rem] text-t3/70 leading-snug'}
+            peer-focus:top-2 peer-focus:text-[0.65rem] peer-focus:font-semibold peer-focus:tracking-[0.2em] peer-focus:uppercase peer-focus:text-accent`}>
+          {label}{required ? ' *' : ''}
+        </label>
+        {maxLength && (
+          <span className="absolute bottom-2.5 right-4 font-body text-[0.68rem] text-t3/70 tabular-nums">
+            {value.length}/{maxLength}
+          </span>
+        )}
+      </div>
+      {error && (
+        <p id={`${id}-err`} role="alert" className="mt-1.5 font-body text-[0.75rem] text-red-400/90">{error}</p>
+      )}
     </div>
   );
 }
