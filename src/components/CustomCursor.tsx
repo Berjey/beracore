@@ -42,12 +42,23 @@ export default function CustomCursor() {
       });
     };
     bind();
-    const mo = new MutationObserver(bind);
+
+    // DOM değişiklikleri sık tetiklenir (GSAP vb.); rAF ile frame başına bir bind yap
+    let bindRaf: number | null = null;
+    const scheduleBind = () => {
+      if (bindRaf !== null) return;
+      bindRaf = requestAnimationFrame(() => {
+        bindRaf = null;
+        bind();
+      });
+    };
+    const mo = new MutationObserver(scheduleBind);
     mo.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       document.removeEventListener('mousemove', onMove);
       cancelAnimationFrame(animId);
+      if (bindRaf !== null) cancelAnimationFrame(bindRaf);
       mo.disconnect();
     };
   }, []);

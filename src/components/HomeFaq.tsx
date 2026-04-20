@@ -8,12 +8,38 @@ import ScrollText from '@/components/ScrollText';
 gsap.registerPlugin(ScrollTrigger);
 
 const FAQ_ITEMS = [
-  { q: 'BERACORE hangi hizmetleri sunuyor?', a: 'Yapay zeka & otomasyon, blockchain & fintech, web ve mobil yazılım geliştirme, UI/UX tasarım, e-ticaret çözümleri ve dijital pazarlama hizmetleri sunuyoruz. Her alanda uzman ekibimizle uçtan uca çözümler üretiyoruz.' },
-  { q: 'Proje süreci nasıl işliyor?', a: 'Keşif görüşmesi ile başlıyoruz. İhtiyaç analizi, strateji, tasarım, geliştirme ve lansman adımlarını Agile metodoloji ile yürütüyoruz. Her sprint sonunda demo yaparak sizi sürecin içinde tutuyoruz.' },
-  { q: 'Proje maliyeti nasıl belirleniyor?', a: 'Projenin kapsamı, karmaşıklığı ve süresine göre özel fiyat teklifi sunuyoruz. İlk keşif görüşmesi ücretsiz ve taahhütsüzdür. Şeffaf fiyatlandırma politikamızla sürpriz maliyetler olmaz.' },
-  { q: 'Bir projenin tamamlanması ne kadar sürer?', a: 'Basit web siteleri 3-4 haftada, kurumsal uygulamalar 2-4 ayda, kapsamlı platformlar (kripto borsası, ERP) 4-8 ayda tamamlanır. MVP yaklaşımı ile erken çıkış yapıp kademeli büyüme de mümkün.' },
-  { q: 'Proje tesliminden sonra destek veriyor musunuz?', a: 'Evet. Tüm projelerimize teslim sonrası bakım ve destek paketi dahildir. Güvenlik güncellemeleri, performans izleme, hata düzeltme ve yeni özellik geliştirme kapsamında 7/24 destek sağlıyoruz.' },
-  { q: 'Hangi teknolojileri kullanıyorsunuz?', a: 'React, Next.js, Node.js, TypeScript, Python, Flutter, Solidity, Rust gibi modern teknolojiler kullanıyoruz. Projenin ihtiyaçlarına göre en uygun teknoloji stack\'ini birlikte belirliyoruz.' },
+  {
+    q: 'BERACORE hangi hizmetleri sunuyor?',
+    a: 'Web ve mobil yazılım geliştirme, UI/UX tasarım, e-ticaret altyapısı, yapay zekâ destekli otomasyon, blockchain çözümleri ve dijital pazarlama. Her projeyi strateji, tasarım, mühendislik ve lansman olarak uçtan uca tek bir ekiple yürütüyoruz.',
+  },
+  {
+    q: 'Proje süreci nasıl işliyor?',
+    a: 'Keşif görüşmesi ile başlıyoruz. İhtiyaç analizi, strateji, tasarım, geliştirme ve lansman adımlarını şeffaf bir yol haritası üzerinden iteratif sprintlerle yürütüyoruz. Her sprint sonunda demo yapıyor, kararları birlikte alıyor, süreci canlı proje panosundan takip etmenizi sağlıyoruz.',
+  },
+  {
+    q: 'Bir projenin tamamlanması ne kadar sürer?',
+    a: 'Her projenin kapsamı, karmaşıklığı ve öncelikleri farklı olduğu için tek bir sabit süreden söz etmek doğru olmaz. Keşif görüşmesinin ardından projenize özel, gerçekçi bir zaman planı sunuyor; teslim noktalarını birlikte belirliyoruz. İhtiyaç halinde MVP yaklaşımıyla hızlı bir ilk çıkış alıp kademeli olarak genişletebiliriz.',
+  },
+  {
+    q: 'Proje maliyeti nasıl belirleniyor?',
+    a: 'Kapsam, teknoloji seçimleri ve teslim sürecine göre projeye özel sabit kapsamlı teklif hazırlıyoruz. İlk keşif görüşmesi ücretsiz ve taahhütsüzdür. Süreç içinde kapsam değişiklikleri sizinle önceden mutabık kalınarak netleştirilir; sürpriz maliyet çıkmaz.',
+  },
+  {
+    q: 'Teslim sonrası bakım ve destek alıyor muyuz?',
+    a: 'Evet. Teslim sonrası bakım, güvenlik güncellemeleri, performans izleme, hata çözümü ve yeni özellik geliştirme süreçlerini kapsayan destek paketleri sunuyoruz. Lansman sonrasında da sizinle sürekli iletişimde kalıyoruz.',
+  },
+  {
+    q: 'Yeni girişimler ve küçük ekiplerle de çalışıyor musunuz?',
+    a: 'Evet. Yeni kurulan markalardan kurumsal şirketlere kadar farklı ölçeklerde projeler yürütüyoruz. Özellikle erken dönem ürün doğrulama ve MVP geliştirme süreçlerinde sizi, birlikte inşa ettiğimiz uzun soluklu bir iş ortağı olarak görüyoruz.',
+  },
+  {
+    q: 'Kaynak kodu, tasarım varlıkları ve gizlilik nasıl yönetiliyor?',
+    a: 'Tüm kod tabanı, tasarım varlıkları ve dokümantasyon sözleşmeyle birlikte size devredilir; projeyi dilediğiniz zaman başka bir ekiple de sürdürebilirsiniz. Talep edilen her ticari gizlilik sözleşmesini (NDA) imzalıyor, verilerinizi ve fikri mülkiyetinizi ilgili mevzuata uygun şekilde koruyoruz.',
+  },
+  {
+    q: 'Hangi teknolojileri kullanıyorsunuz?',
+    a: 'React, Next.js, Node.js, TypeScript, Python, React Native, Solidity ve ilgili modern ekosistemlerle çalışıyoruz. Projenin ihtiyaçlarına göre en uygun stack\'i birlikte belirliyor, gereksiz karmaşıklıktan kaçınıyoruz.',
+  },
 ];
 
 export default function HomeFaq() {
@@ -31,7 +57,7 @@ export default function HomeFaq() {
           scrollTrigger: { trigger: section, start: 'top 80%', end: 'top 20%', scrub: 0.15 },
         });
       }, section);
-    }, 800);
+    }, 400);
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 

@@ -14,7 +14,7 @@ const NAV_LINKS = [
   { label: 'Süreç', id: 'process' },
   { label: 'Referanslar', id: 'referanslar' },
   { label: 'SSS', id: 'faq' },
-  { label: 'İletişim', id: 'iletisim' },
+  { label: 'İletişim', id: '__contact' },
 ];
 
 export default function Navbar() {
@@ -72,6 +72,17 @@ export default function Navbar() {
       } else {
         setNavigating(true);
         router.push('/hakkimizda');
+      }
+      return;
+    }
+
+    // İletişim (dedicated /iletisim sayfası)
+    if (id === '__contact') {
+      if (pathname === '/iletisim') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setNavigating(true);
+        router.push('/iletisim');
       }
       return;
     }
@@ -183,7 +194,7 @@ export default function Navbar() {
 
           {/* CTA — Teklif Al sayfasına yönlendir */}
           <Link
-            href="/teklif-al"
+            href="/iletisim"
             className="ml-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-body text-[0.72rem] font-semibold tracking-[0.1em] uppercase transition-all duration-400
               bg-gradient-to-r from-accent to-accent2 text-bg
               hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(255,169,249,0.25)] hover:scale-[1.02]"
@@ -215,7 +226,7 @@ export default function Navbar() {
               {link.label}
             </button>
           ))}
-          <Link href="/teklif-al" onClick={() => setMobileOpen(false)}
+          <Link href="/iletisim" onClick={() => setMobileOpen(false)}
             className="mt-6 inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-body text-sm font-semibold tracking-wider uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-500"
             style={{ opacity: mobileOpen ? 1 : 0, transform: mobileOpen ? 'translateY(0)' : 'translateY(20px)', transitionDelay: mobileOpen ? '700ms' : '0ms' }}>
             Teklif Al

@@ -28,11 +28,6 @@ const HeroCore = dynamic(() => import('@/components/HeroCore'), { ssr: false });
 export default function Home() {
   const [preloaderDone, setPreloaderDone] = useState(false);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  }, []);
-
   // Preloader kalktıktan sonra ScrollTrigger pozisyonlarını yenile
   useEffect(() => {
     if (preloaderDone) {

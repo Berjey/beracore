@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
+import ScrollReset from '@/components/ScrollReset';
 import './globals.css';
 
 const inter = Inter({
@@ -70,12 +71,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="image/svg+xml"
           href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fff7ad'/%3E%3Cstop offset='100%25' stop-color='%23ffa9f9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%230f0d16'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='url(%23g)' stroke-width='2.6'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='url(%23g)'/%3E%3C/svg%3E"
         />
+        {/* Scroll to top on refresh — senkron çalışır, hydration beklemez */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+              window.addEventListener('beforeunload', function() { window.scrollTo(0, 0); });
+              window.addEventListener('pageshow', function(e) { if (e.persisted) window.scrollTo(0, 0); });
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="cursor-custom" suppressHydrationWarning>{children}</body>
+      <body className="cursor-custom" suppressHydrationWarning>
+        <ScrollReset />
+        {children}
+      </body>
     </html>
   );
 }

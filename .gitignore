@@ -5,3 +5,7 @@ out/
 *.log
 .env
 .env.*
+
+# IDE / lokal araç dosyaları
+.claude/
+tsconfig.tsbuildinfo

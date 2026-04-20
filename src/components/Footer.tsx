@@ -52,7 +52,7 @@ export default function Footer() {
           scrollTrigger: { trigger: footer, start: 'top 85%', end: 'top 35%', scrub: 0.15 },
         });
       }, footer);
-    }, 800);
+    }, 400);
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 

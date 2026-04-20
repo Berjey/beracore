@@ -30,7 +30,7 @@ export default function CtaBand() {
           scrollTrigger: { trigger: section, start: 'top 75%', end: 'top 42%', scrub: 0.15 },
         });
       }, section);
-    }, 800);
+    }, 400);
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 
@@ -45,7 +45,7 @@ export default function CtaBand() {
         <p className="cta-desc text-base text-t2 mb-10 leading-relaxed max-md:text-sm">
           Aklındaki dijital fikri konuşalım — keşif görüşmesi ücretsiz, taahhütsüz.
         </p>
-        <Link href="/teklif-al"
+        <Link href="/iletisim"
           className="cta-btn inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-heading text-sm font-bold tracking-wider uppercase transition-all duration-500
             bg-gradient-to-r from-accent to-accent2 text-bg hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(255,169,249,0.3)] hover:scale-[1.02]">
           Hemen Teklif Al →

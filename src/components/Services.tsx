@@ -9,7 +9,6 @@ export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const canvasWrapRef = useRef<HTMLDivElement>(null);
   const shapeRef = useRef<ShapeSceneAPI | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [contentVisible, setContentVisible] = useState(false);
@@ -69,11 +68,6 @@ export default function Services() {
     setTransitioning(true);
   }, [transitioning]);
 
-  // Back button ile dönünce transitioning reset
-  useEffect(() => {
-    setTransitioning(false);
-  }, []);
-
   // After zoom animation completes, open the detail page
   useEffect(() => {
     if (!transitioning) return;
@@ -128,7 +122,6 @@ export default function Services() {
 
           {/* Shape wrapper — this is what zooms */}
           <div
-            ref={canvasWrapRef}
             className="relative flex items-center justify-center cursor-pointer"
             onClick={handleOpen}
             style={{

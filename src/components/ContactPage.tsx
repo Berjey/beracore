@@ -42,7 +42,7 @@ export default function ContactPage() {
           scrollTrigger: { trigger: '.ct-services', start: 'top 85%', end: 'top 35%', scrub: 0.15 },
         });
       }, container);
-    }, 800);
+    }, 400);
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 

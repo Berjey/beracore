@@ -140,7 +140,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
           scrollTrigger: { trigger: '[data-sp="cta"]', start: 'top 88%', end: 'top 42%', scrub: 0.15 },
         });
       }, container);
-    }, 800);
+    }, 400);
 
     return () => {
       clearTimeout(timer);

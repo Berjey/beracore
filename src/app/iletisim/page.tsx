@@ -7,12 +7,12 @@ import ScrollToTop from '@/components/ScrollToTop';
 import ContactPage from '@/components/ContactPage';
 
 export const metadata: Metadata = {
-  title: 'Teklif Al | BERACORE — Digital Experience Studio',
+  title: 'İletişim | BERACORE — Digital Experience Studio',
   description: 'BERACORE ile projenizi konuşalım. Ücretsiz keşif görüşmesi ve teklif almak için bizimle iletişime geçin. Yapay zeka, blockchain, yazılım, tasarım ve dijital pazarlama.',
-  alternates: { canonical: 'https://beracore.com/teklif-al' },
+  alternates: { canonical: 'https://beracore.com/iletisim' },
 };
 
-export default function TeklifAlPage() {
+export default function IletisimPage() {
   return (
     <>
       <Starfield />
