@@ -130,7 +130,6 @@ const FAQ = [
 ];
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const STORAGE_KEY = 'beracore-contact-form-v1';
 
 type FormState = {
   name: string;
@@ -167,24 +166,6 @@ export default function ContactPage() {
   const [submitError, setSubmitError] = useState<string>('');
   const [copied, setCopied] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-
-  // ----- sessionStorage persistence -----
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as Partial<FormState>;
-        setForm(prev => ({ ...prev, ...parsed }));
-      }
-    } catch { /* noop */ }
-  }, []);
-
-  useEffect(() => {
-    if (submitState === 'success') return;
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-    } catch { /* noop */ }
-  }, [form, submitState]);
 
   // ----- Helpers -----
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => {
@@ -241,7 +222,6 @@ export default function ContactPage() {
 
       if (res.ok) {
         setSubmitState('success');
-        try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
         return;
       }
 
@@ -268,7 +248,6 @@ export default function ContactPage() {
     setErrors({});
     setSubmitState('idle');
     setSubmitError('');
-    try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
   };
 
   // ----- Copy to clipboard with fallback -----
@@ -318,35 +297,35 @@ export default function ContactPage() {
     const timer = setTimeout(() => {
       ctx = gsap.context(() => {
         // ===== HERO =====
-        const heroTl = gsap.timeline({ delay: 0.15 });
+        const heroTl = gsap.timeline({ delay: 0.05 });
         heroTl
           .fromTo('.ct-hero-label',
-            { y: 20, opacity: 0, letterSpacing: '0.8em' },
-            { y: 0, opacity: 1, letterSpacing: '0.5em', duration: 0.9, ease: 'power3.out' })
+            { y: 14, opacity: 0, letterSpacing: '0.7em' },
+            { y: 0, opacity: 1, letterSpacing: '0.5em', duration: 0.5, ease: 'power3.out' })
           .fromTo('.ct-char-main',
-            { y: 60, opacity: 0, rotationX: -80 },
-            { y: 0, opacity: 1, rotationX: 0, duration: 0.8, stagger: 0.035, ease: 'power3.out' },
-            '-=0.3')
+            { y: 40, opacity: 0, rotationX: -60 },
+            { y: 0, opacity: 1, rotationX: 0, duration: 0.5, stagger: 0.02, ease: 'power3.out' },
+            '-=0.25')
           .fromTo('.ct-char-accent',
-            { y: 60, opacity: 0, rotationX: -80 },
-            { y: 0, opacity: 1, rotationX: 0, duration: 0.8, stagger: 0.035, ease: 'power3.out' },
-            '-=0.5')
+            { y: 40, opacity: 0, rotationX: -60 },
+            { y: 0, opacity: 1, rotationX: 0, duration: 0.5, stagger: 0.02, ease: 'power3.out' },
+            '-=0.35')
           .fromTo('.ct-accent-glow',
-            { opacity: 0, scale: 0.4 },
-            { opacity: 0.45, scale: 1, duration: 1.3, ease: 'power2.out' },
-            '-=0.6')
+            { opacity: 0, scale: 0.5 },
+            { opacity: 0.45, scale: 1, duration: 0.8, ease: 'power2.out' },
+            '-=0.45')
           .fromTo('.ct-hero-desc',
-            { y: 30, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out' },
-            '-=0.4')
+            { y: 20, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out' },
+            '-=0.35')
           .fromTo('.ct-hero-line',
             { scaleX: 0 },
-            { scaleX: 1, duration: 1.4, ease: 'power2.out' },
-            '-=0.6')
+            { scaleX: 1, duration: 0.9, ease: 'power2.out' },
+            '-=0.45')
           .fromTo('.ct-qstat',
-            { y: 16, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out', stagger: 0.08 },
-            '-=0.9');
+            { y: 12, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out', stagger: 0.05 },
+            '-=0.7');
 
         gsap.to('.ct-orbit-1', { rotation: 360, duration: 80, repeat: -1, ease: 'none' });
         gsap.to('.ct-orbit-2', { rotation: -360, duration: 110, repeat: -1, ease: 'none' });
@@ -750,9 +729,21 @@ export default function ContactPage() {
             </p>
           </div>
 
-          {/* Form Card */}
-          <div className="ct-form-card relative rounded-3xl border border-white/[0.08] overflow-hidden"
-            style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005))' }}>
+          {/* Form Card — gradient border */}
+          <div
+            className="ct-form-card relative rounded-3xl p-[1.5px] overflow-hidden"
+            style={{
+              background:
+                'linear-gradient(135deg, rgba(255,169,249,0.55) 0%, rgba(255,247,173,0.35) 30%, rgba(255,169,249,0.15) 55%, rgba(255,247,173,0.45) 100%)',
+            }}
+          >
+            <div
+              className="relative rounded-[calc(1.5rem-1.5px)] overflow-hidden"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(28,28,28,0.98), rgba(22,22,22,0.98))',
+              }}
+            >
             {/* Corner glow */}
             <span className="pointer-events-none absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-60 blur-[80px]"
               style={{ background: 'radial-gradient(circle, rgba(255,169,249,0.18), transparent 70%)' }} aria-hidden="true" />
@@ -800,7 +791,7 @@ export default function ContactPage() {
                 </div>
 
                 {/* Step 01 — İletişim */}
-                <FormStep index={0} title="Sizi tanıyalım" hint="Zorunlu alanlar *">
+                <FormStep index={0} title="Sizi Tanıyalım" hint="Zorunlu alanlar *">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-md:gap-4">
                     <FloatingInput
                       id="f-name"
@@ -844,7 +835,7 @@ export default function ContactPage() {
                 </FormStep>
 
                 {/* Step 02 — Hizmet */}
-                <FormStep index={1} title="İlgilendiğiniz hizmet" hint="Bir tanesini seçin">
+                <FormStep index={1} title="İlgilendiğiniz Hizmet" hint="Bir tanesini seçin">
                   <div className="flex flex-wrap gap-2" data-field="service">
                     {services.map((svc) => {
                       const active = form.service === svc.title;
@@ -865,7 +856,7 @@ export default function ContactPage() {
                 </FormStep>
 
                 {/* Step 03 — Bütçe + Takvim */}
-                <FormStep index={2} title="Bütçe ve zaman çizelgesi" hint="Yaklaşık değerler yeterli">
+                <FormStep index={2} title="Bütçe ve Zaman Çizelgesi" hint="Yaklaşık değerler yeterli">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-7 max-md:gap-5">
                     <div>
                       <div className="font-body text-[0.7rem] font-semibold tracking-[0.2em] uppercase text-t3 mb-3">
@@ -909,10 +900,11 @@ export default function ContactPage() {
                 </FormStep>
 
                 {/* Step 04 — Detay */}
-                <FormStep index={3} title="Projeniz hakkında" hint="Zorunlu *" last>
+                <FormStep index={3} title="Projeniz Hakkında" hint="Zorunlu *" last>
                   <FloatingTextarea
                     id="f-message"
-                    label="Kısaca hedefinizi, mevcut durumu ve beklentilerinizi paylaşın. Referans bağlantılar varsa ekleyebilirsiniz."
+                    label="Proje Detayları"
+                    placeholder="Kısaca hedefinizi, mevcut durumu ve beklentilerinizi paylaşın. Referans bağlantılar varsa ekleyebilirsiniz."
                     required
                     value={form.message}
                     onChange={(v) => set('message', v)}
@@ -922,7 +914,7 @@ export default function ContactPage() {
                 </FormStep>
 
                 {/* KVKK consent */}
-                <div className="mt-4 ml-[56px] max-md:ml-0" data-field="consent">
+                <div className="mt-6 pl-[64px] max-md:pl-0" data-field="consent">
                   <label className="flex items-start gap-3 cursor-pointer group">
                     <span className="relative mt-0.5 shrink-0">
                       <input
@@ -952,7 +944,7 @@ export default function ContactPage() {
 
                 {/* Error banner */}
                 {submitState === 'error' && submitError && (
-                  <div className="mt-6 ml-[56px] max-md:ml-0 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
+                  <div className="mt-6 mx-auto max-w-md p-4 rounded-xl border border-red-500/20 bg-red-500/5">
                     <div className="flex items-start gap-3">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
                         <circle cx="12" cy="12" r="10" />
@@ -964,36 +956,34 @@ export default function ContactPage() {
                   </div>
                 )}
 
-                {/* Submit */}
-                <div className="mt-8 ml-[56px] max-md:ml-0">
+                {/* Submit — ortalanmış + sade */}
+                <div className="mt-10 flex flex-col items-center">
                   <button
                     ref={submitBtnRef}
                     type="submit"
                     disabled={submitState === 'loading'}
-                    className="group relative w-full py-5 rounded-2xl font-body text-[0.9rem] font-semibold tracking-[0.15em] uppercase
+                    className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-3.5 rounded-xl font-body text-[0.78rem] font-semibold tracking-[0.15em] uppercase
                       bg-gradient-to-r from-accent to-accent2 text-bg transition-shadow duration-300
-                      hover:shadow-[0_10px_32px_rgba(255,169,249,0.22)] disabled:opacity-70 disabled:cursor-not-allowed">
-                    <span className="inline-flex items-center justify-center gap-3">
-                      {submitState === 'loading' ? (
-                        <>
-                          <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="rgba(26,26,26,0.25)" strokeWidth="3" />
-                            <path d="M22 12a10 10 0 01-10 10" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
-                          </svg>
-                          Gönderiliyor…
-                        </>
-                      ) : (
-                        <>
-                          Teklif Talebini Gönder
-                          <svg className="transition-transform duration-300 group-hover:translate-x-0.5" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                          </svg>
-                        </>
-                      )}
-                    </span>
+                      hover:shadow-[0_8px_24px_rgba(255,169,249,0.22)] disabled:opacity-70 disabled:cursor-not-allowed">
+                    {submitState === 'loading' ? (
+                      <>
+                        <svg className="animate-spin" width="15" height="15" viewBox="0 0 24 24" fill="none">
+                          <circle cx="12" cy="12" r="10" stroke="rgba(26,26,26,0.25)" strokeWidth="3" />
+                          <path d="M22 12a10 10 0 01-10 10" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+                        </svg>
+                        Gönderiliyor…
+                      </>
+                    ) : (
+                      <>
+                        Teklif Talebini Gönder
+                        <svg className="transition-transform duration-300 group-hover:translate-x-0.5" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </>
+                    )}
                   </button>
 
-                  <p className="mt-5 text-center font-body text-[0.78rem] text-t3 font-light">
+                  <p className="mt-5 text-center font-body text-[0.76rem] text-t3 font-light max-w-md">
                     veya doğrudan{' '}
                     <a href="mailto:info@beracore.com" className="text-accent hover:underline">info@beracore.com</a>
                     {' '}adresine yazın · Verileriniz yalnızca teklif sürecinde kullanılır.
@@ -1001,6 +991,7 @@ export default function ContactPage() {
                 </div>
               </form>
             )}
+            </div>
           </div>
         </div>
       </section>
@@ -1029,7 +1020,7 @@ export default function ContactPage() {
               style={{ background: 'linear-gradient(180deg, transparent, #ffa9f9, #fff7ad, transparent)' }}
             />
 
-            <div className="relative space-y-10 max-md:space-y-7">
+            <div className="relative space-y-10 max-md:space-y-7" style={{ perspective: '1400px' }}>
               {PROCESS_STEPS.map((s, i) => {
                 const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
                 return (
@@ -1043,25 +1034,58 @@ export default function ContactPage() {
                         }} />
                     </div>
 
-                    <div
-                      className="relative p-7 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.15] transition-all duration-400 max-md:p-5 min-w-0"
-                      style={{ '--accent': accent } as React.CSSProperties}>
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                          style={{ background: `${accent}14`, boxShadow: `0 0 0 1px ${accent}30 inset` }}>
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                            <path d={s.iconPath} />
-                          </svg>
-                        </div>
-                        <div className="min-w-0">
-                          <div className="font-body text-[0.65rem] font-semibold tracking-[0.25em] uppercase" style={{ color: `${accent}aa` }}>
-                            Adım {s.step} · {s.time}
+                    <article
+                      onMouseMove={handleTilt}
+                      onMouseLeave={handleTiltLeave}
+                      className="ct-process-card group relative p-7 rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden transition-all duration-400 hover:border-white/[0.18] hover:bg-white/[0.035] cursor-default max-md:p-5 min-w-0"
+                      style={{ '--accent': accent, transformStyle: 'preserve-3d' } as React.CSSProperties}>
+                      {/* Accent border glow hover */}
+                      <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        style={{ boxShadow: `0 0 0 1px ${accent} inset, 0 0 24px ${accent}44, 0 0 50px ${accent}1a` }}
+                        aria-hidden="true" />
+                      {/* Cursor radial */}
+                      <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        style={{ background: `radial-gradient(280px circle at var(--mx) var(--my), ${accent}14, transparent 70%)` }}
+                        aria-hidden="true" />
+                      {/* Corner brackets */}
+                      {([
+                        ['top-2.5 left-2.5', 'TL'],
+                        ['top-2.5 right-2.5', 'TR'],
+                        ['bottom-2.5 left-2.5', 'BL'],
+                        ['bottom-2.5 right-2.5', 'BR'],
+                      ] as const).map(([pos, key]) => (
+                        <span key={key} aria-hidden="true"
+                          className={`pointer-events-none absolute w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out ${pos}`}
+                          style={{
+                            ...(key.startsWith('T') && { borderTop: `1.5px solid ${accent}` }),
+                            ...(key.startsWith('B') && { borderBottom: `1.5px solid ${accent}` }),
+                            ...(key.endsWith('L') && { borderLeft: `1.5px solid ${accent}` }),
+                            ...(key.endsWith('R') && { borderRight: `1.5px solid ${accent}` }),
+                            [`border${key.startsWith('T') ? 'Top' : 'Bottom'}${key.endsWith('L') ? 'Left' : 'Right'}Radius`]: '8px',
+                            filter: `drop-shadow(0 0 6px ${accent}88)`,
+                          }} />
+                      ))}
+
+                      <div className="relative">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-6"
+                            style={{ background: `${accent}14`, boxShadow: `0 0 0 1px ${accent}30 inset, 0 0 20px ${accent}22` }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                              <path d={s.iconPath} />
+                            </svg>
                           </div>
-                          <h3 className="font-heading text-[1.1rem] font-semibold text-t1 mt-0.5 max-md:text-[1rem]">{s.title}</h3>
+                          <div className="min-w-0">
+                            <div className="font-body text-[0.65rem] font-semibold tracking-[0.25em] uppercase" style={{ color: `${accent}aa` }}>
+                              Adım {s.step} · {s.time}
+                            </div>
+                            <h3 className="font-heading text-[1.1rem] font-semibold text-t1 mt-0.5 transition-colors duration-400 group-hover:text-[color:var(--accent)] max-md:text-[1rem]">
+                              {s.title}
+                            </h3>
+                          </div>
                         </div>
+                        <p className="font-body text-[0.9rem] text-t2 font-light leading-[1.7] max-md:text-[0.85rem]">{s.desc}</p>
                       </div>
-                      <p className="font-body text-[0.9rem] text-t2 font-light leading-[1.7] max-md:text-[0.85rem]">{s.desc}</p>
-                    </div>
+                    </article>
                   </div>
                 );
               })}
@@ -1290,11 +1314,13 @@ function FormStep({
             style={{ background: `linear-gradient(180deg, ${accent}44, transparent)` }} />
         )}
       </div>
-      <div className="pt-2.5 min-w-0">
-        <div className="flex items-baseline gap-3 mb-4 flex-wrap">
-          <h3 className="font-heading text-[1.1rem] font-semibold text-t1 max-md:text-[1rem]">{title}</h3>
+      <div className="pt-1.5 min-w-0">
+        <div className="flex items-baseline gap-3 mb-5 flex-wrap">
+          <h3 className="font-heading text-[1.35rem] font-bold tracking-tight gradient-text leading-none max-md:text-[1.15rem]">
+            {title}
+          </h3>
           {hint && (
-            <span className="font-body text-[0.7rem] text-t3 font-light">{hint}</span>
+            <span className="font-body text-[0.68rem] font-semibold tracking-[0.2em] uppercase text-t3">{hint}</span>
           )}
         </div>
         {children}
@@ -1355,47 +1381,44 @@ function FloatingInput({
 }
 
 // ============================================================
-// FLOATING LABEL TEXTAREA (with character counter)
+// FLOATING LABEL TEXTAREA (kısa label üstte, uzun placeholder içeride)
 // ============================================================
 function FloatingTextarea({
-  id, label, value, onChange, required, error, maxLength,
+  id, label, placeholder, value, onChange, required, error, maxLength,
 }: {
   id: string;
   label: string;
+  placeholder?: string;
   value: string;
   onChange: (v: string) => void;
   required?: boolean;
   error?: string;
   maxLength?: number;
 }) {
-  const hasValue = value.length > 0;
   const field = id.replace(/^f-/, '');
   return (
     <div className="relative" data-field={field}>
       <div className={`relative rounded-xl border transition-all duration-300
         ${error ? 'border-red-400/50 bg-red-500/[0.02]' : 'border-white/[0.08] bg-white/[0.03] focus-within:border-accent/40 focus-within:bg-white/[0.05]'}`}>
+        <label
+          htmlFor={id}
+          className="block px-5 pt-3 pb-1 font-body text-[0.65rem] font-semibold tracking-[0.2em] uppercase text-t3 peer-focus:text-accent">
+          {label}{required ? ' *' : ''}
+        </label>
         <textarea
           id={id}
           rows={6}
           required={required}
           maxLength={maxLength}
+          placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-err` : undefined}
-          className="peer w-full px-5 pt-7 pb-3 bg-transparent font-body text-[0.9rem] text-t1 outline-none resize-none"
+          className="peer w-full px-5 pb-4 pt-1 bg-transparent font-body text-[0.9rem] text-t1 outline-none resize-none placeholder:text-t3/55 placeholder:font-light"
         />
-        <label
-          htmlFor={id}
-          className={`pointer-events-none absolute left-5 right-14 font-body transition-all duration-200 ease-out
-            ${hasValue
-              ? 'top-2 text-[0.65rem] font-semibold tracking-[0.2em] uppercase text-t3'
-              : 'top-5 text-[0.88rem] text-t3/70 leading-snug'}
-            peer-focus:top-2 peer-focus:text-[0.65rem] peer-focus:font-semibold peer-focus:tracking-[0.2em] peer-focus:uppercase peer-focus:text-accent`}>
-          {label}{required ? ' *' : ''}
-        </label>
         {maxLength && (
-          <span className="absolute bottom-2.5 right-4 font-body text-[0.68rem] text-t3/70 tabular-nums">
+          <span className="absolute bottom-2.5 right-4 font-body text-[0.68rem] text-t3/70 tabular-nums pointer-events-none">
             {value.length}/{maxLength}
           </span>
         )}
