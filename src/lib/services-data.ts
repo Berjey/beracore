@@ -45,7 +45,7 @@ export const services: Service[] = [
         features: ['Doğal Dil İşleme (NLP)', 'Çok dilli destek (50+ dil)', 'CRM/ERP entegrasyonu', 'Öğrenen algoritma', 'Duygu analizi & sentiment', 'Sesli asistan desteği'],
         process: ['İhtiyaç analizi ve senaryo tasarımı', 'AI modeli eğitimi ve kişiselleştirme', 'Entegrasyon ve kapsamlı test süreci', 'Canlıya alma ve sürekli optimizasyon'],
         benefits: ['Müşteri hizmetleri maliyetlerinde %60 tasarruf', '7/24 kesintisiz, anında müşteri desteği', 'Artan müşteri memnuniyeti ve marka bağlılığı'],
-        stats: [{ value: '%60', label: 'Maliyet Tasarrufu' }, { value: '7/24', label: 'Kesintisiz Destek' }, { value: '50+', label: 'Desteklenen Dil' }, { value: '%99.9', label: 'Uptime Garantisi' }],
+        stats: [{ value: '%55', label: 'Maliyet Tasarrufu' }, { value: '<2s', label: 'Yanıt Süresi' }, { value: '40+', label: 'Dil Desteği' }, { value: '%99.5', label: 'SLA Uptime' }],
         faq: [
           { question: 'AI chatbot nedir ve nasıl çalışır?', answer: 'AI chatbot, doğal dil işleme (NLP) teknolojisi kullanarak müşterilerinizle metin veya ses aracılığıyla iletişim kuran yapay zeka yazılımıdır. Kullanıcıların sorularını anlayarak bağlama uygun yanıtlar üretir ve her etkileşimde öğrenerek kendini geliştirir.' },
           { question: 'Chatbot geliştirme süreci ne kadar sürer?', answer: 'Projenin kapsamına bağlı olarak chatbot geliştirme süreci genellikle 4-12 hafta arasında sürer. Basit senaryolar için 4 hafta yeterli olurken, çok dilli ve CRM entegrasyonlu kapsamlı projeler 8-12 hafta sürebilir.' },
@@ -65,7 +65,7 @@ export const services: Service[] = [
         features: ['RPA bot geliştirme', 'İş akışı tasarımı & orkestrasyon', 'Raporlama & analitik dashboard', 'API otomasyon & webhook', 'Belge işleme (OCR/IDP)', 'Akıllı karar motorları'],
         process: ['Süreç haritalama ve otomasyon potansiyeli analizi', 'Bot geliştirme ve iş akışı tasarımı', 'Pilot uygulama ve performans testi', 'Tam ölçekli dağıtım ve izleme'],
         benefits: ['Operasyonel maliyetlerde %40-70 düşüş', 'İnsan hatasının tamamen ortadan kaldırılması', 'Çalışan verimliliğinde 3x artış'],
-        stats: [{ value: '%70', label: 'Verimlilik Artışı' }, { value: '3x', label: 'Hız Kazanımı' }, { value: '%0', label: 'İnsan Hatası' }, { value: '500+', label: 'Otomasyon Senaryosu' }],
+        stats: [{ value: '%65', label: 'Verimlilik Artışı' }, { value: '3x', label: 'Hız Kazanımı' }, { value: '%98', label: 'İşlem Doğruluğu' }, { value: '120+', label: 'Otomasyon Senaryosu' }],
         faq: [
           { question: 'RPA (Robotik Süreç Otomasyonu) nedir?', answer: 'RPA, tekrarlayan ve kural tabanlı iş süreçlerini yazılım robotları ile otomatikleştiren bir teknolojidir. İnsan müdahalesi olmadan veri girişi, form doldurma, rapor oluşturma gibi görevleri yerine getirir.' },
           { question: 'Hangi iş süreçleri otomatikleştirilebilir?', answer: 'Fatura işleme, sipariş yönetimi, veri aktarımı, raporlama, müşteri onboarding, envanter güncelleme ve daha birçok tekrarlayan süreç RPA ile otomatikleştirilebilir.' },
@@ -85,7 +85,7 @@ export const services: Service[] = [
         features: ['Tahmine dayalı analitik (predictive)', 'Gerçek zamanlı veri dashboard\'ı', 'İnteraktif veri görselleştirme', 'Makine öğrenmesi modelleri', 'Anomali ve sahtekarlık tespiti', 'Otomatik rapor üretimi'],
         process: ['Veri kaynaklarının haritalanması ve entegrasyonu', 'Veri temizleme ve model eğitimi', 'Dashboard ve görselleştirme tasarımı', 'Deployment ve sürekli model iyileştirme'],
         benefits: ['Veriye dayalı stratejik karar alma kapasitesi', 'Pazar trendlerini önceden tahmin edebilme', 'Gelir artışı ve maliyet optimizasyonu'],
-        stats: [{ value: '%95', label: 'Tahmin Doğruluğu' }, { value: '10x', label: 'Hızlı Analiz' }, { value: '360°', label: 'Veri Görünürlüğü' }, { value: '24/7', label: 'Gerçek Zamanlı' }],
+        stats: [{ value: '%92', label: 'Tahmin Doğruluğu' }, { value: '8x', label: 'Analiz Hızı' }, { value: '360°', label: 'Veri Görünürlüğü' }, { value: '24/7', label: 'Gerçek Zamanlı' }],
         faq: [
           { question: 'AI veri analizi işletmeme ne katar?', answer: 'AI veri analizi, büyük veri setlerinden insan gözünün kaçıracağı kalıpları ve trendleri ortaya çıkarır. Bu sayede stratejik kararlarınızı veriye dayalı alır, riskleri önceden tespit eder ve yeni fırsatları keşfedersiniz.' },
           { question: 'Hangi veri kaynaklarını analiz edebilirsiniz?', answer: 'Veritabanları, CRM sistemleri, web analitiği, sosyal medya, IoT sensörleri, ERP ve daha birçok kaynaktan veri toplayarak bütünleşik analiz yapıyoruz.' },
@@ -105,7 +105,7 @@ export const services: Service[] = [
         features: ['Özel model eğitimi & fine-tuning', 'Görüntü işleme & bilgisayarlı görü', 'Ses tanıma & sentezleme', 'Kişiselleştirilmiş öneri sistemleri', 'Anomali & sahtekarlık tespiti', 'Edge AI & IoT entegrasyonu'],
         process: ['Kullanım senaryosu tanımlama ve fizibilite', 'Veri toplama, etiketleme ve model tasarımı', 'Prototip geliştirme ve performans testi', 'Üretim ortamına deployment ve monitoring'],
         benefits: ['Sektöre özel, rakiplerden farklılaşan AI çözümleri', 'Ölçeklenebilir ve sürekli öğrenen modeller', 'Tam entegre, uçtan uca AI altyapısı'],
-        stats: [{ value: '50+', label: 'AI Projesi' }, { value: '%98', label: 'Model Doğruluğu' }, { value: '∞', label: 'Ölçeklenebilirlik' }, { value: '7/24', label: 'Model İzleme' }],
+        stats: [{ value: '35+', label: 'AI Projesi' }, { value: '%94', label: 'Model Doğruluğu' }, { value: '%99', label: 'Uptime SLA' }, { value: '7/24', label: 'Model İzleme' }],
         faq: [
           { question: 'Özel AI çözümü ne zaman gereklidir?', answer: 'Hazır AI ürünleri iş ihtiyaçlarınızı karşılayamadığında, sektöre özel veri ve süreçleriniz olduğunda veya rakiplerden farklılaşmak istediğinizde özel AI çözümü gerekir.' },
           { question: 'AI model eğitimi için ne kadar veriye ihtiyaç var?', answer: 'Gerekli veri miktarı probleme göre değişir. Genellikle binlerce etiketli veri noktası yeterlidir. Transfer learning ile daha az veriyle bile yüksek performanslı modeller geliştirebiliyoruz.' },
@@ -136,7 +136,7 @@ export const services: Service[] = [
         features: ['Yüksek frekanslı trade engine (100K+ TPS)', 'Soğuk/sıcak cüzdan yönetim sistemi', 'KYC/AML uyumluluk modülü', 'Likidite havuzu & market maker', 'Spot, futures & marjin trading', 'Gerçek zamanlı order book & charting'],
         process: ['Borsa mimarisi tasarımı ve güvenlik planlaması', 'Core engine, cüzdan ve eşleştirme motoru geliştirme', 'Güvenlik denetimi ve penetrasyon testi', 'Kademeli lansman ve likidite yönetimi'],
         benefits: ['Saniyede 100.000+ işlem kapasitesi', 'Kurumsal düzeyde çok katmanlı güvenlik', 'Uluslararası regülasyonlara tam uyumluluk'],
-        stats: [{ value: '100K+', label: 'İşlem/Saniye' }, { value: '%99.99', label: 'Uptime' }, { value: '256-bit', label: 'Şifreleme' }, { value: '50+', label: 'Coin Desteği' }],
+        stats: [{ value: '10K+', label: 'TPS' }, { value: '%99.95', label: 'Uptime' }, { value: '256-bit', label: 'Şifreleme' }, { value: '40+', label: 'Coin Desteği' }],
         faq: [
           { question: 'Kripto para borsası geliştirmek ne kadar sürer?', answer: 'Tam kapsamlı bir kripto para borsası geliştirme süreci 4-8 ay arasında sürer. MVP (Minimum Viable Product) yaklaşımıyla 3 ayda temel özellikleri devreye alıp kademeli olarak genişletebiliriz.' },
           { question: 'Borsa güvenliği nasıl sağlanır?', answer: 'Çok katmanlı güvenlik mimarisi kullanıyoruz: soğuk cüzdan depolama, 2FA, IP whitelisting, DDoS koruması, penetrasyon testleri ve 7/24 güvenlik izleme ile fonlarınız koruma altında.' },
@@ -156,7 +156,7 @@ export const services: Service[] = [
         features: ['Solidity, Rust & Move geliştirme', 'Bağımsız güvenlik denetimi (audit)', 'Gas optimizasyonu & maliyet kontrolü', 'Upgradeable proxy kontratlar', 'Multisig & timelock mekanizmaları', 'Formal verification & test suite'],
         process: ['Kontrat gereksinimlerinin belirlenmesi', 'Akıllı kontrat geliştirme ve birim testleri', 'Üçüncü parti güvenlik denetimi', 'Mainnet deployment ve doğrulama'],
         benefits: ['%100 güvenlik denetimli kontratlar', 'Optimize edilmiş gas maliyetleri', 'Gelecek uyumlu, yükseltilebilir mimari'],
-        stats: [{ value: '%100', label: 'Audit Oranı' }, { value: '200+', label: 'Deploy Edilen Kontrat' }, { value: '%40', label: 'Gas Tasarrufu' }, { value: '0', label: 'Güvenlik İhlali' }],
+        stats: [{ value: '%95', label: 'Test Coverage' }, { value: '120+', label: 'Kontrat Deploy' }, { value: '%40', label: 'Gas Optimizasyonu' }, { value: '0', label: 'Kritik Açık' }],
         faq: [
           { question: 'Akıllı kontrat nedir?', answer: 'Akıllı kontrat, blockchain üzerinde çalışan ve önceden tanımlanan koşullar sağlandığında otomatik olarak yürütülen dijital sözleşmelerdir. Aracıya gerek kalmadan güvenli işlemler yapmanızı sağlar.' },
           { question: 'Akıllı kontrat güvenlik denetimi neden önemlidir?', answer: 'Blockchain işlemleri geri alınamaz olduğundan, güvenlik açıkları büyük kayıplara yol açabilir. Bağımsız güvenlik denetimi, kontratınızdaki olası açıkları tespit ederek fonlarınızı korur.' },
@@ -176,7 +176,7 @@ export const services: Service[] = [
         features: ['Token oluşturma (ERC-20/721/1155)', 'DEX & AMM protokol geliştirme', 'Staking & yield farming mekanizmaları', 'DAO yönetişim altyapısı', 'Likidite havuzu yönetimi', 'Tokenomik tasarım & danışmanlık'],
         process: ['Token ekonomisi ve protokol tasarımı', 'Akıllı kontrat geliştirme ve denetim', 'Frontend ve kullanıcı arayüzü entegrasyonu', 'Lansman, likidite sağlama ve topluluk oluşturma'],
         benefits: ['Profesyonel tokenomik tasarım ve danışmanlık', 'Güvenli ve denetlenmiş DeFi protokolleri', 'Sürdürülebilir token ekonomisi ve yönetişim'],
-        stats: [{ value: '30+', label: 'Token Projesi' }, { value: '$50M+', label: 'TVL Yönetimi' }, { value: '10+', label: 'DEX Entegrasyonu' }, { value: '100K+', label: 'Token Holder' }],
+        stats: [{ value: '12+', label: 'DeFi Projesi' }, { value: '5+', label: 'Blockchain' }, { value: '3+', label: 'DEX Entegrasyonu' }, { value: 'Audit', label: 'Onaylı' }],
         faq: [
           { question: 'DeFi nedir ve nasıl çalışır?', answer: 'DeFi (Merkeziyetsiz Finans), blockchain teknolojisi üzerinde aracısız finansal hizmetler sunan protokollerdir. Borç verme, ödünç alma, takas ve likidite sağlama gibi finansal işlemleri akıllı kontratlar aracılığıyla gerçekleştirir.' },
           { question: 'Token oluşturma süreci nasıl işler?', answer: 'Token oluşturma; tokenomik tasarım, akıllı kontrat geliştirme, güvenlik denetimi ve deployment aşamalarından oluşur. ERC-20, ERC-721 veya ERC-1155 standartlarından projenize uygun olanı seçeriz.' },
@@ -196,7 +196,7 @@ export const services: Service[] = [
         features: ['Kripto ödeme gateway entegrasyonu', 'Fiat on-ramp & off-ramp çözümleri', 'PCI DSS Level 1 uyumluluk', 'Çoklu para birimi desteği (150+)', 'Anlık ödeme bildirimleri & webhook', 'Sahtekarlık tespit & önleme sistemi'],
         process: ['Ödeme akışı tasarımı ve güvenlik planlaması', 'Gateway entegrasyonu ve API geliştirme', 'Compliance ve güvenlik sertifikasyonu', 'Pilot test ve kademeli canlıya alma'],
         benefits: ['PCI DSS Level 1 ile en üst düzey güvenlik', 'Küresel ölçekte 150+ para birimi desteği', 'Düşük işlem ücretleri ve anlık settlement'],
-        stats: [{ value: '150+', label: 'Para Birimi' }, { value: '<1s', label: 'İşlem Süresi' }, { value: 'PCI DSS', label: 'Güvenlik Sertifikası' }, { value: '%99.99', label: 'İşlem Başarısı' }],
+        stats: [{ value: '30+', label: 'Para Birimi' }, { value: '<1s', label: 'İşlem Süresi' }, { value: 'PCI DSS', label: 'Sertifikalı' }, { value: '%99.95', label: 'İşlem Başarısı' }],
         faq: [
           { question: 'Kripto ödeme altyapısı nasıl çalışır?', answer: 'Kripto ödeme altyapımız, müşterilerinizin Bitcoin, Ethereum ve diğer kripto paralarla ödeme yapmasını sağlar. Anlık kur dönüştürme ile isterseniz ödemeleri otomatik olarak fiat para birimine çevirebilirsiniz.' },
           { question: 'PCI DSS uyumluluk neden önemlidir?', answer: 'PCI DSS, kart verilerinin güvenliğini sağlayan uluslararası standarttır. Bu sertifikaya sahip olmak müşterilerinize güven verir ve yasal gereksinimleri karşılamanızı sağlar.' },
@@ -226,7 +226,7 @@ export const services: Service[] = [
         features: ['React / Next.js / Vue.js', 'Node.js, Express & NestJS', 'PostgreSQL, MongoDB & Redis', 'CI/CD pipeline & DevOps', 'Server-side rendering (SSR)', 'Progressive Web App (PWA)'],
         process: ['Gereksinim analizi ve teknoloji seçimi', 'UI/UX tasarımı ve prototipleme', 'Agile geliştirme ve sprint döngüleri', 'Test, deployment ve bakım süreci'],
         benefits: ['%99.9 uptime garantili altyapı', 'Google Lighthouse 90+ performans skoru', 'Ölçeklenebilir, bakımı kolay mimari'],
-        stats: [{ value: '200+', label: 'Web Projesi' }, { value: '90+', label: 'Lighthouse Skoru' }, { value: '%99.9', label: 'Uptime' }, { value: '5s', label: 'Ort. Yükleme' }],
+        stats: [{ value: '120+', label: 'Web Projesi' }, { value: '95+', label: 'Lighthouse' }, { value: '%99.9', label: 'Uptime' }, { value: '<2s', label: 'Yükleme Süresi' }],
         faq: [
           { question: 'Web uygulama geliştirme süreci nasıl işler?', answer: 'Agile metodoloji ile çalışıyoruz. Gereksinim analizi, tasarım, geliştirme, test ve deployment aşamalarını 2 haftalık sprint döngülerinde iteratif olarak yürütüyoruz.' },
           { question: 'Hangi teknolojileri kullanıyorsunuz?', answer: 'Frontend için React, Next.js ve Vue.js; backend için Node.js, NestJS ve Express; veritabanı için PostgreSQL, MongoDB ve Redis kullanıyoruz. Projenin ihtiyaçlarına göre en uygun stack\'i seçiyoruz.' },
@@ -245,7 +245,7 @@ export const services: Service[] = [
         features: ['React Native / Flutter', 'Native iOS (Swift) & Android (Kotlin)', 'Push bildirimler & deep linking', 'Offline mod & veri senkronizasyonu', 'Biyometrik kimlik doğrulama', 'App Store & Play Store optimizasyonu'],
         process: ['Kullanıcı araştırması ve UX tasarımı', 'Cross-platform veya native geliştirme', 'Beta test ve kullanıcı geri bildirimi', 'Store yayın ve performans izleme'],
         benefits: ['Tek kod tabanı ile %50 maliyet tasarrufu', 'Her iki platformda native performans', 'Hızlı time-to-market ve iterasyon'],
-        stats: [{ value: '80+', label: 'Mobil Uygulama' }, { value: '4.8+', label: 'Store Puanı' }, { value: '1M+', label: 'İndirme' }, { value: '%50', label: 'Maliyet Tasarrufu' }],
+        stats: [{ value: '45+', label: 'Mobil Uygulama' }, { value: '4.7+', label: 'Store Puanı' }, { value: '500K+', label: 'İndirme' }, { value: '%50', label: 'Maliyet Tasarrufu' }],
         faq: [
           { question: 'Native ve cross-platform arasındaki fark nedir?', answer: 'Native uygulama her platform için ayrı kod yazılmasını gerektirirken, cross-platform (React Native/Flutter) tek kod tabanıyla her iki platformda çalışır. Cross-platform %50 maliyet tasarrufu sağlarken, native ise maksimum performans sunar.' },
           { question: 'Mobil uygulama geliştirme maliyeti nedir?', answer: 'Maliyet, uygulamanın karmaşıklığına göre değişir. Basit uygulamalar için daha düşük bütçe yeterli olurken, kapsamlı enterprise uygulamalar daha fazla yatırım gerektirir. Detaylı fiyat için bizimle iletişime geçin.' },
@@ -264,7 +264,7 @@ export const services: Service[] = [
         features: ['Kurumsal ERP sistemleri', 'Özel CRM çözümleri', 'İş zekası (BI) & raporlama', 'Microservice mimari', 'Event-driven & message queue', 'Kubernetes & Docker containerization'],
         process: ['İş süreçleri analizi ve çözüm tasarımı', 'Mimari tasarım ve teknoloji stack belirleme', 'Modüler geliştirme ve entegrasyon', 'Eğitim, deployment ve destek'],
         benefits: ['İş süreçlerine tam uyumlu özel çözümler', 'Sınırsız ölçeklenebilirlik ve esneklik', 'Tam sahiplik ve bağımsızlık'],
-        stats: [{ value: '150+', label: 'Özel Proje' }, { value: '%100', label: 'Özelleştirme' }, { value: '∞', label: 'Ölçeklenebilir' }, { value: '10+', label: 'Yıl Deneyim' }],
+        stats: [{ value: '80+', label: 'Özel Proje' }, { value: '%95', label: 'SLA Oranı' }, { value: '%99.9', label: 'Uptime' }, { value: '8+', label: 'Yıl Deneyim' }],
         faq: [
           { question: 'Özel yazılım ne zaman tercih edilmelidir?', answer: 'Hazır çözümler iş süreçlerinize uyum sağlayamadığında, benzersiz ihtiyaçlarınız olduğunda veya rekabet avantajı elde etmek istediğinizde özel yazılım doğru tercihdir.' },
           { question: 'Microservice mimari neden önemlidir?', answer: 'Microservice mimari, uygulamanızı bağımsız modüllere bölerek her birini ayrı ölçeklendirmenizi, güncellemenizi ve dağıtmanızı sağlar. Sistem dayanıklılığını artırır ve ekip verimliliğini yükseltir.' },
@@ -283,7 +283,7 @@ export const services: Service[] = [
         features: ['RESTful API tasarımı & geliştirme', 'GraphQL & gRPC implementasyonu', '3. parti entegrasyon (SAP, Salesforce vb.)', 'Webhook & event-driven mimari', 'API gateway & rate limiting', 'Swagger/OpenAPI dokümantasyon'],
         process: ['API spesifikasyonu ve kontrat tasarımı', 'Endpoint geliştirme ve güvenlik katmanı', 'Entegrasyon testi ve yük testi', 'Dokümantasyon ve developer portal'],
         benefits: ['Tüm sistemleriniz tek bir platformda birleşir', 'Yüksek güvenlikli ve performanslı API\'ler', 'Kapsamlı dokümantasyon ve SDK desteği'],
-        stats: [{ value: '500+', label: 'API Endpoint' }, { value: '<100ms', label: 'Yanıt Süresi' }, { value: '99.9%', label: 'Uptime SLA' }, { value: '50+', label: '3.Parti Entegrasyon' }],
+        stats: [{ value: '300+', label: 'API Endpoint' }, { value: '<150ms', label: 'Yanıt Süresi' }, { value: '%99.9', label: 'Uptime SLA' }, { value: '30+', label: 'Entegrasyon' }],
         faq: [
           { question: 'RESTful API ve GraphQL arasındaki fark nedir?', answer: 'REST, kaynağa dayalı sabit endpoint\'ler sunarken, GraphQL tek endpoint üzerinden istemcinin tam olarak ihtiyaç duyduğu veriyi sorgulamasını sağlar. GraphQL over-fetching ve under-fetching problemlerini çözer.' },
           { question: 'API güvenliği nasıl sağlanır?', answer: 'OAuth 2.0, JWT token, API key, rate limiting, IP whitelisting ve SSL/TLS şifreleme ile API\'lerinizi koruyoruz. OWASP API Security standartlarına uygun geliştirme yapıyoruz.' },
@@ -311,7 +311,7 @@ export const services: Service[] = [
         features: ['Responsive & mobile-first tasarım', 'Motion design & micro-interaction', 'Figma & Adobe XD prototyping', 'Design system oluşturma', 'Dark/light mode tasarımı', 'Accessibility (WCAG 2.1 AA)'],
         process: ['Marka analizi ve moodboard oluşturma', 'Wireframe ve bilgi mimarisi tasarımı', 'Yüksek sadakatli UI tasarımı', 'Prototip testi ve geliştirme handoff'],
         benefits: ['Marka kimliğiyle tam uyumlu dijital deneyim', 'Dönüşüm oranlarında ortalama %35 artış', 'Tüm cihazlarda kusursuz görünüm'],
-        stats: [{ value: '300+', label: 'Tasarım Projesi' }, { value: '%35', label: 'Dönüşüm Artışı' }, { value: '%100', label: 'Responsive' }, { value: 'WCAG', label: 'Erişilebilirlik' }],
+        stats: [{ value: '180+', label: 'Tasarım Projesi' }, { value: '%35', label: 'Dönüşüm Artışı' }, { value: 'Full', label: 'Responsive' }, { value: 'WCAG', label: 'Erişilebilirlik' }],
         faq: [
           { question: 'Web tasarım süreci nasıl işler?', answer: 'Marka analiziyle başlayıp, wireframe, UI tasarımı ve prototipleme aşamalarından geçerek geliştirme ekibine handoff ile tamamlanır. Her aşamada sizin onayınız alınır.' },
           { question: 'Responsive tasarım nedir?', answer: 'Responsive tasarım, web sitenizin masaüstü, tablet ve mobil dahil her ekran boyutunda optimum görünüm ve kullanım deneyimi sunmasını sağlayan tasarım yaklaşımıdır.' },
@@ -328,7 +328,7 @@ export const services: Service[] = [
         features: ['Kullanıcı araştırması & persona', 'User journey & flow mapping', 'Wireframe & interaktif prototip', 'A/B test tasarımı & analiz', 'Accessibility denetimi (WCAG)', 'Heuristic & usability evaluation'],
         process: ['Kullanıcı araştırması ve içgörü analizi', 'Bilgi mimarisi ve wireframe tasarımı', 'İnteraktif prototip ve kullanıcı testi', 'İterasyon ve final tasarım teslimi'],
         benefits: ['Veriye dayalı, kanıtlanmış tasarım kararları', 'Kullanıcı memnuniyetinde ölçülebilir artış', 'Düşük bounce rate ve yüksek dönüşüm'],
-        stats: [{ value: '%40', label: 'Dönüşüm Artışı' }, { value: '500+', label: 'UX Testi' }, { value: '%60', label: 'Bounce Rate Düşüşü' }, { value: '4.9/5', label: 'Kullanıcı Puanı' }],
+        stats: [{ value: '%35', label: 'Dönüşüm Artışı' }, { value: '300+', label: 'UX Testi' }, { value: '%50', label: 'Bounce Düşüşü' }, { value: '4.8/5', label: 'Kullanıcı Puanı' }],
         faq: [
           { question: 'UI ve UX arasındaki fark nedir?', answer: 'UI (User Interface) görsel arayüz tasarımıdır: renkler, tipografi, butonlar. UX (User Experience) ise kullanıcı deneyiminin tamamını kapsar: kullanılabilirlik, erişilebilirlik, kullanıcı akışları ve memnuniyet.' },
           { question: 'Kullanıcı araştırması neden gereklidir?', answer: 'Kullanıcı araştırması, hedef kitlenizin gerçek ihtiyaçlarını, davranışlarını ve beklentilerini anlamanızı sağlar. Varsayımlara değil, verilere dayalı tasarım kararları alarak başarısızlık riskini minimuma indirir.' },
@@ -345,7 +345,7 @@ export const services: Service[] = [
         features: ['Stratejik logo tasarımı', 'Renk sistemi & tipografi', 'Kapsamlı marka rehberi (brand book)', 'Sosyal medya kiti & şablonlar', 'Kurumsal kimlik uygulamaları', 'İkon & illüstrasyon seti'],
         process: ['Marka stratejisi ve konumlandırma workshop\'u', 'Görsel kimlik araştırması ve konsept geliştirme', 'Logo ve kimlik elemanları tasarımı', 'Brand book ve uygulama kılavuzu teslimi'],
         benefits: ['Rakiplerden farklılaşan güçlü marka algısı', 'Tüm temas noktalarında tutarlı kimlik', 'Profesyonel, ölçeklenebilir marka sistemi'],
-        stats: [{ value: '100+', label: 'Marka Projesi' }, { value: '%90', label: 'Müşteri Memnuniyeti' }, { value: '360°', label: 'Bütünsel Kimlik' }, { value: '∞', label: 'Ölçeklenebilir' }],
+        stats: [{ value: '65+', label: 'Marka Projesi' }, { value: '%92', label: 'Memnuniyet' }, { value: '360°', label: 'Bütünsel Kimlik' }, { value: '12+', label: 'Sektör' }],
         faq: [
           { question: 'Marka kimliği tasarımı neleri kapsar?', answer: 'Logo, renk paleti, tipografi, ikonlar, görsel dil kuralları, kurumsal kimlik uygulamaları (kartvizit, antetli kağıt vb.) ve sosyal medya kitini kapsayan bütünsel bir pakettir.' },
           { question: 'Logo tasarımı süreci nasıl işler?', answer: 'Marka stratejisi workshop\'u ile başlıyoruz. Araştırma, konsept geliştirme, tasarım alternatifleri ve revizyonlar ile final logonuza ulaşıyoruz. Genellikle 3-4 hafta sürer.' },
@@ -362,7 +362,7 @@ export const services: Service[] = [
         features: ['Sosyal medya görsel tasarımı', 'Banner & display reklam tasarımı', 'Kurumsal sunum tasarımı', 'İnfografik & veri görselleştirme', 'Baskı & ambalaj tasarımı', 'Motion graphics & kısa video'],
         process: ['Brief analizi ve yaratıcı konsept', 'Tasarım alternatifleri ve revizyon', 'Final tasarım ve dosya hazırlığı', 'Çoklu format export ve teslim'],
         benefits: ['Marka ile uyumlu, tutarlı görsel dil', 'Sosyal medyada artan etkileşim ve görünürlük', 'Print-ready ve dijital-ready profesyonel çıktılar'],
-        stats: [{ value: '5000+', label: 'Tasarım' }, { value: '%200', label: 'Etkileşim Artışı' }, { value: '48s', label: 'Ort. Teslim Süresi' }, { value: '∞', label: 'Revizyon Desteği' }],
+        stats: [{ value: '2500+', label: 'Tasarım' }, { value: '%180', label: 'Etkileşim Artışı' }, { value: '48s', label: 'Ort. Teslim' }, { value: '3+', label: 'Revizyon Hakkı' }],
         faq: [
           { question: 'Hangi grafik tasarım hizmetlerini sunuyorsunuz?', answer: 'Sosyal medya görselleri, banner reklamlar, infografikler, sunum tasarımı, kartvizit, broşür, poster, ambalaj tasarımı ve motion graphics dahil geniş bir yelpazede hizmet sunuyoruz.' },
           { question: 'Tasarım dosyaları hangi formatta teslim edilir?', answer: 'PNG, JPG, SVG, PDF, AI, PSD ve FIGMA formatlarında teslim ediyoruz. Baskı için CMYK, dijital için RGB renk modunda hazırlanır.' },
@@ -390,7 +390,7 @@ export const services: Service[] = [
         features: ['Özel mağaza yazılımı', 'Gelişmiş stok & sipariş yönetimi', 'Çoklu dil & para birimi desteği', 'Mobil uyumlu & PWA', 'Akıllı ürün öneri motoru', 'Gelişmiş arama & filtreleme'],
         process: ['E-ticaret stratejisi ve platform planlaması', 'UI/UX tasarımı ve geliştirme', 'Ödeme, kargo ve ERP entegrasyonları', 'Lansman, SEO optimizasyonu ve bakım'],
         benefits: ['Sınırsız özelleştirme ve ölçeklenebilirlik', 'Dönüşüm oranlarında ortalama %40 artış', 'Tam kontrol ve bağımsızlık'],
-        stats: [{ value: '100+', label: 'E-Ticaret Projesi' }, { value: '%40', label: 'Dönüşüm Artışı' }, { value: '10M+', label: 'İşlenen Sipariş' }, { value: '%99.9', label: 'Uptime' }],
+        stats: [{ value: '60+', label: 'E-Ticaret Projesi' }, { value: '%40', label: 'Dönüşüm Artışı' }, { value: '5M+', label: 'İşlenen Sipariş' }, { value: '%99.9', label: 'Uptime' }],
         faq: [
           { question: 'Özel e-ticaret yazılımı mı yoksa hazır çözüm mü tercih etmeliyim?', answer: 'Benzersiz iş süreçleriniz varsa, yüksek ölçeklenebilirlik istiyorsanız veya farklılaşmak istiyorsanız özel yazılım tercih edilmelidir. Standart ihtiyaçlar için hazır çözümler de değerlendirilebilir.' },
           { question: 'E-ticaret sitesi geliştirme ne kadar sürer?', answer: 'Temel bir e-ticaret sitesi 6-8 haftada, kapsamlı özel platformlar 3-6 ayda tamamlanır. MVP yaklaşımıyla erken çıkış yapıp kademeli olarak geliştirmek mümkündür.' },
@@ -407,7 +407,7 @@ export const services: Service[] = [
         features: ['Trendyol & Hepsiburada entegrasyonu', 'Amazon, Etsy & N11 desteği', 'Gerçek zamanlı stok senkronizasyonu', 'Otomatik & dinamik fiyatlandırma', 'Çoklu kanal sipariş yönetimi', 'Satış performansı raporlama'],
         process: ['Pazaryeri hesap ve API yapılandırması', 'Ürün kataloğu eşleştirme ve aktarım', 'Stok ve sipariş senkronizasyonu kurulumu', 'Canlıya alma ve sürekli izleme'],
         benefits: ['Tek panelden tüm pazaryerlerini yönetme', 'Stok tutarsızlığı riskinin ortadan kalkması', 'Satışlarda çoklu kanal ile %60 artış'],
-        stats: [{ value: '15+', label: 'Pazaryeri' }, { value: '%60', label: 'Satış Artışı' }, { value: '0', label: 'Stok Hatası' }, { value: '1', label: 'Panel' }],
+        stats: [{ value: '15+', label: 'Pazaryeri' }, { value: '%60', label: 'Satış Artışı' }, { value: '<5s', label: 'Stok Senkron' }, { value: 'Tek', label: 'Panel' }],
         faq: [
           { question: 'Hangi pazaryerlerini destekliyorsunuz?', answer: 'Trendyol, Hepsiburada, N11, GittiGidiyor, Amazon, Etsy, Shopify ve daha 15+ pazaryerini destekliyoruz. Yeni pazaryerleri talep üzerine entegre edilir.' },
           { question: 'Stok senkronizasyonu nasıl çalışır?', answer: 'Gerçek zamanlı API entegrasyonu ile tüm kanallarınızdaki stok bilgileri otomatik olarak güncellenir. Bir kanalda satış gerçekleştiğinde diğer kanallardaki stok anında düşer.' },
@@ -424,7 +424,7 @@ export const services: Service[] = [
         features: ['iyzico, Stripe & PayTR entegrasyonu', 'Sanal POS & banka entegrasyonu', 'Taksitli ödeme seçenekleri', 'Abonelik & tekrarlayan ödeme', '3D Secure & PCI DSS uyumluluk', 'Sahtekarlık tespit & önleme'],
         process: ['Ödeme ihtiyaçları analizi ve sağlayıcı seçimi', 'Ödeme gateway entegrasyonu ve test', 'Güvenlik denetimi ve sertifikasyon', 'Canlıya alma ve transaction monitoring'],
         benefits: ['Tüm popüler ödeme yöntemlerinin desteği', 'En yüksek düzeyde ödeme güvenliği', 'Sepet terk oranında %25 düşüş'],
-        stats: [{ value: '20+', label: 'Ödeme Yöntemi' }, { value: '%25', label: 'Sepet Terk Düşüşü' }, { value: '3D Secure', label: 'Güvenlik' }, { value: '<2s', label: 'İşlem Süresi' }],
+        stats: [{ value: '15+', label: 'Ödeme Yöntemi' }, { value: '%25', label: 'Sepet Terk Düşüşü' }, { value: '3D', label: 'Secure' }, { value: '<2s', label: 'İşlem Süresi' }],
         faq: [
           { question: 'Hangi ödeme yöntemlerini destekliyorsunuz?', answer: 'Kredi kartı, banka kartı, havale/EFT, BKM Express, Apple Pay, Google Pay, Masterpass ve kripto para dahil 20+ ödeme yöntemini destekliyoruz.' },
           { question: 'Taksitli ödeme nasıl entegre edilir?', answer: 'Sanal POS entegrasyonu ile tüm büyük bankaların taksit seçeneklerini otomatik olarak müşterilerinize sunuyoruz. Banka bazında taksit oranlarını yönetebilirsiniz.' },
@@ -452,7 +452,7 @@ export const services: Service[] = [
         features: ['Kapsamlı teknik SEO denetimi', 'Anahtar kelime araştırması & strateji', 'İçerik optimizasyonu & on-page SEO', 'Link building & off-page SEO', 'Core Web Vitals optimizasyonu', 'Local SEO & Google Business'],
         process: ['Site denetimi ve rakip analizi', 'Anahtar kelime stratejisi ve içerik planı', 'Teknik ve on-page optimizasyonlar', 'Link building ve aylık performans raporlama'],
         benefits: ['Organik trafikte ortalama %150 artış', 'Sürdürülebilir ve ücretsiz trafik kaynağı', 'Hedef anahtar kelimelerde ilk sayfa sıralaması'],
-        stats: [{ value: '%150', label: 'Organik Trafik Artışı' }, { value: '1000+', label: 'Anahtar Kelime' }, { value: 'Top 10', label: 'Google Sıralaması' }, { value: '%95', label: 'Müşteri Memnuniyeti' }],
+        stats: [{ value: '%120', label: 'Organik Artış' }, { value: '600+', label: 'Anahtar Kelime' }, { value: 'Top 10', label: 'Google Sıralaması' }, { value: '%92', label: 'Memnuniyet' }],
         faq: [
           { question: 'SEO sonuçları ne kadar sürede görülür?', answer: 'SEO organik ve sürdürülebilir bir süreçtir. İlk iyileşmeler 2-3 ayda görülmeye başlar, anlamlı sonuçlar 4-6 ayda elde edilir. Rekabetçi sektörlerde 6-12 ay sürebilir.' },
           { question: 'Teknik SEO nedir ve neden önemlidir?', answer: 'Teknik SEO, sitenizin arama motorları tarafından taranabilirliğini, indekslenebilirliğini ve performansını optimize etmeyi kapsar. Hızlı yükleme, mobil uyumluluk, düzgün URL yapısı ve schema markup gibi faktörleri içerir.' },
@@ -469,7 +469,7 @@ export const services: Service[] = [
         features: ['Stratejik içerik planı & takvim', 'Profesyonel görsel & video üretimi', 'Topluluk yönetimi & moderasyon', 'Performans analitiği & raporlama', 'Influencer iş birliği yönetimi', 'Kriz iletişimi & itibar yönetimi'],
         process: ['Marka analizi ve strateji oluşturma', 'İçerik takvimi ve görsel üretim', 'Yayınlama, etkileşim ve topluluk yönetimi', 'Aylık analiz, raporlama ve strateji güncelleme'],
         benefits: ['Etkileşim oranlarında ortalama %200 artış', 'Tutarlı ve profesyonel marka iletişimi', 'Organik takipçi büyümesi ve topluluk oluşturma'],
-        stats: [{ value: '%200', label: 'Etkileşim Artışı' }, { value: '50+', label: 'Yönetilen Hesap' }, { value: '1M+', label: 'Aylık Erişim' }, { value: '500+', label: 'İçerik/Ay' }],
+        stats: [{ value: '%150', label: 'Etkileşim Artışı' }, { value: '40+', label: 'Yönetilen Hesap' }, { value: '600K+', label: 'Aylık Erişim' }, { value: '250+', label: 'İçerik/Ay' }],
         faq: [
           { question: 'Hangi sosyal medya platformlarını yönetiyorsunuz?', answer: 'Instagram, TikTok, LinkedIn, X (Twitter), Facebook, YouTube ve Pinterest dahil tüm büyük platformları yönetiyoruz. İhtiyacınıza göre platform seçimi yapıyoruz.' },
           { question: 'Aylık kaç içerik üretilir?', answer: 'Pakete göre değişmekle birlikte aylık 20-60 arasında görsel, video ve story içeriği üretiyoruz. Reels, TikTok ve carousel içerikler dahildir.' },
@@ -486,7 +486,7 @@ export const services: Service[] = [
         features: ['Google Ads (Search, Display, Shopping)', 'Meta Ads (Facebook & Instagram)', 'YouTube & video reklam yönetimi', 'Remarketing & retargeting stratejileri', 'A/B test & sürekli optimizasyon', 'Conversion tracking & attribution'],
         process: ['Hedef kitle araştırması ve strateji', 'Kampanya oluşturma ve kreatif tasarım', 'Lansman, A/B test ve optimizasyon', 'Performans raporlama ve bütçe optimizasyonu'],
         benefits: ['Reklam harcamasında ortalama 4x ROI', 'Doğru kitleye doğru mesaj ile düşük CPA', 'Şeffaf raporlama ve ölçülebilir sonuçlar'],
-        stats: [{ value: '4x', label: 'Ortalama ROI' }, { value: '₺10M+', label: 'Yönetilen Bütçe' }, { value: '%300', label: 'ROAS Artışı' }, { value: '100+', label: 'Aktif Kampanya' }],
+        stats: [{ value: '3x', label: 'Ortalama ROI' }, { value: '₺5M+', label: 'Yönetilen Bütçe' }, { value: '%200', label: 'ROAS Artışı' }, { value: '60+', label: 'Aktif Kampanya' }],
         faq: [
           { question: 'Google Ads ve Meta Ads arasındaki fark nedir?', answer: 'Google Ads aktif olarak ürün/hizmet arayan kullanıcılara ulaşırken (arama niyeti), Meta Ads ilgi alanı ve demografik hedefleme ile potansiyel müşterilere ulaşır (keşif). İkisinin birlikte kullanımı en etkili stratejidir.' },
           { question: 'Minimum reklam bütçesi ne olmalıdır?', answer: 'Etkili kampanyalar için minimum aylık bütçe sektöre göre değişir. Genel olarak başlangıç için makul bir bütçe ile başlayıp performansa göre artırmayı öneriyoruz. Detaylı bilgi için danışmanlık alabilirsiniz.' },
@@ -503,7 +503,7 @@ export const services: Service[] = [
         features: ['SEO uyumlu blog & makale yazımı', 'Video içerik prodüksiyonu', 'E-kitap & whitepaper hazırlama', 'E-mail pazarlama kampanyaları', 'İçerik takvimi & editorial planlama', 'İçerik performans analitiği'],
         process: ['İçerik stratejisi ve persona bazlı planlama', 'İçerik üretimi ve editorial review', 'Çoklu kanal dağıtım ve promotion', 'Performans analizi ve strateji optimizasyonu'],
         benefits: ['Organik trafikte uzun vadeli sürdürülebilir büyüme', 'Sektörde güvenilir otorite konumlandırma', 'Lead generation ve müşteri sadakati artışı'],
-        stats: [{ value: '1000+', label: 'Üretilen İçerik' }, { value: '%80', label: 'Organik Trafik Payı' }, { value: '3x', label: 'Lead Artışı' }, { value: '%45', label: 'E-mail Açılma Oranı' }],
+        stats: [{ value: '500+', label: 'Üretilen İçerik' }, { value: '%70', label: 'Organik Trafik Payı' }, { value: '2x', label: 'Lead Artışı' }, { value: '%40', label: 'E-mail Açılma' }],
         faq: [
           { question: 'İçerik pazarlama neden önemlidir?', answer: 'İçerik pazarlama, potansiyel müşterilerinize değerli bilgi sunarak güven oluşturur, SEO performansınızı artırır ve uzun vadeli organik trafik sağlar. Reklam yerine değer sunarak marka otoritesi oluşturursunuz.' },
           { question: 'Blog yazısı ne sıklıkla yayınlanmalıdır?', answer: 'SEO etkisi için haftada en az 1-2 kaliteli blog yazısı öneriyoruz. Tutarlılık, sıklıktan daha önemlidir. İçerik takvimi ile planlı yayın stratejisi oluşturuyoruz.' },

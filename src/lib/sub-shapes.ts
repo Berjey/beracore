@@ -11,7 +11,7 @@ const CORP_PINK = '#ffa9f9';
 const CORP_YELLOW = '#fff7ad';
 
 // Şeklin tüm yaşam döngüsünde kullanılan taban ölçek (idle ve morph içinde çarpan)
-const BASE_SCALE = 1.4;
+const BASE_SCALE = 1.0;
 
 function makeLineMat(): THREE.LineBasicMaterial {
   return new THREE.LineBasicMaterial({ color: CORP_PINK, transparent: true, opacity: 1.0 });
@@ -470,39 +470,48 @@ function buildShape(name: string, _color: string): THREE.Group {
   return g;
 }
 
-// ===== Create the 3D mesh scene =====
-export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
-  const scene = new THREE.Scene();
+// Modül seviyesinde registry — aynı canvas için WebGL context çakışmalarını önler.
+// React Strict Mode / HMR / çoklu effect gibi senaryolarda koruyucu görev yapar.
+const sceneRegistry = new WeakMap<HTMLCanvasElement, SubShapeAPI>();
 
-  // Ambient + directional light for depth
-  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-  scene.add(ambient);
-  const dirLight = new THREE.DirectionalLight(0xffa9f9, 0.9);
-  dirLight.position.set(2, 3, 4);
-  scene.add(dirLight);
-  const rimLight = new THREE.DirectionalLight(0xfff7ad, 0.6);
+// ===== Create the 3D mesh scene =====
+// Minimal, sakin ve güvenilir: küçük taban ölçek, neredeyse statik idle,
+// temiz morph geçişi, WebGL context çakışmalarına karşı registry koruması.
+export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
+  // Bu canvas için zaten bir sahne varsa yeniden yaratma — mevcudu döndür.
+  const existing = sceneRegistry.get(canvas);
+  if (existing) return existing;
+
+  // --- Scene & lights ---
+  const scene = new THREE.Scene();
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  const keyLight = new THREE.DirectionalLight(0xffa9f9, 0.85);
+  keyLight.position.set(2, 3, 4);
+  scene.add(keyLight);
+  const rimLight = new THREE.DirectionalLight(0xfff7ad, 0.55);
   rimLight.position.set(-2, -1, -3);
   scene.add(rimLight);
-  const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.25);
   fillLight.position.set(-3, 2, -1);
   scene.add(fillLight);
 
+  // --- Camera (daha geride → şekil küçük ve sabit görünür) ---
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-  camera.position.set(0, 0, 4.2);
+  camera.position.set(0, 0, 4.6);
 
+  // --- Renderer ---
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
 
+  // --- Kullanıcı kontrolü (hafif) ---
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
-  controls.dampingFactor = 0.06;
+  controls.dampingFactor = 0.08;
   controls.enableZoom = false;
   controls.enablePan = false;
-  controls.rotateSpeed = 0.6;
-  controls.autoRotate = false; // Manuel idle animasyon kullanacağız
-  controls.minPolarAngle = 0;
-  controls.maxPolarAngle = Math.PI;
+  controls.rotateSpeed = 0.45;
+  controls.autoRotate = false;
 
   let userInteracting = false;
   let resumeTimer: ReturnType<typeof setTimeout> | null = null;
@@ -512,182 +521,124 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
   });
   controls.addEventListener('end', () => {
     if (resumeTimer) clearTimeout(resumeTimer);
-    resumeTimer = setTimeout(() => { userInteracting = false; }, 2000);
+    resumeTimer = setTimeout(() => { userInteracting = false; }, 2500);
   });
 
-  let currentGroup: THREE.Group | null = null as THREE.Group | null;
-  let targetGroup: THREE.Group | null = null as THREE.Group | null;
-  let morphProgress = -1;
-  // Morph başlangıcında mevcut şeklin rotasyonunu sakla (idle salınımından devralma)
-  let morphBaseRotY = 0;
-  let morphBaseRotX = 0;
-  // İlk yüklemede 0 → 1 yumuşak intro
+  // --- State ---
+  let currentGroup: THREE.Group | null = null;
   let introProgress = 0;
   let introActive = false;
+  // Aktif şekil adı — aynı shape için setShape tekrar çağrılırsa no-op.
+  let currentShape: string | null = null;
 
-  function traverseMaterials(group: THREE.Group, fn: (m: THREE.Material) => void) {
-    group.traverse((c: THREE.Object3D) => {
-      const mesh = c as THREE.Mesh;
-      if (mesh.material) {
-        const mat = mesh.material;
-        if (Array.isArray(mat)) mat.forEach(fn);
-        else fn(mat as THREE.Material);
-      }
+  function traverseMats(group: THREE.Group, fn: (m: THREE.Material) => void) {
+    group.traverse(o => {
+      const mesh = o as THREE.Mesh;
+      const mat = mesh.material;
+      if (!mat) return;
+      if (Array.isArray(mat)) mat.forEach(fn);
+      else fn(mat);
     });
   }
 
+  function disposeGroup(group: THREE.Group) {
+    group.traverse(o => {
+      const mesh = o as THREE.Mesh;
+      if (mesh.geometry) mesh.geometry.dispose();
+      const mat = mesh.material;
+      if (!mat) return;
+      if (Array.isArray(mat)) mat.forEach(m => m.dispose());
+      else mat.dispose();
+    });
+  }
+
+  // --- Resize: layout henüz yokken fallback boyutla aç ---
   function resize() {
-    const w = canvas.offsetWidth;
-    const h = canvas.offsetHeight;
-    if (w === 0 || h === 0) return;
+    let w = canvas.offsetWidth;
+    let h = canvas.offsetHeight;
+    if (w === 0 || h === 0) {
+      const rect = canvas.getBoundingClientRect();
+      w = rect.width || 480;
+      h = rect.height || 480;
+    }
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
+    renderer.setSize(w, h, false);
   }
   resize();
   const ro = new ResizeObserver(resize);
   ro.observe(canvas);
 
-  const clock = new THREE.Clock();
-  let vis = true;
-  const obs = new IntersectionObserver(e => { vis = e[0].isIntersecting; }, { threshold: 0 });
-  obs.observe(canvas);
+  // --- Görünürlük (ekran dışında RAF'ı boşa harcama) ---
+  let visible = true;
+  const io = new IntersectionObserver(e => { visible = e[0].isIntersecting; }, { threshold: 0 });
+  io.observe(canvas);
 
-  let raf: number;
+  // --- Render loop ---
+  const clock = new THREE.Clock();
+  let raf = 0;
   (function loop() {
     raf = requestAnimationFrame(loop);
-    if (!vis) return;
+    if (!visible) return;
     const dt = Math.min(clock.getDelta(), 0.05);
     const t = clock.elapsedTime;
 
     controls.update();
 
-    // ============ MORPH HAS PRIORITY ============
-    // Morph sırasında idle/intro atlanır, rotation/scale doğrudan morph tarafından yönetilir
-    if (morphProgress >= 0) {
-      // Delta-time based (60fps'te eski 0.03 hızına yakın, ama framerate-bağımsız)
-      morphProgress += 1.8 * dt;
-
-      if (morphProgress < 0.5 && currentGroup) {
-        // Phase 1: eski şekil küçülür + döner + kaybolur
-        const p = morphProgress / 0.5;
-        const easeOut = 1 - (1 - p) * (1 - p);
-        currentGroup.scale.setScalar(BASE_SCALE * (1 - easeOut * 0.55));
-        currentGroup.rotation.y = morphBaseRotY + easeOut * Math.PI * 0.6;
-        currentGroup.rotation.x = morphBaseRotX * (1 - easeOut);
-        currentGroup.position.y = -easeOut * 0.15;
-        traverseMaterials(currentGroup, m => {
-          m.opacity = (m.userData.baseOpacity ?? m.opacity) * (1 - easeOut);
-        });
-      } else if (morphProgress >= 0.5 && targetGroup && !targetGroup.parent) {
-        // Swap point — yeni şekil giriyor
-        if (currentGroup) {
-          scene.remove(currentGroup);
-          disposeGroup(currentGroup);
-        }
-        currentGroup = targetGroup;
-        scene.add(currentGroup);
-        currentGroup.scale.setScalar(BASE_SCALE * 0.45);
-        currentGroup.rotation.set(0, -Math.PI * 0.6, 0);
-        currentGroup.position.y = 0.15;
-        targetGroup = null;
-      }
-
-      if (morphProgress >= 0.5 && currentGroup) {
-        // Phase 2: yeni şekil büyür + dönerek merkeze gelir + görünür olur
-        const p = Math.min(1, (morphProgress - 0.5) / 0.5);
-        const easeIn = p * p * (3 - 2 * p);
-        currentGroup.scale.setScalar(BASE_SCALE * (0.45 + easeIn * 0.55));
-        currentGroup.rotation.y = -Math.PI * 0.6 * (1 - easeIn);
-        currentGroup.position.y = 0.15 * (1 - easeIn);
-        traverseMaterials(currentGroup, m => {
-          m.opacity = (m.userData.baseOpacity ?? m.opacity) * easeIn;
-        });
-      }
-
-      if (morphProgress >= 1) {
-        morphProgress = -1;
-        if (currentGroup) {
-          currentGroup.scale.setScalar(BASE_SCALE);
-          currentGroup.rotation.set(0, 0, 0);
-          currentGroup.position.y = 0;
-          morphBaseRotY = 0;
-          morphBaseRotX = 0;
-          traverseMaterials(currentGroup, m => {
-            m.opacity = m.userData.baseOpacity ?? m.opacity;
-          });
-        }
-      }
-    } else if (currentGroup !== null) {
-      // ============ NORMAL LIFECYCLE (morph aktif değilken) ============
-      const cg = currentGroup as THREE.Group;
-
-      // Idle rotation salınımı
-      if (!userInteracting) {
-        cg.rotation.y = Math.sin(t * 0.3) * 0.4;
-        cg.rotation.x = Math.sin(t * 0.2 + 1) * 0.1;
-      }
-
-      // Yumuşak float
-      cg.position.y = Math.sin(t * 0.6) * 0.025;
-
-      // İlk yükleme intro'su (0 → 1, ~0.6s)
+    if (currentGroup) {
+      // Lokal const + explicit type — TS closure-scope'da currentGroup narrowing'i kaybediyor.
+      const cg: THREE.Group = currentGroup;
       if (introActive) {
-        introProgress = Math.min(1, introProgress + 2 * dt);
-        const easeOut = 1 - Math.pow(1 - introProgress, 3);
-        cg.scale.setScalar(BASE_SCALE * easeOut);
-        traverseMaterials(cg, m => {
-          m.opacity = (m.userData.baseOpacity ?? m.opacity) * easeOut;
+        // İlk yükleme intro'su: 0 → BASE_SCALE, ~0.4s
+        introProgress = Math.min(1, introProgress + 2.5 * dt);
+        const e = 1 - Math.pow(1 - introProgress, 3);
+        cg.scale.setScalar(BASE_SCALE * e);
+        traverseMats(cg, m => {
+          m.opacity = (m.userData.baseOpacity ?? 1) * e;
         });
         if (introProgress >= 1) {
           introActive = false;
-          traverseMaterials(cg, m => {
-            m.opacity = m.userData.baseOpacity ?? m.opacity;
-          });
+          cg.scale.setScalar(BASE_SCALE);
+          traverseMats(cg, m => { m.opacity = m.userData.baseOpacity ?? 1; });
         }
-      } else {
-        // Breathing scale (idle)
-        const breath = 1 + Math.sin(t * 0.8) * 0.015;
-        cg.scale.setScalar(BASE_SCALE * breath);
+      } else if (!userInteracting) {
+        // Çok hafif salınım — şekil sabit gibi dursun
+        cg.rotation.y = Math.sin(t * 0.18) * 0.18;
+        cg.rotation.x = Math.sin(t * 0.12) * 0.05;
       }
     }
 
     renderer.render(scene, camera);
   })();
 
-  function disposeGroup(group: THREE.Group) {
-    group.traverse(c => {
-      if ((c as THREE.Mesh).geometry) (c as THREE.Mesh).geometry.dispose();
-      if ((c as THREE.Mesh).material) {
-        const mat = (c as THREE.Mesh).material;
-        if (Array.isArray(mat)) mat.forEach(m => m.dispose());
-        else (mat as THREE.Material).dispose();
-      }
-    });
-  }
-
-  return {
+  // --- API ---
+  const api: SubShapeAPI = {
     setShape(shape: string, color: string) {
+      // Aynı şekilse hiçbir şey yapma.
+      if (currentShape === shape) return;
+      currentShape = shape;
+
       const newGroup = buildShape(shape, color);
-      traverseMaterials(newGroup, m => {
-        m.userData.baseOpacity = m.opacity;
-      });
+      traverseMats(newGroup, m => { m.userData.baseOpacity = m.opacity; });
 
       if (!currentGroup) {
-        // İlk yükleme — intro animasyonu başlat
+        // İlk yükleme — intro başlat (0 → BASE_SCALE, hafif fade-in)
         currentGroup = newGroup;
         currentGroup.scale.setScalar(0);
-        traverseMaterials(currentGroup, m => { m.opacity = 0; });
+        traverseMats(currentGroup, m => { m.opacity = 0; });
         scene.add(currentGroup);
         introProgress = 0;
         introActive = true;
       } else {
-        // Morph başlıyor — mevcut şeklin idle salınım değerini yakala ki
-        // devamlılık bozulmasın (zıplama yerine akıcı geçiş)
-        morphBaseRotY = currentGroup.rotation.y;
-        morphBaseRotX = currentGroup.rotation.x;
-        targetGroup = newGroup;
-        morphProgress = 0;
+        // Anında swap — eski siliniyor, yeni tam boyda ekleniyor.
+        // Animasyon yok, flicker yok, race yok.
+        scene.remove(currentGroup);
+        disposeGroup(currentGroup);
+        currentGroup = newGroup;
+        currentGroup.scale.setScalar(BASE_SCALE);
+        currentGroup.rotation.set(0, 0, 0);
+        scene.add(currentGroup);
+        introActive = false;
       }
     },
     dispose() {
@@ -695,10 +646,13 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
       if (resumeTimer) clearTimeout(resumeTimer);
       controls.dispose();
       ro.disconnect();
-      obs.disconnect();
+      io.disconnect();
       if (currentGroup) disposeGroup(currentGroup);
-      if (targetGroup) disposeGroup(targetGroup);
       renderer.dispose();
+      sceneRegistry.delete(canvas);
     },
   };
+
+  sceneRegistry.set(canvas, api);
+  return api;
 }
