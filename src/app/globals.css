@@ -109,6 +109,26 @@ button:focus-visible, a:focus-visible {
   outline: 2px solid var(--color-accent2);
   outline-offset: 3px;
 }
+input:focus, input:focus-visible,
+textarea:focus, textarea:focus-visible,
+select:focus, select:focus-visible {
+  outline: none;
+}
+
+/* ===== KVKK Modal Scrollbar (sitede global scrollbar gizli — modal için ince aksan scrollbar) ===== */
+.kvkk-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 169, 249, 0.28) transparent;
+}
+.kvkk-scroll::-webkit-scrollbar { width: 6px; display: block; }
+.kvkk-scroll::-webkit-scrollbar-track { background: transparent; }
+.kvkk-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(255, 169, 249, 0.35), rgba(255, 247, 173, 0.25));
+  border-radius: 999px;
+}
+.kvkk-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(255, 169, 249, 0.55), rgba(255, 247, 173, 0.4));
+}
 
 /* ===== Reduced Motion ===== */
 @media (prefers-reduced-motion: reduce) {

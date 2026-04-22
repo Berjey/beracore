@@ -6,6 +6,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollText from '@/components/ScrollText';
 import { services } from '@/lib/services-data';
+import { kvkkMeta, kvkkSections } from '@/lib/kvkk-data';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -166,6 +167,11 @@ export default function ContactPage() {
   const [submitError, setSubmitError] = useState<string>('');
   const [copied, setCopied] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  // KVKK modal — aynı sayfada açılan onay akışı
+  const [kvkkOpen, setKvkkOpen] = useState(false);
+  const [kvkkReadEnd, setKvkkReadEnd] = useState(false);
+  const kvkkScrollRef = useRef<HTMLDivElement>(null);
 
   // ----- Helpers -----
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => {
@@ -453,6 +459,50 @@ export default function ContactPage() {
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 
+  // ----- KVKK modal — body scroll lock + ESC + scroll-to-end tracking -----
+  useEffect(() => {
+    if (!kvkkOpen) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setKvkkOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+
+    // Küçük metinlerde scroll gerekmeyebilir → ilk render'da bitişi işaretle
+    const el = kvkkScrollRef.current;
+    if (el && el.scrollHeight - el.clientHeight <= 8) {
+      setKvkkReadEnd(true);
+    }
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [kvkkOpen]);
+
+  const openKvkk = () => {
+    setKvkkReadEnd(false);
+    setKvkkOpen(true);
+    requestAnimationFrame(() => {
+      if (kvkkScrollRef.current) kvkkScrollRef.current.scrollTop = 0;
+    });
+  };
+
+  const handleKvkkScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 24) {
+      setKvkkReadEnd(true);
+    }
+  };
+
+  const acceptKvkk = () => {
+    set('consent', true);
+    setKvkkOpen(false);
+  };
+
   // Progress counter (completed fields in core steps)
   const completed = [
     form.name.trim().length >= 2,
@@ -462,6 +512,7 @@ export default function ContactPage() {
   ].filter(Boolean).length;
 
   return (
+    <>
     <div ref={containerRef}>
       {/* ========================================================
           HERO
@@ -915,28 +966,41 @@ export default function ContactPage() {
 
                 {/* KVKK consent */}
                 <div className="mt-6 pl-[64px] max-md:pl-0" data-field="consent">
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <span className="relative mt-0.5 shrink-0">
-                      <input
-                        type="checkbox"
-                        checked={form.consent}
-                        onChange={(e) => set('consent', e.target.checked)}
-                        className="peer sr-only"
-                      />
-                      <span className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-300
-                        ${form.consent ? 'border-accent bg-accent/20' : errors.consent ? 'border-red-400/60 bg-red-500/5' : 'border-white/15 bg-white/[0.02] group-hover:border-accent/40'}`}>
-                        {form.consent && (
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffa9f9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        )}
+                  <div className="flex items-start gap-3">
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <span className="relative mt-0.5 shrink-0">
+                        <input
+                          type="checkbox"
+                          checked={form.consent}
+                          onChange={(e) => set('consent', e.target.checked)}
+                          className="peer sr-only"
+                        />
+                        <span className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-300
+                          ${form.consent ? 'border-accent bg-accent/20' : errors.consent ? 'border-red-400/60 bg-red-500/5' : 'border-white/15 bg-white/[0.02] group-hover:border-accent/40'}`}>
+                          {form.consent && (
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffa9f9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
                       </span>
-                    </span>
-                    <span className="font-body text-[0.8rem] text-t2 leading-relaxed font-light max-md:text-[0.78rem]">
-                      <Link href="/kvkk" className="text-accent hover:underline">KVKK aydınlatma metni</Link>
-                      {' '}kapsamında, paylaştığım bilgilerin yalnızca teklif süreci için kullanılmasına onay veriyorum.
-                    </span>
-                  </label>
+                      <span className="font-body text-[0.8rem] text-t2 leading-relaxed font-light max-md:text-[0.78rem]">
+                        Paylaştığım bilgilerin yalnızca teklif süreci için kullanılmasına onay veriyorum.
+                      </span>
+                    </label>
+                  </div>
+                  <div className="mt-2 ml-8">
+                    <button
+                      type="button"
+                      onClick={openKvkk}
+                      className="font-body text-[0.78rem] text-accent hover:underline underline-offset-2 cursor-pointer inline-flex items-center gap-1.5">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6" />
+                      </svg>
+                      KVKK aydınlatma metnini oku
+                    </button>
+                  </div>
                   {errors.consent && (
                     <p className="mt-2 ml-8 font-body text-[0.75rem] text-red-400/90">{errors.consent}</p>
                   )}
@@ -1207,6 +1271,206 @@ export default function ContactPage() {
         </div>
       </section>
     </div>
+
+    {/* ============================================================
+        KVKK MODAL — aynı sayfada scroll-gated onay akışı
+        Kurumsal kimlik: #1a1a1a taban + pembe/sarı ambient glow,
+        gradient ayraçlar, numaralı bölümler, dönüşümlü vurgu noktaları
+        ============================================================ */}
+    {kvkkOpen && (
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="kvkk-modal-title"
+        className="fixed inset-0 z-[1000] flex items-center justify-center p-4 max-md:p-2"
+        onClick={(e) => { if (e.target === e.currentTarget) setKvkkOpen(false); }}
+      >
+        {/* backdrop — sitedeki derin ton + hafif bulanıklık */}
+        <div className="absolute inset-0 bg-[rgba(10,10,10,0.72)] backdrop-blur-md" />
+
+        {/* panel */}
+        <div
+          className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-2xl border border-white/[0.08] overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+          style={{ background: 'var(--color-bg)' }}
+        >
+          {/* panel ambient glow — LegalLayout ile aynı ruh */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-0"
+            style={{
+              background:
+                'radial-gradient(700px 360px at 20% 0%, rgba(255,169,249,0.09), transparent 60%), radial-gradient(600px 320px at 100% 100%, rgba(255,247,173,0.06), transparent 60%)',
+            }}
+          />
+
+          {/* header */}
+          <div className="relative flex items-start justify-between gap-4 px-8 pt-7 pb-6 shrink-0 max-md:px-5 max-md:pt-6 max-md:pb-5">
+            <div className="min-w-0">
+              <span className="inline-block font-body text-[0.68rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-3">
+                {kvkkMeta.accent}
+              </span>
+              <h3
+                id="kvkk-modal-title"
+                className="font-heading text-[clamp(1.4rem,2.6vw,1.85rem)] font-bold tracking-tight leading-[1.15] gradient-text"
+              >
+                {kvkkMeta.title}
+              </h3>
+              <div className="mt-3 inline-flex items-center gap-2 font-body text-[0.72rem] text-t3 tracking-wide">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent2/60" aria-hidden="true" />
+                Son güncelleme: {kvkkMeta.lastUpdated}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setKvkkOpen(false)}
+              aria-label="Kapat"
+              className="shrink-0 w-9 h-9 rounded-lg border border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-t2 hover:text-accent hover:border-accent/30 transition-colors"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* ayraç — pembe → sarı → transparent */}
+          <div
+            aria-hidden="true"
+            className="relative h-px w-full shrink-0"
+            style={{
+              background:
+                'linear-gradient(90deg, transparent, rgba(255,169,249,0.25), rgba(255,247,173,0.2), transparent)',
+            }}
+          />
+
+          {/* scrollable body */}
+          <div
+            ref={kvkkScrollRef}
+            onScroll={handleKvkkScroll}
+            className="kvkk-scroll relative flex-1 overflow-y-auto px-8 py-7 max-md:px-5 max-md:py-6"
+          >
+            <p className="font-body text-[0.92rem] text-t2 font-light leading-[1.85] mb-9 max-md:text-[0.88rem] max-md:mb-7">
+              {kvkkMeta.intro}
+            </p>
+
+            <div className="space-y-9 max-md:space-y-7">
+              {kvkkSections.map((s, i) => {
+                const dot = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
+                return (
+                  <section key={i}>
+                    <h4 className="font-heading text-[1.08rem] font-bold text-t1 mb-3 leading-snug max-md:text-[1rem]">
+                      <span
+                        className="font-body text-[0.7rem] font-semibold tracking-[0.2em] mr-2.5 align-middle"
+                        style={{ color: dot }}
+                      >
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      {s.title}
+                    </h4>
+                    {Array.isArray(s.body) ? (
+                      <ul className="space-y-2 pl-1">
+                        {s.body.map((item, j) => (
+                          <li
+                            key={j}
+                            className="flex items-start gap-2.5 font-body text-[0.88rem] text-t2 font-light leading-[1.75] max-md:text-[0.84rem]"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="shrink-0 mt-[0.6em] w-1 h-1 rounded-full"
+                              style={{ background: dot }}
+                            />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="font-body text-[0.88rem] text-t2 font-light leading-[1.8] max-md:text-[0.84rem]">
+                        {s.body}
+                      </p>
+                    )}
+                  </section>
+                );
+              })}
+            </div>
+
+            {/* metin sonu — gradient ayraç + etiket */}
+            <div className="mt-10 mb-1 flex items-center gap-3 max-md:mt-8">
+              <span
+                aria-hidden="true"
+                className="flex-1 h-px"
+                style={{
+                  background:
+                    'linear-gradient(90deg, transparent, rgba(255,247,173,0.25))',
+                }}
+              />
+              <span className="font-body text-[0.68rem] font-semibold tracking-[0.3em] uppercase text-accent2/70">
+                Metin Sonu
+              </span>
+              <span
+                aria-hidden="true"
+                className="flex-1 h-px"
+                style={{
+                  background:
+                    'linear-gradient(90deg, rgba(255,247,173,0.25), transparent)',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* footer ayraç — üstten pembe fade */}
+          <div
+            aria-hidden="true"
+            className="relative h-px w-full shrink-0"
+            style={{
+              background:
+                'linear-gradient(90deg, transparent, rgba(255,169,249,0.22), rgba(255,247,173,0.18), transparent)',
+            }}
+          />
+
+          {/* footer */}
+          <div className="relative px-8 py-5 shrink-0 flex items-center justify-between gap-4 flex-wrap bg-white/[0.015] max-md:px-5 max-md:py-4">
+            <p
+              className={`font-body text-[0.78rem] leading-relaxed flex items-center gap-2 transition-colors duration-300 max-md:text-[0.74rem] ${
+                kvkkReadEnd ? 'text-accent2' : 'text-t3'
+              }`}
+            >
+              {kvkkReadEnd ? (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Metni sonuna kadar okudunuz.
+                </>
+              ) : (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 5v14M5 12l7 7 7-7" />
+                  </svg>
+                  Onaylamak için metni sonuna kadar kaydırın.
+                </>
+              )}
+            </p>
+            <div className="flex gap-2.5">
+              <button
+                type="button"
+                onClick={() => setKvkkOpen(false)}
+                className="px-5 py-2.5 rounded-xl font-body text-[0.78rem] font-medium border border-white/[0.08] bg-white/[0.02] text-t2 hover:border-white/20 hover:text-t1 transition-colors"
+              >
+                Vazgeç
+              </button>
+              <button
+                type="button"
+                onClick={acceptKvkk}
+                disabled={!kvkkReadEnd}
+                className="px-5 py-2.5 rounded-xl font-body text-[0.78rem] font-semibold tracking-[0.08em] uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-300 hover:shadow-[0_8px_24px_rgba(255,169,249,0.25)] disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:shadow-none"
+              >
+                Okudum ve Onaylıyorum
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
 
