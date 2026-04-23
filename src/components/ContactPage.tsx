@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -543,6 +543,14 @@ export default function ContactPage() {
     set('consent', true);
     setKvkkOpen(false);
   };
+
+  // Form başarıyla gönderildiğinde sayfa tepeye kaydırılır —
+  // success ekranı tüm viewport'u kaplar ve kullanıcı direkt karşılar.
+  useEffect(() => {
+    if (submitState === 'success') {
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    }
+  }, [submitState]);
 
   // Progress counter (completed fields in core steps)
   const completed = [
@@ -1520,13 +1528,36 @@ export default function ContactPage() {
 }
 
 // ============================================================
-// SUCCESS STATE — tam sayfa (diğer section'ları gizler)
+// SUCCESS STATE — tam sayfa, viewport sabit, responsive
+// Form başarıyla gönderildiğinde ContactPage bu komponenti render eder.
 // ============================================================
 function SuccessState({ name, onReset }: { name: string; onReset: () => void }) {
   const firstName = name ? name.trim().split(/\s+/)[0] : '';
+  const refId = useMemo(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    return `BRC-${y}${m}${d}-${rand}`;
+  }, []);
+
+  const timeNow = useMemo(() => {
+    return new Date().toLocaleString('tr-TR', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+      timeZone: 'Europe/Istanbul',
+    });
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-6 py-28 overflow-hidden max-md:py-20">
-      {/* Arka plan ambient glow — kurumsal kimlik */}
+    <section
+      className="relative min-h-[100dvh] flex items-center justify-center px-5 py-20 overflow-hidden sm:px-6 sm:py-24 lg:py-28"
+      role="status"
+      aria-live="polite"
+      style={{ animation: 'fi 0.5s ease-out' }}
+    >
+      {/* Arka plan ambient glow */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10"
@@ -1536,17 +1567,17 @@ function SuccessState({ name, onReset }: { name: string; onReset: () => void }) 
         }}
       />
 
-      {/* Kutlama ışık noktaları */}
+      {/* Kutlama ışık noktaları — mobilde azaltıldı */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         {[
           { t: '14%', l: '12%', s: 3, c: '#ffa9f9' },
           { t: '22%', l: '86%', s: 2.2, c: '#fff7ad' },
-          { t: '42%', l: '8%', s: 1.8, c: '#fff7ad' },
-          { t: '52%', l: '92%', s: 2, c: '#ffa9f9' },
+          { t: '42%', l: '8%', s: 1.8, c: '#fff7ad', hideMobile: true },
+          { t: '52%', l: '92%', s: 2, c: '#ffa9f9', hideMobile: true },
           { t: '74%', l: '16%', s: 2.4, c: '#fff7ad' },
           { t: '82%', l: '82%', s: 2, c: '#ffa9f9' },
         ].map((o, i) => (
-          <span key={i} className="absolute rounded-full animate-pulse"
+          <span key={i} className={`absolute rounded-full animate-pulse ${o.hideMobile ? 'hidden sm:block' : ''}`}
             style={{
               top: o.t, left: o.l,
               width: `${o.s * 4}px`, height: `${o.s * 4}px`,
@@ -1557,18 +1588,19 @@ function SuccessState({ name, onReset }: { name: string; onReset: () => void }) 
         ))}
       </div>
 
-      <div className="relative max-w-2xl w-full text-center">
+      <div className="relative max-w-2xl w-full mx-auto text-center flex flex-col items-center">
         {/* Check badge */}
         <div
-          className="inline-flex w-28 h-28 rounded-full items-center justify-center mb-8 max-md:w-24 max-md:h-24"
+          className="inline-flex w-24 h-24 rounded-full items-center justify-center mb-7 sm:w-28 sm:h-28 sm:mb-8"
           style={{
             background:
               'radial-gradient(circle, rgba(255,169,249,0.28) 0%, rgba(255,247,173,0.12) 50%, transparent 72%)',
             boxShadow:
               '0 0 0 1px rgba(255,169,249,0.35), 0 0 60px rgba(255,169,249,0.3)',
+            animation: 'preLogoIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both',
           }}
         >
-          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="url(#gradcheckFull)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="max-md:w-10 max-md:h-10">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="url(#gradcheckFull)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="sm:w-[46px] sm:h-[46px]">
             <defs>
               <linearGradient id="gradcheckFull" x1="0" y1="0" x2="24" y2="24">
                 <stop offset="0" stopColor="#ffa9f9" />
@@ -1579,56 +1611,83 @@ function SuccessState({ name, onReset }: { name: string; onReset: () => void }) 
           </svg>
         </div>
 
-        <span className="inline-block font-body text-[0.75rem] font-semibold tracking-[0.5em] uppercase text-accent2/70 mb-5 max-md:text-[0.7rem] max-md:tracking-[0.4em]">
+        <span className="inline-block font-body text-[0.68rem] font-semibold tracking-[0.4em] uppercase text-accent2/70 mb-4 sm:text-[0.75rem] sm:tracking-[0.5em] sm:mb-5">
           Talep Alındı
         </span>
 
-        <h1 className="font-body text-[clamp(2rem,4.5vw,3.2rem)] font-light tracking-tight leading-[1.15] mb-6 max-md:mb-5">
+        <h1 className="font-body text-[clamp(1.7rem,5.5vw,3.2rem)] font-light tracking-tight leading-[1.12] mb-5 sm:mb-6 px-2">
           <span className="text-t1">Teşekkürler{firstName ? `, ${firstName}` : ''} — </span>
           <span className="gradient-text font-semibold">ulaştık.</span>
         </h1>
 
-        <p className="font-body text-[1rem] text-t2 font-light max-w-lg mx-auto leading-[1.8] mb-10 max-md:text-[0.92rem] max-md:mb-8">
+        <p className="font-body text-[0.92rem] text-t2 font-light max-w-lg mx-auto leading-[1.75] mb-8 sm:text-[1rem] sm:leading-[1.8] sm:mb-10">
           Talebiniz ekibimize düştü. <span className="text-t1 font-medium">Aynı gün içinde</span> size özel bir mesajla döneceğiz.
           Lütfen e-posta kutunuzu ve <span className="text-t1">spam klasörünüzü</span> kontrol edin.
         </p>
 
-        {/* Sonraki adımlar — şeffaf zaman çizelgesi */}
-        <div className="mb-10 max-md:mb-8">
-          <div className="font-body text-[0.68rem] font-semibold tracking-[0.3em] uppercase text-t3 mb-4">
-            Sonraki Adımlar
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 font-body text-[0.85rem] text-t2 font-light max-md:text-[0.8rem] max-md:gap-x-4">
-            <span className="inline-flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
-              Talep dosyası açılır (0-2 saat)
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent2" aria-hidden="true" />
-              Proje uzmanı atanır (aynı gün)
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
-              Keşif görüşmesi daveti (1-2 gün)
-            </span>
-          </div>
+        {/* Referans + zaman bloğu — profesyonel "talep kaydı" hissi */}
+        <div className="inline-flex items-center gap-3 flex-wrap justify-center px-4 py-2.5 mb-8 rounded-full border border-white/[0.06] bg-white/[0.02] max-md:px-3 max-md:py-2 max-md:gap-2 max-md:mb-7">
+          <span className="inline-flex items-center gap-1.5 font-body text-[0.68rem] text-t3 font-medium tracking-[0.15em] uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" aria-hidden="true" />
+            Ref
+          </span>
+          <span className="font-mono text-[0.78rem] text-t1 tabular-nums max-md:text-[0.72rem]">{refId}</span>
+          <span className="w-px h-3 bg-white/10" aria-hidden="true" />
+          <span className="font-body text-[0.72rem] text-t3 font-light max-md:text-[0.68rem]">{timeNow}</span>
         </div>
 
-        {/* Gradient ayraç — kurumsal kimlik */}
+        {/* Sonraki adımlar — kart ile yapılandırılmış */}
+        <div className="w-full max-w-xl mb-10 sm:mb-12">
+          <div className="font-body text-[0.66rem] font-semibold tracking-[0.3em] uppercase text-t3 mb-4 sm:text-[0.68rem]">
+            Sonraki Adımlar
+          </div>
+          <ol className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-left">
+            {[
+              { step: '01', title: 'Talep dosyası', time: '0 – 2 saat', color: '#ffa9f9' },
+              { step: '02', title: 'Proje uzmanı', time: 'Aynı gün', color: '#fff7ad' },
+              { step: '03', title: 'Keşif görüşmesi', time: '1 – 2 gün', color: '#ffa9f9' },
+            ].map((s) => (
+              <li
+                key={s.step}
+                className="relative rounded-2xl border border-white/[0.06] bg-white/[0.015] p-4 transition-colors duration-300 hover:bg-white/[0.03]"
+              >
+                <div className="flex items-center gap-2.5 mb-2">
+                  <span
+                    className="font-body text-[0.62rem] font-bold tracking-[0.25em] uppercase"
+                    style={{ color: s.color }}
+                  >
+                    {s.step}
+                  </span>
+                  <span
+                    className="flex-1 h-px"
+                    style={{
+                      background: `linear-gradient(90deg, ${s.color}55, transparent)`,
+                    }}
+                    aria-hidden="true"
+                  />
+                </div>
+                <div className="font-body text-[0.92rem] font-medium text-t1 leading-tight max-md:text-[0.88rem]">{s.title}</div>
+                <div className="mt-1 font-body text-[0.72rem] text-t3 font-light max-md:text-[0.68rem]">{s.time}</div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* Gradient ayraç */}
         <div
           aria-hidden="true"
-          className="h-px w-full max-w-md mx-auto mb-10 max-md:mb-8"
+          className="h-px w-full max-w-md mb-8 sm:mb-10"
           style={{
             background:
               'linear-gradient(90deg, transparent, rgba(255,169,249,0.3), rgba(255,247,173,0.25), transparent)',
           }}
         />
 
-        {/* Navigasyon */}
-        <div className="flex items-center justify-center gap-3 flex-wrap">
+        {/* Navigasyon — mobilde dikey, sm'de yatay */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 w-full max-w-md sm:max-w-none">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 bg-white/[0.02] text-t1 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent max-md:text-[0.74rem] max-md:px-5 max-md:py-3"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:px-7 rounded-xl font-body text-[0.76rem] sm:text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 bg-white/[0.02] text-t1 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent min-h-[48px]"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 12l9-9 9 9" /><path d="M5 10v11h14V10" />
@@ -1637,14 +1696,14 @@ function SuccessState({ name, onReset }: { name: string; onReset: () => void }) 
           </Link>
           <Link
             href="/hakkimizda"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 bg-white/[0.02] text-t1 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent2/40 hover:text-accent2 max-md:text-[0.74rem] max-md:px-5 max-md:py-3"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:px-7 rounded-xl font-body text-[0.76rem] sm:text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 bg-white/[0.02] text-t1 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent2/40 hover:text-accent2 min-h-[48px]"
           >
             Biz Kimiz
           </Link>
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(255,169,249,0.3)] max-md:text-[0.74rem] max-md:px-5 max-md:py-3"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:px-7 rounded-xl font-body text-[0.76rem] sm:text-[0.8rem] font-semibold tracking-[0.12em] uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(255,169,249,0.3)] min-h-[48px]"
           >
             Yeni Talep Gönder
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -1654,7 +1713,7 @@ function SuccessState({ name, onReset }: { name: string; onReset: () => void }) 
         </div>
 
         {/* Acil durum maili */}
-        <p className="mt-10 font-body text-[0.78rem] text-t3 font-light max-md:text-[0.74rem] max-md:mt-8">
+        <p className="mt-8 sm:mt-10 font-body text-[0.74rem] sm:text-[0.78rem] text-t3 font-light">
           Aciliyet durumunda{' '}
           <a href="mailto:info@beracore.com" className="text-accent hover:underline">
             info@beracore.com
