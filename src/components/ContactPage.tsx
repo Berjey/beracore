@@ -511,6 +511,12 @@ export default function ContactPage() {
     form.message.trim().length >= 10,
   ].filter(Boolean).length;
 
+  // Form başarıyla gönderildiğinde tüm sayfayı kaplayan success ekranı göster.
+  // Hero, methods, form, process, FAQ, CTA section'ları gizlenir.
+  if (submitState === 'success') {
+    return <SuccessState name={form.name} onReset={resetForm} />;
+  }
+
   return (
     <>
     <div ref={containerRef}>
@@ -801,11 +807,9 @@ export default function ContactPage() {
             <span className="pointer-events-none absolute -bottom-20 -right-20 w-64 h-64 rounded-full opacity-50 blur-[80px]"
               style={{ background: 'radial-gradient(circle, rgba(255,247,173,0.14), transparent 70%)' }} aria-hidden="true" />
 
-            {/* Success state overlay */}
-            {submitState === 'success' ? (
-              <SuccessState name={form.name} onReset={resetForm} />
-            ) : (
-              <form onSubmit={handleSubmit} className="relative p-10 max-md:p-6" noValidate>
+            {/* Form — success durumu component'in en üstünde yakalanıp
+                tüm sayfayı kaplıyor, buraya hiç ulaşmaz */}
+            <form onSubmit={handleSubmit} className="relative p-10 max-md:p-6" noValidate>
                 {/* Progress summary */}
                 <div className="mb-10 flex items-center justify-between gap-4 flex-wrap max-md:mb-8">
                   <div className="flex items-center gap-3">
@@ -1054,7 +1058,6 @@ export default function ContactPage() {
                   </p>
                 </div>
               </form>
-            )}
             </div>
           </div>
         </div>
@@ -1475,40 +1478,57 @@ export default function ContactPage() {
 }
 
 // ============================================================
-// SUCCESS STATE
+// SUCCESS STATE — tam sayfa (diğer section'ları gizler)
 // ============================================================
 function SuccessState({ name, onReset }: { name: string; onReset: () => void }) {
+  const firstName = name ? name.trim().split(/\s+/)[0] : '';
   return (
-    <div className="relative p-14 text-center max-md:p-8">
-      {/* Celebration orbs */}
+    <section className="relative min-h-screen flex items-center justify-center px-6 py-28 overflow-hidden max-md:py-20">
+      {/* Arka plan ambient glow — kurumsal kimlik */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            'radial-gradient(1200px 650px at 50% 20%, rgba(255,169,249,0.09), transparent 60%), radial-gradient(900px 520px at 50% 85%, rgba(255,247,173,0.06), transparent 60%)',
+        }}
+      />
+
+      {/* Kutlama ışık noktaları */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         {[
-          { t: '12%', l: '18%', s: 3, c: '#ffa9f9' },
-          { t: '24%', l: '82%', s: 2, c: '#fff7ad' },
-          { t: '76%', l: '14%', s: 2.5, c: '#fff7ad' },
-          { t: '80%', l: '78%', s: 2, c: '#ffa9f9' },
+          { t: '14%', l: '12%', s: 3, c: '#ffa9f9' },
+          { t: '22%', l: '86%', s: 2.2, c: '#fff7ad' },
+          { t: '42%', l: '8%', s: 1.8, c: '#fff7ad' },
+          { t: '52%', l: '92%', s: 2, c: '#ffa9f9' },
+          { t: '74%', l: '16%', s: 2.4, c: '#fff7ad' },
+          { t: '82%', l: '82%', s: 2, c: '#ffa9f9' },
         ].map((o, i) => (
           <span key={i} className="absolute rounded-full animate-pulse"
             style={{
               top: o.t, left: o.l,
               width: `${o.s * 4}px`, height: `${o.s * 4}px`,
               background: o.c,
-              boxShadow: `0 0 14px ${o.c}`,
-              animationDelay: `${i * 0.3}s`,
+              boxShadow: `0 0 16px ${o.c}`,
+              animationDelay: `${i * 0.35}s`,
             }} />
         ))}
       </div>
 
-      <div className="relative">
+      <div className="relative max-w-2xl w-full text-center">
         {/* Check badge */}
-        <div className="inline-flex w-20 h-20 rounded-full items-center justify-center mb-7"
+        <div
+          className="inline-flex w-28 h-28 rounded-full items-center justify-center mb-8 max-md:w-24 max-md:h-24"
           style={{
-            background: 'radial-gradient(circle, rgba(255,169,249,0.2) 0%, rgba(255,247,173,0.1) 50%, transparent 70%)',
-            boxShadow: '0 0 0 1px rgba(255,169,249,0.3), 0 0 40px rgba(255,169,249,0.25)',
-          }}>
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="url(#gradcheck)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            background:
+              'radial-gradient(circle, rgba(255,169,249,0.28) 0%, rgba(255,247,173,0.12) 50%, transparent 72%)',
+            boxShadow:
+              '0 0 0 1px rgba(255,169,249,0.35), 0 0 60px rgba(255,169,249,0.3)',
+          }}
+        >
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="url(#gradcheckFull)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="max-md:w-10 max-md:h-10">
             <defs>
-              <linearGradient id="gradcheck" x1="0" y1="0" x2="24" y2="24">
+              <linearGradient id="gradcheckFull" x1="0" y1="0" x2="24" y2="24">
                 <stop offset="0" stopColor="#ffa9f9" />
                 <stop offset="1" stopColor="#fff7ad" />
               </linearGradient>
@@ -1517,30 +1537,90 @@ function SuccessState({ name, onReset }: { name: string; onReset: () => void }) 
           </svg>
         </div>
 
-        <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/70 mb-4">
+        <span className="inline-block font-body text-[0.75rem] font-semibold tracking-[0.5em] uppercase text-accent2/70 mb-5 max-md:text-[0.7rem] max-md:tracking-[0.4em]">
           Talep Alındı
         </span>
-        <h3 className="font-body text-[clamp(1.6rem,3.2vw,2.2rem)] font-light tracking-tight leading-[1.2] mb-4">
-          <span className="text-t1">Teşekkürler{name ? `, ${name.split(' ')[0]}` : ''} — </span>
+
+        <h1 className="font-body text-[clamp(2rem,4.5vw,3.2rem)] font-light tracking-tight leading-[1.15] mb-6 max-md:mb-5">
+          <span className="text-t1">Teşekkürler{firstName ? `, ${firstName}` : ''} — </span>
           <span className="gradient-text font-semibold">ulaştık.</span>
-        </h3>
-        <p className="font-body text-[0.95rem] text-t2 font-light max-w-md mx-auto leading-[1.8] mb-8">
-          Talebiniz ekibimize düştü. Aynı gün içinde size özel bir mesajla döneceğiz.
-          Lütfen e-posta kutunuzu ve spam klasörünüzü kontrol edin.
+        </h1>
+
+        <p className="font-body text-[1rem] text-t2 font-light max-w-lg mx-auto leading-[1.8] mb-10 max-md:text-[0.92rem] max-md:mb-8">
+          Talebiniz ekibimize düştü. <span className="text-t1 font-medium">Aynı gün içinde</span> size özel bir mesajla döneceğiz.
+          Lütfen e-posta kutunuzu ve <span className="text-t1">spam klasörünüzü</span> kontrol edin.
         </p>
 
-        <div className="flex items-center gap-3 justify-center flex-wrap">
-          <button type="button" onClick={onReset}
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 text-t1 transition-all duration-400 hover:-translate-y-0.5 hover:border-accent/30 hover:text-accent">
-            Yeni Talep Gönder
-          </button>
-          <Link href="/hakkimizda"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 text-t1 transition-all duration-400 hover:-translate-y-0.5 hover:border-accent2/30 hover:text-accent2">
+        {/* Sonraki adımlar — şeffaf zaman çizelgesi */}
+        <div className="mb-10 max-md:mb-8">
+          <div className="font-body text-[0.68rem] font-semibold tracking-[0.3em] uppercase text-t3 mb-4">
+            Sonraki Adımlar
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 font-body text-[0.85rem] text-t2 font-light max-md:text-[0.8rem] max-md:gap-x-4">
+            <span className="inline-flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
+              Talep dosyası açılır (0-2 saat)
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent2" aria-hidden="true" />
+              Proje uzmanı atanır (aynı gün)
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
+              Keşif görüşmesi daveti (1-2 gün)
+            </span>
+          </div>
+        </div>
+
+        {/* Gradient ayraç — kurumsal kimlik */}
+        <div
+          aria-hidden="true"
+          className="h-px w-full max-w-md mx-auto mb-10 max-md:mb-8"
+          style={{
+            background:
+              'linear-gradient(90deg, transparent, rgba(255,169,249,0.3), rgba(255,247,173,0.25), transparent)',
+          }}
+        />
+
+        {/* Navigasyon */}
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 bg-white/[0.02] text-t1 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent max-md:text-[0.74rem] max-md:px-5 max-md:py-3"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12l9-9 9 9" /><path d="M5 10v11h14V10" />
+            </svg>
+            Ana Sayfa
+          </Link>
+          <Link
+            href="/hakkimizda"
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/10 bg-white/[0.02] text-t1 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent2/40 hover:text-accent2 max-md:text-[0.74rem] max-md:px-5 max-md:py-3"
+          >
             Biz Kimiz
           </Link>
+          <button
+            type="button"
+            onClick={onReset}
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(255,169,249,0.3)] max-md:text-[0.74rem] max-md:px-5 max-md:py-3"
+          >
+            Yeni Talep Gönder
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
+
+        {/* Acil durum maili */}
+        <p className="mt-10 font-body text-[0.78rem] text-t3 font-light max-md:text-[0.74rem] max-md:mt-8">
+          Aciliyet durumunda{' '}
+          <a href="mailto:info@beracore.com" className="text-accent hover:underline">
+            info@beracore.com
+          </a>
+          {' '}adresine doğrudan yazabilirsiniz.
+        </p>
       </div>
-    </div>
+    </section>
   );
 }
 
