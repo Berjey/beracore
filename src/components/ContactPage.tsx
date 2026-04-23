@@ -749,7 +749,7 @@ export default function ContactPage() {
                       {m.href && (
                         <a href={m.href}
                           aria-label={`${m.label} aç`}
-                          className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-400 ease-out hover:translate-x-1 hover:scale-110"
+                          className="w-8 h-8 max-md:w-11 max-md:h-11 rounded-full flex items-center justify-center transition-all duration-400 ease-out hover:translate-x-1 hover:scale-110"
                           style={{ background: `${accent}14`, boxShadow: `0 0 0 1px ${accent}33 inset` }}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M5 12h14M12 5l7 7-7 7" />
@@ -1190,11 +1190,11 @@ export default function ContactPage() {
                     type="button"
                     onClick={() => setOpenFaq(open ? null : i)}
                     aria-expanded={open}
-                    className="w-full flex items-center justify-between gap-4 p-6 text-left max-md:p-5">
+                    className="w-full flex items-center justify-between gap-4 p-6 text-left max-md:p-5 min-h-[64px]">
                     <span className="font-heading text-[1rem] font-semibold text-t1 pr-4 max-md:text-[0.95rem]">
                       {item.q}
                     </span>
-                    <span className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-400"
+                    <span className="w-8 h-8 max-md:w-11 max-md:h-11 rounded-full flex items-center justify-center shrink-0 transition-all duration-400"
                       style={{
                         background: open ? `${accent}1c` : 'rgba(255,255,255,0.03)',
                         border: `1px solid ${open ? `${accent}55` : 'rgba(255,255,255,0.08)'}`,
@@ -1327,7 +1327,7 @@ export default function ContactPage() {
               type="button"
               onClick={() => setKvkkOpen(false)}
               aria-label="Kapat"
-              className="shrink-0 w-9 h-9 rounded-lg border border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-t2 hover:text-accent hover:border-accent/30 transition-colors"
+              className="shrink-0 w-9 h-9 max-md:w-11 max-md:h-11 rounded-lg border border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-t2 hover:text-accent hover:border-accent/30 transition-colors"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 6L6 18M6 6l12 12" />
@@ -1703,14 +1703,14 @@ function FloatingInput({
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-err` : undefined}
-          className="peer w-full px-5 pt-6 pb-2 bg-transparent font-body text-[0.9rem] text-t1 outline-none"
+          className="peer w-full px-5 pt-6 pb-2 bg-transparent font-body text-[0.9rem] max-md:text-[16px] text-t1 outline-none"
         />
         <label
           htmlFor={id}
           className={`pointer-events-none absolute left-5 font-body transition-all duration-200 ease-out
             ${hasValue
               ? 'top-2 text-[0.65rem] font-semibold tracking-[0.2em] uppercase text-t3'
-              : 'top-1/2 -translate-y-1/2 text-[0.9rem] text-t3/70'}
+              : 'top-1/2 -translate-y-1/2 text-[0.9rem] max-md:text-[16px] text-t3/70'}
             peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.65rem] peer-focus:font-semibold peer-focus:tracking-[0.2em] peer-focus:uppercase peer-focus:text-accent`}>
           {label}{required ? ' *' : ''}
         </label>
@@ -1759,7 +1759,7 @@ function FloatingTextarea({
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-err` : undefined}
-          className="peer w-full px-5 pb-4 pt-1 bg-transparent font-body text-[0.9rem] text-t1 outline-none resize-none placeholder:text-t3/55 placeholder:font-light"
+          className="peer w-full px-5 pb-4 pt-1 bg-transparent font-body text-[0.9rem] max-md:text-[16px] text-t1 outline-none resize-none placeholder:text-t3/55 placeholder:font-light"
         />
         {maxLength && (
           <span className="absolute bottom-2.5 right-4 font-body text-[0.68rem] text-t3/70 tabular-nums pointer-events-none">

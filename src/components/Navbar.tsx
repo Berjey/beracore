@@ -53,6 +53,7 @@ export default function Navbar() {
 
   const handleNav = useCallback((id: string) => {
     setMobileOpen(false);
+    setHizmetlerOpen(false);
 
     // Ana Sayfa
     if (id === '__home') {
@@ -216,18 +217,62 @@ export default function Navbar() {
       </nav>
 
       {/* ===== Mobile Menu ===== */}
-      <div className={`fixed inset-0 z-[8999] md:hidden transition-all duration-500 ${mobileOpen ? 'visible' : 'invisible pointer-events-none'}`}
+      <div className={`fixed inset-0 z-[8999] md:hidden transition-all duration-500 overflow-y-auto ${mobileOpen ? 'visible' : 'invisible pointer-events-none'}`}
         style={{ background: 'rgba(26,26,26,0.97)' }}>
-        <div className="flex flex-col items-center justify-center h-full gap-2 px-8">
-          {NAV_LINKS.map((link, i) => (
-            <button key={link.id} onClick={() => handleNav(link.id)}
-              className="font-body text-[1.3rem] font-light text-t1 py-2.5 transition-all duration-500 hover:text-accent"
-              style={{ opacity: mobileOpen ? 1 : 0, transform: mobileOpen ? 'translateY(0)' : 'translateY(20px)', transitionDelay: mobileOpen ? `${150 + i * 60}ms` : '0ms' }}>
-              {link.label}
-            </button>
-          ))}
-          <Link href="/iletisim" onClick={() => setMobileOpen(false)}
-            className="mt-6 inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-body text-sm font-semibold tracking-wider uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-500"
+        <div className="min-h-full flex flex-col items-center justify-center py-24 px-6 gap-1.5">
+          {NAV_LINKS.map((link, i) => {
+            // Hizmetler: accordion şeklinde alt servisleri göster
+            if (link.label === 'Hizmetler') {
+              return (
+                <div key={link.id} className="w-full max-w-xs"
+                  style={{ opacity: mobileOpen ? 1 : 0, transform: mobileOpen ? 'translateY(0)' : 'translateY(20px)', transitionDelay: mobileOpen ? `${150 + i * 60}ms` : '0ms', transition: 'opacity 500ms, transform 500ms' }}>
+                  <button
+                    onClick={() => setHizmetlerOpen((v) => !v)}
+                    className="w-full flex items-center justify-center gap-2 font-body text-[1.3rem] font-light text-t1 py-3 min-h-[48px] transition-colors duration-300 hover:text-accent"
+                    aria-expanded={hizmetlerOpen}
+                  >
+                    <span>{link.label}</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                      className={`transition-transform duration-300 ${hizmetlerOpen ? 'rotate-180' : ''}`}>
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+                  <div
+                    className="overflow-hidden transition-[max-height,opacity] duration-400 ease-out"
+                    style={{ maxHeight: hizmetlerOpen ? '520px' : '0px', opacity: hizmetlerOpen ? 1 : 0 }}
+                  >
+                    <div className="flex flex-col gap-0.5 mt-1 mb-2 pl-2 pr-2 pt-1 pb-1 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                      {services.map((svc, si) => (
+                        <Link
+                          key={svc.key}
+                          href={`/hizmetler/${svc.key}/${svc.subServices[0].slug}`}
+                          onClick={() => { setMobileOpen(false); setHizmetlerOpen(false); }}
+                          className="flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg transition-colors duration-200 hover:bg-white/[0.04]"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full shrink-0"
+                            style={{ background: si % 2 === 0 ? '#ffa9f9' : '#fff7ad', boxShadow: `0 0 8px ${si % 2 === 0 ? 'rgba(255,169,249,0.35)' : 'rgba(255,247,173,0.35)'}` }} />
+                          <div className="flex-1 text-left">
+                            <span className="block font-body text-[0.9rem] font-medium text-t1">{svc.title}</span>
+                            <span className="block font-body text-[0.68rem] text-t3 font-light">{svc.subtitle}</span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <button key={link.id} onClick={() => handleNav(link.id)}
+                className="font-body text-[1.3rem] font-light text-t1 py-3 min-h-[48px] transition-all duration-500 hover:text-accent"
+                style={{ opacity: mobileOpen ? 1 : 0, transform: mobileOpen ? 'translateY(0)' : 'translateY(20px)', transitionDelay: mobileOpen ? `${150 + i * 60}ms` : '0ms' }}>
+                {link.label}
+              </button>
+            );
+          })}
+          <Link href="/iletisim" onClick={() => { setMobileOpen(false); setHizmetlerOpen(false); }}
+            className="mt-6 inline-flex items-center gap-2 px-8 py-4 min-h-[52px] rounded-2xl font-body text-sm font-semibold tracking-wider uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-500"
             style={{ opacity: mobileOpen ? 1 : 0, transform: mobileOpen ? 'translateY(0)' : 'translateY(20px)', transitionDelay: mobileOpen ? '700ms' : '0ms' }}>
             Teklif Al
           </Link>
