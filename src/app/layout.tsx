@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import ScrollReset from '@/components/ScrollReset';
+import MotionGuard from '@/components/MotionGuard';
 import './globals.css';
 
 export const viewport: Viewport = {
@@ -96,6 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="cursor-custom" suppressHydrationWarning>
+        <MotionGuard />
         <ScrollReset />
         {children}
       </body>

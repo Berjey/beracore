@@ -172,6 +172,7 @@ export default function ContactPage() {
   const [kvkkOpen, setKvkkOpen] = useState(false);
   const [kvkkReadEnd, setKvkkReadEnd] = useState(false);
   const kvkkScrollRef = useRef<HTMLDivElement>(null);
+  const kvkkPanelRef = useRef<HTMLDivElement>(null);
 
   // ----- Helpers -----
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => {
@@ -459,15 +460,51 @@ export default function ContactPage() {
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 
-  // ----- KVKK modal — body scroll lock + ESC + scroll-to-end tracking -----
+  // ----- KVKK modal — body scroll lock + ESC + focus trap + scroll-to-end -----
   useEffect(() => {
     if (!kvkkOpen) return;
 
     const prevOverflow = document.body.style.overflow;
+    const prevFocused = document.activeElement as HTMLElement | null;
     document.body.style.overflow = 'hidden';
 
+    // Focus trap: modal dışına Tab ile çıkılmasın
+    const getFocusables = (): HTMLElement[] => {
+      const panel = kvkkPanelRef.current;
+      if (!panel) return [];
+      return Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => !el.hasAttribute('aria-hidden'));
+    };
+
+    // İlk focusable'ı odakla (açılışta kapat butonu değil, okuma alanı hedef)
+    requestAnimationFrame(() => {
+      const focusables = getFocusables();
+      focusables[0]?.focus();
+    });
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setKvkkOpen(false);
+      if (e.key === 'Escape') {
+        setKvkkOpen(false);
+        return;
+      }
+      if (e.key !== 'Tab') return;
+
+      const focusables = getFocusables();
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement;
+
+      if (e.shiftKey && (active === first || !kvkkPanelRef.current?.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !kvkkPanelRef.current?.contains(active))) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
 
@@ -480,6 +517,10 @@ export default function ContactPage() {
     return () => {
       document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', onKey);
+      // Modal kapandığında odak açılış butonuna geri dönsün
+      if (prevFocused && typeof prevFocused.focus === 'function') {
+        prevFocused.focus();
+      }
     };
   }, [kvkkOpen]);
 
@@ -1293,6 +1334,7 @@ export default function ContactPage() {
 
         {/* panel */}
         <div
+          ref={kvkkPanelRef}
           className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-2xl border border-white/[0.08] overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
           style={{ background: 'var(--color-bg)' }}
         >
