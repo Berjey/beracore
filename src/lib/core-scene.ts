@@ -105,8 +105,8 @@ export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
     // Camera zoom (sahnenin içine doğru)
     camera.position.z = 3.8 - p * 0.8;
 
-    // Dünya erken solar — %45'te başlar, %75'te tamamen yok. Sonrası temiz Manifesto için boşluk.
-    planeMat.opacity = p > 0.45 ? Math.max(0, 1 - (p - 0.45) / 0.30) : 1;
+    // Dünya kayboluşu Hero'nun tam sonuna yaslanır — kayboluş = Hero bitişi, Manifesto'ya boşluksuz geçiş
+    planeMat.opacity = p > 0.70 ? Math.max(0, 1 - (p - 0.70) / 0.28) : 1;
 
     // Hover brightness
     const hBright = 1.0 + hover * 0.25;
