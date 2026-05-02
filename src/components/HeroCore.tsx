@@ -46,10 +46,10 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
       scrub: 0.5,
       onUpdate: (self) => {
         sceneRef.current?.setScrollProgress(self.progress);
-        // Last 50% of hero scroll: gradual fade to dark
+        // Last 25% of hero scroll: gradual fade to dark — kısa, "kara delik" hissi olmadan
         const p = self.progress;
-        if (p > 0.5) {
-          setFadeOpacity((p - 0.5) / 0.5); // 0 → 1 over 50%
+        if (p > 0.75) {
+          setFadeOpacity((p - 0.75) / 0.25);
         } else {
           setFadeOpacity(0);
         }
@@ -75,7 +75,7 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
       ref={sectionRef}
       id="hero"
       aria-label="BERACORE — The Core"
-      className="relative w-full h-[300vh]"
+      className="relative w-full h-[200vh]"
     >
       <div className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center">
         {/* 3D Canvas */}
