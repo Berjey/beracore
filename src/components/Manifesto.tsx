@@ -22,15 +22,15 @@ export default function Manifesto() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  // Hero'dan çıkar çıkmaz typewriter — neredeyse anında başlangıç
-  const p1 = Math.max(0, Math.min(1, progress / 0.05));
-  const p2 = Math.max(0, Math.min(1, (progress - 0.05) / 0.15));
-  const p3 = Math.max(0, Math.min(1, (progress - 0.22) / 0.16));
-  const p4 = Math.max(0, Math.min(1, (progress - 0.42) / 0.30));
-  const dP = Math.max(0, Math.min(1, (progress - 0.38) / 0.10));
+  // Hero biter bitmez "Dijitalin" yazılır — boş bekleme yok
+  const p1 = Math.max(0, Math.min(1, progress / 0.01));
+  const p2 = Math.max(0, Math.min(1, (progress - 0.01) / 0.06));
+  const p3 = Math.max(0, Math.min(1, (progress - 0.08) / 0.10));
+  const p4 = Math.max(0, Math.min(1, (progress - 0.20) / 0.30));
+  const dP = Math.max(0, Math.min(1, (progress - 0.17) / 0.08));
 
   return (
-    <div ref={wrapperRef} id="manifesto" className="relative h-[300vh]">
+    <div ref={wrapperRef} id="manifesto" className="relative h-[200vh]">
       <div className="sticky top-0 h-screen flex items-center px-8 overflow-hidden max-md:px-5">
         <div className="max-w-5xl mx-auto w-full relative z-[1] text-center">
           <div className="mb-3 min-h-[1.1em]">

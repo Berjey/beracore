@@ -66,7 +66,7 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
       ref={sectionRef}
       id="hero"
       aria-label="BERACORE — The Core"
-      className="relative w-full h-[200vh]"
+      className="relative w-full h-[150vh]"
     >
       <div className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center">
         {/* 3D Canvas */}
