@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { createCoreScene, type CoreSceneAPI } from '@/lib/core-scene';
@@ -17,7 +17,6 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<CoreSceneAPI | null>(null);
   const readyFired = useRef(false);
-  const [fadeOpacity, setFadeOpacity] = useState(0);
 
   const fireReady = useCallback(() => {
     if (readyFired.current) return;
@@ -35,7 +34,6 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
     return () => { clearTimeout(timer); api.dispose(); };
   }, [fireReady]);
 
-  // Scroll → 3D scene + fade-to-black at end
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -46,13 +44,6 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
       scrub: 0.5,
       onUpdate: (self) => {
         sceneRef.current?.setScrollProgress(self.progress);
-        // Last 25% of hero scroll: gradual fade to dark — kısa, "kara delik" hissi olmadan
-        const p = self.progress;
-        if (p > 0.75) {
-          setFadeOpacity((p - 0.75) / 0.25);
-        } else {
-          setFadeOpacity(0);
-        }
       },
     });
     return () => { trigger.kill(); };
@@ -82,16 +73,6 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full"
-          aria-hidden="true"
-        />
-
-        {/* Fade-to-dark overlay — smooths the hero→manifesto transition */}
-        <div
-          className="absolute inset-0 pointer-events-none z-[1]"
-          style={{
-            background: '#1a1a1a',
-            opacity: fadeOpacity,
-          }}
           aria-hidden="true"
         />
 

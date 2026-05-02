@@ -22,12 +22,12 @@ export default function Manifesto() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  // Hero'dan çıkar çıkmaz typewriter başlasın — başta sessiz boşluk olmasın
-  const p1 = Math.max(0, Math.min(1, progress / 0.12));
-  const p2 = Math.max(0, Math.min(1, (progress - 0.10) / 0.18));
-  const p3 = Math.max(0, Math.min(1, (progress - 0.28) / 0.18));
-  const p4 = Math.max(0, Math.min(1, (progress - 0.50) / 0.30));
-  const dP = Math.max(0, Math.min(1, (progress - 0.42) / 0.10));
+  // Hero'dan çıkar çıkmaz typewriter — neredeyse anında başlangıç
+  const p1 = Math.max(0, Math.min(1, progress / 0.05));
+  const p2 = Math.max(0, Math.min(1, (progress - 0.05) / 0.15));
+  const p3 = Math.max(0, Math.min(1, (progress - 0.22) / 0.16));
+  const p4 = Math.max(0, Math.min(1, (progress - 0.42) / 0.30));
+  const dP = Math.max(0, Math.min(1, (progress - 0.38) / 0.10));
 
   return (
     <div ref={wrapperRef} id="manifesto" className="relative h-[300vh]">

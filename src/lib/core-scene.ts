@@ -93,19 +93,20 @@ export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
     // Breathing scale
     const breath = 1 + Math.sin(t * 0.8) * 0.02;
 
-    // === SCROLL: straight up + idle float ===
-    const yOffset = p * 2.5;
+    // === SCROLL: yukarı uçar, küçülerek uzaklaşır ===
+    // Ease-in: önce yavaş yukarı, sonra hızlanır — "uçup gidiyor" hissi
+    const yOffset = Math.pow(p, 1.5) * 3.2;
     sphere.position.set(floatX, yOffset + floatY, 0);
 
-    // Scale
-    const scaleBase = 1 + p * 1.0;
+    // Hafif büyüme (yaklaşma hissi yok, çakışmaz)
+    const scaleBase = 1 + p * 0.25;
     sphere.scale.setScalar(scaleBase * breath);
 
-    // Camera zoom
+    // Camera zoom (sahnenin içine doğru)
     camera.position.z = 3.8 - p * 0.8;
 
-    // Planet fades in last phase
-    planeMat.opacity = p > 0.6 ? Math.max(0, 1 - (p - 0.6) / 0.35) : 1;
+    // Dünya erken solar — %45'te başlar, %75'te tamamen yok. Sonrası temiz Manifesto için boşluk.
+    planeMat.opacity = p > 0.45 ? Math.max(0, 1 - (p - 0.45) / 0.30) : 1;
 
     // Hover brightness
     const hBright = 1.0 + hover * 0.25;
