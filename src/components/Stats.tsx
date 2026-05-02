@@ -98,11 +98,10 @@ export default function Stats() {
             once: true,
             onEnter: () => {
               const obj = { n: 0 };
-              // Büyük sayılar (ör. 2024) daha uzun sürede sayılsın; okunabilirlik
-              const duration = target > 100 ? 2.8 : 2;
+              // Tüm sayılar aynı sürede biter — birlikte hizalı animasyon
               gsap.to(obj, {
                 n: target,
-                duration,
+                duration: 2.2,
                 ease: 'power2.out',
                 onUpdate: () => {
                   numEl.textContent = prefix + Math.round(obj.n) + suffix;

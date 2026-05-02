@@ -82,8 +82,13 @@ export default function HomeFaq() {
                   <svg className="w-4 h-4 transition-transform duration-400" style={{ color: openIndex === i ? '#ffa9f9' : 'var(--color-t3)', transform: openIndex === i ? 'rotate(180deg)' : 'rotate(0)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg>
                 </div>
               </button>
-              <div className="overflow-hidden transition-all duration-500" style={{ maxHeight: openIndex === i ? '300px' : '0', opacity: openIndex === i ? 1 : 0 }}>
-                <p className="px-7 pb-7 font-body text-[0.95rem] text-t2 font-light leading-[1.85]">{item.a}</p>
+              <div
+                className="grid transition-all duration-500"
+                style={{ gridTemplateRows: openIndex === i ? '1fr' : '0fr', opacity: openIndex === i ? 1 : 0 }}
+              >
+                <div className="overflow-hidden">
+                  <p className="px-7 pb-7 font-body text-[0.95rem] text-t2 font-light leading-[1.85]">{item.a}</p>
+                </div>
               </div>
             </div>
           ))}

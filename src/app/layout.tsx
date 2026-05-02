@@ -36,17 +36,30 @@ export const metadata: Metadata = {
   authors: [{ name: 'BERACORE' }],
   robots: 'index,follow',
   metadataBase: new URL('https://beracore.com'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: 'website',
     locale: 'tr_TR',
+    url: 'https://beracore.com',
     title: 'BERACORE — Digital Experience Studio',
     description: 'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler.',
     siteName: 'BERACORE',
+    images: [
+      {
+        url: '/beracore-bg.png',
+        width: 600,
+        height: 392,
+        alt: 'BERACORE — Digital Experience Studio',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'BERACORE — Digital Experience Studio',
     description: 'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler.',
+    images: ['/beracore-bg.png'],
   },
   other: {
     'theme-color': '#0f0d16',

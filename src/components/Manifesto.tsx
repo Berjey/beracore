@@ -12,14 +12,23 @@ export default function Manifesto() {
     if (!wrapper) return;
     const rect = wrapper.getBoundingClientRect();
     const total = wrapper.offsetHeight - window.innerHeight;
+    if (total <= 0) return;
     const p = Math.max(0, Math.min(1, -rect.top / total));
     setProgress(p);
   }, []);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    const wrapper = wrapperRef.current;
+    const ro = wrapper ? new ResizeObserver(handleScroll) : null;
+    if (wrapper && ro) ro.observe(wrapper);
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      ro?.disconnect();
+    };
   }, [handleScroll]);
 
   // Hero biter bitmez "Dijitalin" yazılır — boş bekleme yok
