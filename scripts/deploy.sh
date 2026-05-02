@@ -26,7 +26,7 @@ echo "[local] git push origin main"
 git push origin main
 
 echo "[remote] server-deploy.sh çalıştırılıyor"
-ssh beracore 'bash /var/www/beracore/server-deploy.sh'
+ssh beracore 'bash /var/www/beracore/scripts/server-deploy.sh'
 
 echo "[remote] pm2 status"
 ssh beracore 'pm2 list'
