@@ -52,10 +52,13 @@ export default function Home() {
         <h1 className="sr-only">
           BERACORE — Web Tasarım, Yazılım Geliştirme, Yapay Zeka ve E-Ticaret Çözümleri Sunan Dijital Deneyim Stüdyosu
         </h1>
-        {/* fallback yuksekligi HeroCore (h-[150vh]) ile birebir esit — hydrate'te CLS olmaz */}
-        <Suspense fallback={<div className="w-full h-[150vh]" aria-hidden="true" />}>
-          <HeroCore onReady={handleReady} />
-        </Suspense>
+        {/* SSR'da render edilen sabit yukseklikli sarmalayici (Suspense/ssr:false bailout'un DISINDA).
+            Hero slotu icin 150vh yer ayirir; HeroCore client'ta yuklenince Manifesto kaymaz -> CLS ~0 */}
+        <div className="w-full h-[150vh]">
+          <Suspense fallback={null}>
+            <HeroCore onReady={handleReady} />
+          </Suspense>
+        </div>
         <Manifesto />
         <TechMarquee />
         <Services />
