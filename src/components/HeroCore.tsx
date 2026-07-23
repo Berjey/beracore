@@ -81,12 +81,15 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
           ref={overlayRef}
           className="relative z-[3] text-center pointer-events-none select-none flex flex-col items-center gap-5 mt-[28vh]"
         >
-          <h1
+          {/* Görsel wordmark — dekoratif marka logosu. Anlamsal <h1> page.tsx'te (SSR).
+              aria-hidden: ekran okuyucu bu görsel tekrarı okumaz, gerçek h1'i okur. */}
+          <p
+            aria-hidden="true"
             className="font-heading text-[clamp(2.2rem,7vw,5rem)] font-bold tracking-[-0.03em] leading-none opacity-0"
             style={{ animation: 'fi 1.2s ease 0.5s forwards' }}
           >
             <span className="text-t1">BERA</span><span className="gradient-text">CORE</span>
-          </h1>
+          </p>
           <p
             className="font-heading text-[clamp(0.75rem,1.5vw,1rem)] font-semibold tracking-[0.4em] uppercase opacity-0"
             style={{ animation: 'fi 1.2s ease 1.2s forwards' }}

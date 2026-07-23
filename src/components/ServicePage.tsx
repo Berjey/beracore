@@ -561,8 +561,8 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
             </button>
           </div>
 
-          {/* Title button */}
-          <div className="sp-hero-title text-center mb-3 -mt-2">
+          {/* Title button — sayfanın tek <h1>'i (dinamik hizmet başlığı, SSR'da mevcut) */}
+          <h1 className="sp-hero-title text-center mb-3 -mt-2">
             <button
               onClick={handleShapeClick}
               className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-xl font-body text-[clamp(0.82rem,1.25vw,0.95rem)] font-semibold tracking-wide overflow-hidden
@@ -578,7 +578,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                 <path d="M12 5v14M5 12l7 7 7-7" />
               </svg>
             </button>
-          </div>
+          </h1>
 
           {/* Description — sabit yükseklik: alt hizmet geçişlerinde Y ofseti kaymasın */}
           <div className="w-full max-w-2xl min-h-[4.5rem] max-md:min-h-[5.5rem] mb-8 flex items-start justify-center">

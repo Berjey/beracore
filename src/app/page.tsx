@@ -46,6 +46,12 @@ export default function Home() {
       <Navbar />
 
       <main id="main" className="relative z-[1]">
+        {/* Anlamsal H1 — SSR'da render edilir, ilk HTML yanıtında yer alır.
+            HeroCore (ssr:false / 3D canvas) client-side kalırken Googlebot bu başlığı ilk taramada görür.
+            Görsel wordmark HeroCore içinde <p> olarak duruyor; sayfadaki tek <h1> budur. */}
+        <h1 className="sr-only">
+          BERACORE — Web Tasarım, Yazılım Geliştirme, Yapay Zeka ve E-Ticaret Çözümleri Sunan Dijital Deneyim Stüdyosu
+        </h1>
         <Suspense fallback={<div className="w-full h-screen" />}>
           <HeroCore onReady={handleReady} />
         </Suspense>
