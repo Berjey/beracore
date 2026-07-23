@@ -53,7 +53,7 @@ export const services: Service[] = [
           { question: 'AI chatbot yatırım getirisi nedir?', answer: 'Müşterilerimiz ortalama %60 maliyet tasarrufu ve %35 müşteri memnuniyeti artışı elde etmektedir. İlk 3 ayda yatırımın geri dönüşü sağlanır.' },
         ],
         metaTitle: 'AI Chatbot & Asistan Geliştirme | BERACORE',
-        metaDescription: 'Yapay zeka destekli chatbot ve sanal asistanla müşteri hizmetini 7/24 otomatikleştirin. NLP, çok dilli destek, CRM entegrasyonu. AI chatbot geliştirme: BERACORE.',
+        metaDescription: 'Yapay zeka destekli chatbot ve sanal asistanla müşteri hizmetini 7/24 otomatikleştirin. NLP, çok dilli destek, CRM entegrasyonu. AI chatbot: BERACORE.',
       },
       {
         title: 'Süreç Otomasyonu',
