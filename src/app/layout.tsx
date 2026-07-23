@@ -35,6 +35,9 @@ export const metadata: Metadata = {
     'web tasarım, ui ux, yazılım geliştirme, e-ticaret, seo, dijital pazarlama, beracore, dijital ajans, istanbul',
   authors: [{ name: 'BERACORE' }],
   robots: 'index,follow',
+  verification: {
+    google: 'bOuYNnmvRvq5CIcTKGN5jQDYjHOi6DgcveMAVTszYSM',
+  },
   metadataBase: new URL('https://beracore.com'),
   alternates: {
     canonical: '/',
