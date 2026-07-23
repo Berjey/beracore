@@ -3,13 +3,19 @@ import type { NextConfig } from 'next';
 // Content-Security-Policy — site tamamen self-hosted (harici script/font/görsel yok).
 // script/style 'unsafe-inline': inline JSON-LD, GSAP inline stilleri ve Next hydration
 // için gerekli; nonce yerine bunu kullanıyoruz ki sayfalar statik (SSG) kalsın.
+// GA yapılandırılmışsa (NEXT_PUBLIC_GA_ID) CSP'ye yalnızca gerekli Google alan adlarını ekle.
+// ID yoksa CSP tam sıkı kalır (harici hiçbir origin'e izin verilmez).
+const ga = process.env.NEXT_PUBLIC_GA_ID
+  ? { script: ' https://www.googletagmanager.com', conn: ' https://www.google-analytics.com https://www.googletagmanager.com', img: ' https://www.google-analytics.com https://www.googletagmanager.com' }
+  : { script: '', conn: '', img: '' };
+
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${ga.script}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  `img-src 'self' data: blob:${ga.img}`,
   "font-src 'self' data:",
-  "connect-src 'self'",
+  `connect-src 'self'${ga.conn}`,
   "media-src 'self'",
   "worker-src 'self' blob:",
   "manifest-src 'self'",
