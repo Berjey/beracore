@@ -26,5 +26,9 @@
     "@types/three": "^0.175.0",
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3"
+  },
+  "overrides": {
+    "sharp": "^0.35.3",
+    "postcss": "^8.5.10"
   }
 }
