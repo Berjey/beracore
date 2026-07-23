@@ -7,7 +7,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-import Image from 'next/image';
 import CustomCursor from '@/components/CustomCursor';
 import Starfield from '@/components/Starfield';
 import Navbar from '@/components/Navbar';
@@ -57,16 +56,12 @@ export default function Home() {
             filter: 'blur(25px)',
           }}
         />
-        {/* Markalı logo görseli — deterministik, erken boyanan LCP elementi (priority/preload). */}
-        <Image
-          src="/beracore-bg.png"
-          alt=""
-          width={380}
-          height={248}
-          priority
-          fetchPriority="high"
-          className="relative w-[clamp(220px,28vw,340px)] h-auto drop-shadow-[0_0_40px_rgba(255,169,249,0.25)]"
-        />
+        <p className="relative font-heading text-[clamp(2.2rem,7vw,5rem)] font-bold tracking-[-0.03em] leading-none">
+          <span className="text-t1">BERA</span><span className="gradient-text">CORE</span>
+        </p>
+        <p className="relative font-heading text-[clamp(0.75rem,1.5vw,1rem)] font-semibold tracking-[0.4em] uppercase">
+          <span className="gradient-text-reverse">Digital Experience Studio</span>
+        </p>
       </div>
       <Starfield />
       <CustomCursor />
