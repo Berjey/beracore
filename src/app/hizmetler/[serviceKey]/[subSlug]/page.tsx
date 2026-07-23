@@ -33,11 +33,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: 'tr_TR',
       siteName: 'BERACORE',
       url: `https://beracore.com/hizmetler/${serviceKey}/${subSlug}`,
+      images: [{ url: '/beracore-bg.png', width: 600, height: 392, alt: sub.title }],
     },
     twitter: {
       card: 'summary_large_image',
       title: sub.metaTitle,
       description: sub.metaDescription,
+      images: ['/beracore-bg.png'],
     },
     alternates: {
       canonical: `https://beracore.com/hizmetler/${serviceKey}/${subSlug}`,

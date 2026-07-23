@@ -9,7 +9,7 @@ import AboutPage from '@/components/AboutPage';
 export const metadata: Metadata = {
   title: 'Hakkımızda | BERACORE — Digital Experience Studio',
   description:
-    'BERACORE hakkında: Yapay zeka, blockchain, yazılım geliştirme, tasarım ve dijital pazarlama alanlarında uzman ekibimiz ile dijital dönüşüm çözümleri sunuyoruz. İstanbul merkezli dijital ajans.',
+    'BERACORE: Yapay zeka, blockchain, yazılım, tasarım ve dijital pazarlamada uzman ekiple dijital dönüşüm çözümleri sunan İstanbul merkezli dijital stüdyo.',
   openGraph: {
     title: 'Hakkımızda | BERACORE',
     description: 'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle dijital deneyimler üreten BERACORE ekibini tanıyın.',
@@ -17,6 +17,13 @@ export const metadata: Metadata = {
     locale: 'tr_TR',
     siteName: 'BERACORE',
     url: 'https://beracore.com/hakkimizda',
+    images: [{ url: '/beracore-bg.png', width: 600, height: 392, alt: 'BERACORE Hakkında' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Hakkımızda | BERACORE',
+    description: 'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle dijital deneyimler üreten BERACORE ekibini tanıyın.',
+    images: ['/beracore-bg.png'],
   },
   alternates: { canonical: 'https://beracore.com/hakkimizda' },
 };

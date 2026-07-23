@@ -53,7 +53,7 @@ export const services: Service[] = [
           { question: 'AI chatbot yatırım getirisi nedir?', answer: 'Müşterilerimiz ortalama %60 maliyet tasarrufu ve %35 müşteri memnuniyeti artışı elde etmektedir. İlk 3 ayda yatırımın geri dönüşü sağlanır.' },
         ],
         metaTitle: 'AI Chatbot & Asistan Geliştirme | BERACORE',
-        metaDescription: 'Yapay zeka destekli chatbot ve sanal asistan çözümleri ile müşteri hizmetlerinizi 7/24 otomatikleştirin. NLP, çok dilli destek, CRM entegrasyonu. İstanbul AI chatbot geliştirme ajansı BERACORE.',
+        metaDescription: 'Yapay zeka destekli chatbot ve sanal asistanla müşteri hizmetini 7/24 otomatikleştirin. NLP, çok dilli destek, CRM entegrasyonu. AI chatbot geliştirme: BERACORE.',
       },
       {
         title: 'Süreç Otomasyonu',
@@ -93,7 +93,7 @@ export const services: Service[] = [
           { question: 'Dashboard ve raporlara nasıl erişirim?', answer: 'Web tabanlı interaktif dashboard\'larımıza herhangi bir cihazdan erişebilirsiniz. Otomatik rapor üretimi ile belirlediğiniz periyodlarda e-posta ile raporlar alırsınız.' },
         ],
         metaTitle: 'AI Veri Analizi & Tahmine Dayalı Analitik | BERACORE',
-        metaDescription: 'Yapay zeka destekli veri analizi ile büyük veriden anlamlı içgörüler çıkarın. Gerçek zamanlı dashboard, tahmine dayalı analitik, makine öğrenmesi. BERACORE veri analizi hizmetleri.',
+        metaDescription: 'Yapay zeka destekli veri analizi ile büyük veriden içgörü çıkarın. Gerçek zamanlı dashboard, tahmine dayalı analitik, makine öğrenmesi. BERACORE veri analizi.',
       },
       {
         title: 'Özel AI Çözümleri',
@@ -253,7 +253,7 @@ export const services: Service[] = [
           { question: 'Mevcut web sistemimle entegre olabilir mi?', answer: 'Kesinlikle. Mevcut web uygulamanız, API\'leriniz ve backend altyapınızla tam uyumlu mobil uygulamalar geliştiriyoruz. Aynı veri tabanını ve iş mantığını paylaşabilir.' },
         ],
         metaTitle: 'Mobil Uygulama Geliştirme | iOS & Android | BERACORE',
-        metaDescription: 'iOS ve Android mobil uygulama geliştirme. React Native, Flutter, native Swift & Kotlin. Cross-platform çözümlerle %50 maliyet tasarrufu. BERACORE mobil geliştirme.',
+        metaDescription: 'iOS ve Android mobil uygulama geliştirme. React Native, Flutter, Swift & Kotlin. Cross-platform ile %50 maliyet tasarrufu. BERACORE mobil geliştirme.',
       },
       {
         title: 'Özel Yazılım',
@@ -460,7 +460,7 @@ export const services: Service[] = [
           { question: 'Yerel SEO (Local SEO) nedir?', answer: 'Yerel SEO, işletmenizin bulunduğu bölgedeki aramalarda görünürlüğünü artıran optimizasyon sürecidir. Google Business profili, yerel dizinler ve konum bazlı anahtar kelimeler ile bölgesel müşterilerinize ulaşmanızı sağlar.' },
         ],
         metaTitle: 'SEO Hizmetleri | Arama Motoru Optimizasyonu | BERACORE',
-        metaDescription: 'Profesyonel SEO hizmetleri ile Google\'da üst sıralara çıkın. Teknik SEO, içerik optimizasyonu, link building, Local SEO. Organik trafikte %150 artış. BERACORE SEO ajansı.',
+        metaDescription: 'Google\'da üst sıralara çıkın. Teknik SEO, içerik optimizasyonu, link building, Local SEO ile organik trafikte %150 artış. BERACORE SEO ajansı.',
       },
       {
         title: 'Sosyal Medya Yönetimi', slug: 'sosyal-medya-yonetimi', image: '📣', icon: 'megaphone',
@@ -477,7 +477,7 @@ export const services: Service[] = [
           { question: 'Raporlama ne sıklıkla yapılır?', answer: 'Aylık detaylı performans raporu sunuyoruz. Takipçi büyümesi, etkileşim oranları, erişim, tıklamalar ve dönüşüm metrikleri ile şeffaf raporlama yapıyoruz.' },
         ],
         metaTitle: 'Sosyal Medya Yönetimi | İçerik Üretimi | BERACORE',
-        metaDescription: 'Profesyonel sosyal medya yönetimi. İçerik üretimi, topluluk yönetimi, influencer iş birlikleri. Instagram, TikTok, LinkedIn yönetimi. BERACORE dijital pazarlama.',
+        metaDescription: 'Profesyonel sosyal medya yönetimi: içerik üretimi, topluluk yönetimi, influencer iş birlikleri. Instagram, TikTok, LinkedIn. BERACORE dijital pazarlama.',
       },
       {
         title: 'Google & Meta Reklamları', slug: 'google-meta-reklamlari', image: '📈', icon: 'trending',

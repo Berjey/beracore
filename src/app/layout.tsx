@@ -34,7 +34,17 @@ export const metadata: Metadata = {
   keywords:
     'web tasarım, ui ux, yazılım geliştirme, e-ticaret, seo, dijital pazarlama, beracore, dijital ajans, istanbul',
   authors: [{ name: 'BERACORE' }],
-  robots: 'index,follow',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
   verification: {
     google: 'bOuYNnmvRvq5CIcTKGN5jQDYjHOi6DgcveMAVTszYSM',
   },
@@ -88,6 +98,15 @@ const jsonLd = {
   sameAs: [],
 };
 
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'BERACORE',
+  url: 'https://beracore.com',
+  inLanguage: 'tr-TR',
+  publisher: { '@type': 'Organization', name: 'BERACORE', url: 'https://beracore.com' },
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr" className={`${inter.variable} ${spaceGrotesk.variable}`}>
@@ -110,6 +129,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
         />
       </head>
       <body className="cursor-custom" suppressHydrationWarning>
