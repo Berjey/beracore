@@ -136,6 +136,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="cursor-custom" suppressHydrationWarning>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-5 focus:py-3 focus:rounded-lg focus:bg-white focus:text-black focus:font-semibold focus:shadow-lg"
+        >
+          Ana içeriğe atla
+        </a>
         <MotionGuard />
         <ScrollReset />
         {children}

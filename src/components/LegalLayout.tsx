@@ -59,7 +59,7 @@ export default function LegalLayout({
   }, []);
 
   return (
-    <main ref={containerRef} className="relative min-h-screen pt-32 pb-20 px-8 max-md:px-5 max-md:pt-24">
+    <main id="main" ref={containerRef} className="relative min-h-screen pt-32 pb-20 px-8 max-md:px-5 max-md:pt-24">
       {/* Arkaplan sinematik glow */}
       <div
         className="pointer-events-none absolute inset-0 -z-10"

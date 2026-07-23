@@ -10,7 +10,7 @@ export default function HizmetlerLayout({ children }: { children: React.ReactNod
       <Starfield />
       <CustomCursor />
       <Navbar />
-      <main className="relative z-[1]">{children}</main>
+      <main id="main" className="relative z-[1]">{children}</main>
       <Footer />
       <ScrollToTop />
     </>

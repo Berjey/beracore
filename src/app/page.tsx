@@ -52,7 +52,8 @@ export default function Home() {
         <h1 className="sr-only">
           BERACORE — Web Tasarım, Yazılım Geliştirme, Yapay Zeka ve E-Ticaret Çözümleri Sunan Dijital Deneyim Stüdyosu
         </h1>
-        <Suspense fallback={<div className="w-full h-screen" />}>
+        {/* fallback yuksekligi HeroCore (h-[150vh]) ile birebir esit — hydrate'te CLS olmaz */}
+        <Suspense fallback={<div className="w-full h-[150vh]" aria-hidden="true" />}>
           <HeroCore onReady={handleReady} />
         </Suspense>
         <Manifesto />

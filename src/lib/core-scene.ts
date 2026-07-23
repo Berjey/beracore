@@ -17,7 +17,7 @@ export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
 
   // Planet as billboard plane (the PNG is already a 3D-rendered sphere)
   const loader = new THREE.TextureLoader();
-  const planetTex = loader.load('/planet.png');
+  const planetTex = loader.load('/planet.webp');
   planetTex.colorSpace = THREE.SRGBColorSpace;
   planetTex.minFilter = THREE.LinearMipMapLinearFilter;
   planetTex.magFilter = THREE.LinearFilter;

@@ -33,7 +33,7 @@ export default function IletisimPage() {
       <Starfield />
       <CustomCursor />
       <Navbar />
-      <main className="relative z-[1]">
+      <main id="main" className="relative z-[1]">
         <ContactPage />
       </main>
       <Footer />

@@ -83,23 +83,23 @@ export default function Footer() {
             </div>
           </div>
           <div className="ft-col">
-            <h4 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-5 gradient-text">Hizmetler</h4>
+            <h3 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-5 gradient-text">Hizmetler</h3>
             <ul className="space-y-3">
               {services.map((svc) => (<li key={svc.key}><Link href={`/hizmetler/${svc.key}/${svc.subServices[0].slug}`} className="font-body text-[0.85rem] text-t1/80 hover:text-accent transition-all duration-300 inline-flex items-center gap-2 group"><span className="w-1 h-1 rounded-full bg-accent/40 group-hover:bg-accent group-hover:scale-150 transition-all duration-300" />{svc.title}</Link></li>))}
             </ul>
           </div>
           <div className="ft-col">
-            <h4 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-5 gradient-text">Kurumsal</h4>
+            <h3 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-5 gradient-text">Kurumsal</h3>
             <ul className="space-y-3">
               {KURUMSAL.map((item) => (<li key={item.id}><button onClick={() => handleNav(item.id)} className="font-body text-[0.85rem] text-t1/80 hover:text-accent transition-all duration-300 inline-flex items-center gap-2 group"><span className="w-1 h-1 rounded-full bg-accent2/40 group-hover:bg-accent2 group-hover:scale-150 transition-all duration-300" />{item.label}</button></li>))}
             </ul>
-            <h4 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-4 mt-8 gradient-text-reverse">Yasal</h4>
+            <h3 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-4 mt-8 gradient-text-reverse">Yasal</h3>
             <ul className="space-y-2.5">
               {YASAL.map((item) => (<li key={item.href}><Link href={item.href} className="font-body text-[0.8rem] text-t2 hover:text-t1 transition-colors duration-300">{item.label}</Link></li>))}
             </ul>
           </div>
           <div className="ft-col">
-            <h4 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-5 gradient-text">Bizi Takip Edin</h4>
+            <h3 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-5 gradient-text">Bizi Takip Edin</h3>
             <div className="flex gap-3 mb-8">
               {SOCIALS.map((social) => (
                 <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer" aria-label={social.label}

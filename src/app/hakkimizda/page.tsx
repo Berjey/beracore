@@ -51,7 +51,7 @@ export default function HakkimizdaPage() {
       <Starfield />
       <CustomCursor />
       <Navbar />
-      <main className="relative z-[1]">
+      <main id="main" className="relative z-[1]">
         <AboutPage />
       </main>
       <Footer />
