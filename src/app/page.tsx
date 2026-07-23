@@ -7,7 +7,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-import Preloader from '@/components/Preloader';
 import CustomCursor from '@/components/CustomCursor';
 import Starfield from '@/components/Starfield';
 import Navbar from '@/components/Navbar';
@@ -40,7 +39,30 @@ export default function Home() {
 
   return (
     <>
-      {!preloaderDone && <Preloader />}
+      {/* SSR hero poster — ilk boyada aninda gorunur (LCP ~FCP), 3D hazir olunca yerini birakir.
+          Wordmark, HeroCore overlay'i ile birebir ayni stilde; gecis kusursuz (ayni konum/font). */}
+      <div
+        aria-hidden="true"
+        className={`fixed inset-0 z-[50] flex flex-col items-center justify-center gap-5 bg-bg transition-opacity duration-700 ${
+          preloaderDone ? 'opacity-0 invisible pointer-events-none' : 'opacity-100'
+        }`}
+        style={{ transitionTimingFunction: 'cubic-bezier(0.4,0,0.2,1)' }}
+      >
+        <div
+          className="absolute top-1/2 left-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,169,249,0.08), rgba(255,247,173,0.03) 40%, transparent 65%)',
+            transform: 'translate(-50%, -50%)',
+            filter: 'blur(25px)',
+          }}
+        />
+        <p className="relative font-heading text-[clamp(2.2rem,7vw,5rem)] font-bold tracking-[-0.03em] leading-none">
+          <span className="text-t1">BERA</span><span className="gradient-text">CORE</span>
+        </p>
+        <p className="relative font-heading text-[clamp(0.75rem,1.5vw,1rem)] font-semibold tracking-[0.4em] uppercase">
+          <span className="gradient-text-reverse">Digital Experience Studio</span>
+        </p>
+      </div>
       <Starfield />
       <CustomCursor />
       <Navbar />
