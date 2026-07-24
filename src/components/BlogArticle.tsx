@@ -136,6 +136,31 @@ export default function BlogArticle({ post, relatedPosts }: Props) {
             {post.content.map((b, i) => renderBlock(b, i, accent))}
           </div>
 
+          {/* SSS — FAQPage schema ile zengin sonuç */}
+          {post.faq && post.faq.length > 0 && (
+            <section className="mt-16" aria-label="Sıkça Sorulan Sorular">
+              <h2 className="bl-reveal font-body text-[clamp(1.4rem,3vw,1.95rem)] font-semibold text-t1 tracking-tight mb-6">
+                Sıkça Sorulan Sorular
+              </h2>
+              <div className="space-y-3">
+                {post.faq.map((item, i) => (
+                  <details
+                    key={i}
+                    className="bl-reveal group rounded-2xl border border-white/[0.07] bg-white/[0.015] overflow-hidden transition-colors duration-300 hover:border-white/[0.15]"
+                  >
+                    <summary className="flex items-center justify-between gap-4 cursor-pointer list-none px-6 py-5 font-body text-[1rem] font-semibold text-t1">
+                      <span>{item.question}</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" className="shrink-0 transition-transform duration-300 group-open:rotate-45"><path d="M12 5v14M5 12h14" /></svg>
+                    </summary>
+                    <div className="px-6 pb-5 -mt-1 font-body text-[0.95rem] text-t2 font-light leading-relaxed">
+                      {item.answer}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* İlgili hizmet — huni girişi */}
           {post.relatedService && (
             <div className="bl-reveal mt-16 p-8 rounded-2xl border overflow-hidden relative text-center"
