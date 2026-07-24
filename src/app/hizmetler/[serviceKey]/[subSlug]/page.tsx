@@ -78,7 +78,7 @@ export default async function SubServicePage({ params }: Props) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://beracore.com' },
-      { '@type': 'ListItem', position: 2, name: service.title, item: `https://beracore.com/#services` },
+      { '@type': 'ListItem', position: 2, name: service.title, item: `https://beracore.com/hizmetler/${serviceKey}` },
       { '@type': 'ListItem', position: 3, name: sub.title, item: `https://beracore.com/hizmetler/${serviceKey}/${subSlug}` },
     ],
   };

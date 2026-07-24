@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { services } from '@/lib/services-data';
+import { blogPosts } from '@/lib/blog-data';
 
 const BASE_URL = 'https://beracore.com';
 
@@ -10,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/`, lastModified: now, changeFrequency: 'weekly', priority: 1.0 },
     { url: `${BASE_URL}/hakkimizda`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE_URL}/iletisim`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${BASE_URL}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE_URL}/kvkk`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}/gizlilik-politikasi`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}/cerez-politikasi`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
@@ -18,6 +20,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const serviceEntries: MetadataRoute.Sitemap = [];
   services.forEach((service) => {
+    // Kategori hub sayfası
+    serviceEntries.push({
+      url: `${BASE_URL}/hizmetler/${service.key}`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    });
+    // Alt hizmet sayfaları
     service.subServices.forEach((sub) => {
       serviceEntries.push({
         url: `${BASE_URL}/hizmetler/${service.key}/${sub.slug}`,
@@ -28,5 +38,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   });
 
-  return [...staticEntries, ...serviceEntries];
+  const blogEntries: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${BASE_URL}/blog/${post.slug}`,
+    lastModified: post.updatedAt ?? post.publishedAt,
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }));
+
+  return [...staticEntries, ...serviceEntries, ...blogEntries];
 }

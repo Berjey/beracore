@@ -81,22 +81,55 @@ export const metadata: Metadata = {
   },
 };
 
+// Sosyal profiller — Footer'daki SOCIALS ile aynı.
+// Google, sameAs ile marka kimliğini doğrular — dış sinyal olarak SEO'ya katkı sağlar.
+// NOT: Bu profillerin GERÇEKTEN açık ve sitene link veriyor olması gerekir.
+const socialProfiles: string[] = [
+  'https://instagram.com/beracore',
+  'https://linkedin.com/company/beracore',
+  'https://x.com/beracore',
+  'https://github.com/beracore',
+];
+
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
+  '@type': 'ProfessionalService',
+  '@id': 'https://beracore.com/#business',
   name: 'BERACORE',
   alternateName: 'Beracore Digital Experience Studio',
   url: 'https://beracore.com',
   description:
     'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üreten dijital deneyim stüdyosu.',
+  image: 'https://beracore.com/beracore-bg.png',
+  logo: 'https://beracore.com/beracore.png',
   email: 'info@beracore.com',
   telephone: '+905539862306',
+  priceRange: '₺₺₺',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'İstanbul',
+    addressRegion: 'İstanbul',
     addressCountry: 'TR',
   },
-  sameAs: [],
+  areaServed: [
+    { '@type': 'City', name: 'İstanbul' },
+    { '@type': 'Country', name: 'Türkiye' },
+  ],
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 41.0082,
+    longitude: 28.9784,
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '18:00',
+    },
+  ],
+  knowsLanguage: ['tr', 'en'],
+  sameAs: socialProfiles,
 };
 
 const websiteLd = {

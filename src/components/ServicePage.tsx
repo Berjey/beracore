@@ -1151,6 +1151,15 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                   );
                 })}
               </div>
+              <div className="text-center mt-12">
+                <Link
+                  href={`/hizmetler/${service.key}`}
+                  className="group inline-flex items-center gap-2 font-body text-[0.82rem] font-semibold tracking-wider uppercase text-t2 hover:text-accent transition-colors duration-300"
+                >
+                  Tüm {service.title} hizmetlerini gör
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                </Link>
+              </div>
             </div>
           </section>
         )}
