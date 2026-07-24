@@ -66,6 +66,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'AI chatbot, müşteri hizmetlerini otomatikleştirmenin ötesinde işletmenize ölçeklenebilir bir rekabet avantajı sağlar. İşletmenize özel bir chatbot çözümünün nasıl kurgulanacağını konuşmak isterseniz ekibimizle iletişime geçebilirsiniz.' },
     ],
+    faq: [
+      { question: 'AI chatbot ile canlı destek arasındaki fark nedir?', answer: 'AI chatbot, önceden eğitilmiş yapay zeka ile soruları anında ve otomatik yanıtlar; canlı destek ise gerçek bir temsilci gerektirir. En verimli model çoğu zaman ikisinin birleşimidir: rutin soruları chatbot karşılar, karmaşık durumlar canlı temsilciye aktarılır.' },
+      { question: 'Chatbot hangi platformlarda çalışır?', answer: 'Web sitesi, mobil uygulama, WhatsApp, Instagram, Facebook Messenger ve Telegram dahil birçok kanalda çalışabilir. Aynı chatbot birden fazla kanala aynı anda hizmet verebilir.' },
+      { question: 'Chatbot yönetmek için teknik ekip gerekir mi?', answer: 'Kurulum ve entegrasyonu geliştirici ekip yapar; ancak devreye alındıktan sonra chatbot’u yönetmek için teknik bilgi gerekmez. Yanıtlar ve senaryolar kullanıcı dostu panellerden güncellenebilir.' },
+    ],
   },
 
   {
@@ -103,6 +108,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'RPA, dijital dönüşümün en hızlı geri dönüş sağlayan adımlarından biridir. Hangi süreçlerinizin otomatikleştirilebileceğini birlikte değerlendirmek için ücretsiz keşif görüşmesi talep edebilirsiniz.' },
     ],
+    faq: [
+      { question: 'RPA ile yapay zeka aynı şey mi?', answer: 'Hayır. RPA kural tabanlı, tekrarlayan görevleri otomatikleştirir; yapay zeka ise öğrenir ve karar verir. İkisi birleştiğinde (akıllı otomasyon), hem kurallı işler otomatikleşir hem de belge okuma gibi bilişsel görevler üstlenilir.' },
+      { question: 'RPA mevcut yazılımlarımı değiştirir mi?', answer: 'Hayır. RPA botları mevcut sistemlerinizin üzerinde, tıpkı bir kullanıcı gibi çalışır; yazılımlarınızı değiştirmeden onları otomatikleştirir. Bu, düşük riskli ve hızlı bir dönüşüm sağlar.' },
+      { question: 'Hangi departmanlar RPA’dan en çok fayda görür?', answer: 'Muhasebe/finans, insan kaynakları, operasyon, müşteri hizmetleri ve satın alma; yüksek hacimli ve kurallı işlemler barındırdıkları için en hızlı geri dönüşü sağlar.' },
+    ],
   },
 
   {
@@ -138,6 +148,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'quote', text: 'E-ticarette en pahalı seçenek, birkaç yıl sonra baştan yazmak zorunda kaldığınız ucuz siteler olur.' },
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'E-ticaret maliyeti, iş modelinize ve büyüme hedeflerinize göre net bir kapsamla belirlenmelidir. Projenize özel şeffaf bir maliyet analizi için bizimle iletişime geçin; ücretsiz keşif görüşmesinde ihtiyaçlarınızı birlikte önceliklendirelim.' },
+    ],
+    faq: [
+      { question: 'En ucuz e-ticaret çözümü hangisidir?', answer: 'Kısa vadede kiralık (hazır) platformlar en düşük başlangıç maliyetini sunar. Ancak satış hacminiz arttıkça komisyon ve kısıtlar maliyeti yükseltir; büyüyen işletmeler için özel yazılım uzun vadede daha ekonomik olabilir.' },
+      { question: 'E-ticaret sitesi ne kadar sürede kurulur?', answer: 'Hazır platformla birkaç günde temel bir mağaza açılabilir. Markaya özel tasarım ve entegrasyonlar içeren özel bir e-ticaret sitesi ise genellikle birkaç haftadan birkaç aya kadar sürebilir.' },
+      { question: 'Sadece site yaptırmak satış için yeterli mi?', answer: 'Hayır. Site bir vitrindir; satış için trafiğe ihtiyaç vardır. SEO, dijital reklam ve sosyal medya gibi pazarlama çalışmaları olmadan en iyi site bile ziyaretçi çekmez.' },
     ],
   },
 
@@ -177,6 +192,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'Kurumsal web sitesi, doğru yapıldığında yıllarca çalışan bir yatırımdır. Markanıza özel, hızlı, SEO uyumlu ve dönüşüm odaklı bir site için ekibimizle görüşebilirsiniz.' },
     ],
+    faq: [
+      { question: 'Kurumsal web sitesi maliyeti ne kadardır?', answer: 'Maliyet; sayfa sayısı, özel tasarım, işlevsellik ve entegrasyonlara göre değişir. Basit kurumsal sitelerden kapsamlı, özel geliştirilmiş sitelere kadar geniş bir aralık vardır. Net fiyat, ihtiyaç analizinden sonra belirlenir.' },
+      { question: 'Hazır tema mı özel tasarım mı tercih etmeliyim?', answer: 'Hazır tema hızlı ve ucuzdur ama rakiplerinizle benzer görünür ve sınırlıdır. Özel tasarım markanızı yansıtır, dönüşüm için optimize edilir ve büyümeye uygundur. Kurumsal ciddiyet için özel tasarım önerilir.' },
+      { question: 'Web sitemi kendim güncelleyebilir miyim?', answer: 'Evet. İçerik yönetim sistemi (CMS) ile metin, görsel ve sayfaları teknik bilgi gerektirmeden güncelleyebilirsiniz. Kurulum sırasında bu yönetim kolaylığı sağlanır.' },
+    ],
   },
 
   {
@@ -208,6 +228,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'quote', text: 'Kullanıcı arayüzü ilk izlenimi kazandırır; kullanıcı deneyimi ise müşteriyi elde tutar.' },
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'UI/UX tasarımı bir “estetik lüks” değil, doğrudan gelire etki eden bir yatırımdır. Ürününüzün ya da web sitenizin dönüşümünü artıracak bir deneyim tasarımı için ekibimizle tanışabilirsiniz.' },
+    ],
+    faq: [
+      { question: 'UI mı UX mi daha önemli?', answer: 'İkisi de gereklidir ve birbirini tamamlar. Güçlü bir UX kötü bir UI ile kullanışsız görünür; güzel bir UI kötü bir UX ile hüsran yaratır. Başarı, ikisinin birlikte tasarlanmasındadır.' },
+      { question: 'İyi UX tasarımı satışı gerçekten artırır mı?', answer: 'Evet. Sürtünmeyi azaltan, akışı basitleştiren bir deneyim; sepet terk oranını düşürür ve tamamlanan işlem sayısını artırır. Küçük UX iyileştirmeleri bile dönüşüm oranında ölçülebilir artış sağlayabilir.' },
+      { question: 'Mevcut sitemin UX’i iyileştirilebilir mi?', answer: 'Evet. Kullanıcı davranışı analizi, ısı haritaları ve testlerle mevcut sorunlar tespit edilip iyileştirilebilir. Çoğu zaman sıfırdan başlamadan, hedefli düzenlemelerle önemli kazanımlar elde edilir.' },
     ],
   },
 
@@ -251,6 +276,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'İlk sayfaya çıkmak tek seferlik bir iş değil, sürekli bir strateji gerektirir. Siteniz için uçtan uca bir SEO yol haritası ve uygulaması istiyorsanız, ekibimizle iletişime geçebilirsiniz.' },
     ],
+    faq: [
+      { question: 'SEO sonuçları ne kadar sürede alınır?', answer: 'Uzun kuyruk ve yerel kelimelerde 1-3 ay, rekabetçi ana kelimelerde 6-12 ay tipik bir aralıktır. SEO bileşik büyüyen bir yatırımdır; erken başlamak ve tutarlılık belirleyicidir.' },
+      { question: 'SEO’yu kendim yapabilir miyim?', answer: 'Temel adımları (içerik, meta etiketler, hız) öğrenip uygulayabilirsiniz. Ancak teknik SEO, rekabet analizi ve backlink stratejisi uzmanlık gerektirir; profesyonel destek süreci belirgin biçimde hızlandırır.' },
+      { question: 'SEO mu reklam mı daha iyi?', answer: 'Reklam anlık trafik getirir ama bütçe bitince durur; SEO yavaş başlar fakat kalıcı ve giderek ucuzlayan organik trafik sağlar. İdeal strateji ikisini birlikte kullanmaktır.' },
+    ],
   },
 
   {
@@ -287,6 +317,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'Mobil uygulama, doğru planlandığında güçlü bir büyüme kanalıdır. Fikrinize özel bir maliyet ve yol haritası çıkarmak için ekibimizle ücretsiz keşif görüşmesi yapabilirsiniz.' },
     ],
+    faq: [
+      { question: 'Native mi cross-platform mu seçmeliyim?', answer: 'Yüksek performans ve platforma özel deneyim gerekiyorsa native; bütçe ve süre önemliyse ve tek kod tabanıyla iki platforma çıkmak istiyorsanız cross-platform (React Native, Flutter) uygundur. Çoğu iş uygulaması için cross-platform dengeli bir seçimdir.' },
+      { question: 'Uygulamamı hem iOS hem Android’de yayınlamak şart mı?', answer: 'Şart değil. Hedef kitlenizin ağırlıklı kullandığı platformla başlayıp diğerine sonra geçebilirsiniz. Ancak cross-platform geliştirme, iki platforma birden çıkmayı ekonomik hale getirir.' },
+      { question: 'Uygulama yayınlandıktan sonra maliyet biter mi?', answer: 'Hayır. Sunucu, güncellemeler, işletim sistemi uyumluluğu ve yeni özellikler için sürekli bir bakım bütçesi gerekir. Bunu baştan planlamak önemlidir.' },
+    ],
   },
 
   {
@@ -320,6 +355,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'quote', text: 'Akıllı kontratlar, “güven” kelimesini bir kişiye değil, herkesin doğrulayabildiği bir koda taşır.' },
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'Doğru tasarlanmış bir akıllı kontrat, süreçlerinizi hem güvenli hem de otomatik hale getirir. Ancak güvenlik açıklarına karşı titiz bir geliştirme ve denetim şarttır. Projeniz için akıllı kontrat çözümlerini konuşmak isterseniz ekibimizle iletişime geçebilirsiniz.' },
+    ],
+    faq: [
+      { question: 'Akıllı kontrat hukuki olarak geçerli mi?', answer: 'Akıllı kontrat teknik olarak kendi kendine yürüyen bir koddur; hukuki geçerliliği ülkeye ve içeriğe göre değişir. Çoğu durumda geleneksel sözleşmeyi tamamlar, tamamen ikame etmez. Kritik projelerde hukuki danışmanlık önerilir.' },
+      { question: 'Akıllı kontrat sonradan değiştirilebilir mi?', answer: 'Blockchain’e yazıldıktan sonra genellikle değiştirilemez; bu güvenlik sağlar ama hata riski taşır. Bu yüzden yayına almadan önce kapsamlı güvenlik denetimi (audit) şarttır. Yükseltilebilir kontrat desenleri de kullanılabilir.' },
+      { question: 'Akıllı kontrat hangi blockchain’de geliştirilir?', answer: 'Ethereum en yaygın olanıdır; bunun yanında BNB Chain, Polygon, Solana ve Avalanche gibi ağlar da kullanılır. Seçim; maliyet, hız ve ekosistem ihtiyacınıza göre yapılır.' },
     ],
   },
 
@@ -356,6 +396,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'Verilerinizin içinde keşfedilmeyi bekleyen fırsatlar var. İşletmenize özel bir veri analizi ve dashboard çözümü için ekibimizle iletişime geçebilirsiniz.' },
     ],
+    faq: [
+      { question: 'Küçük işletmemin veri analizine ihtiyacı var mı?', answer: 'Evet. Küçük işletmeler bile satış, ziyaretçi ve müşteri verisi üretir. Bu veriyi okumak; hangi ürünün sattığını, hangi kanalın işe yaradığını görüp bütçeyi doğru yere yönlendirmenizi sağlar.' },
+      { question: 'Veri analizi için hangi araçlar kullanılır?', answer: 'İhtiyaca göre BI panelleri (dashboard), makine öğrenmesi modelleri ve veri ambarları kullanılır. Önemli olan araç değil, doğru soruları sorup veriyi aksiyona çevirmektir.' },
+      { question: 'Verilerim dağınık, yine de analiz edilebilir mi?', answer: 'Evet. Analiz sürecinin ilk aşaması zaten veriyi toplama ve temizlemedir. Farklı kaynaklardaki dağınık veriler birleştirilip tutarlı hale getirilerek analize hazırlanır.' },
+    ],
   },
 
   {
@@ -387,6 +432,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'quote', text: 'Hazır çözüm sizi yazılıma uydurur; özel yazılım ise yazılımı işinize uydurur. Doğru soru “hangisi ucuz?” değil, “hangisi işimi büyütür?” olmalıdır.' },
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'Doğru karar, işletmenizin bugünkü ihtiyacına değil, 3-5 yıl sonraki hedefine bakarak verilir. Süreçlerinizi birlikte değerlendirip hangi yaklaşımın size uygun olduğunu netleştirmek için bizimle iletişime geçebilirsiniz.' },
+    ],
+    faq: [
+      { question: 'Özel yazılım hazır çözümden pahalı mı?', answer: 'Başlangıç maliyeti genellikle daha yüksektir. Ancak hazır çözümlerin aylık abonelik ve komisyonları zamanla birikir; özel yazılım uzun vadede daha düşük toplam sahip olma maliyeti sunabilir ve tamamen size ait olur.' },
+      { question: 'Özel yazılım ne kadar sürede teslim edilir?', answer: 'Kapsama bağlıdır. MVP (çekirdek özellikli ilk sürüm) yaklaşımıyla birkaç ayda kullanılabilir bir ürün çıkarılabilir; kapsamlı sistemler daha uzun sürebilir. Çevik geliştirme ile erken değer üretilir.' },
+      { question: 'Hazır çözümden özel yazılıma geçebilir miyim?', answer: 'Evet. Birçok işletme hazır çözümle başlayıp ihtiyaç büyüdükçe özel yazılıma geçer. Mevcut verileriniz göç ettirilerek (migration) sorunsuz bir geçiş planlanabilir.' },
     ],
   },
 
@@ -421,6 +471,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'Doğru bir pazaryeri entegrasyonu, satışlarınızı katlanırken operasyon yükünüzü sabit tutar. İşletmenize uygun bir entegrasyon çözümü için ekibimizle iletişime geçebilirsiniz.' },
     ],
+    faq: [
+      { question: 'Hangi pazaryerleriyle entegrasyon yapılabilir?', answer: 'Trendyol, Hepsiburada, Amazon, N11 ve Çiçeksepeti gibi başlıca pazaryerleriyle entegrasyon mümkündür. API sunan hemen her pazaryeri tek panele bağlanabilir.' },
+      { question: 'Entegrasyon stok hatalarını gerçekten önler mi?', answer: 'Evet. Bir kanalda satış olduğunda stok tüm kanallarda anında güncellendiği için "olmayan ürünü satma" hatası ortadan kalkar. Bu, hem müşteri memnuniyetini hem de pazaryeri puanınızı korur.' },
+      { question: 'Kendi sitem ile pazaryerlerini birlikte yönetebilir miyim?', answer: 'Evet. Entegrasyon, kendi e-ticaret sitenizi ve tüm pazaryerlerini tek bir merkezi panelde birleştirir; ürün, stok ve siparişleri tek yerden yönetirsiniz.' },
+    ],
   },
 
   {
@@ -453,6 +508,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'quote', text: 'Sosyal medyada tutarlılık, tek bir viral içerikten çok daha değerlidir; markalar sprint’le değil, ritimle büyür.' },
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'Sosyal medya, doğru yönetildiğinde markanızın en güçlü büyüme kanallarından biri olur. İşletmenize özel bir sosyal medya stratejisi için ekibimizle iletişime geçebilirsiniz.' },
+    ],
+    faq: [
+      { question: 'Hangi sosyal medya platformunda olmalıyım?', answer: 'Hedef kitlenizin bulunduğu yerde. B2C markalar için Instagram ve TikTok, B2B için LinkedIn öne çıkar. Her platformda olmak yerine, doğru platformlara odaklanmak daha etkilidir.' },
+      { question: 'Sosyal medya yönetimi ne kadar sürede sonuç verir?', answer: 'Organik büyüme sabır ister; anlamlı sonuçlar genellikle birkaç ayda görülür. Tutarlı ve stratejik paylaşımlar zamanla topluluk ve güven inşa eder.' },
+      { question: 'Takipçi sayısı mı etkileşim mi önemli?', answer: 'Etkileşim ve dönüşüm, takipçi sayısından daha değerlidir. Küçük ama ilgili ve etkileşimli bir kitle, satın almayan büyük bir kitleden çok daha fazla iş getirir.' },
     ],
   },
 
@@ -487,6 +547,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'Doğru kurgulanmış bir reklam kampanyası, yatırdığınız her lirayı ölçülebilir gelire çevirir. Reklam bütçenizden maksimum verim almak için ekibimizle iletişime geçebilirsiniz.' },
     ],
+    faq: [
+      { question: 'Google reklamı için minimum bütçe nedir?', answer: 'Teknik bir minimum yoktur; küçük bir test bütçesiyle başlanabilir. Önemli olan tutarın büyüklüğü değil, dönüşüm takibi kurup bütçeyi kazanan reklamlara yönlendirmektir.' },
+      { question: 'Google Ads mi Meta reklamı mı daha iyi?', answer: 'Amaca göre değişir. Google Ads aktif olarak arayan (niyeti yüksek) kullanıcıyı yakalar; Meta reklamları ilgi alanına göre geniş kitleye ulaşır. Çoğu markada ikisinin dengesi en iyi sonucu verir.' },
+      { question: 'Reklam durunca satışlar biter mi?', answer: 'Evet, reklam trafiği bütçeyle doğru orantılıdır ve durunca kesilir. Bu yüzden reklamı, kalıcı organik trafik getiren SEO ve içerik pazarlamayla birlikte yürütmek önerilir.' },
+    ],
   },
 
   {
@@ -519,6 +584,11 @@ export const blogPosts: BlogPost[] = [
       { type: 'quote', text: 'Marka, siz odada yokken insanların sizin hakkınızda söylediği şeydir. Marka kimliği ise o cümleyi bilinçli olarak yazma sanatıdır.' },
       { type: 'h2', text: 'Sonuç' },
       { type: 'p', text: 'Güçlü bir marka kimliği, bir maliyet değil işletmenizin en değerli uzun vadeli yatırımıdır. Markanızı baştan konumlandırmak ya da yenilemek için ekibimizle iletişime geçebilirsiniz.' },
+    ],
+    faq: [
+      { question: 'Marka kimliği sadece logo mudur?', answer: 'Hayır. Logo kimliğin bir parçasıdır; ama marka kimliği renk paleti, tipografi, görsel dil, ton ve markanın verdiği genel hissi de kapsar. Bütünsel ve tutarlı bir sistemdir.' },
+      { question: 'Marka kimliğini yenilemek gerekir mi?', answer: 'Zamanla evet. Pazar, kitle ve trendler değiştikçe marka kimliği tazelenebilir. Ancak yenileme, mevcut marka değerini koruyacak şekilde stratejik yapılmalıdır; ani ve köklü değişiklikler tanınırlığı zedeleyebilir.' },
+      { question: 'Küçük işletme için marka kimliği şart mı?', answer: 'Evet. Tutarlı ve profesyonel bir kimlik, küçük işletmeleri bile güvenilir ve kurumsal gösterir; rakiplerden ayrışmayı ve akılda kalmayı sağlar. Marka kimliği ölçekten bağımsız değer katar.' },
     ],
   },
 
@@ -853,6 +923,49 @@ export const blogPosts: BlogPost[] = [
       { question: 'İçerik pazarlamadan ne kadar sürede sonuç alınır?', answer: 'İçerik pazarlama uzun vadeli bir stratejidir. İlk anlamlı organik trafik sonuçları genellikle 3-6 ayda görülmeye başlar ve zamanla bileşik biçimde artar. Reklamın aksine anlık değildir; ancak kalıcı ve giderek ucuzlayan bir kanal oluşturur.' },
       { question: 'Blog yazmak SEO için gerçekten gerekli mi?', answer: 'Evet. Düzenli, kaliteli ve niyet odaklı blog içeriği, sitenize topikal otorite kazandırır, uzun kuyruk anahtar kelimelerde sıralama sağlar ve iç link ağını güçlendirir. Bu, özellikle rekabetçi sektörlerde organik büyümenin en güçlü kaldıraçlarından biridir.' },
       { question: 'İçerik pazarlama mı reklam mı daha iyi?', answer: 'İkisi farklı amaçlara hizmet eder ve birlikte en iyi sonucu verir. Reklam anlık ve ölçeklenebilir trafik getirir ama bütçe bittiğinde durur. İçerik pazarlama ise yavaş başlar fakat kalıcı, bileşik ve giderek ucuzlayan bir kaynak oluşturur. İdeal strateji ikisini dengelemektir.' },
+    ],
+  },
+
+  {
+    slug: 'e-ticarette-odeme-sistemleri-rehberi',
+    title: 'E-Ticarette Ödeme Sistemleri: Dönüşümü Artıran Ödeme Deneyimi 2026',
+    metaTitle: 'E-Ticarette Ödeme Sistemleri Rehberi 2026 | BERACORE',
+    metaDescription:
+      'E-ticarette ödeme sistemleri nasıl kurulur, hangi ödeme yöntemleri sunulmalı ve ödeme adımı dönüşümü nasıl artırılır? Sanal POS, taksit ve cüzdan rehberi BERACORE blogunda.',
+    excerpt:
+      'Müşteriler en çok ödeme adımında vazgeçer. E-ticarette hangi ödeme yöntemlerini sunmanız gerektiğini ve ödeme deneyimini dönüşüme çeviren ipuçlarını anlatıyoruz.',
+    publishedAt: '2026-05-26',
+    author: 'BERACORE',
+    category: 'E-Ticaret',
+    readingMinutes: 7,
+    relatedService: { label: 'Ödeme Sistemleri hizmetimiz', href: '/hizmetler/ecommerce/odeme-sistemleri' },
+    content: [
+      { type: 'p', text: 'E-ticarette bütün pazarlama çabanız müşteriyi ödeme adımına kadar getirir; ama satış o son adımda kazanılır ya da kaybedilir. Karmaşık, güvensiz veya sınırlı bir ödeme deneyimi, sepete ürün ekleyen müşterilerin büyük kısmını son anda kaçırır. Bu rehberde e-ticarette ödeme sistemlerini ve ödeme adımını dönüşüme çeviren yöntemleri açıklıyoruz.' },
+      { type: 'h2', text: 'E-Ticarette Ödeme Sistemi Nedir?' },
+      { type: 'p', text: 'Ödeme sistemi; müşterinin sepetini tamamlayıp güvenli biçimde ödeme yapmasını sağlayan altyapıdır. Sanal POS, ödeme geçidi (payment gateway), taksit motoru ve güvenlik katmanlarını içerir. İyi bir ödeme sistemi, müşteriye "güvendeyim ve bu kolaymış" hissini verir.' },
+      { type: 'h2', text: 'Sunulması Gereken Ödeme Yöntemleri' },
+      { type: 'ul', items: [
+        'Kredi/banka kartı ile tek çekim ve taksit',
+        '3D Secure güvenli ödeme doğrulaması',
+        'Dijital cüzdan ve hızlı ödeme seçenekleri',
+        'Kapıda ödeme (uygun sektörlerde)',
+        'Havale/EFT ve tekrarlayan (abonelik) ödeme',
+        'Mümkünse tek tıkla (kayıtlı kart) ödeme',
+      ] },
+      { type: 'h2', text: 'Taksit ve Kampanyaların Satışa Etkisi' },
+      { type: 'p', text: 'Türkiye’de taksit, satın alma kararında güçlü bir tetikleyicidir. Anlaşmalı bankaların sanal POS’ları üzerinden sunulan taksit seçenekleri ve kampanyalar, özellikle yüksek sepet tutarlarında dönüşümü belirgin biçimde artırır. Ödeme ekranında taksit seçeneklerinin net gösterilmesi önemlidir.' },
+      { type: 'h2', text: 'Ödeme Adımında Dönüşümü Artırmak' },
+      { type: 'p', text: 'Sepet terk oranını düşürmenin yolu, ödeme adımındaki sürtünmeyi azaltmaktır: mümkün olduğunca az adım, misafir (üyeliksiz) ödeme seçeneği, mobilde kusursuz çalışan bir arayüz, güven rozetleri ve şeffaf kargo/iade bilgisi. Her fazladan adım, bir kısım müşteriyi kaybetmek demektir.' },
+      { type: 'h2', text: 'Güvenlik ve Güven' },
+      { type: 'p', text: 'Ödeme güvenliği hem yasal bir zorunluluk hem de bir dönüşüm faktörüdür. PCI DSS uyumu, 3D Secure, SSL ve kart bilgilerinin sitede saklanmaması (tokenizasyon) hem müşteriyi korur hem de güven vererek satın almayı kolaylaştırır. Güvenli görünmeyen bir ödeme ekranı, müşteriyi anında caydırır.' },
+      { type: 'quote', text: 'E-ticarette en pahalı adım, müşterinin parasını ödemeye hazır olduğu ama sisteminizin buna izin vermediği andır.' },
+      { type: 'h2', text: 'Sonuç' },
+      { type: 'p', text: 'Doğru kurgulanmış bir ödeme sistemi, mevcut trafiğinizden daha fazla satış çıkarmanın en hızlı yoludur. E-ticaret sitenize güvenli, çok yöntemli ve dönüşüm odaklı bir ödeme deneyimi kurmak için ekibimizle iletişime geçebilirsiniz.' },
+    ],
+    faq: [
+      { question: 'E-ticaret sitemde hangi ödeme yöntemlerini sunmalıyım?', answer: 'En azından kredi/banka kartı (tek çekim + taksit), 3D Secure ve mümkünse dijital cüzdan seçenekleri sunulmalıdır. Sektörünüze göre kapıda ödeme ve havale/EFT de eklenebilir. Ne kadar çok uygun yöntem, o kadar az kaçan müşteri demektir.' },
+      { question: 'Sanal POS ile ödeme geçidi (gateway) arasındaki fark nedir?', answer: 'Sanal POS, tek bir bankanın kartlı ödeme almanızı sağlayan sistemidir. Ödeme geçidi ise birden fazla banka ve ödeme yöntemini tek bir entegrasyonda toplayan üst katmandır. Çok bankalı taksit ve tek panel yönetimi için ödeme geçidi pratiktir.' },
+      { question: 'Ödeme adımı sepet terk oranını nasıl etkiler?', answer: 'Çok büyük etkiler. Karmaşık, uzun veya güvensiz bir ödeme adımı, satın almaya hazır müşterilerin önemli kısmını kaçırır. Misafir ödeme, az adım, mobil uyum ve güven rozetleri sepet terk oranını belirgin biçimde düşürür.' },
     ],
   },
 ];
