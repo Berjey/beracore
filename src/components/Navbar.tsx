@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { label: 'Süreç', id: 'process' },
   { label: 'Referanslar', id: 'referanslar' },
   { label: 'SSS', id: 'faq' },
+  { label: 'Blog', id: '__blog' },
   { label: 'İletişim', id: '__contact' },
 ];
 
@@ -73,6 +74,17 @@ export default function Navbar() {
       } else {
         setNavigating(true);
         router.push('/hakkimizda');
+      }
+      return;
+    }
+
+    // Blog (dedicated /blog sayfası)
+    if (id === '__blog') {
+      if (pathname === '/blog') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setNavigating(true);
+        router.push('/blog');
       }
       return;
     }
