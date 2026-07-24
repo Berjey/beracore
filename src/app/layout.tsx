@@ -88,7 +88,6 @@ const socialProfiles: string[] = [
   'https://instagram.com/beracore',
   'https://linkedin.com/company/beracore',
   'https://x.com/beracore',
-  'https://github.com/beracore',
 ];
 
 const jsonLd = {
