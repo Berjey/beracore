@@ -149,7 +149,7 @@ export const blogPosts: BlogPost[] = [
       'Kurumsal web sitesi yalnızca bir “dijital kartvizit” değil, en çalışkan satış temsilcinizdir. Doğru yaptırmak için hız, SEO, mobil uyum ve dönüşüm dâhil 10 kritik noktayı sıraladık.',
     publishedAt: '2026-07-13',
     author: 'BERACORE',
-    category: 'Web Tasarım',
+    category: 'Tasarım',
     readingMinutes: 7,
     relatedService: { label: 'Web Tasarım hizmetimiz', href: '/hizmetler/design/web-tasarim' },
     content: [
@@ -554,6 +554,27 @@ export const blogPosts: BlogPost[] = [
   },
 ];
 
+// Kategori meta — renkler site hizmet paletiyle birebir aynı.
+export interface CategoryMeta {
+  name: string;
+  color: string;
+  /** İlgili hizmet kategorisi (iç link) */
+  serviceKey?: string;
+}
+
+export const CATEGORY_META: Record<string, CategoryMeta> = {
+  'Yapay Zeka': { name: 'Yapay Zeka', color: '#a78bfa', serviceKey: 'ai' },
+  'Blockchain': { name: 'Blockchain', color: '#7dd3fc', serviceKey: 'blockchain' },
+  'Yazılım Geliştirme': { name: 'Yazılım Geliştirme', color: '#f0abfc', serviceKey: 'software' },
+  'Tasarım': { name: 'Tasarım', color: '#fda4af', serviceKey: 'design' },
+  'E-Ticaret': { name: 'E-Ticaret', color: '#6ee7b7', serviceKey: 'ecommerce' },
+  'Dijital Pazarlama': { name: 'Dijital Pazarlama', color: '#fde68a', serviceKey: 'marketing' },
+};
+
+export function getCategoryColor(category: string): string {
+  return CATEGORY_META[category]?.color ?? '#ffa9f9';
+}
+
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return blogPosts.find((p) => p.slug === slug);
 }
@@ -561,4 +582,10 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
 // En yeni yazı üstte
 export function getSortedPosts(): BlogPost[] {
   return [...blogPosts].sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
+}
+
+// İçerikte bulunan kategorileri, CATEGORY_META sırasına göre döndürür (yazısı olanlar).
+export function getUsedCategories(): CategoryMeta[] {
+  const used = new Set(blogPosts.map((p) => p.category));
+  return Object.values(CATEGORY_META).filter((c) => used.has(c.name));
 }
