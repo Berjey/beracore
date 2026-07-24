@@ -1178,6 +1178,9 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
+            <p className="mt-8 font-body text-[0.82rem] text-t3">
+              veya <a href="tel:+905539862306" className="text-accent hover:text-accent2 transition-colors duration-300 font-medium">0553 986 23 06</a> numarasından bizi arayın
+            </p>
           </div>
         </section>
 

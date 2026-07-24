@@ -90,6 +90,7 @@ const jsonLd = {
   description:
     'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üreten dijital deneyim stüdyosu.',
   email: 'info@beracore.com',
+  telephone: '+905539862306',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'İstanbul',
