@@ -42,4 +42,12 @@ run('ssh', ['beracore', 'bash /var/www/beracore/scripts/server-deploy.sh'])
 console.log('[remote] pm2 status')
 run('ssh', ['beracore', 'pm2 list'])
 
+// Yeni/degisen sayfalari Bing + Yandex'e bildir. Basarisiz olursa deploy'u bozmaz.
+console.log('[indexnow] arama motorlarina bildiriliyor')
+try {
+  run('node', ['scripts/indexnow-submit.mjs'])
+} catch {
+  console.warn('[indexnow] atlandi (deploy etkilenmedi)')
+}
+
 console.log('deploy tamam — https://beracore.com')
