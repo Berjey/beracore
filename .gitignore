@@ -9,4 +9,5 @@ out/
 
 # IDE / lokal araç dosyaları
 .claude/
+.vscode/
 tsconfig.tsbuildinfo
