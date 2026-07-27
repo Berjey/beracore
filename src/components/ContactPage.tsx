@@ -1794,7 +1794,7 @@ function FloatingInput({
   return (
     <div className="relative" data-field={field}>
       <div className={`relative rounded-xl border transition-all duration-300
-        ${error ? 'border-red-400/50 bg-red-500/[0.02]' : 'border-white/[0.08] bg-white/[0.03] focus-within:border-accent/40 focus-within:bg-white/[0.05]'}`}>
+        ${error ? 'border-red-400/50 bg-red-500/[0.02]' : 'border-white/[0.08] bg-white/[0.03] focus-within:border-accent focus-within:bg-white/[0.05] focus-within:shadow-[0_0_0_3px_rgba(255,169,249,0.22)]'}`}>
         <input
           id={id}
           type={type}
@@ -1844,7 +1844,7 @@ function FloatingTextarea({
   return (
     <div className="relative" data-field={field}>
       <div className={`relative rounded-xl border transition-all duration-300
-        ${error ? 'border-red-400/50 bg-red-500/[0.02]' : 'border-white/[0.08] bg-white/[0.03] focus-within:border-accent/40 focus-within:bg-white/[0.05]'}`}>
+        ${error ? 'border-red-400/50 bg-red-500/[0.02]' : 'border-white/[0.08] bg-white/[0.03] focus-within:border-accent focus-within:bg-white/[0.05] focus-within:shadow-[0_0_0_3px_rgba(255,169,249,0.22)]'}`}>
         <label
           htmlFor={id}
           className="block px-5 pt-3 pb-1 font-body text-[0.65rem] font-semibold tracking-[0.2em] uppercase text-t3 peer-focus:text-accent">

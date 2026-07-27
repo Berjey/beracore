@@ -78,6 +78,7 @@ export default function ScrollToTop() {
               ? 'linear-gradient(135deg, rgba(255,169,249,0.12), rgba(255,247,173,0.08))'
               : 'rgba(26,26,26,0.9)',
             backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
           }}
         >
           {/* Arrow */}

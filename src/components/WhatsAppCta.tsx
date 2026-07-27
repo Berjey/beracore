@@ -68,6 +68,7 @@ export default function WhatsAppCta() {
               ? 'linear-gradient(135deg, rgba(37,211,102,0.14), rgba(167,243,208,0.08))'
               : 'rgba(26,26,26,0.9)',
             backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
           }}
         >
           <svg
