@@ -6,6 +6,34 @@ export const dynamic = 'force-dynamic';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// ---- Basit hız sınırı ----
+// PM2 tek süreç (fork) çalıştığı için bellek içi sayaç yeterli.
+// Amaç: form üzerinden SMTP kotasını tüketen otomatik gönderimleri engellemek.
+const RATE_LIMIT = 5; // pencere başına izin verilen istek
+const RATE_WINDOW_MS = 10 * 60 * 1000; // 10 dakika
+const hits = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  recent.push(now);
+  hits.set(ip, recent);
+
+  // Bellek sızıntısını önle: pencere dışı kalan IP'leri ara sıra temizle
+  if (hits.size > 5000) {
+    for (const [k, v] of hits) {
+      if (v.every((t) => now - t >= RATE_WINDOW_MS)) hits.delete(k);
+    }
+  }
+  return recent.length > RATE_LIMIT;
+}
+
+function clientIp(req: Request): string {
+  const fwd = req.headers.get('x-forwarded-for');
+  if (fwd) return fwd.split(',')[0].trim();
+  return req.headers.get('x-real-ip') ?? 'unknown';
+}
+
 type ContactPayload = {
   name?: string;
   email?: string;
@@ -25,6 +53,13 @@ const esc = (s: string) =>
   );
 
 export async function POST(req: Request) {
+  if (isRateLimited(clientIp(req))) {
+    return NextResponse.json(
+      { ok: false, error: 'rate_limited', message: 'Çok fazla deneme yaptınız. Lütfen birkaç dakika sonra tekrar deneyin.' },
+      { status: 429 }
+    );
+  }
+
   let body: ContactPayload;
   try {
     body = await req.json();
