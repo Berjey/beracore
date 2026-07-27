@@ -34,6 +34,13 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 kullanıcı y
 
 ## FAZ 5 — Profesyonel QA / Teknik Cila (teslim kalitesi)
 
+> Not: 27 Tem 2026 — Kapsamlı kod denetimi yapıldı (subagent). Sonuç: orphan dosya yok,
+> kırık iç link yok, tutarsızlık yok. Düzeltilenler: ölü `.skip-link` CSS silindi,
+> İstanbul breadcrumb schema hatası (tekrarlı URL) düzeltildi, gereksiz `CATEGORY_META`
+> export'u kaldırıldı. Footer'daki İstanbul link yığını kaldırılıp bağlamsal blog linklerine
+> taşındı. Aşağıdaki performans/a11y/güvenlik-başlığı denetimleri henüz yapılmadı.
+
+
 - [ ] 🟢🛠 **Core Web Vitals / Lighthouse** — mobil+masaüstü performans, erişilebilirlik, SEO skoru denetimi ve düzeltmeleri.
 - [ ] 🟢🛠 **Erişilebilirlik (a11y) denetimi** — kontrast, klavye navigasyonu, ARIA, alt metinler.
 - [ ] 🟢🛠 **Yapısal veri doğrulaması** — Rich Results Test ile tüm şablonlar.
