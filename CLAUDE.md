@@ -66,7 +66,11 @@ Her yazıda zorunlu standart:
 - `faq` dizisi → FAQPage schema + zengin sonuç
 - Kategori, `CATEGORY_META`'daki 6 değerden biri olmalı
 
-**Durum:** 37 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
+**Durum:** 41 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
+
+**Vaka çalışmaları:** `src/lib/case-studies-data.ts` → `/calismalarimiz` ve `/calismalarimiz/[slug]`.
+3 gerçek proje (GmsGarage, Arovela, KriptoMall). **Uydurma metrik eklenmez**; müşterinin
+teyit ettiği ifadeler `outcome`, kendi sözleri `quote` alanında tutulur.
 
 ### İçerik stratejisi (26-27 Tem 2026 rakip SERP analizinden)
 Türkiye pazarında ticari sorgularda ilk sıraları tutan içerik tipleri:
@@ -80,8 +84,11 @@ Zeo/Mobitek/Digipeak (SEO), Erpin/Kotivon (özel yazılım fiyat), WebCraft/Cbot
 
 Trendyol, Hepsiburada, N11 ve Amazon mağaza açma/entegrasyon rehberleri tamamlandı (4 pazaryeri tam kapsam).
 
-**Kalan içerik boşlukları:** şehir bazlı hizmet sayfaları (ör. "istanbul web tasarım"),
-vaka çalışması / portfolyo sayfaları, müşteri yorumları.
+**Kalan içerik boşlukları:** İstanbul dışındaki şehirler için yerel sayfalar,
+vaka çalışmalarına görsel/ekran görüntüsü ve müşteri onaylı ölçülebilir rakamlar.
+
+**Müşteri yorumları gerçektir** — `Testimonials.tsx` içindeki 3 yorum gerçek müşterilere aittir
+(kullanıcı 28 Tem 2026'da teyit etti). Uydurma referans/metrik eklenmemelidir.
 
 ---
 
@@ -109,11 +116,13 @@ kısa vadede kazanılacak yer uzun kuyruk sorgular. Gerçekçi takvim: 4-6 ayda 
 - Kullanıcının müşteriye ve gelire acil ihtiyacı var; beklenti yönetimi konusunda dürüst olunmalı
 
 ### Yapılmış olanlar
-sitemap.xml (80 URL) · robots.txt · Google doğrulama etiketi · ProfessionalService/WebSite/BlogPosting/
-FAQPage/BreadcrumbList/Service şemaları · sameAs sosyal sinyalleri · canonical + OG · HTTPS · mobil uyum ·
-37 blog yazısı · İstanbul şehir bazlı 6 hizmet sayfası (`/istanbul/[hizmet]`, `src/lib/city-pages-data.ts`) ·
-çalışan iletişim formu (Hostinger SMTP, `.env`) · WhatsApp CTA (`src/components/WhatsAppCta.tsx`, +905539862306) ·
-IndexNow her deploy'da otomatik (`scripts/indexnow-submit.mjs`, key `public/*.txt`)
+sitemap.xml (88 URL) · robots.txt · Google doğrulama etiketi · ProfessionalService/WebSite/BlogPosting/
+FAQPage/BreadcrumbList/Service/Article/ItemList şemaları · sameAs sosyal sinyalleri · canonical + OG · HTTPS ·
+mobil uyum · 41 blog yazısı · İstanbul şehir bazlı 6 hizmet sayfası (`/istanbul/[hizmet]`) ·
+vaka çalışmaları (`/calismalarimiz`, 3 proje) · çalışan iletişim formu (Hostinger SMTP, `.env`) ·
+WhatsApp CTA (`src/components/WhatsAppCta.tsx`, +905539862306) ·
+IndexNow her deploy'da otomatik (`scripts/indexnow-submit.mjs`, key `public/*.txt`) ·
+a11y denetimi geçildi (WCAG AA kontrast, klavye odağı, 404, Safari uyumu)
 
 ---
 
