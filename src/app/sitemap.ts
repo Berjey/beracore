@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { services } from '@/lib/services-data';
 import { blogPosts } from '@/lib/blog-data';
+import { cityPages } from '@/lib/city-pages-data';
 
 const BASE_URL = 'https://beracore.com';
 
@@ -45,5 +46,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticEntries, ...serviceEntries, ...blogEntries];
+  const cityEntries: MetadataRoute.Sitemap = cityPages.map((p) => ({
+    url: `${BASE_URL}/istanbul/${p.slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }));
+
+  return [...staticEntries, ...serviceEntries, ...blogEntries, ...cityEntries];
 }
