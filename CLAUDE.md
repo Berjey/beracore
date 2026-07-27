@@ -51,7 +51,11 @@ Form `src/app/api/contact/route.ts` nodemailer + SMTP kullanır. Ayarlar VPS'te
 `/var/www/beracore/.env` dosyasında (chmod 600, **git'e dahil değil**, şifre burada tutulur):
 Hostinger `smtp.hostinger.com:465`, gönderen/alıcı `info@beracore.com`.
 Deploy `git reset --hard` yapar ama `git clean` yapmaz → `.env` kalıcıdır.
-Yeni sunucuya taşınırsa `.env` elle yeniden oluşturulmalı.
+Yeni sunucuya taşınırsa `.env` elle yeniden oluşturulmalı (`.env.example` şablon).
+
+Korumalar: honeypot · alan doğrulama · HTML escape · nginx hız sınırı (`limit_req` 5r/m,
+`nginx.conf` + site config) · uygulama katmanı hız sınırı (IP başına 10 dk'da 5, route.ts).
+Nginx limitine takılan istek HTML 503, uygulama limitine takılan JSON 429 döner.
 
 ### Lint
 Projede ESLint kurulu değil ve `lint` script'i kaldırıldı (Next 15'te `next lint` kaldırıldığı için
@@ -100,39 +104,32 @@ Trendyol, Hepsiburada, N11 ve Amazon mağaza açma/entegrasyon rehberleri tamaml
 
 ---
 
-## Görünürlük durumu ve DEVAM EDİLECEK NOKTA
+## Görünürlük, yapılacaklar, durum
 
-Ayrıntılı ücretsiz kurulum rehberi: **`docs/gorunurluk-rehberi.md`**
+➡️ **Tek kaynak: `docs/yol-haritasi.md`.** Sıradaki adımlar, kullanıcıdan beklenenler,
+tamamlananlar ve bilinçli kapsam-dışı kararlar orada. Önce onu oku.
+(Eski `site-tamamlama-plani.md` ve `gorunurluk-rehberi.md` birleştirilip kaldırıldı.)
 
-### Asıl darboğaz
-Site teknik olarak iyi ama **yeni ve otoritesi yok**. Temmuz 2026'da Google beracore.com için
-"açıklama sağlanamıyor" gösteriyordu. Ana kelimelerde rakiplerin domain yaşı 15 yıla varıyor —
-kısa vadede kazanılacak yer uzun kuyruk sorgular. Gerçekçi takvim: 4-6 ayda düzenli organik trafik.
+### Kısa özet
+- Teknik durum sağlam: 27 Tem 2026 tam denetiminde 84 sayfa tarandı, **0 SEO hatası**.
+- Asıl darboğaz görünürlük: site yeni, otoritesi yok, 4-6 ayda organik trafik beklenir.
+- Kullanıcıdan bekleyen: Search Console indeks sayıları 🔴 · GA4 ölçüm kimliği 🟡 · Yandex etiketi 🟢
 
-### Kullanıcıdan beklenen (yapılmadı — sohbete bununla devam edilecek)
-1. **Search Console → Dizine ekleme > Sayfalar**: "Dizine eklendi" ve "Dizine eklenmedi" sayıları.
-   Bu iki sayı indeksleme sorunu olup olmadığını belirleyecek.
-2. **GA4 ölçüm kimliği** (`G-XXXXXXX`) — alınınca `src/app/layout.tsx`'e eklenecek.
-   Mülk `kemalberkealanel@gmail.com` hesabında, iş hesabına devredilecek.
-3. **Yandex Webmaster doğrulama meta etiketi** — alınınca `layout.tsx`'e eklenecek.
-
-(Portfolyo içeriği bu listede DEĞİL — kullanıcı portfolyo sayfasını istemediğini belirtti, bkz. yukarıdaki
-"Vaka çalışmaları / portfolyo sayfası YOK" notu.)
+### Dikkat edilecek teknik tuzaklar
+- **GA4 kodu zaten hazır** (`CookieConsent.tsx`, KVKK uyumlu, onay öncesi yüklenmez).
+  Sadece `NEXT_PUBLIC_GA_ID` gerekiyor. İKİ şey birden yapılmalı, yoksa GA sessizce çalışmaz:
+  (1) değişken VPS `.env`'e build'den ÖNCE eklenmeli (`NEXT_PUBLIC_*` build zamanı okunur),
+  (2) **Nginx CSP güncellenmeli** — şu anki `script-src 'self'` / `connect-src 'self'` GA'yı engeller.
+  Ayrıntılı talimat yol haritasında.
+- **Navigasyon linkleri `<a href>` olmak ZORUNDA.** 27 Tem 2026'da bulunan en büyük SEO kusuru:
+  Navbar/Footer `<button onClick={router.push}>` kullanıyordu, Googlebot takip etmiyordu ve
+  49 sayfa hiç iç link almıyordu. `Link href` + onClick (yumuşak kaydırma için) kalıbı korunmalı.
 
 ### Kullanıcı kararları
-- **Google Business Profile şimdilik AÇILMAYACAK** (kullanıcının kararı; ücretsiz ve yerel aramada
-  en hızlı dönüş getiren kanal olduğu kendisine söylendi)
-- **Ücretli kanal yok** — Google Ads şimdilik kapsam dışı, sadece ücretsiz yöntemlerle ilerleniyor
-- Kullanıcının müşteriye ve gelire acil ihtiyacı var; beklenti yönetimi konusunda dürüst olunmalı
-
-### Yapılmış olanlar
-sitemap.xml (84 URL) · robots.txt · Google doğrulama etiketi · ProfessionalService/WebSite/BlogPosting/
-FAQPage/BreadcrumbList/Service şemaları · sameAs sosyal sinyalleri · canonical + OG · HTTPS ·
-mobil uyum · 41 blog yazısı · İstanbul şehir bazlı 6 hizmet sayfası (`/istanbul/[hizmet]`) ·
-çalışan iletişim formu (Hostinger SMTP, `.env`) ·
-WhatsApp CTA (`src/components/WhatsAppCta.tsx`, +905539862306) ·
-IndexNow her deploy'da otomatik (`scripts/indexnow-submit.mjs`, key `public/*.txt`) ·
-a11y denetimi geçildi (WCAG AA kontrast, klavye odağı, 404, Safari uyumu)
+- **Google Business Profile şimdilik AÇILMAYACAK** (ücretsiz ve yerel aramada en hızlı dönüş
+  getiren kanal olduğu kendisine söylendi; kararı kendisinin)
+- **Ücretli kanal yok** — Google Ads kapsam dışı, sadece ücretsiz yöntemler
+- Kullanıcının müşteriye ve gelire acil ihtiyacı var; beklenti yönetiminde dürüst olunmalı
 
 ---
 
