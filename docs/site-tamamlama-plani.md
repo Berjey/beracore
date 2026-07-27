@@ -10,8 +10,7 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 kullanıcı y
 
 ## FAZ 1 — Kritik / İşlevsel (site iş getirmeye başlasın)
 
-- [ ] 🔴🛠 **İletişim formu e-posta gönderimi** — Şu an VPS'te SMTP env yok, form gelen talebi göndermiyor (LEAD KAYBI). Çözüm: SMTP bilgisi girilip VPS `.env`'e eklenecek, test maili atılacak.
-      → 👤 gerekli: hangi e-posta hesabından/servisinden gönderilecek (Gmail uygulama şifresi, Hostinger mail, veya bir SMTP servisi) ve talepler hangi adrese düşecek.
+- [x] 🔴🛠 **İletişim formu e-posta gönderimi** — TAMAM (27 Tem 2026). VPS `/var/www/beracore/.env` (chmod 600, git-dışı) içinde Hostinger SMTP yapılandırıldı: `smtp.hostinger.com:465`, gönderen/alıcı `info@beracore.com`. Test talebi gönderildi, `{ok:true}` döndü. Deploy `git reset` yapıyor ama `.env` untracked olduğu için silinmez.
 - [ ] 🔴👤 **Search Console → Sayfalar** ekranı: "Dizine eklendi" ve "eklenmedi" sayıları paylaşılacak → indeksleme sorunu var mı teşhis edilecek.
 - [ ] 🟡🛠 **GA4 analytics kurulumu** — ziyaretçi/dönüşüm ölçümü. → 👤 gerekli: GA4 ölçüm kimliği (`G-XXXXXXX`).
 - [ ] 🟢🛠 **Yandex Webmaster doğrulama** — → 👤 gerekli: doğrulama meta etiketi.

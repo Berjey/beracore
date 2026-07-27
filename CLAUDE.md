@@ -38,6 +38,13 @@ SSH anahtarı makineye özeldir. Yeni makinede:
    Windows'ta `ssh-copy-id`/`sshpass` yok; tek seferlik parola ile eklemek için
    `pip install paramiko` + kısa bir Python script'i en pratik yol. Parola kullanıcıda.
 
+### İletişim formu (çalışıyor)
+Form `src/app/api/contact/route.ts` nodemailer + SMTP kullanır. Ayarlar VPS'te
+`/var/www/beracore/.env` dosyasında (chmod 600, **git'e dahil değil**, şifre burada tutulur):
+Hostinger `smtp.hostinger.com:465`, gönderen/alıcı `info@beracore.com`.
+Deploy `git reset --hard` yapar ama `git clean` yapmaz → `.env` kalıcıdır.
+Yeni sunucuya taşınırsa `.env` elle yeniden oluşturulmalı.
+
 ### Bilinen papercut
 `npm run lint` çalışmıyor — Next 15'te `next lint` kaldırıldı, komut interaktif kurulum sorusu soruyor.
 Kalite kapısı olarak **`npm run build`** kullan (tip kontrolü içerir).
