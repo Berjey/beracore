@@ -105,9 +105,10 @@ kısa vadede kazanılacak yer uzun kuyruk sorgular. Gerçekçi takvim: 4-6 ayda 
 - Kullanıcının müşteriye ve gelire acil ihtiyacı var; beklenti yönetimi konusunda dürüst olunmalı
 
 ### Yapılmış olanlar
-sitemap.xml (74 URL) · robots.txt · Google doğrulama etiketi · ProfessionalService/WebSite/BlogPosting/
-FAQPage/BreadcrumbList şemaları · sameAs sosyal sinyalleri · canonical + OG · HTTPS · mobil uyum ·
-37 blog yazısı · WhatsApp CTA (`src/components/WhatsAppCta.tsx`, +905539862306) ·
+sitemap.xml (80 URL) · robots.txt · Google doğrulama etiketi · ProfessionalService/WebSite/BlogPosting/
+FAQPage/BreadcrumbList/Service şemaları · sameAs sosyal sinyalleri · canonical + OG · HTTPS · mobil uyum ·
+37 blog yazısı · İstanbul şehir bazlı 6 hizmet sayfası (`/istanbul/[hizmet]`, `src/lib/city-pages-data.ts`) ·
+çalışan iletişim formu (Hostinger SMTP, `.env`) · WhatsApp CTA (`src/components/WhatsAppCta.tsx`, +905539862306) ·
 IndexNow her deploy'da otomatik (`scripts/indexnow-submit.mjs`, key `public/*.txt`)
 
 ---

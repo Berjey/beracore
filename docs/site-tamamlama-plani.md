@@ -23,7 +23,7 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 kullanıcı y
 
 ## FAZ 3 — İçerik & Yerel SEO Derinliği (organik büyüme)
 
-- [ ] 🟡🛠 **Şehir bazlı hizmet sayfaları** — ör. "İstanbul web tasarım", "İstanbul yazılım firması". Yerel ticari sorguları hedefler.
+- [x] 🟡🛠 **Şehir bazlı hizmet sayfaları** — TAMAM (27 Tem 2026). `/istanbul/[hizmet]` altında 6 sayfa: web-tasarim, yazilim, e-ticaret, dijital-pazarlama, seo, mobil-uygulama. Her biri özgün içerik + FAQ + Service/LocalBusiness/FAQPage schema + iç link. Footer'da "İstanbul Hizmetleri" bloğu. Veri: `src/lib/city-pages-data.ts`. (Diğer şehirler ileride aynı yapıyla eklenebilir.)
 - [ ] 🟢🛠 **Ek blog yazıları** — kalan içerik boşlukları ve rakip SERP analizine göre yeni ticari niyetli yazılar (süreklilik).
 - [ ] 🟢👤 **Google Business Profile** — yerel aramanın #1 kaldıracı (kullanıcı şimdilik ertelemişti; hazır olunca).
 
