@@ -20,6 +20,27 @@ function formatDate(iso: string): string {
   return `${parseInt(d, 10)} ${MONTHS[parseInt(m, 10) - 1]} ${y}`;
 }
 
+// Site hero animasyon dili — başlığı karakter-karakter böler (rotationX reveal için).
+const ACCENT_TEXT_STYLE: React.CSSProperties = {
+  background: 'linear-gradient(135deg, #ffa9f9, #fff7ad)',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  color: 'transparent',
+};
+
+function SplitChars({ text, style }: { text: string; style?: React.CSSProperties }) {
+  return (
+    <>
+      {Array.from(text).map((ch, i) => (
+        <span key={i} className="bl-char inline-block" style={{ willChange: 'transform, opacity', ...style }}>
+          {ch === ' ' ? ' ' : ch}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export default function BlogIndex({ posts, categories }: Props) {
   const [activeCat, setActiveCat] = useState<string>('Tümü');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,10 +66,16 @@ export default function BlogIndex({ posts, categories }: Props) {
       ctx = gsap.context(() => {
         const tl = gsap.timeline({ delay: 0.15 });
         tl.fromTo('.bl-label', { y: 20, opacity: 0, letterSpacing: '0.8em' }, { y: 0, opacity: 1, letterSpacing: '0.5em', duration: 0.8, ease: 'power3.out' })
-          .fromTo('.bl-title', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }, '-=0.35')
-          .fromTo('.bl-sub', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.45')
-          .fromTo('.bl-filter', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power2.out' }, '-=0.3')
-          .fromTo('.bl-featured', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.2');
+          // Başlık: karakter-karakter 3D reveal (site hero diliyle aynı)
+          .fromTo('.bl-char', { y: 44, opacity: 0, rotationX: -75 }, { y: 0, opacity: 1, rotationX: 0, duration: 0.7, stagger: 0.028, ease: 'power3.out' }, '-=0.4')
+          .fromTo('.bl-accent-glow', { opacity: 0, scale: 0.4 }, { opacity: 0.4, scale: 1, duration: 1.1, ease: 'power2.out' }, '-=0.55')
+          .fromTo('.bl-sub', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.5')
+          .fromTo('.bl-line', { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: 'power2.out' }, '-=0.6')
+          .fromTo('.bl-filter', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power2.out' }, '-=0.7')
+          .fromTo('.bl-featured', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.4');
+
+        // Accent glow nefes alır (girişten sonra) — AboutPage ile aynı dil
+        gsap.to('.bl-accent-glow', { opacity: 0.6, scale: 1.12, duration: 2.8, yoyo: true, repeat: -1, ease: 'sine.inOut', delay: 2 });
       }, container);
     }, 60);
     return () => { clearTimeout(timer); ctx?.revert(); };
@@ -83,12 +110,31 @@ export default function BlogIndex({ posts, categories }: Props) {
           <span className="bl-label inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-5">
             BERACORE Blog
           </span>
-          <h1 className="bl-title font-heading text-[clamp(2.4rem,6.5vw,4.5rem)] font-semibold tracking-tight leading-[1.02] mb-6">
-            <span className="gradient-text">İçgörüler ve Rehberler</span>
+          <h1
+            aria-label="İçgörüler ve Rehberler"
+            className="font-heading text-[clamp(2.4rem,6.5vw,4.5rem)] font-semibold tracking-tight leading-[1.02] mb-6"
+            style={{ perspective: '1000px' }}
+          >
+            <span className="inline-block text-t1 mr-[0.28em]" aria-hidden="true">
+              <SplitChars text="İçgörüler ve" />
+            </span>
+            <span className="relative inline-block" aria-hidden="true">
+              <span
+                className="bl-accent-glow pointer-events-none absolute inset-0 -z-10 blur-[42px]"
+                style={{ background: 'linear-gradient(135deg, #ffa9f9, #fff7ad)', borderRadius: '50%' }}
+                aria-hidden="true"
+              />
+              <SplitChars text="Rehberler" style={ACCENT_TEXT_STYLE} />
+            </span>
           </h1>
           <p className="bl-sub font-body text-[1.15rem] max-md:text-[1rem] text-t2 font-light leading-relaxed max-w-2xl mx-auto">
             Yapay zeka, web, e-ticaret, yazılım ve dijital pazarlama üzerine uygulanabilir bilgiler — işletmenizi bir adım öne taşıyacak içerikler.
           </p>
+          <div
+            className="bl-line mt-10 h-px w-full max-w-md mx-auto origin-center"
+            style={{ background: 'linear-gradient(90deg, transparent, var(--color-accent), var(--color-accent2), transparent)' }}
+            aria-hidden="true"
+          />
         </header>
 
         {/* ===== KATEGORİ FİLTRESİ ===== */}

@@ -76,9 +76,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'rpa-surec-otomasyonu-nedir',
     title: 'RPA ile Süreç Otomasyonu: Hangi İşler Otomatikleştirilebilir?',
-    metaTitle: 'RPA Süreç Otomasyonu Nedir? Hangi İşler Otomatikleşir | BERACORE',
+    metaTitle: 'RPA Süreç Otomasyonu Nedir? Faydaları ve Örnekler | BERACORE',
     metaDescription:
-      'RPA (robotik süreç otomasyonu) nedir, hangi iş süreçleri otomatikleştirilebilir ve ne kadar tasarruf sağlar? Uygulanabilir örnekler ve devreye alma süreci BERACORE blogunda.',
+      'RPA (robotik süreç otomasyonu) nedir, hangi iş süreçleri otomatikleştirilebilir ve ne kadar tasarruf sağlar? Uygulanabilir örnekler ve devreye alma süreci.',
     excerpt:
       'Fatura işleme, veri girişi, raporlama… Çalışanlarınızın saatlerini yiyen tekrarlayan işler RPA ile dakikalara iniyor. Hangi süreçlerin otomatikleştirilebileceğini ve nereden başlanacağını anlatıyoruz.',
     publishedAt: '2026-07-21',
@@ -118,7 +118,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'e-ticaret-sitesi-kurma-maliyeti',
     title: 'E-Ticaret Sitesi Kurma Maliyeti 2026: Neye Ne Kadar Bütçe Ayırmalı?',
-    metaTitle: 'E-Ticaret Sitesi Kurma Maliyeti 2026 — Fiyat Rehberi | BERACORE',
+    metaTitle: 'E-Ticaret Sitesi Kurma Maliyeti 2026 | BERACORE',
     metaDescription:
       'E-ticaret sitesi kurma maliyeti 2026’da neye göre değişir? Hazır platform mu özel yazılım mı, hangi kalemlere bütçe ayrılır? Şeffaf fiyat rehberi BERACORE blogunda.',
     excerpt:
@@ -159,7 +159,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'kurumsal-web-sitesi-yaptirma-rehberi',
     title: 'Kurumsal Web Sitesi Yaptırırken Dikkat Edilmesi Gereken 10 Nokta',
-    metaTitle: 'Kurumsal Web Sitesi Yaptırma Rehberi — 10 Kritik Nokta | BERACORE',
+    metaTitle: 'Kurumsal Web Sitesi Yaptırma Rehberi 2026 | BERACORE',
     metaDescription:
       'Kurumsal web sitesi yaptırırken nelere dikkat etmeli? Hız, SEO, mobil uyum, güvenlik ve dönüşüm odaklı 10 kritik noktayı içeren pratik rehber BERACORE blogunda.',
     excerpt:
@@ -204,7 +204,7 @@ export const blogPosts: BlogPost[] = [
     title: 'UI/UX Tasarımı Neden Önemli? Dönüşüm ve Kullanıcı Deneyimi İlişkisi',
     metaTitle: 'UI/UX Tasarımı Neden Önemli? Dönüşüme Etkisi | BERACORE',
     metaDescription:
-      'UI/UX tasarımı nedir, aralarındaki fark nedir ve dönüşüm oranını nasıl artırır? İyi kullanıcı deneyiminin satışa etkisini örneklerle anlatan rehber BERACORE blogunda.',
+      'UI/UX tasarımı nedir, aralarındaki fark nedir ve dönüşüm oranını nasıl artırır? İyi kullanıcı deneyiminin satışa etkisini örneklerle anlatan rehber.',
     excerpt:
       'Kullanıcılar güzel arayüzleri sever ama iyi deneyimlere para öder. UI ile UX arasındaki farkı ve iyi tasarımın dönüşüm oranınıza doğrudan etkisini bu yazıda ele alıyoruz.',
     publishedAt: '2026-07-09',
@@ -286,9 +286,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'mobil-uygulama-gelistirme-maliyeti',
     title: 'Mobil Uygulama Geliştirme Maliyeti ve Süreci: Bilmeniz Gerekenler',
-    metaTitle: 'Mobil Uygulama Geliştirme Maliyeti 2026 — Süreç Rehberi | BERACORE',
+    metaTitle: 'Mobil Uygulama Geliştirme Maliyeti 2026 | BERACORE',
     metaDescription:
-      'Mobil uygulama geliştirme maliyeti neye göre değişir, native mi cross-platform mu, süreç nasıl işler? Bütçenizi doğru planlamanız için pratik rehber BERACORE blogunda.',
+      'Mobil uygulama geliştirme maliyeti neye göre değişir, native mi cross-platform mu, süreç nasıl işler? Bütçenizi doğru planlamak için pratik rehber.',
     excerpt:
       'Mobil uygulama fikriniz var ama maliyeti ve süreci kafanızı mı karıştırıyor? Native ile cross-platform farkını, maliyeti belirleyen kalemleri ve geliştirme sürecini netleştiriyoruz.',
     publishedAt: '2026-07-01',
@@ -327,9 +327,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'akilli-kontrat-nedir',
     title: 'Akıllı Kontrat (Smart Contract) Nedir ve Nasıl Çalışır?',
-    metaTitle: 'Akıllı Kontrat (Smart Contract) Nedir, Nasıl Çalışır? | BERACORE',
+    metaTitle: 'Akıllı Kontrat (Smart Contract) Nedir? | BERACORE',
     metaDescription:
-      'Akıllı kontrat (smart contract) nedir, nasıl çalışır ve hangi alanlarda kullanılır? Blockchain tabanlı sözleşmelerin avantajları ve iş dünyasındaki uygulamaları BERACORE blogunda.',
+      'Akıllı kontrat (smart contract) nedir, nasıl çalışır ve nerede kullanılır? Blockchain tabanlı sözleşmelerin avantajları ve uygulama alanları.',
     excerpt:
       'Aracıya gerek kalmadan, koşullar sağlandığında kendi kendine çalışan sözleşmeler artık gerçek. Akıllı kontratların ne olduğunu, nasıl işlediğini ve nerelerde kullanıldığını anlatıyoruz.',
     publishedAt: '2026-06-27',
@@ -366,7 +366,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'veri-analizi-nedir-isletmeye-faydasi',
     title: 'Veri Analizi Nedir ve İşletmenize Nasıl Rekabet Avantajı Sağlar?',
-    metaTitle: 'Veri Analizi Nedir? İşletmeye Faydaları ve Kullanımı | BERACORE',
+    metaTitle: 'Veri Analizi Nedir? İşletmeye Faydaları | BERACORE',
     metaDescription:
       'Veri analizi nedir, hangi verilerden içgörü çıkarılır ve tahmine dayalı analitik işletmenize ne kazandırır? Veriye dayalı karar almanın yolları BERACORE blogunda.',
     excerpt:
@@ -445,7 +445,7 @@ export const blogPosts: BlogPost[] = [
     title: 'Pazaryeri Entegrasyonu Nedir? Trendyol, Hepsiburada ve Amazon Yönetimi',
     metaTitle: 'Pazaryeri Entegrasyonu Nedir? Nasıl Yapılır | BERACORE',
     metaDescription:
-      'Pazaryeri entegrasyonu nedir, Trendyol/Hepsiburada/Amazon gibi platformları tek panelden nasıl yönetirsiniz? Stok ve sipariş senkronizasyonunun faydaları BERACORE blogunda.',
+      'Pazaryeri entegrasyonu nedir, Trendyol/Hepsiburada/Amazon platformlarını tek panelden nasıl yönetirsiniz? Stok ve sipariş senkronizasyonunun faydaları.',
     excerpt:
       'Birden fazla pazaryerinde satış yapmak büyük fırsat ama stok ve siparişleri ayrı ayrı yönetmek kâbusa dönebilir. Pazaryeri entegrasyonunun bu karmaşayı nasıl çözdüğünü anlatıyoruz.',
     publishedAt: '2026-06-15',
@@ -483,7 +483,7 @@ export const blogPosts: BlogPost[] = [
     title: 'Sosyal Medya Yönetimi Neden Önemli? İşletmeler İçin Rehber',
     metaTitle: 'Sosyal Medya Yönetimi Neden Önemli? Faydaları | BERACORE',
     metaDescription:
-      'Sosyal medya yönetimi nedir, neden önemlidir ve işletmenize ne kazandırır? Marka bilinirliği, topluluk ve satışa etkisiyle profesyonel yönetimin farkı BERACORE blogunda.',
+      'Sosyal medya yönetimi nedir, neden önemlidir ve işletmenize ne kazandırır? Marka bilinirliği, topluluk ve satışa etkisiyle profesyonel yönetimin farkı.',
     excerpt:
       'Sosyal medyada var olmak yetmiyor; düzenli, stratejik ve markaya uygun bir yönetim gerekiyor. Profesyonel sosyal medya yönetiminin işletmenize neden değer kattığını anlatıyoruz.',
     publishedAt: '2026-06-11',
@@ -597,7 +597,7 @@ export const blogPosts: BlogPost[] = [
     title: 'API Entegrasyonu Nedir ve İşletmeniz İçin Neden Önemli?',
     metaTitle: 'API Entegrasyonu Nedir? Nasıl Çalışır | BERACORE',
     metaDescription:
-      'API entegrasyonu nedir, sistemler birbiriyle nasıl konuşur ve işletmenize ne kazandırır? Otomasyon, veri akışı ve verimlilik açısından API’lerin rolü BERACORE blogunda.',
+      'API entegrasyonu nedir, sistemler birbiriyle nasıl konuşur ve işletmenize ne kazandırır? Otomasyon, veri akışı ve verimlilik açısından API’lerin rolü.',
     excerpt:
       'Kullandığınız yazılımlar birbiriyle konuşmuyorsa, ekibiniz aynı veriyi defalarca elle giriyordur. API entegrasyonunun bu kopuklukları nasıl çözdüğünü sade bir dille anlatıyoruz.',
     publishedAt: '2026-05-30',
@@ -633,9 +633,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'kripto-para-borsasi-yazilimi-nasil-kurulur',
     title: 'Kripto Para Borsası Yazılımı Nedir ve Nasıl Kurulur? 2026 Rehberi',
-    metaTitle: 'Kripto Para Borsası Yazılımı Nasıl Kurulur? 2026 Rehberi | BERACORE',
+    metaTitle: 'Kripto Para Borsası Yazılımı Nasıl Kurulur? | BERACORE',
     metaDescription:
-      'Kripto para borsası yazılımı nedir, hangi modüllerden oluşur ve nasıl kurulur? Eşleştirme motoru, cüzdan, AML/KYC ve SPK uyumu dahil 2026 kapsamlı rehberi BERACORE’da.',
+      'Kripto para borsası yazılımı nedir, hangi modüllerden oluşur ve nasıl kurulur? Eşleştirme motoru, cüzdan, AML/KYC ve SPK uyumu dahil 2026 rehberi.',
     excerpt:
       'Kendi kripto para borsanızı kurmak; eşleştirme motorundan cüzdan altyapısına, AML/KYC’den yasal uyuma kadar birçok katmanı doğru kurgulamayı gerektirir. Bu kapsamlı rehberde tüm bileşenleri ve kurulum sürecini açıklıyoruz.',
     publishedAt: '2026-07-23',
@@ -689,7 +689,7 @@ export const blogPosts: BlogPost[] = [
     title: 'DeFi Nedir? Merkeziyetsiz Finans ve Token Çözümleri Rehberi 2026',
     metaTitle: 'DeFi Nedir? Merkeziyetsiz Finans Rehberi 2026 | BERACORE',
     metaDescription:
-      'DeFi (merkeziyetsiz finans) nedir, nasıl çalışır ve token çözümleri işletmelere ne sunar? Likidite havuzları, staking ve akıllı kontratlar dahil 2026 rehberi BERACORE’da.',
+      'DeFi (merkeziyetsiz finans) nedir, nasıl çalışır ve token çözümleri ne sunar? Likidite havuzları, staking ve akıllı kontratlar dahil 2026 rehberi.',
     excerpt:
       'Bankalar olmadan borç verme, faiz kazanma ve takas… DeFi, geleneksel finansı akıllı kontratlarla yeniden kuruyor. Merkeziyetsiz finansın ne olduğunu ve token çözümlerinin işletmelere sunduğu fırsatları anlatıyoruz.',
     publishedAt: '2026-07-19',
@@ -768,9 +768,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'ozel-yapay-zeka-cozumleri-rehberi',
     title: 'Özel Yapay Zeka Çözümleri: İşletmeler İçin AI Rehberi 2026',
-    metaTitle: 'Özel Yapay Zeka Çözümleri: İşletmeler İçin AI Rehberi 2026 | BERACORE',
+    metaTitle: 'Özel Yapay Zeka (AI) Çözümleri Rehberi 2026 | BERACORE',
     metaDescription:
-      'Özel yapay zeka çözümleri nedir, hazır AI’dan farkı nedir ve işletmenize nasıl rekabet avantajı sağlar? Model eğitimi, kullanım alanları ve süreç 2026 rehberinde BERACORE’da.',
+      'Özel yapay zeka çözümleri nedir, hazır AI’dan farkı nedir ve nasıl rekabet avantajı sağlar? Model eğitimi, kullanım alanları ve süreç 2026 rehberi.',
     excerpt:
       'Hazır AI araçları herkese aynı gücü verir; gerçek fark, işletmenize özel eğitilmiş yapay zekâ ile ortaya çıkar. Özel AI çözümlerinin ne olduğunu ve nasıl rekabet avantajına dönüştüğünü anlatıyoruz.',
     publishedAt: '2026-07-11',
@@ -809,9 +809,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'web-yazilim-gelistirme-nedir',
     title: 'Web Yazılım Geliştirme Nedir? Teknolojiler ve Süreç Rehberi 2026',
-    metaTitle: 'Web Yazılım Geliştirme Nedir? Süreç ve Teknolojiler 2026 | BERACORE',
+    metaTitle: 'Web Yazılım Geliştirme Nedir? Süreç 2026 | BERACORE',
     metaDescription:
-      'Web yazılım geliştirme nedir, hangi teknolojiler kullanılır ve süreç nasıl işler? Frontend, backend, veritabanı ve modern web mimarisi 2026 rehberinde BERACORE blogunda.',
+      'Web yazılım geliştirme nedir, hangi teknolojiler kullanılır ve süreç nasıl işler? Frontend, backend, veritabanı ve modern web mimarisi 2026 rehberi.',
     excerpt:
       'Web uygulaması bir web sitesinden çok daha fazlasıdır. Web yazılım geliştirmenin ne olduğunu, hangi teknolojilerle yapıldığını ve sağlıklı bir geliştirme sürecinin nasıl işlediğini anlatıyoruz.',
     publishedAt: '2026-07-07',
@@ -891,7 +891,7 @@ export const blogPosts: BlogPost[] = [
     title: 'İçerik Pazarlama Nedir? SEO Uyumlu İçerik Stratejisi Rehberi 2026',
     metaTitle: 'İçerik Pazarlama Nedir? SEO İçerik Stratejisi 2026 | BERACORE',
     metaDescription:
-      'İçerik pazarlama nedir, neden işe yarar ve SEO uyumlu içerik stratejisi nasıl kurulur? Blog, huni ve anahtar kelime dahil uygulanabilir 2026 rehberi BERACORE blogunda.',
+      'İçerik pazarlama nedir, neden işe yarar ve SEO uyumlu içerik stratejisi nasıl kurulur? Blog, huni ve anahtar kelime dahil 2026 rehberi.',
     excerpt:
       'Reklam kesildiğinde susar; içerik ise çalışmaya devam eder. İçerik pazarlamanın ne olduğunu ve SEO ile birleştiğinde nasıl sürekli müşteri getiren bir varlığa dönüştüğünü anlatıyoruz.',
     publishedAt: '2026-06-29',
@@ -931,7 +931,7 @@ export const blogPosts: BlogPost[] = [
     title: 'E-Ticarette Ödeme Sistemleri: Dönüşümü Artıran Ödeme Deneyimi 2026',
     metaTitle: 'E-Ticarette Ödeme Sistemleri Rehberi 2026 | BERACORE',
     metaDescription:
-      'E-ticarette ödeme sistemleri nasıl kurulur, hangi ödeme yöntemleri sunulmalı ve ödeme adımı dönüşümü nasıl artırılır? Sanal POS, taksit ve cüzdan rehberi BERACORE blogunda.',
+      'E-ticarette ödeme sistemleri nasıl kurulur, hangi yöntemler sunulmalı ve ödeme adımı dönüşümü nasıl artırılır? Sanal POS, taksit ve cüzdan rehberi.',
     excerpt:
       'Müşteriler en çok ödeme adımında vazgeçer. E-ticarette hangi ödeme yöntemlerini sunmanız gerektiğini ve ödeme deneyimini dönüşüme çeviren ipuçlarını anlatıyoruz.',
     publishedAt: '2026-05-26',
@@ -972,7 +972,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'yazilim-firmasi-nasil-secilir',
     title: 'Yazılım Firması Nasıl Seçilir? Karar Vermeden Önce Sorulacak 12 Soru',
-    metaTitle: 'Yazılım Firması Nasıl Seçilir? 12 Kriter ve Kırmızı Bayraklar | BERACORE',
+    metaTitle: 'Yazılım Firması Nasıl Seçilir? 12 Kriter | BERACORE',
     metaDescription:
       'Yazılım firması seçerken nelere dikkat edilmeli? Teklif karşılaştırma, sözleşme, kaynak kod mülkiyeti, bakım ve kırmızı bayraklar dahil 12 maddelik karar rehberi.',
     excerpt:
@@ -1038,7 +1038,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'ozel-yazilim-fiyatlari-2026',
     title: 'Özel Yazılım Fiyatları 2026: Maliyet Neye Göre Belirlenir?',
-    metaTitle: 'Özel Yazılım Fiyatları 2026: Maliyet Kalemleri ve Bütçe Rehberi | BERACORE',
+    metaTitle: 'Özel Yazılım Fiyatları 2026: Maliyet Rehberi | BERACORE',
     metaDescription:
       'Özel yazılım fiyatları 2026’da neye göre belirleniyor? Proje ölçeğine göre bütçe aralıkları, gizli maliyet kalemleri ve teklifleri doğru karşılaştırma rehberi.',
     excerpt:
@@ -1099,9 +1099,9 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'web-sitesi-yaptirma-fiyatlari-2026',
     title: 'Web Sitesi Yaptırma Fiyatları 2026: Bütçenizi Ne Belirler?',
-    metaTitle: 'Web Sitesi Yaptırma Fiyatları 2026 | Maliyet Rehberi | BERACORE',
+    metaTitle: 'Web Sitesi Yaptırma Fiyatları 2026 | BERACORE',
     metaDescription:
-      'Web sitesi yaptırma fiyatları 2026’da neye göre değişir? Şablon ve özel tasarım farkı, kurumsal site maliyet kalemleri, yıllık giderler ve teklif karşılaştırma rehberi.',
+      'Web sitesi yaptırma fiyatları 2026’da neye göre değişir? Şablon ve özel tasarım farkı, kurumsal site maliyet kalemleri ve yıllık giderler rehberi.',
     excerpt:
       'Aynı işi anlatan iki teklif arasında kat kat fark olabiliyor. Web sitesi fiyatını gerçekte neyin belirlediğini, şablon ile özel tasarım arasındaki farkın nereye yansıdığını açıklıyoruz.',
     publishedAt: '2026-07-25',
@@ -1159,7 +1159,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'kripto-borsasi-yazilimi-maliyeti',
     title: 'Kripto Para Borsası Yazılımı Maliyeti: White Label mı, Özel Geliştirme mi?',
-    metaTitle: 'Kripto Borsa Yazılımı Maliyeti 2026 | White Label vs Özel | BERACORE',
+    metaTitle: 'Kripto Borsa Yazılımı Maliyeti 2026 | BERACORE',
     metaDescription:
       'Kripto para borsası yazılımı maliyeti nasıl oluşur? White label ile özel geliştirme karşılaştırması, likidite, lisans, güvenlik ve işletme giderleri kalem kalem.',
     excerpt:
@@ -1217,7 +1217,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'yapay-zeka-chatbot-fiyatlari',
     title: 'Yapay Zeka Chatbot Fiyatları: Maliyeti Ne Belirler, Geri Dönüşü Nasıl Hesaplanır?',
-    metaTitle: 'Yapay Zeka Chatbot Fiyatları 2026 | Maliyet ve ROI Rehberi | BERACORE',
+    metaTitle: 'Yapay Zeka Chatbot Fiyatları 2026 | BERACORE',
     metaDescription:
       'AI chatbot fiyatları neye göre değişir? Hazır platform ile özel geliştirme farkı, token/kullanım maliyetleri, entegrasyon kalemleri ve yatırım geri dönüşü hesabı.',
     excerpt:
@@ -1341,7 +1341,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'seo-ajansi-nasil-secilir',
     title: 'SEO Ajansı Nasıl Seçilir? Fiyatlandırma Modelleri ve Kırmızı Bayraklar',
-    metaTitle: 'SEO Ajansı Nasıl Seçilir? Fiyat Modelleri ve Kırmızı Bayraklar | BERACORE',
+    metaTitle: 'SEO Ajansı Nasıl Seçilir? Fiyat ve Kriterler | BERACORE',
     metaDescription:
       'SEO ajansı seçerken nelere dikkat edilmeli? Fiyatlandırma modelleri, garanti vaatlerinin gerçeği, raporlamada bakılacak metrikler ve kaçınılması gereken uygulamalar.',
     excerpt:
@@ -1417,7 +1417,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'mobil-uygulama-mi-web-uygulamasi-mi',
     title: 'Mobil Uygulama mı, Web Uygulaması mı? Doğru Kararı Verme Rehberi',
-    metaTitle: 'Mobil Uygulama mı Web Uygulaması mı? Karşılaştırma 2026 | BERACORE',
+    metaTitle: 'Mobil Uygulama mı Web Uygulaması mı? | BERACORE',
     metaDescription:
       'Native mobil uygulama, cross-platform ve PWA/web uygulaması karşılaştırması: maliyet, performans, mağaza süreçleri ve hangi senaryoda hangisinin doğru olduğu.',
     excerpt:
@@ -1541,7 +1541,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'akilli-kontrat-denetimi-audit',
     title: 'Akıllı Kontrat Denetimi (Audit) Nedir? Süreç, Kapsam ve Maliyet',
-    metaTitle: 'Akıllı Kontrat Denetimi (Audit) Nedir? Süreç ve Maliyet | BERACORE',
+    metaTitle: 'Akıllı Kontrat Denetimi (Audit) Nedir? | BERACORE',
     metaDescription:
       'Akıllı kontrat denetimi nasıl yapılır, hangi zafiyetler aranır, ne kadar sürer ve maliyeti neye göre değişir? Audit öncesi hazırlık ve rapor okuma rehberi.',
     excerpt:
@@ -1616,7 +1616,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'sanal-pos-nasil-secilir',
     title: 'Sanal POS Nasıl Seçilir? Ödeme Kuruluşu ve Banka POS’u Karşılaştırması',
-    metaTitle: 'Sanal POS Nasıl Seçilir? Banka POS vs Ödeme Kuruluşu | BERACORE',
+    metaTitle: 'Sanal POS Nasıl Seçilir? Banka vs Kuruluş | BERACORE',
     metaDescription:
       'Sanal POS seçerken nelere dikkat edilmeli? Banka sanal POS’u ile ödeme kuruluşu farkı, komisyon, valör, taksit, teknik entegrasyon ve dönüşüm etkisi.',
     excerpt:
@@ -1688,7 +1688,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'e-ticaret-altyapisi-secimi',
     title: 'E-Ticaret Altyapısı Seçimi: Hazır Platform mu, Özel Yazılım mı?',
-    metaTitle: 'E-Ticaret Altyapısı Seçimi 2026: Hazır Platform vs Özel Yazılım | BERACORE',
+    metaTitle: 'E-Ticaret Altyapısı Seçimi 2026 | BERACORE',
     metaDescription:
       'E-ticaret altyapısı nasıl seçilir? Hazır platform, açık kaynak ve özel yazılım karşılaştırması; maliyet, ölçeklenebilirlik, SEO ve geçiş riskleri.',
     excerpt:
@@ -1813,7 +1813,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'amazon-magaza-acma-entegrasyon-rehberi',
     title: 'Amazon’da Mağaza Açma ve Entegrasyon Rehberi: FBA ve FBM',
-    metaTitle: 'Amazon Mağaza Açma Rehberi 2026: FBA, FBM ve Entegrasyon | BERACORE',
+    metaTitle: 'Amazon Mağaza Açma Rehberi 2026: FBA & FBM | BERACORE',
     metaDescription:
       'Amazon’da mağaza nasıl açılır, FBA ile FBM farkı nedir, komisyon ve Buy Box nasıl işler? Satıcı hesabı ve entegrasyonla stok/sipariş yönetimi rehberi BERACORE’da.',
     excerpt:
