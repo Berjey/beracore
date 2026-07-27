@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -52,25 +52,38 @@ function renderBlock(block: ContentBlock, i: number, accent: string) {
 }
 
 export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
-  const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const accent = getCategoryColor(post.category);
 
-  // Okuma ilerleme çubuğu
+  // Okuma ilerleme çubuğu — React state YOK. rAF ile throttle + GPU scaleX.
+  // Her scroll'da re-render tetiklemez; doğrudan DOM transform güncellenir.
   useEffect(() => {
     const body = bodyRef.current;
-    if (!body) return;
-    const onScroll = () => {
+    const bar = progressRef.current;
+    if (!body || !bar) return;
+    let ticking = false;
+    const update = () => {
+      ticking = false;
       const rect = body.getBoundingClientRect();
       const total = rect.height - window.innerHeight;
       const scrolled = -rect.top;
-      const pct = total > 0 ? Math.min(100, Math.max(0, (scrolled / total) * 100)) : 0;
-      setProgress(pct);
+      const ratio = total > 0 ? Math.min(1, Math.max(0, scrolled / total)) : 0;
+      bar.style.transform = `scaleX(${ratio})`;
     };
-    onScroll();
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   // Giriş + içerik reveal animasyonları
@@ -85,11 +98,12 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
           .fromTo('.bl-meta', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.25')
           .fromTo('.bl-h1', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.25');
 
-        gsap.utils.toArray<HTMLElement>('.bl-reveal').forEach((el) => {
-          gsap.fromTo(el, { y: 24, opacity: 0 }, {
-            y: 0, opacity: 1, duration: 0.6, ease: 'power2.out',
-            scrollTrigger: { trigger: el, start: 'top 88%' },
-          });
+        // Çok sayıda tekil ScrollTrigger yerine batch — grup halinde, tek gözlemci, çok daha pürüzsüz.
+        gsap.set('.bl-reveal', { y: 24, opacity: 0 });
+        ScrollTrigger.batch('.bl-reveal', {
+          start: 'top 90%',
+          onEnter: (batch) =>
+            gsap.to(batch, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out', stagger: 0.08, overwrite: true }),
         });
       }, container);
     }, 60);
@@ -98,9 +112,13 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
 
   return (
     <div ref={containerRef}>
-      {/* Okuma ilerleme çubuğu */}
+      {/* Okuma ilerleme çubuğu — GPU scaleX, transformOrigin sol */}
       <div className="fixed top-0 left-0 right-0 h-[3px] z-[60] bg-transparent">
-        <div className="h-full transition-[width] duration-100 ease-out" style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${accent}, #fff7ad)` }} />
+        <div
+          ref={progressRef}
+          className="h-full w-full origin-left will-change-transform"
+          style={{ transform: 'scaleX(0)', background: `linear-gradient(90deg, ${accent}, #fff7ad)` }}
+        />
       </div>
 
       <article className="relative pt-36 pb-24 px-6 max-md:pt-28 max-md:pb-16">

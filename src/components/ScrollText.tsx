@@ -16,6 +16,10 @@ interface ScrollTextProps {
 /**
  * Manifesto tarzı scroll-driven typewriter başlık.
  * Scroll aşağı → harf harf yazılır. Scroll yukarı → harf harf silinir.
+ *
+ * Performans: state olarak float progress DEĞİL, integer harf sayısı tutulur.
+ * Böylece re-render yalnızca yeni bir harf çıkıp/silinince olur (her scroll
+ * frame'inde değil). Scroll handler rAF ile throttle edilir.
  */
 export default function ScrollText({
   before = '',
@@ -24,20 +28,31 @@ export default function ScrollText({
   accentClass = 'gradient-text font-semibold',
 }: ScrollTextProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [progress, setProgress] = useState(0);
+  const full = before + accent;
+  const fullLen = full.length;
+  const [count, setCount] = useState(0);
+  const ticking = useRef(false);
+  const lastN = useRef(-1);
 
   const handleScroll = useCallback(() => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const vh = window.innerHeight;
-    // Yazma başlangıcı: element viewport'un %85'inde
-    // Yazma bitişi: element viewport'un %40'ında
-    const start = vh * 0.85;
-    const end = vh * 0.40;
-    const p = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
-    setProgress(p);
-  }, []);
+    if (ticking.current) return;
+    ticking.current = true;
+    requestAnimationFrame(() => {
+      ticking.current = false;
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const start = vh * 0.85;
+      const end = vh * 0.40;
+      const p = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
+      const n = Math.floor(p * fullLen);
+      if (n !== lastN.current) {
+        lastN.current = n;
+        setCount(n); // integer → aynı değerde React re-render'ı atlar
+      }
+    });
+  }, [fullLen]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -45,12 +60,9 @@ export default function ScrollText({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  const full = before + accent;
-  const n = Math.floor(progress * full.length);
-  const typing = progress > 0 && progress < 1;
-
-  const showBefore = full.slice(0, Math.min(n, before.length));
-  const showAccent = n > before.length ? full.slice(before.length, n) : '';
+  const showBefore = full.slice(0, Math.min(count, before.length));
+  const showAccent = count > before.length ? full.slice(before.length, count) : '';
+  const typing = count > 0 && count < fullLen;
 
   return (
     <span ref={ref} className={className}>

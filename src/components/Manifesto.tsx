@@ -6,15 +6,29 @@ export default function Manifesto() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
+  const ticking = useRef(false);
+  const lastQ = useRef(-1);
 
+  // rAF throttle + kuantize: re-render yalnızca progress görünür bir adım
+  // değiştiğinde olur. ~400 adım divider/typewriter için pürüzsüz, ama her
+  // scroll frame'inde re-render tetiklemez.
   const handleScroll = useCallback(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-    const rect = wrapper.getBoundingClientRect();
-    const total = wrapper.offsetHeight - window.innerHeight;
-    if (total <= 0) return;
-    const p = Math.max(0, Math.min(1, -rect.top / total));
-    setProgress(p);
+    if (ticking.current) return;
+    ticking.current = true;
+    requestAnimationFrame(() => {
+      ticking.current = false;
+      const wrapper = wrapperRef.current;
+      if (!wrapper) return;
+      const rect = wrapper.getBoundingClientRect();
+      const total = wrapper.offsetHeight - window.innerHeight;
+      if (total <= 0) return;
+      const p = Math.max(0, Math.min(1, -rect.top / total));
+      const q = Math.round(p * 400); // 0..400 kuantize adım
+      if (q !== lastQ.current) {
+        lastQ.current = q;
+        setProgress(q / 400);
+      }
+    });
   }, []);
 
   useEffect(() => {
