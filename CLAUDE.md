@@ -55,7 +55,7 @@ Her yazıda zorunlu standart:
 - `faq` dizisi → FAQPage schema + zengin sonuç
 - Kategori, `CATEGORY_META`'daki 6 değerden biri olmalı
 
-**Durum:** 35 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
+**Durum:** 37 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
 
 ### İçerik stratejisi (26-27 Tem 2026 rakip SERP analizinden)
 Türkiye pazarında ticari sorgularda ilk sıraları tutan içerik tipleri:
@@ -67,7 +67,9 @@ Zeo/Mobitek/Digipeak (SEO), Erpin/Kotivon (özel yazılım fiyat), WebCraft/Cbot
 
 İlk 23 yazı tamamen "X nedir" bilgi amaçlıydı; bu analizden sonra 12 ticari niyetli yazı eklendi.
 
-**Kalan içerik boşlukları:** n11 ve Amazon mağaza açma rehberleri, şehir bazlı hizmet sayfaları,
+Trendyol, Hepsiburada, N11 ve Amazon mağaza açma/entegrasyon rehberleri tamamlandı (4 pazaryeri tam kapsam).
+
+**Kalan içerik boşlukları:** şehir bazlı hizmet sayfaları (ör. "istanbul web tasarım"),
 vaka çalışması / portfolyo sayfaları, müşteri yorumları.
 
 ---
@@ -96,9 +98,9 @@ kısa vadede kazanılacak yer uzun kuyruk sorgular. Gerçekçi takvim: 4-6 ayda 
 - Kullanıcının müşteriye ve gelire acil ihtiyacı var; beklenti yönetimi konusunda dürüst olunmalı
 
 ### Yapılmış olanlar
-sitemap.xml (72 URL) · robots.txt · Google doğrulama etiketi · ProfessionalService/WebSite/BlogPosting/
+sitemap.xml (74 URL) · robots.txt · Google doğrulama etiketi · ProfessionalService/WebSite/BlogPosting/
 FAQPage/BreadcrumbList şemaları · sameAs sosyal sinyalleri · canonical + OG · HTTPS · mobil uyum ·
-35 blog yazısı · WhatsApp CTA (`src/components/WhatsAppCta.tsx`, +905539862306) ·
+37 blog yazısı · WhatsApp CTA (`src/components/WhatsAppCta.tsx`, +905539862306) ·
 IndexNow her deploy'da otomatik (`scripts/indexnow-submit.mjs`, key `public/*.txt`)
 
 ---
