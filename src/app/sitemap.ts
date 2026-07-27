@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { services } from '@/lib/services-data';
 import { blogPosts } from '@/lib/blog-data';
 import { cityPages } from '@/lib/city-pages-data';
+import { caseStudies } from '@/lib/case-studies-data';
 
 const BASE_URL = 'https://beracore.com';
 
@@ -13,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/hakkimizda`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE_URL}/iletisim`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE_URL}/calismalarimiz`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/kvkk`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}/gizlilik-politikasi`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}/cerez-politikasi`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
@@ -53,5 +55,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticEntries, ...serviceEntries, ...blogEntries, ...cityEntries];
+  const caseEntries: MetadataRoute.Sitemap = caseStudies.map((c) => ({
+    url: `${BASE_URL}/calismalarimiz/${c.slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
+    priority: 0.7,
+  }));
+
+  return [...staticEntries, ...serviceEntries, ...blogEntries, ...cityEntries, ...caseEntries];
 }

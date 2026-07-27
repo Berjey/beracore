@@ -17,7 +17,7 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 kullanıcı y
 
 ## FAZ 2 — Güven & Dönüşüm İçeriği (ziyaretçiyi müşteriye çevirir)
 
-- [ ] 🟡🛠 **Gerçek müşteri referansları** — `Testimonials.tsx` şu an placeholder. Gerçek yorumlarla değiştirilecek. → 👤 gerekli: 3-6 gerçek müşteri yorumu (isim/şirket/metin) veya "yeni stüdyo" konumlandırması için alternatif kurgu.
+- [x] 🟡🛠 **Gerçek müşteri referansları** — TAMAM. `Testimonials.tsx` içindeki 3 yorum **gerçek müşterilere aittir** (kullanıcı 28 Tem 2026'da teyit etti); önceki "placeholder" notu hatalıydı. İleride izin alınırsa şirket adı/logo eklenerek güven etkisi artırılabilir.
 - [ ] 🟡🛠 **Portfolyo / Vaka çalışması sayfaları** — `/calismalarimiz` (veya `/portfolyo`) + tekil vaka sayfaları. Güçlü sosyal kanıt + SEO. → 👤 gerekli: hangi projeler yapıldı, ne sonuç verdi (rakam/ekran görüntüsü).
 - [ ] 🟢🛠 **Güven rozetleri / iş bilgileri** — ödeme güvenliği, çalışma modeli, NDA vb. iletişim ve hizmet sayfalarında netleştirme.
 
