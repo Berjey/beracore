@@ -41,11 +41,12 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 kullanıcı y
 > taşındı. Aşağıdaki performans/a11y/güvenlik-başlığı denetimleri henüz yapılmadı.
 
 
-- [ ] 🟢🛠 **Core Web Vitals / Lighthouse** — mobil+masaüstü performans, erişilebilirlik, SEO skoru denetimi ve düzeltmeleri.
-- [ ] 🟢🛠 **Erişilebilirlik (a11y) denetimi** — kontrast, klavye navigasyonu, ARIA, alt metinler.
-- [ ] 🟢🛠 **Yapısal veri doğrulaması** — Rich Results Test ile tüm şablonlar.
-- [ ] 🟢🛠 **Güvenlik başlıkları** — CSP, HSTS, X-Frame-Options vb. (Nginx).
-- [ ] 🟢🛠 **Çapraz tarayıcı / mobil test** + 404 ve hata durumları cilası.
+- [x] 🟢🛠 **Güvenlik başlıkları** — TAMAM (zaten kuruluydu): CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy (Nginx `sites-available/beracore.com`).
+- [x] 🟢🛠 **Statik varlık cache** — TAMAM (27 Tem 2026): `/public` görselleri artık `max-age=2592000` (Nginx `proxy_hide_header` + regex location). `_next/static` immutable korundu. gzip+brotli zaten açık.
+- [x] 🟢🛠 **Yapısal veri doğrulaması** — TAMAM: tüm sayfa tiplerinde JSON-LD geçerli (ProfessionalService/Service/FAQPage/BreadcrumbList/BlogPosting/ItemList/AboutPage).
+- [ ] 🟢🛠/👤 **Core Web Vitals / Lighthouse** — LCP/CLS ve animasyonlar optimize edildi; kesin skor için 👤 [PageSpeed Insights](https://pagespeed.web.dev) ile canlı ölçüm (URL bazlı, kullanıcı çalıştırabilir).
+- [ ] 🟢🛠 **Erişilebilirlik (a11y) denetimi** — temel ARIA/reduced-motion/alt var; kapsamlı denetim (kontrast, klavye) opsiyonel.
+- [ ] 🟢🛠 **Çapraz tarayıcı / mobil test** + 404 cilası (404 sayfası mevcut).
 
 ---
 

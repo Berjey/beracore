@@ -29,6 +29,10 @@ Local + GitHub + canlı **her zaman aynı commit'te tutulur**. Kullanıcı bunu 
 - Host `187.124.181.213`, user `root`, SSH alias `beracore` (Hostinger, Ubuntu)
 - Proje yolu `/var/www/beracore`, PM2 app adı `beracore`, Nginx + Let's Encrypt
 - pm2-root servisi enabled (reboot'ta site kendiliğinden kalkar), certbot timer aktif
+- Nginx config `sites-available/beracore.com`: güvenlik başlıkları (CSP/HSTS/…),
+  gzip+brotli, `_next/static` immutable cache, `/public` statik varlıklar 30 gün cache
+  (`proxy_hide_header Cache-Control` + regex location). Config değişikliğinde önce
+  `cp .bak`, `nginx -t`, sonra `systemctl reload nginx` (yedekler `.bak-*` olarak durur).
 
 ### Yeni bir bilgisayarda kurulum
 SSH anahtarı makineye özeldir. Yeni makinede:
