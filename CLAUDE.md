@@ -3,7 +3,7 @@
 Bu dosya, yeni bir sohbette veya farklı bir bilgisayarda çalışmaya başlandığında
 projenin durumunu ve devam edilecek noktayı aktarır. Git ile taşındığı için her makinede bulunur.
 
-**Son güncelleme:** 28 Temmuz 2026
+**Son güncelleme:** 27 Temmuz 2026
 
 ---
 
@@ -74,9 +74,11 @@ Her yazıda zorunlu standart:
 
 **Durum:** 41 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
 
-**Vaka çalışmaları / portfolyo sayfası YOK.** 28 Tem 2026'da `/calismalarimiz` kuruldu ancak
+**Vaka çalışmaları / portfolyo sayfası YOK.** 27 Tem 2026'da `/calismalarimiz` kuruldu ancak
 kullanıcı gösterilecek yeterli proje olmadığı gerekçesiyle beğenmedi ve kaldırıldı.
-Tekrar istenmeden yeniden kurulmamalı. Eski kod git geçmişinde (`d5e57df` civarı) duruyor.
+**Kullanıcı açıkça istemeden yeniden kurulmamalı.**
+Eski kod git geçmişinde: `420e937` eklendi, `01e062c` kaldırıldı
+(`git show 420e937` ile geri getirilebilir).
 
 ### İçerik stratejisi (26-27 Tem 2026 rakip SERP analizinden)
 Türkiye pazarında ticari sorgularda ilk sıraları tutan içerik tipleri:
@@ -86,7 +88,7 @@ fiyat/maliyet yazıları · "X nasıl seçilir" · karşılaştırma · platform
 Öne çıkan rakipler: Cesa Yazılım & Crypto Software (kripto borsa), IdeaSoft/T-Soft/Dopigo (pazaryeri),
 Zeo/Mobitek/Digipeak (SEO), Erpin/Kotivon (özel yazılım fiyat), WebCraft/Cbot (chatbot), Kafein/Gen RPA (RPA).
 
-İlk 23 yazı tamamen "X nedir" bilgi amaçlıydı; bu analizden sonra 12 ticari niyetli yazı eklendi.
+İlk 23 yazı tamamen "X nedir" bilgi amaçlıydı; bu analizden sonra 18 ticari niyetli yazı eklendi (23 → 41).
 
 Trendyol, Hepsiburada, N11 ve Amazon mağaza açma/entegrasyon rehberleri tamamlandı (4 pazaryeri tam kapsam).
 
@@ -94,7 +96,7 @@ Trendyol, Hepsiburada, N11 ve Amazon mağaza açma/entegrasyon rehberleri tamaml
 `src/lib/city-pages-data.ts` yapısı çoğaltılarak), sürekli yeni ticari niyetli blog yazıları.
 
 **Müşteri yorumları gerçektir** — `Testimonials.tsx` içindeki 3 yorum gerçek müşterilere aittir
-(kullanıcı 28 Tem 2026'da teyit etti). Uydurma referans/metrik eklenmemelidir.
+(kullanıcı 27 Tem 2026'da teyit etti). Uydurma referans/metrik eklenmemelidir.
 
 ---
 
@@ -113,7 +115,9 @@ kısa vadede kazanılacak yer uzun kuyruk sorgular. Gerçekçi takvim: 4-6 ayda 
 2. **GA4 ölçüm kimliği** (`G-XXXXXXX`) — alınınca `src/app/layout.tsx`'e eklenecek.
    Mülk `kemalberkealanel@gmail.com` hesabında, iş hesabına devredilecek.
 3. **Yandex Webmaster doğrulama meta etiketi** — alınınca `layout.tsx`'e eklenecek.
-4. **Portfolyo içeriği** — hangi projeler yapıldı, ne sonuç verdi? Vaka çalışması sayfaları için gerekli.
+
+(Portfolyo içeriği bu listede DEĞİL — kullanıcı portfolyo sayfasını istemediğini belirtti, bkz. yukarıdaki
+"Vaka çalışmaları / portfolyo sayfası YOK" notu.)
 
 ### Kullanıcı kararları
 - **Google Business Profile şimdilik AÇILMAYACAK** (kullanıcının kararı; ücretsiz ve yerel aramada
