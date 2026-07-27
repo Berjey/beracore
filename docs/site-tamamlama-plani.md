@@ -18,7 +18,7 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 kullanıcı y
 ## FAZ 2 — Güven & Dönüşüm İçeriği (ziyaretçiyi müşteriye çevirir)
 
 - [x] 🟡🛠 **Gerçek müşteri referansları** — TAMAM. `Testimonials.tsx` içindeki 3 yorum **gerçek müşterilere aittir** (kullanıcı 28 Tem 2026'da teyit etti); önceki "placeholder" notu hatalıydı. İleride izin alınırsa şirket adı/logo eklenerek güven etkisi artırılabilir.
-- [x] 🟡🛠 **Portfolyo / Vaka çalışması sayfaları** — TAMAM (28 Tem 2026). `/calismalarimiz` + 3 tekil vaka sayfası (GmsGarage, Arovela, KriptoMall). Veri: `src/lib/case-studies-data.ts`. Her sayfada zorluk / yaptığımız iş / sonuç + müşteri alıntısı + Article & BreadcrumbList schema. Navbar, footer, sitemap ve ana sayfa Referanslar bölümünden iç link verildi. → 👤 opsiyonel geliştirme: proje ekran görüntüleri ve müşteri onaylı ölçülebilir rakamlar (şu an uydurma metrik kullanılmadı).
+- [ ] 🟡🛠 **Portfolyo / Vaka çalışması sayfaları** — **GERİ ALINDI (28 Tem 2026).** `/calismalarimiz` sayfaları kurulmuştu ancak kullanıcı, gösterilecek yeterli proje olmadığı için sayfayı beğenmedi ve kaldırılmasını istedi. Tüm rota, veri dosyası, navbar/footer/sitemap bağlantıları temizlendi. Kod `git log` üzerinden geri getirilebilir (commit `d5e57df` öncesi). → Yeniden ele alınması için 👤 gerekli: gösterilmeye değer sayıda proje + ekran görüntüsü + müşteri onaylı sonuçlar.
 - [ ] 🟢🛠 **Güven rozetleri / iş bilgileri** — ödeme güvenliği, çalışma modeli, NDA vb. iletişim ve hizmet sayfalarında netleştirme.
 
 ## FAZ 3 — İçerik & Yerel SEO Derinliği (organik büyüme)

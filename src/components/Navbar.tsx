@@ -12,7 +12,6 @@ const NAV_LINKS = [
   { label: 'Hizmetler', id: 'services' },
   { label: 'Neden Biz', id: 'why-us' },
   { label: 'Süreç', id: 'process' },
-  { label: 'Çalışmalarımız', id: '__work' },
   { label: 'Referanslar', id: 'referanslar' },
   { label: 'SSS', id: 'faq' },
   { label: 'Blog', id: '__blog' },
@@ -75,17 +74,6 @@ export default function Navbar() {
       } else {
         setNavigating(true);
         router.push('/hakkimizda');
-      }
-      return;
-    }
-
-    // Çalışmalarımız (dedicated /calismalarimiz sayfası)
-    if (id === '__work') {
-      if (pathname === '/calismalarimiz') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        setNavigating(true);
-        router.push('/calismalarimiz');
       }
       return;
     }

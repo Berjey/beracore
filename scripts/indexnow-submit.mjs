@@ -6,7 +6,7 @@
 //   node scripts/indexnow-submit.mjs            # sitemap'teki tum URL'ler
 //   node scripts/indexnow-submit.mjs <url> ...  # sadece verilen URL'ler
 //
-// indexnow-submit.sh ile ayni isi yapar; Windows'ta da calisir diye Node surumu.
+// Her platformda calisir; deploy.mjs sonunda otomatik cagrilir.
 
 import { readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'

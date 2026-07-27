@@ -3,7 +3,7 @@
 Bu dosya, yeni bir sohbette veya farklı bir bilgisayarda çalışmaya başlandığında
 projenin durumunu ve devam edilecek noktayı aktarır. Git ile taşındığı için her makinede bulunur.
 
-**Son güncelleme:** 27 Temmuz 2026
+**Son güncelleme:** 28 Temmuz 2026
 
 ---
 
@@ -22,6 +22,10 @@ npm run deploy "commit mesajı"
 `scripts/deploy.mjs` çalışır ve şunları sırayla yapar:
 local commit → `git push origin main` → SSH ile VPS'te `server-deploy.sh`
 (git reset --hard + npm ci + next build + pm2 restart) → IndexNow ile Bing/Yandex bildirimi.
+
+**Tek deploy yolu budur.** Eski `scripts/deploy.sh` ve `scripts/indexnow-submit.sh` kaldırıldı:
+Windows'ta `bash` System32'deki WSL shim'ine gidiyordu ve bash sürümü IndexNow adımını
+içermediği için iki yol birbirinden ayrışmıştı. `scripts/server-deploy.sh` VPS'te çalıştığı için durur.
 
 Local + GitHub + canlı **her zaman aynı commit'te tutulur**. Kullanıcı bunu böyle istiyor.
 
@@ -49,9 +53,11 @@ Hostinger `smtp.hostinger.com:465`, gönderen/alıcı `info@beracore.com`.
 Deploy `git reset --hard` yapar ama `git clean` yapmaz → `.env` kalıcıdır.
 Yeni sunucuya taşınırsa `.env` elle yeniden oluşturulmalı.
 
-### Bilinen papercut
-`npm run lint` çalışmıyor — Next 15'te `next lint` kaldırıldı, komut interaktif kurulum sorusu soruyor.
-Kalite kapısı olarak **`npm run build`** kullan (tip kontrolü içerir).
+### Lint
+Projede ESLint kurulu değil ve `lint` script'i kaldırıldı (Next 15'te `next lint` kaldırıldığı için
+zaten çalışmıyordu, ESLint devDependency olarak da hiç eklenmemişti).
+Kalite kapısı **`npm run build`**'dir — tip kontrolü yapar.
+ESLint istenirse ayrı bir iş olarak kurulmalı (devDependency + `eslint.config.mjs`).
 
 ---
 
@@ -68,9 +74,9 @@ Her yazıda zorunlu standart:
 
 **Durum:** 41 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
 
-**Vaka çalışmaları:** `src/lib/case-studies-data.ts` → `/calismalarimiz` ve `/calismalarimiz/[slug]`.
-3 gerçek proje (GmsGarage, Arovela, KriptoMall). **Uydurma metrik eklenmez**; müşterinin
-teyit ettiği ifadeler `outcome`, kendi sözleri `quote` alanında tutulur.
+**Vaka çalışmaları / portfolyo sayfası YOK.** 28 Tem 2026'da `/calismalarimiz` kuruldu ancak
+kullanıcı gösterilecek yeterli proje olmadığı gerekçesiyle beğenmedi ve kaldırıldı.
+Tekrar istenmeden yeniden kurulmamalı. Eski kod git geçmişinde (`d5e57df` civarı) duruyor.
 
 ### İçerik stratejisi (26-27 Tem 2026 rakip SERP analizinden)
 Türkiye pazarında ticari sorgularda ilk sıraları tutan içerik tipleri:
@@ -84,8 +90,8 @@ Zeo/Mobitek/Digipeak (SEO), Erpin/Kotivon (özel yazılım fiyat), WebCraft/Cbot
 
 Trendyol, Hepsiburada, N11 ve Amazon mağaza açma/entegrasyon rehberleri tamamlandı (4 pazaryeri tam kapsam).
 
-**Kalan içerik boşlukları:** İstanbul dışındaki şehirler için yerel sayfalar,
-vaka çalışmalarına görsel/ekran görüntüsü ve müşteri onaylı ölçülebilir rakamlar.
+**Kalan içerik boşlukları:** İstanbul dışındaki şehirler için yerel sayfalar (Ankara/İzmir/Bursa —
+`src/lib/city-pages-data.ts` yapısı çoğaltılarak), sürekli yeni ticari niyetli blog yazıları.
 
 **Müşteri yorumları gerçektir** — `Testimonials.tsx` içindeki 3 yorum gerçek müşterilere aittir
 (kullanıcı 28 Tem 2026'da teyit etti). Uydurma referans/metrik eklenmemelidir.
@@ -116,10 +122,10 @@ kısa vadede kazanılacak yer uzun kuyruk sorgular. Gerçekçi takvim: 4-6 ayda 
 - Kullanıcının müşteriye ve gelire acil ihtiyacı var; beklenti yönetimi konusunda dürüst olunmalı
 
 ### Yapılmış olanlar
-sitemap.xml (88 URL) · robots.txt · Google doğrulama etiketi · ProfessionalService/WebSite/BlogPosting/
-FAQPage/BreadcrumbList/Service/Article/ItemList şemaları · sameAs sosyal sinyalleri · canonical + OG · HTTPS ·
+sitemap.xml (84 URL) · robots.txt · Google doğrulama etiketi · ProfessionalService/WebSite/BlogPosting/
+FAQPage/BreadcrumbList/Service şemaları · sameAs sosyal sinyalleri · canonical + OG · HTTPS ·
 mobil uyum · 41 blog yazısı · İstanbul şehir bazlı 6 hizmet sayfası (`/istanbul/[hizmet]`) ·
-vaka çalışmaları (`/calismalarimiz`, 3 proje) · çalışan iletişim formu (Hostinger SMTP, `.env`) ·
+çalışan iletişim formu (Hostinger SMTP, `.env`) ·
 WhatsApp CTA (`src/components/WhatsAppCta.tsx`, +905539862306) ·
 IndexNow her deploy'da otomatik (`scripts/indexnow-submit.mjs`, key `public/*.txt`) ·
 a11y denetimi geçildi (WCAG AA kontrast, klavye odağı, 404, Safari uyumu)

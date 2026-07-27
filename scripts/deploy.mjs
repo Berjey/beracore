@@ -4,7 +4,8 @@
 //   npm run deploy "commit mesaji"
 //   npm run deploy                  # zaten commit edilmisse: sadece push + remote build
 //
-// deploy.sh ile ayni isi yapar; Windows'ta `bash` WSL'e gittigi icin bu surum kullanilir.
+// Tek deploy yoludur. (Eski bash surumu kaldirildi: Windows'ta `bash` WSL'e gidiyordu
+// ve IndexNow adimini icermedigi icin iki yol birbirinden ayrisiyordu.)
 
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'

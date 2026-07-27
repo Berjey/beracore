@@ -14,7 +14,6 @@ const KURUMSAL = [
   { label: 'Ana Sayfa', id: '__home' },
   { label: 'Hakkımızda', id: '__about' },
   { label: 'Hizmetler', id: 'services' },
-  { label: 'Çalışmalarımız', id: '__work' },
   { label: 'Blog', id: '__blog' },
   { label: 'Süreç', id: 'process' },
   { label: 'İletişim', id: 'iletisim' },
@@ -61,7 +60,6 @@ export default function Footer() {
     if (id === '__home') { if (pathname === '/') window.scrollTo({ top: 0, behavior: 'smooth' }); else router.push('/'); return; }
     if (id === '__about') { router.push('/hakkimizda'); return; }
     if (id === '__blog') { router.push('/blog'); return; }
-    if (id === '__work') { router.push('/calismalarimiz'); return; }
     if (pathname === '/') { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
     else { router.push(`/#${id}`); }
   }, [pathname, router]);
