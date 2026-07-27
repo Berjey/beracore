@@ -72,8 +72,7 @@ export default async function IstanbulServicePage({ params }: Props) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: BASE_URL },
-      { '@type': 'ListItem', position: 2, name: 'İstanbul', item: `${BASE_URL}/istanbul/${hizmet}` },
-      { '@type': 'ListItem', position: 3, name: page.title, item: url },
+      { '@type': 'ListItem', position: 2, name: page.title, item: url },
     ],
   };
 

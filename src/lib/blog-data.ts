@@ -1893,7 +1893,7 @@ export interface CategoryMeta {
   serviceKey?: string;
 }
 
-export const CATEGORY_META: Record<string, CategoryMeta> = {
+const CATEGORY_META: Record<string, CategoryMeta> = {
   'Yapay Zeka': { name: 'Yapay Zeka', color: '#a78bfa', serviceKey: 'ai' },
   'Blockchain': { name: 'Blockchain', color: '#7dd3fc', serviceKey: 'blockchain' },
   'Yazılım Geliştirme': { name: 'Yazılım Geliştirme', color: '#f0abfc', serviceKey: 'software' },

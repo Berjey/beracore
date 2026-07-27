@@ -12,6 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 interface Props {
   post: BlogPost;
   relatedPosts: BlogPost[];
+  cityLink?: { href: string; title: string } | null;
 }
 
 const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
@@ -50,7 +51,7 @@ function renderBlock(block: ContentBlock, i: number, accent: string) {
   }
 }
 
-export default function BlogArticle({ post, relatedPosts }: Props) {
+export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -177,6 +178,17 @@ export default function BlogArticle({ post, relatedPosts }: Props) {
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
               </Link>
             </div>
+          )}
+
+          {/* Bağlamsal yerel iç link — İstanbul (yerel SEO) */}
+          {cityLink && (
+            <p className="bl-reveal mt-6 text-center font-body text-[0.9rem] text-t3">
+              İstanbul’da mısınız?{' '}
+              <Link href={cityLink.href} className="text-accent hover:text-accent2 font-medium transition-colors">
+                {cityLink.title}
+              </Link>{' '}
+              hizmetimize göz atın.
+            </p>
           )}
         </div>
 

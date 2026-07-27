@@ -88,16 +88,6 @@ h1, h2, h3, h4, h5, h6 {
   50% { stroke-dasharray: 60 100; stroke-dashoffset: -30; }
 }
 
-/* ===== Skip Link ===== */
-.skip-link {
-  position: absolute;
-  top: -100px;
-  left: 1rem;
-  z-index: 100001;
-  transition: top 0.3s var(--ease-out-expo);
-}
-.skip-link:focus { top: 1rem; }
-
 /* ===== Focus ===== */
 :focus-visible {
   outline: 2px solid var(--color-accent2);

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { blogPosts, getPostBySlug } from '@/lib/blog-data';
+import { cityPages } from '@/lib/city-pages-data';
 import BlogArticle from '@/components/BlogArticle';
 
 const BASE_URL = 'https://beracore.com';
@@ -55,6 +56,10 @@ export default async function BlogPostPage({ params }: Props) {
   const others = blogPosts.filter((p) => p.slug !== slug && p.category !== post.category);
   const relatedPosts = [...sameCat, ...others].slice(0, 3);
 
+  // Bu yazıya bağlı İstanbul şehir sayfası varsa bağlamsal iç link (yerel SEO)
+  const cityMatch = cityPages.find((c) => c.blogHref === `/blog/${slug}`);
+  const cityLink = cityMatch ? { href: `/istanbul/${cityMatch.slug}`, title: cityMatch.title } : null;
+
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -101,7 +106,7 @@ export default async function BlogPostPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
-      <BlogArticle post={post} relatedPosts={relatedPosts} />
+      <BlogArticle post={post} relatedPosts={relatedPosts} cityLink={cityLink} />
     </>
   );
 }
