@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { services } from '@/lib/services-data';
+import { getCityPagesByServiceHref } from '@/lib/city-pages-data';
 import { createSubScene, type SubShapeAPI } from '@/lib/sub-shapes';
 import ScrollText from '@/components/ScrollText';
 
@@ -381,6 +382,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
   if (!service || !sub) return null;
 
   const otherSubs = service.subServices.filter((_, i) => i !== subIndex);
+  const cityLinks = getCityPagesByServiceHref(`/hizmetler/${service.key}/${sub.slug}`);
   const toggleFaq = (i: number) => setOpenFaq(prev => prev === i ? null : i);
 
   return (
@@ -1160,6 +1162,30 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </Link>
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* ===== Şehir bazlı hizmet sayfasına bağlamsal iç link =====
+             Şehir sayfaları başka hiçbir yerden link almıyordu; buradan verilen
+             link onları taranabilir hale getirir. */}
+        {cityLinks.length > 0 && (
+          <section data-sp="city" className="pb-4 px-6">
+            <div className="max-w-2xl mx-auto text-center">
+              <p className="font-body text-[0.95rem] text-t2 font-light">
+                İstanbul’da mı arıyorsunuz?{' '}
+                {cityLinks.map((c, i) => (
+                  <span key={c.slug}>
+                    {i > 0 && ' · '}
+                    <Link
+                      href={`/istanbul/${c.slug}`}
+                      className="font-medium text-accent hover:text-accent2 transition-colors duration-300"
+                    >
+                      {c.title}
+                    </Link>
+                  </span>
+                ))}
+              </p>
             </div>
           </section>
         )}

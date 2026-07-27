@@ -10,13 +10,14 @@ import { services } from '@/lib/services-data';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// href ZORUNLU: Googlebot <button onClick> gezinmesini takip etmez.
 const KURUMSAL = [
-  { label: 'Ana Sayfa', id: '__home' },
-  { label: 'Hakkımızda', id: '__about' },
-  { label: 'Hizmetler', id: 'services' },
-  { label: 'Blog', id: '__blog' },
-  { label: 'Süreç', id: 'process' },
-  { label: 'İletişim', id: 'iletisim' },
+  { label: 'Ana Sayfa', id: '__home', href: '/' },
+  { label: 'Hakkımızda', id: '__about', href: '/hakkimizda' },
+  { label: 'Hizmetler', id: 'services', href: '/#services' },
+  { label: 'Blog', id: '__blog', href: '/blog' },
+  { label: 'Süreç', id: 'process', href: '/#process' },
+  { label: 'İletişim', id: 'iletisim', href: '/iletisim' },
 ];
 
 const YASAL = [
@@ -56,13 +57,19 @@ export default function Footer() {
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 
-  const handleNav = useCallback((id: string) => {
-    if (id === '__home') { if (pathname === '/') window.scrollTo({ top: 0, behavior: 'smooth' }); else router.push('/'); return; }
-    if (id === '__about') { router.push('/hakkimizda'); return; }
-    if (id === '__blog') { router.push('/blog'); return; }
-    if (pathname === '/') { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
-    else { router.push(`/#${id}`); }
-  }, [pathname, router]);
+  // <Link> üzerinden çağrılır; gezinmeyi Link yapar, burada yalnızca
+  // aynı sayfa içi yumuşak kaydırma davranışı ele alınır.
+  const handleNav = useCallback((e: React.MouseEvent, id: string, href: string) => {
+    if (href === pathname) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (href.startsWith('/#') && pathname === '/') {
+      e.preventDefault();
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [pathname]);
 
   return (
     <footer ref={footerRef} className="relative pt-24 pb-8 px-10 max-md:px-5 overflow-hidden"
@@ -92,7 +99,7 @@ export default function Footer() {
           <div className="ft-col">
             <h3 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-5 gradient-text">Kurumsal</h3>
             <ul className="space-y-3">
-              {KURUMSAL.map((item) => (<li key={item.id}><button onClick={() => handleNav(item.id)} className="font-body text-[0.85rem] text-t1/80 hover:text-accent transition-all duration-300 inline-flex items-center gap-2 group"><span className="w-1 h-1 rounded-full bg-accent2/40 group-hover:bg-accent2 group-hover:scale-150 transition-all duration-300" />{item.label}</button></li>))}
+              {KURUMSAL.map((item) => (<li key={item.id}><Link href={item.href} onClick={(e) => handleNav(e, item.id, item.href)} className="font-body text-[0.85rem] text-t1/80 hover:text-accent transition-all duration-300 inline-flex items-center gap-2 group"><span className="w-1 h-1 rounded-full bg-accent2/40 group-hover:bg-accent2 group-hover:scale-150 transition-all duration-300" />{item.label}</Link></li>))}
             </ul>
             <h3 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-4 mt-8 gradient-text-reverse">Yasal</h3>
             <ul className="space-y-2.5">

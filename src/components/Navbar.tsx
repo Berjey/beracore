@@ -6,16 +6,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { services } from '@/lib/services-data';
 
+// href ZORUNLU: Googlebot <button onClick> gezinmesini takip etmez.
+// Her gezinme öğesi gerçek bir <a href> olarak render edilir; yumuşak kaydırma
+// davranışı onClick içinde korunur.
 const NAV_LINKS = [
-  { label: 'Ana Sayfa', id: '__home' },
-  { label: 'Hakkımızda', id: '__about' },
-  { label: 'Hizmetler', id: 'services' },
-  { label: 'Neden Biz', id: 'why-us' },
-  { label: 'Süreç', id: 'process' },
-  { label: 'Referanslar', id: 'referanslar' },
-  { label: 'SSS', id: 'faq' },
-  { label: 'Blog', id: '__blog' },
-  { label: 'İletişim', id: '__contact' },
+  { label: 'Ana Sayfa', id: '__home', href: '/' },
+  { label: 'Hakkımızda', id: '__about', href: '/hakkimizda' },
+  { label: 'Hizmetler', id: 'services', href: '/#services' },
+  { label: 'Neden Biz', id: 'why-us', href: '/#why-us' },
+  { label: 'Süreç', id: 'process', href: '/#process' },
+  { label: 'Referanslar', id: 'referanslar', href: '/#referanslar' },
+  { label: 'SSS', id: 'faq', href: '/#faq' },
+  { label: 'Blog', id: '__blog', href: '/blog' },
+  { label: 'İletişim', id: '__contact', href: '/iletisim' },
 ];
 
 export default function Navbar() {
@@ -52,63 +55,29 @@ export default function Navbar() {
   }, [navigating]);
   useEffect(() => { setNavigating(false); }, [pathname]);
 
-  const handleNav = useCallback((id: string) => {
+  // <Link> üzerinden çağrılır. Gezinmeyi Link yapar; burada yalnızca
+  // aynı sayfa içi yumuşak kaydırma davranışı ele alınır.
+  const handleNav = useCallback((e: React.MouseEvent, id: string, href: string) => {
     setMobileOpen(false);
     setHizmetlerOpen(false);
 
-    // Ana Sayfa
-    if (id === '__home') {
-      if (pathname === '/') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        setNavigating(true);
-        router.push('/');
-      }
+    // Zaten o sayfadaysak: gezinme yerine başa kaydır
+    if (href === pathname) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    // Hakkımızda
-    if (id === '__about') {
-      if (pathname === '/hakkimizda') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        setNavigating(true);
-        router.push('/hakkimizda');
-      }
+    // Ana sayfa bölüm bağlantısı ve zaten ana sayfadaysak: yumuşak kaydır
+    if (href.startsWith('/#') && pathname === '/') {
+      e.preventDefault();
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
 
-    // Blog (dedicated /blog sayfası)
-    if (id === '__blog') {
-      if (pathname === '/blog') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        setNavigating(true);
-        router.push('/blog');
-      }
-      return;
-    }
-
-    // İletişim (dedicated /iletisim sayfası)
-    if (id === '__contact') {
-      if (pathname === '/iletisim') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        setNavigating(true);
-        router.push('/iletisim');
-      }
-      return;
-    }
-
-    // Anasayfa section'ları
-    if (pathname === '/') {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      setNavigating(true);
-      router.push(`/#${id}`);
-    }
-  }, [pathname, router]);
+    // Diğer tüm durumlarda Link kendi gezinmesini yapar
+    setNavigating(true);
+  }, [pathname]);
 
   const openHizmetler = () => {
     if (hizmetlerTimeout.current) clearTimeout(hizmetlerTimeout.current);
@@ -152,21 +121,22 @@ export default function Navbar() {
           max-md:px-5 max-md:h-14`}
       >
         {/* Logo */}
-        <button onClick={() => handleNav('__home')} className="inline-flex items-center leading-none shrink-0" aria-label="BERACORE — Ana sayfa">
+        <Link href="/" onClick={(e) => handleNav(e, '__home', '/')} className="inline-flex items-center leading-none shrink-0" aria-label="BERACORE — Ana sayfa">
           <Image
             src="/beracore.png" alt="BERACORE" width={58} height={38} priority
             className="h-9 w-auto block drop-shadow-[0_0_18px_rgba(255,169,249,0.2)] transition-all duration-400 hover:drop-shadow-[0_0_28px_rgba(255,169,249,0.4)] hover:scale-[1.03] max-md:h-7"
             style={{ animation: 'logoSlide 1s cubic-bezier(0.16,1,0.3,1) 0.15s both' }}
           />
-        </button>
+        </Link>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-0.5">
           {NAV_LINKS.map((link) => (
             link.label === 'Hizmetler' ? (
               <div key={link.id} className="relative" onMouseEnter={openHizmetler} onMouseLeave={closeHizmetler}>
-                <button
-                  onClick={() => handleNav(link.id)}
+                <Link
+                  href={link.href}
+                  onClick={(e) => handleNav(e, link.id, link.href)}
                   className="relative px-3 py-2 font-body text-[0.75rem] font-medium tracking-wide text-t1 transition-all duration-300 hover:text-accent group"
                 >
                   <span>{link.label}</span>
@@ -175,7 +145,7 @@ export default function Navbar() {
                     <path d="M6 9l6 6 6-6" />
                   </svg>
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-px bg-gradient-to-r from-accent to-accent2 group-hover:w-3/4 transition-all duration-400" />
-                </button>
+                </Link>
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 transition-all duration-300"
                   style={{ opacity: hizmetlerOpen ? 1 : 0, transform: hizmetlerOpen ? 'translateY(0)' : 'translateY(-8px)', pointerEvents: hizmetlerOpen ? 'auto' : 'none' }}>
                   <div className="w-[280px] p-3 rounded-2xl bg-bg/95 backdrop-blur-[24px] border border-white/[0.08] shadow-[0_16px_48px_rgba(0,0,0,0.4)]">
@@ -194,14 +164,15 @@ export default function Navbar() {
                 </div>
               </div>
             ) : (
-              <button
+              <Link
                 key={link.id}
-                onClick={() => handleNav(link.id)}
+                href={link.href}
+                onClick={(e) => handleNav(e, link.id, link.href)}
                 className="relative px-3 py-2 font-body text-[0.75rem] font-medium tracking-wide text-t1 transition-all duration-300 hover:text-accent group"
               >
                 <span>{link.label}</span>
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-px bg-gradient-to-r from-accent to-accent2 group-hover:w-3/4 transition-all duration-400" />
-              </button>
+              </Link>
             )
           ))}
 
@@ -276,11 +247,11 @@ export default function Navbar() {
             }
 
             return (
-              <button key={link.id} onClick={() => handleNav(link.id)}
+              <Link key={link.id} href={link.href} onClick={(e) => handleNav(e, link.id, link.href)}
                 className="font-body text-[1.3rem] font-light text-t1 py-3 min-h-[48px] transition-all duration-500 hover:text-accent"
                 style={{ opacity: mobileOpen ? 1 : 0, transform: mobileOpen ? 'translateY(0)' : 'translateY(20px)', transitionDelay: mobileOpen ? `${150 + i * 60}ms` : '0ms' }}>
                 {link.label}
-              </button>
+              </Link>
             );
           })}
           <Link href="/iletisim" onClick={() => { setMobileOpen(false); setHizmetlerOpen(false); }}

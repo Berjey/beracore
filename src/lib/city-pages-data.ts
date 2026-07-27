@@ -105,7 +105,7 @@ export const cityPages: CityPage[] = [
     title: 'İstanbul E-Ticaret Çözümleri',
     metaTitle: 'İstanbul E-Ticaret Çözümleri — Site ve Entegrasyon | BERACORE',
     metaDescription:
-      'İstanbul’da e-ticaret sitesi kurulumu, pazaryeri entegrasyonu ve ödeme sistemleri. Satışa hazır, ölçeklenebilir e-ticaret altyapıları için İstanbul merkezli BERACORE.',
+      'İstanbul’da e-ticaret sitesi kurulumu, pazaryeri entegrasyonu ve ödeme sistemleri. Satışa hazır, ölçeklenebilir e-ticaret altyapıları — İstanbul merkezli BERACORE.',
     keyword: 'istanbul e-ticaret',
     intro: 'İstanbul’da online satışa geçmek ya da mevcut e-ticaretinizi büyütmek mi istiyorsunuz? BERACORE; satışa hazır e-ticaret siteleri, Trendyol/Hepsiburada/N11/Amazon pazaryeri entegrasyonları ve güvenli ödeme altyapıları kurar. Sadece site değil, satan bir sistem.',
     sections: [
@@ -243,4 +243,14 @@ export const cityPages: CityPage[] = [
 
 export function getCityPageBySlug(slug: string): CityPage | undefined {
   return cityPages.find((p) => p.slug === slug);
+}
+
+/**
+ * Bir hizmet sayfasına karşılık gelen şehir sayfalarını döndürür.
+ * Hizmet sayfalarından şehir sayfalarına iç link vermek için kullanılır —
+ * aksi halde şehir sayfaları hiç iç link almaz ve Google tarafından
+ * yalnızca sitemap üzerinden keşfedilir (zayıf sinyal).
+ */
+export function getCityPagesByServiceHref(serviceHref: string): CityPage[] {
+  return cityPages.filter((p) => p.serviceHref === serviceHref);
 }
