@@ -3,7 +3,7 @@
 Bu dosya, yeni bir sohbette veya farklı bir bilgisayarda çalışmaya başlandığında
 projenin durumunu ve devam edilecek noktayı aktarır. Git ile taşındığı için her makinede bulunur.
 
-**Son güncelleme:** 27 Temmuz 2026
+**Son güncelleme:** 28 Temmuz 2026
 
 ---
 
@@ -76,7 +76,7 @@ Her yazıda zorunlu standart:
 - `faq` dizisi → FAQPage schema + zengin sonuç
 - Kategori, `CATEGORY_META`'daki 6 değerden biri olmalı
 
-**Durum:** 41 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
+**Durum:** 46 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
 
 **Vaka çalışmaları / portfolyo sayfası YOK.** 27 Tem 2026'da `/calismalarimiz` kuruldu ancak
 kullanıcı gösterilecek yeterli proje olmadığı gerekçesiyle beğenmedi ve kaldırıldı.
@@ -92,7 +92,9 @@ fiyat/maliyet yazıları · "X nasıl seçilir" · karşılaştırma · platform
 Öne çıkan rakipler: Cesa Yazılım & Crypto Software (kripto borsa), IdeaSoft/T-Soft/Dopigo (pazaryeri),
 Zeo/Mobitek/Digipeak (SEO), Erpin/Kotivon (özel yazılım fiyat), WebCraft/Cbot (chatbot), Kafein/Gen RPA (RPA).
 
-İlk 23 yazı tamamen "X nedir" bilgi amaçlıydı; bu analizden sonra 18 ticari niyetli yazı eklendi (23 → 41).
+İlk 23 yazı tamamen "X nedir" bilgi amaçlıydı; bu analizden sonra ticari niyetli yazılar eklendi (23 → 46).
+Son parti (28 Tem 2026, her kategoride bir boşluk): logo/marka kimliği fiyatları, RPA maliyeti,
+WordPress mi özel yazılım mı, sosyal medya yönetimi fiyatları, token/coin oluşturma maliyeti.
 
 Trendyol, Hepsiburada, N11 ve Amazon mağaza açma/entegrasyon rehberleri tamamlandı (4 pazaryeri tam kapsam).
 
