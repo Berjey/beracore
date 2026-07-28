@@ -51,10 +51,10 @@ Site eklendi ve doğrulandı (HTML dosya yöntemi: `public/yandex_3d09533b9553da
 Sitemap `https://beracore.com/sitemap.xml` gönderildi (işleme kuyruğunda, 1-2 hafta sürebilir).
 Yandex özet paneli: "No errors or recommendations", yinelenen başlık/açıklama yok.
 
-### 🟢 Adım 4 — Bing Webmaster Tools 👤
-https://www.bing.com/webmasters → site ekle → **"Google Search Console'dan içe aktar"**
-(tek tıkla doğrulama + sitemap). ChatGPT/Copilot aramaları Bing dizinini kullanır.
-IndexNow zaten kurulu olduğu için yeni sayfalar otomatik bildiriliyor.
+### ✅ Adım 4 — Bing Webmaster Tools (28 Tem 2026 — TAMAMLANDI)
+GSC'den içe aktarıldı (otomatik doğrulama). Sitemap `Success`, 111 URL keşfedildi, 0 hata/uyarı.
+ChatGPT/Copilot aramaları Bing dizinini kullanır. IndexNow zaten Bing'e otomatik bildirim yapıyor.
+Bonus araçlar (ileride): **Site Scan** (Bing'in ücretsiz teknik SEO taraması), **Microsoft Clarity** (ısı haritası).
 
 ### 🟢 Adım 5 — Otorite / backlink 👤
 Yeni sitenin en büyük eksiği dış bağlantı. Ücretsiz olanlar:

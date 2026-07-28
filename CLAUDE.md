@@ -120,7 +120,8 @@ tamamlananlar ve bilinçli kapsam-dışı kararlar orada. Önce onu oku.
 ### Kısa özet
 - Teknik durum sağlam: 27 Tem 2026 tam denetiminde 84 sayfa tarandı, **0 SEO hatası**.
 - Asıl darboğaz görünürlük: site yeni, otoritesi yok, 4-6 ayda organik trafik beklenir.
-- Kullanıcıdan bekleyen: Search Console indeks sayıları 🔴 · Bing Webmaster (GSC'den içe aktar) 🟢
+- ✅ Arama motoru üçlüsü tamam: Google Search Console + Yandex + Bing Webmaster (28 Tem 2026).
+- Kalan asıl kaldıraç: otorite/backlink (kullanıcı) · GSC indeks kademeli artacak (yeni site).
 - ✅ GA4 kuruldu (28 Tem 2026): `G-NX5SRKJT2M`, VPS `.env`'de. CSP `next.config.ts`'te ID'den otomatik.
 - ✅ Yandex Webmaster kuruldu (28 Tem 2026): HTML dosya doğrulaması (`public/yandex_3d09533b9553da5c.html`), sitemap gönderildi.
 - ✅ Google Search Console mülkü iş hesabına devredildi (28 Tem 2026): sahip `berkealanelbusiness@gmail.com`,
