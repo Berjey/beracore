@@ -56,13 +56,12 @@ GSC'den içe aktarıldı (otomatik doğrulama). Sitemap `Success`, 111 URL keşf
 ChatGPT/Copilot aramaları Bing dizinini kullanır. IndexNow zaten Bing'e otomatik bildirim yapıyor.
 Bonus araçlar (ileride): **Site Scan** (Bing'in ücretsiz teknik SEO taraması), **Microsoft Clarity** (ısı haritası).
 
-### 🟢 Adım 5 — Otorite / backlink 👤
-Yeni sitenin en büyük eksiği dış bağlantı. Ücretsiz olanlar:
-- LinkedIn şirket sayfası + blog yazılarını linkiyle paylaşmak
-- Instagram / X profillerinde site linki
-- Ücretsiz sektörel dizinler
-- **En değerlisi:** iş yaptığın müşterilerden sitelerine "geliştirici: BERACORE" linki
-- ⛔ Toplu backlink satın alma — kısa vadede işe yarar görünür, cezayla biter
+### 🟢 Adım 5 — Dijital varlık & otorite/backlink 👤+🛠
+➡️ **Tam sistematik plan: `docs/dijital-varlik-plani.md`** — BERACORE'un yer alması gereken tüm
+platformlar (arama motorları ✅, işletme profilleri, ajans dizinleri, sosyal, freelance, portfolyo,
+yorum siteleri) fazlı liste + standart NAP/bio blokları + hazır profil metinleri. Adım adım işlenir.
+Özet: yeni sitenin en büyük eksiği dış bağlantı; en değerlisi müşteri sitelerine "geliştirici: BERACORE"
+linki + ajans dizinleri (Clutch/GoodFirms) + sosyal + Google İşletme Profili. ⛔ Toplu backlink satın alma yok.
 
 ### 🟢 Adım 6 — İçerik sürekliliği 🛠
 Claude girdi beklemeden ilerletebilir:
