@@ -46,10 +46,10 @@ GA ID client bundle'a gömülü (local + canlı doğrulandı). KVKK uyumu: ziyar
 > Kullanıcı doğrulaması: beracore.com → çerez banner'ında "Kabul Et" → GA Raporlar → Gerçek Zamanlı'da
 > kendini aktif kullanıcı olarak görmeli. GA yalnızca çerezi kabul eden ziyaretçileri sayar (yasal).
 
-### 🟢 Adım 3 — Yandex Webmaster 👤 + 🛠
-1. https://webmaster.yandex.com → site ekle → doğrulama **meta etiketini** al ve ver
-2. Claude `src/app/layout.tsx` içindeki `verification` alanına ekleyip deploy eder
-3. Sitemap gönder: `https://beracore.com/sitemap.xml`
+### ✅ Adım 3 — Yandex Webmaster (28 Tem 2026 — TAMAMLANDI)
+Site eklendi ve doğrulandı (HTML dosya yöntemi: `public/yandex_3d09533b9553da5c.html`).
+Sitemap `https://beracore.com/sitemap.xml` gönderildi (işleme kuyruğunda, 1-2 hafta sürebilir).
+Yandex özet paneli: "No errors or recommendations", yinelenen başlık/açıklama yok.
 
 ### 🟢 Adım 4 — Bing Webmaster Tools 👤
 https://www.bing.com/webmasters → site ekle → **"Google Search Console'dan içe aktar"**
