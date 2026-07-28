@@ -15,7 +15,7 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalıs
 title/description/canonical/OG/schema/H1/alt eksiksiz, kırık link yok, yetim sayfa yok,
 http→https ve www→apex yönlendirmeleri çalışıyor, güvenlik başlıkları tam, gzip açık.
 
-**İçerik durumu: iyi.** 46 blog yazısı, 24 alt hizmet sayfası, 6 İstanbul yerel sayfası.
+**İçerik durumu: iyi.** 46 blog yazısı, 24 alt hizmet sayfası, 24 yerel sayfa (İstanbul, Ankara, İzmir, Bursa × 6 hizmet).
 
 **Asıl darboğaz: görünürlük.** Site yeni, otoritesi yok. Ana kelimelerde rakiplerin
 domain yaşı 15 yıla varıyor. Kısa vadede kazanılacak yer uzun kuyruk sorgular.
@@ -77,7 +77,7 @@ Yeni sitenin en büyük eksiği dış bağlantı. Ücretsiz olanlar:
 
 ### 🟢 Adım 6 — İçerik sürekliliği 🛠
 Claude girdi beklemeden ilerletebilir:
-- Diğer şehirler için yerel sayfalar (Ankara / İzmir / Bursa) — `city-pages-data.ts` çoğaltılır
+- Diğer şehirler için yerel sayfalar (Antalya / Konya / Adana …) — `city-pages-data.ts`'e CityPage + `CITY_SLUGS`'a slug ekle (Ankara/İzmir/Bursa 28 Tem 2026'da tamamlandı)
 - Yeni ticari niyetli blog yazıları (fiyat / nasıl seçilir / karşılaştırma / platform rehberi)
 
 ---
@@ -122,7 +122,7 @@ Claude girdi beklemeden ilerletebilir:
 **SEO**
 - 84 URL sitemap, robots.txt, canonical, OG/Twitter, Google doğrulama
 - Şemalar: ProfessionalService, WebSite, Service, BlogPosting, FAQPage, BreadcrumbList
-- 46 blog yazısı (hepsinde FAQ + ilgili hizmete iç link), 6 İstanbul yerel sayfası
+- 46 blog yazısı (hepsinde FAQ + ilgili hizmete iç link), 24 yerel sayfa (İstanbul/Ankara/İzmir/Bursa × 6)
 - **27 Tem 2026 — kritik düzeltme:** Navigasyon `<button onClick>` kullanıyordu; Googlebot
   bunları takip etmez. 49 sayfa (blog + İstanbul + hakkımızda) hiç iç link almıyordu.
   Gerçek `<a href>` linklere çevrildi → taranabilir sayfa 44'ten 92'ye çıktı, yetim sayfa sıfırlandı.

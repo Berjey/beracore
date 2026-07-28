@@ -1,24 +1,24 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { cityPages, getCityPageBySlug } from '@/lib/city-pages-data';
+import { cityPages, getCityPage } from '@/lib/city-pages-data';
 
 const BASE_URL = 'https://beracore.com';
 
 interface Props {
-  params: Promise<{ hizmet: string }>;
+  params: Promise<{ sehir: string; hizmet: string }>;
 }
 
-export async function generateStaticParams() {
-  return cityPages.map((p) => ({ hizmet: p.slug }));
+export function generateStaticParams() {
+  return cityPages.map((p) => ({ sehir: p.citySlug, hizmet: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { hizmet } = await params;
-  const page = getCityPageBySlug(hizmet);
+  const { sehir, hizmet } = await params;
+  const page = getCityPage(sehir, hizmet);
   if (!page) return {};
 
-  const url = `${BASE_URL}/istanbul/${hizmet}`;
+  const url = `${BASE_URL}/${sehir}/${hizmet}`;
   return {
     title: page.metaTitle,
     description: page.metaDescription,
@@ -41,13 +41,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function IstanbulServicePage({ params }: Props) {
-  const { hizmet } = await params;
-  const page = getCityPageBySlug(hizmet);
+export default async function CityServicePage({ params }: Props) {
+  const { sehir, hizmet } = await params;
+  const page = getCityPage(sehir, hizmet);
   if (!page) notFound();
 
-  const url = `${BASE_URL}/istanbul/${hizmet}`;
-  const others = cityPages.filter((p) => p.slug !== hizmet);
+  const url = `${BASE_URL}/${sehir}/${hizmet}`;
+  const others = cityPages.filter((p) => p.citySlug === sehir && p.slug !== hizmet);
 
   const serviceJsonLd = {
     '@context': 'https://schema.org',
@@ -60,10 +60,10 @@ export default async function IstanbulServicePage({ params }: Props) {
       name: 'BERACORE',
       url: BASE_URL,
       telephone: '+905539862306',
-      areaServed: { '@type': 'City', name: 'İstanbul' },
-      address: { '@type': 'PostalAddress', addressLocality: 'İstanbul', addressCountry: 'TR' },
+      areaServed: { '@type': 'City', name: page.city },
+      address: { '@type': 'PostalAddress', addressLocality: page.city, addressCountry: 'TR' },
     },
-    areaServed: { '@type': 'City', name: 'İstanbul' },
+    areaServed: { '@type': 'City', name: page.city },
     url,
   };
 
@@ -106,7 +106,7 @@ export default async function IstanbulServicePage({ params }: Props) {
           {/* Hero */}
           <header className="mb-14 max-md:mb-10">
             <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-4">
-              İstanbul · Hizmet Bölgesi
+              {page.city} · Hizmet Bölgesi
             </span>
             <h1 className="font-heading text-[clamp(2.2rem,6vw,3.8rem)] font-semibold tracking-tight leading-[1.05] mb-6">
               <span className="gradient-text">{page.title}</span>
@@ -171,7 +171,7 @@ export default async function IstanbulServicePage({ params }: Props) {
           {/* CTA */}
           <section className="mt-16 text-center">
             <p className="font-body text-[1.1rem] text-t2 font-light mb-6">
-              İstanbul’daki projeniz için ücretsiz keşif görüşmesi yapalım.
+              {page.city}’daki projeniz için ücretsiz keşif görüşmesi yapalım.
             </p>
             <Link href="/iletisim" className="group inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-body text-[0.9rem] font-semibold tracking-wider uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(255,169,249,0.3)]">
               Ücretsiz Teklif Al
@@ -179,17 +179,19 @@ export default async function IstanbulServicePage({ params }: Props) {
             </Link>
           </section>
 
-          {/* Diğer İstanbul hizmetleri — iç link ağı */}
-          <section className="mt-16 pt-10 border-t border-white/[0.06]">
-            <h2 className="font-body text-[1.05rem] font-light text-t2 mb-5">İstanbul’daki diğer hizmetlerimiz</h2>
-            <div className="flex flex-wrap gap-3">
-              {others.map((o) => (
-                <Link key={o.slug} href={`/istanbul/${o.slug}`} className="font-body text-[0.85rem] text-t2 px-4 py-2 rounded-full border border-white/[0.08] hover:border-accent/40 hover:text-accent transition-all duration-300">
-                  {o.title}
-                </Link>
-              ))}
-            </div>
-          </section>
+          {/* Aynı şehirdeki diğer hizmetler — iç link ağı */}
+          {others.length > 0 && (
+            <section className="mt-16 pt-10 border-t border-white/[0.06]">
+              <h2 className="font-body text-[1.05rem] font-light text-t2 mb-5">{page.city}’daki diğer hizmetlerimiz</h2>
+              <div className="flex flex-wrap gap-3">
+                {others.map((o) => (
+                  <Link key={o.slug} href={`/${o.citySlug}/${o.slug}`} className="font-body text-[0.85rem] text-t2 px-4 py-2 rounded-full border border-white/[0.08] hover:border-accent/40 hover:text-accent transition-all duration-300">
+                    {o.title}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </article>
     </>

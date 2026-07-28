@@ -56,9 +56,10 @@ export default async function BlogPostPage({ params }: Props) {
   const others = blogPosts.filter((p) => p.slug !== slug && p.category !== post.category);
   const relatedPosts = [...sameCat, ...others].slice(0, 3);
 
-  // Bu yazıya bağlı İstanbul şehir sayfası varsa bağlamsal iç link (yerel SEO)
+  // Bu yazıya bağlı şehir sayfası varsa bağlamsal iç link (yerel SEO).
+  // Birden çok şehir aynı yazıya bağlı olabilir; ilk eşleşen (İstanbul) kullanılır.
   const cityMatch = cityPages.find((c) => c.blogHref === `/blog/${slug}`);
-  const cityLink = cityMatch ? { href: `/istanbul/${cityMatch.slug}`, title: cityMatch.title } : null;
+  const cityLink = cityMatch ? { href: `/${cityMatch.citySlug}/${cityMatch.slug}`, title: cityMatch.title } : null;
 
   const articleJsonLd = {
     '@context': 'https://schema.org',

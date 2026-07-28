@@ -4,7 +4,7 @@ import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 
-export default function IstanbulLayout({ children }: { children: React.ReactNode }) {
+export default function CityLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Starfield />

@@ -49,7 +49,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const cityEntries: MetadataRoute.Sitemap = cityPages.map((p) => ({
-    url: `${BASE_URL}/istanbul/${p.slug}`,
+    url: `${BASE_URL}/${p.citySlug}/${p.slug}`,
     lastModified: now,
     changeFrequency: 'monthly',
     priority: 0.8,

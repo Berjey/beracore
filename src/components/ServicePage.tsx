@@ -1173,12 +1173,12 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
           <section data-sp="city" className="pb-4 px-6">
             <div className="max-w-2xl mx-auto text-center">
               <p className="font-body text-[0.95rem] text-t2 font-light">
-                İstanbul’da mı arıyorsunuz?{' '}
+                Şehrinizde mi arıyorsunuz?{' '}
                 {cityLinks.map((c, i) => (
-                  <span key={c.slug}>
+                  <span key={`${c.citySlug}-${c.slug}`}>
                     {i > 0 && ' · '}
                     <Link
-                      href={`/istanbul/${c.slug}`}
+                      href={`/${c.citySlug}/${c.slug}`}
                       className="font-medium text-accent hover:text-accent2 transition-colors duration-300"
                     >
                       {c.title}

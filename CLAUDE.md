@@ -98,8 +98,13 @@ WordPress mi özel yazılım mı, sosyal medya yönetimi fiyatları, token/coin 
 
 Trendyol, Hepsiburada, N11 ve Amazon mağaza açma/entegrasyon rehberleri tamamlandı (4 pazaryeri tam kapsam).
 
-**Kalan içerik boşlukları:** İstanbul dışındaki şehirler için yerel sayfalar (Ankara/İzmir/Bursa —
-`src/lib/city-pages-data.ts` yapısı çoğaltılarak), sürekli yeni ticari niyetli blog yazıları.
+**Yerel sayfalar (28 Tem 2026 — tamamlandı):** İstanbul, Ankara, İzmir, Bursa × 6 hizmet = 24 yerel
+sayfa. Route `/istanbul/[hizmet]`'ten `/[sehir]/[hizmet]`'e genelleştirildi (mevcut İstanbul URL'leri
+korundu). Her şehir kendi ekonomik kimliğiyle özgün içerik taşır (Ankara: kamu/savunma/teknokent,
+İzmir: ihracat/üretici, Bursa: sanayi/imalat/B2B) — doorway/ince sayfa değil. Yeni şehir eklemek:
+`src/lib/city-pages-data.ts`'e CityPage nesnesi + `CITY_SLUGS`'a slug ekle.
+
+**Kalan içerik boşlukları:** Yeni şehirler (Antalya/Konya/Adana vb.) ve sürekli yeni ticari blog yazıları.
 
 **Müşteri yorumları gerçektir** — `Testimonials.tsx` içindeki 3 yorum gerçek müşterilere aittir
 (kullanıcı 27 Tem 2026'da teyit etti). Uydurma referans/metrik eklenmemelidir.
