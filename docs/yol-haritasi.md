@@ -15,7 +15,7 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalıs
 title/description/canonical/OG/schema/H1/alt eksiksiz, kırık link yok, yetim sayfa yok,
 http→https ve www→apex yönlendirmeleri çalışıyor, güvenlik başlıkları tam, gzip açık.
 
-**İçerik durumu: iyi.** 46 blog yazısı, 24 alt hizmet sayfası, 24 yerel sayfa (İstanbul, Ankara, İzmir, Bursa × 6 hizmet).
+**İçerik durumu: iyi.** 50 blog yazısı, 24 alt hizmet sayfası, 24 yerel sayfa (İstanbul, Ankara, İzmir, Bursa × 6 hizmet).
 
 **Asıl darboğaz: görünürlük.** Site yeni, otoritesi yok. Ana kelimelerde rakiplerin
 domain yaşı 15 yıla varıyor. Kısa vadede kazanılacak yer uzun kuyruk sorgular.
@@ -84,7 +84,7 @@ Claude girdi beklemeden ilerletebilir:
 
 ## 3. TEKNİK İYİLEŞTİRME ÖNERİLERİ (aciliyeti düşük)
 
-- 🟢 **`/blog` sayfalama** — 46 yazı tek sayfada. Yazı sayısı ~60'ı geçince
+- 🟢 **`/blog` sayfalama** — 50 yazı tek sayfada. Yazı sayısı ~60'ı geçince
   sayfalama veya kategori bazlı bölme gerekir.
 - 🟢 **Yeni yazıların iç link derinliği** — en yeni yazılar yalnızca `/blog` listesinden
   link alıyor; "ilgili yazılar" seçimi eskiler lehine çalışıyor. Seçim mantığı
@@ -122,7 +122,7 @@ Claude girdi beklemeden ilerletebilir:
 **SEO**
 - 84 URL sitemap, robots.txt, canonical, OG/Twitter, Google doğrulama
 - Şemalar: ProfessionalService, WebSite, Service, BlogPosting, FAQPage, BreadcrumbList
-- 46 blog yazısı (hepsinde FAQ + ilgili hizmete iç link), 24 yerel sayfa (İstanbul/Ankara/İzmir/Bursa × 6)
+- 50 blog yazısı (hepsinde FAQ + ilgili hizmete iç link), 24 yerel sayfa (İstanbul/Ankara/İzmir/Bursa × 6)
 - **27 Tem 2026 — kritik düzeltme:** Navigasyon `<button onClick>` kullanıyordu; Googlebot
   bunları takip etmez. 49 sayfa (blog + İstanbul + hakkımızda) hiç iç link almıyordu.
   Gerçek `<a href>` linklere çevrildi → taranabilir sayfa 44'ten 92'ye çıktı, yetim sayfa sıfırlandı.

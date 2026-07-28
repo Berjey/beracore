@@ -76,7 +76,7 @@ Her yazıda zorunlu standart:
 - `faq` dizisi → FAQPage schema + zengin sonuç
 - Kategori, `CATEGORY_META`'daki 6 değerden biri olmalı
 
-**Durum:** 46 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
+**Durum:** 50 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
 
 **Vaka çalışmaları / portfolyo sayfası YOK.** 27 Tem 2026'da `/calismalarimiz` kuruldu ancak
 kullanıcı gösterilecek yeterli proje olmadığı gerekçesiyle beğenmedi ve kaldırıldı.
