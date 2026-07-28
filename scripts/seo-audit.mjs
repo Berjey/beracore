@@ -113,6 +113,23 @@ if (fs.existsSync(htmlDir)) {
   }
 }
 
+// ---------- 2b) HTML: blog dışı sayfa tiplerinde JSON-LD varlığı ----------
+if (fs.existsSync(resolve(ROOT, '.next/server/app'))) {
+  const rep = [
+    { f: 'index.html', need: ['ProfessionalService', 'WebSite'] },
+    { f: 'hizmetler/design.html', need: ['ItemList', 'BreadcrumbList'] },
+    { f: 'hizmetler/design/web-tasarim.html', need: ['Service', 'FAQPage', 'BreadcrumbList'] },
+    { f: 'istanbul/web-tasarim.html', need: ['Service', 'FAQPage', 'BreadcrumbList'] },
+    { f: 'hakkimizda.html', need: ['AboutPage'] },
+  ];
+  for (const r of rep) {
+    const p = resolve(ROOT, '.next/server/app', r.f);
+    if (!fs.existsSync(p)) continue;
+    const h = fs.readFileSync(p, 'utf8');
+    for (const type of r.need) if (!new RegExp(`"@type":"${type}"`).test(h)) htmlProblems.push(`[şema:${r.f}] ${type} JSON-LD yok`);
+  }
+}
+
 // ---------- RAPOR ----------
 console.log(`\n════ BERACORE SEO DENETİMİ ════`);
 console.log(`Blog yazısı: ${posts.length} | Şehir metaTitle: ${cityMt.length}`);
