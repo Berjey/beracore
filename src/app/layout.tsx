@@ -47,9 +47,9 @@ export const metadata: Metadata = {
       'max-video-preview': -1,
     },
   },
-  verification: {
-    google: 'bOuYNnmvRvq5CIcTKGN5jQDYjHOi6DgcveMAVTszYSM',
-  },
+  // Google Search Console doğrulaması artık HTML dosya yöntemiyle yapılıyor (iş hesabı
+  // berkealanelbusiness): public/googleb8ca659074d30ada.html — bu dosya SİLİNMEMELİ.
+  // Eski hesabın (kemalberkealanel) meta token'ı 28 Tem 2026'da mülk devrinde kaldırıldı.
   metadataBase: new URL('https://beracore.com'),
   alternates: {
     canonical: '/',
