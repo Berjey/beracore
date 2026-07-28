@@ -36,26 +36,15 @@ Gerçekçi takvim: **4-6 ayda düzenli organik trafik.**
 > Not: 27 Temmuz'da navigasyondaki büyük bir tarama hatası düzeltildi (aşağıya bak).
 > Bu düzeltmenin etkisinin Search Console'a yansıması birkaç hafta sürebilir.
 
-### 🟡 Adım 2 — Google Analytics 4 👤 + 🛠
-**Kod tarafı HAZIR.** `CookieConsent.tsx` içinde KVKK uyumlu GA entegrasyonu duruyor:
-ID yoksa hiç yüklenmiyor, varsa kullanıcı "Kabul Et" demeden çerez set edilmiyor.
+### ✅ Adım 2 — Google Analytics 4 (28 Tem 2026 — TAMAMLANDI)
+GA4 mülkü açıldı, ölçüm kimliği **`G-NX5SRKJT2M`** VPS `/var/www/beracore/.env`'e eklendi ve
+build alındı. CSP `next.config.ts` içinde ID'den **otomatik** kuruluyor (nginx'e dokunulmadı):
+ID varken `script-src`/`connect-src`/`img-src` GA alan adlarını içerir, ID yokken CSP tam sıkı kalır.
+GA ID client bundle'a gömülü (local + canlı doğrulandı). KVKK uyumu: ziyaretçi "Kabul Et" demeden
+çerez set edilmez, IP anonim.
 
-Senin yapman gerekenler:
-1. Mülkü iş hesabına devret: Analytics → **Yönetici → Hesap erişim yönetimi → +** →
-   iş e-postan, rol **Yönetici**. Doğrula, sonra eski hesabı çıkar.
-2. **Yönetici → Veri akışları → web akışı** → `G-` ile başlayan **Ölçüm Kimliği**ni al ve ver.
-
-Claude'un yapacakları (ID gelince):
-- VPS'teki `/var/www/beracore/.env` dosyasına `NEXT_PUBLIC_GA_ID=G-XXXXXXX` eklenecek
-  ⚠️ `NEXT_PUBLIC_*` **build zamanında** okunur; VPS'te build alındığı için değişken
-  build'den ÖNCE `.env` içinde olmalı.
-- ⚠️ **CSP güncellenmeli** — şu anki politika GA'yı engeller. Nginx
-  `sites-available/beracore.com` içinde:
-  - `script-src` → `https://www.googletagmanager.com` eklenecek
-  - `connect-src` → `https://www.google-analytics.com https://*.analytics.google.com` eklenecek
-  - `img-src` → `https://www.google-analytics.com` eklenecek
-  - Sonra `nginx -t` && `systemctl reload nginx`
-  Bu adım atlanırsa GA sessizce çalışmaz.
+> Kullanıcı doğrulaması: beracore.com → çerez banner'ında "Kabul Et" → GA Raporlar → Gerçek Zamanlı'da
+> kendini aktif kullanıcı olarak görmeli. GA yalnızca çerezi kabul eden ziyaretçileri sayar (yasal).
 
 ### 🟢 Adım 3 — Yandex Webmaster 👤 + 🛠
 1. https://webmaster.yandex.com → site ekle → doğrulama **meta etiketini** al ve ver

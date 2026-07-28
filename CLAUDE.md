@@ -120,14 +120,14 @@ tamamlananlar ve bilinçli kapsam-dışı kararlar orada. Önce onu oku.
 ### Kısa özet
 - Teknik durum sağlam: 27 Tem 2026 tam denetiminde 84 sayfa tarandı, **0 SEO hatası**.
 - Asıl darboğaz görünürlük: site yeni, otoritesi yok, 4-6 ayda organik trafik beklenir.
-- Kullanıcıdan bekleyen: Search Console indeks sayıları 🔴 · GA4 ölçüm kimliği 🟡 · Yandex etiketi 🟢
+- Kullanıcıdan bekleyen: Search Console indeks sayıları 🔴 · Yandex etiketi 🟢
+- ✅ GA4 kuruldu (28 Tem 2026): `G-NX5SRKJT2M`, VPS `.env`'de. CSP `next.config.ts`'te ID'den otomatik.
 
 ### Dikkat edilecek teknik tuzaklar
-- **GA4 kodu zaten hazır** (`CookieConsent.tsx`, KVKK uyumlu, onay öncesi yüklenmez).
-  Sadece `NEXT_PUBLIC_GA_ID` gerekiyor. İKİ şey birden yapılmalı, yoksa GA sessizce çalışmaz:
-  (1) değişken VPS `.env`'e build'den ÖNCE eklenmeli (`NEXT_PUBLIC_*` build zamanı okunur),
-  (2) **Nginx CSP güncellenmeli** — şu anki `script-src 'self'` / `connect-src 'self'` GA'yı engeller.
-  Ayrıntılı talimat yol haritasında.
+- **GA4 kuruldu** (28 Tem 2026, `G-NX5SRKJT2M`). Not: CSP artık **nginx'te değil `next.config.ts`'te**
+  ve `NEXT_PUBLIC_GA_ID`'den otomatik kuruluyor — ID varken GA alan adlarını ekler, yokken tam sıkı kalır.
+  Yeni bir `NEXT_PUBLIC_*` değişkeni build zamanı okunur; VPS `.env`'e build'den ÖNCE eklenmeli.
+  Ölçüm kimliğini değiştirmek için: VPS `.env`'de `NEXT_PUBLIC_GA_ID`'yi güncelle + yeniden deploy.
 - **Navigasyon linkleri `<a href>` olmak ZORUNDA.** 27 Tem 2026'da bulunan en büyük SEO kusuru:
   Navbar/Footer `<button onClick={router.push}>` kullanıyordu, Googlebot takip etmiyordu ve
   49 sayfa hiç iç link almıyordu. `Link href` + onClick (yumuşak kaydırma için) kalıbı korunmalı.
