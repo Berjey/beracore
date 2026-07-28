@@ -146,3 +146,9 @@ tamamlananlar ve bilinçli kapsam-dışı kararlar orada. Önce onu oku.
 Kullanıcı onay beklemeden ilerlenmesini istiyor: kodu yaz, build al, deploy et, sonra raporla.
 Ancak geri döndürülmesi zor veya dışa dönük işlerde (sunucu güvenlik ayarı değiştirme, hesap silme,
 ücretli işlem) önce sor. Türkçe iletişim. Kısa ve net cevap tercih ediyor.
+
+### Çalışma çerçevesi (28 Tem 2026'dan itibaren)
+1. **İçerik üretimi DURAKLATILDI** — kullanıcı özel istemedikçe yeni blog/içerik üretme. Öncelik teknik + yapısal mükemmellik.
+2. **Öncelik:** kapsamlı SEO ve dijital varlık yönetimi — her platformda doğru, profesyonel, hatasız görünürlük.
+3. **Sıra:** tüm SEO/dijital araç kurulumları (GA4 ✅ + Yandex ✅ bitti) → kapsamlı son test → sonra web sitesi UX/geliştirme.
+4. **Haftalık rutin:** 1-2 kez A'dan Z'ye SEO denetimi + performans/hata testleri + sürekli doğrulama.
