@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -H 127.0.0.1",
-    "deploy": "node scripts/deploy.mjs"
+    "deploy": "node scripts/deploy.mjs",
+    "seo-audit": "node scripts/seo-audit.mjs"
   },
   "dependencies": {
     "gsap": "^3.15.0",

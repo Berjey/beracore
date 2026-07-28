@@ -123,6 +123,9 @@ tamamlananlar ve bilinçli kapsam-dışı kararlar orada. Önce onu oku.
 - Kullanıcıdan bekleyen: Search Console indeks sayıları 🔴 · Bing Webmaster (GSC'den içe aktar) 🟢
 - ✅ GA4 kuruldu (28 Tem 2026): `G-NX5SRKJT2M`, VPS `.env`'de. CSP `next.config.ts`'te ID'den otomatik.
 - ✅ Yandex Webmaster kuruldu (28 Tem 2026): HTML dosya doğrulaması (`public/yandex_3d09533b9553da5c.html`), sitemap gönderildi.
+- ✅ Google Search Console mülkü iş hesabına devredildi (28 Tem 2026): sahip `berkealanelbusiness@gmail.com`,
+  HTML dosya doğrulaması (`public/googleb8ca659074d30ada.html` — SİLİNMEMELİ), eski hesap + meta token kaldırıldı.
+  İndeks durumu (24 Tem): 9 dizinde, 36 "keşfedildi-bekliyor" (yeni site, otorite/zaman meselesi, teknik hata değil).
 
 ### Dikkat edilecek teknik tuzaklar
 - **GA4 kuruldu** (28 Tem 2026, `G-NX5SRKJT2M`). Not: CSP artık **nginx'te değil `next.config.ts`'te**
@@ -151,4 +154,6 @@ Ancak geri döndürülmesi zor veya dışa dönük işlerde (sunucu güvenlik ay
 1. **İçerik üretimi DURAKLATILDI** — kullanıcı özel istemedikçe yeni blog/içerik üretme. Öncelik teknik + yapısal mükemmellik.
 2. **Öncelik:** kapsamlı SEO ve dijital varlık yönetimi — her platformda doğru, profesyonel, hatasız görünürlük.
 3. **Sıra:** tüm SEO/dijital araç kurulumları (GA4 ✅ + Yandex ✅ bitti) → kapsamlı son test → sonra web sitesi UX/geliştirme.
-4. **Haftalık rutin:** 1-2 kez A'dan Z'ye SEO denetimi + performans/hata testleri + sürekli doğrulama.
+4. **Haftalık rutin + her içerik/iş oturumu:** `npm run seo-audit` (scripts/seo-audit.mjs — A-Z denetim:
+   meta uzunlukları, tek H1, canonical, JSON-LD, iç link, SSS, yinelenen, ince içerik) → `npm run build`
+   → `npm run deploy` → yeni sayfalar canlıda 200 mü → ara ara GSC indeks sayısı + GA4 çalışıyor mu.
