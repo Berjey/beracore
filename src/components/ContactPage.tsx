@@ -549,7 +549,7 @@ export default function ContactPage() {
       {/* ========================================================
           HERO
           ======================================================== */}
-      <section className="ct-hero-section ct-intro-pending relative flex flex-col items-center text-center px-6 pt-36 pb-16 overflow-hidden max-md:pt-28 max-md:pb-12">
+      <section className="ct-hero-section ct-intro-pending relative min-h-[92vh] flex flex-col items-center justify-center text-center px-6 pt-32 pb-24 overflow-hidden">
         <div
           className="ct-hero-ambient pointer-events-none absolute inset-0 -z-30"
           style={{
@@ -572,7 +572,7 @@ export default function ContactPage() {
           />
           {/* Tek zarif dönen halka — kenarda maskeyle silinir (kırpılma görünmez) */}
           <div
-            className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] max-md:w-[400px] max-md:h-[400px]"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] max-md:w-[400px] max-md:h-[400px]"
             style={{
               WebkitMaskImage: 'radial-gradient(circle, #000 50%, transparent 76%)',
               maskImage: 'radial-gradient(circle, #000 50%, transparent 76%)',
