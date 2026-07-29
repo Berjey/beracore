@@ -503,6 +503,9 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
+  // İlk WebGL karesi işlenene kadar canvas'ı gizle: bazı tarayıcılarda canvas katmanı ilk
+  // boyada bir kare opak (beyaz) görünebiliyor. İlk render'da (aşağıda) görünür yapılır.
+  canvas.style.opacity = '0';
 
   // --- Kullanıcı kontrolü (hafif) ---
   const controls = new OrbitControls(camera, canvas);
@@ -577,6 +580,7 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
   // --- Render loop ---
   const clock = new THREE.Clock();
   let raf = 0;
+  let firstFrameShown = false;
   (function loop() {
     raf = requestAnimationFrame(loop);
     if (!visible) return;
@@ -609,6 +613,12 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
     }
 
     renderer.render(scene, camera);
+
+    // İlk gerçek kare işlendi → canvas'ı görünür yap (beyaz opak flash penceresini kapatır)
+    if (!firstFrameShown) {
+      firstFrameShown = true;
+      canvas.style.opacity = '1';
+    }
   })();
 
   // --- API ---
