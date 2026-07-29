@@ -79,6 +79,20 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0;
 }
 
+/* ===== Hero giriş "flash" önleme (Blog liste + yazı) — aynı kalıp (bkz. yukarısı) ===== */
+.bl-intro-pending .bl-label,
+.bl-intro-pending .bl-char,
+.bl-intro-pending .bl-accent-glow,
+.bl-intro-pending .bl-sub,
+.bl-intro-pending .bl-line,
+.bl-intro-pending .bl-filter,
+.bl-intro-pending .bl-featured,
+.bl-intro-pending .bl-crumb,
+.bl-intro-pending .bl-meta,
+.bl-intro-pending .bl-h1 {
+  opacity: 0;
+}
+
 /* ===== Keyframes ===== */
 @keyframes fi { to { opacity: 1; } }
 

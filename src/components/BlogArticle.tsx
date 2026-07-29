@@ -93,10 +93,10 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
     let ctx: gsap.Context | null = null;
     const timer = setTimeout(() => {
       ctx = gsap.context(() => {
-        const tl = gsap.timeline({ delay: 0.15 });
-        tl.fromTo('.bl-crumb', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' })
-          .fromTo('.bl-meta', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.25')
-          .fromTo('.bl-h1', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.25');
+        const tl = gsap.timeline({ delay: 0.05, onComplete: () => container.classList.remove('bl-intro-pending') });
+        tl.fromTo('.bl-crumb', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' })
+          .fromTo('.bl-meta', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2')
+          .fromTo('.bl-h1', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.2');
 
         // Çok sayıda tekil ScrollTrigger yerine batch — grup halinde, tek gözlemci, çok daha pürüzsüz.
         gsap.set('.bl-reveal', { y: 24, opacity: 0 });
@@ -111,7 +111,7 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
   }, []);
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className="bl-intro-pending">
       {/* Okuma ilerleme çubuğu — GPU scaleX, transformOrigin sol */}
       <div className="fixed top-0 left-0 right-0 h-[3px] z-[60] bg-transparent">
         <div

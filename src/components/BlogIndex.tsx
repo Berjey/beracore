@@ -64,15 +64,16 @@ export default function BlogIndex({ posts, categories }: Props) {
     let ctx: gsap.Context | null = null;
     const timer = setTimeout(() => {
       ctx = gsap.context(() => {
-        const tl = gsap.timeline({ delay: 0.15 });
-        tl.fromTo('.bl-label', { y: 20, opacity: 0, letterSpacing: '0.8em' }, { y: 0, opacity: 1, letterSpacing: '0.5em', duration: 0.8, ease: 'power3.out' })
+        // onComplete: ilk-boya gizleme class'ını kaldır (elemanlar artık GSAP inline opacity'siyle görünür).
+        const tl = gsap.timeline({ delay: 0.05, onComplete: () => container.classList.remove('bl-intro-pending') });
+        tl.fromTo('.bl-label', { y: 20, opacity: 0, letterSpacing: '0.8em' }, { y: 0, opacity: 1, letterSpacing: '0.5em', duration: 0.55, ease: 'power3.out' })
           // Başlık: karakter-karakter 3D reveal (site hero diliyle aynı)
-          .fromTo('.bl-char', { y: 44, opacity: 0, rotationX: -75 }, { y: 0, opacity: 1, rotationX: 0, duration: 0.7, stagger: 0.028, ease: 'power3.out' }, '-=0.4')
-          .fromTo('.bl-accent-glow', { opacity: 0, scale: 0.4 }, { opacity: 0.4, scale: 1, duration: 1.1, ease: 'power2.out' }, '-=0.55')
-          .fromTo('.bl-sub', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.5')
-          .fromTo('.bl-line', { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: 'power2.out' }, '-=0.6')
-          .fromTo('.bl-filter', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power2.out' }, '-=0.7')
-          .fromTo('.bl-featured', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.4');
+          .fromTo('.bl-char', { y: 44, opacity: 0, rotationX: -75 }, { y: 0, opacity: 1, rotationX: 0, duration: 0.5, stagger: 0.02, ease: 'power3.out' }, '-=0.3')
+          .fromTo('.bl-accent-glow', { opacity: 0, scale: 0.4 }, { opacity: 0.4, scale: 1, duration: 0.8, ease: 'power2.out' }, '-=0.5')
+          .fromTo('.bl-sub', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.45')
+          .fromTo('.bl-line', { scaleX: 0 }, { scaleX: 1, duration: 0.85, ease: 'power2.out' }, '-=0.5')
+          .fromTo('.bl-filter', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.04, ease: 'power2.out' }, '-=0.6')
+          .fromTo('.bl-featured', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.35');
 
         // Accent glow nefes alır (girişten sonra) — AboutPage ile aynı dil
         gsap.to('.bl-accent-glow', { opacity: 0.6, scale: 1.12, duration: 2.8, yoyo: true, repeat: -1, ease: 'sine.inOut', delay: 2 });
@@ -103,7 +104,7 @@ export default function BlogIndex({ posts, categories }: Props) {
   }, []);
 
   return (
-    <article ref={containerRef} className="relative pt-36 pb-28 px-6 max-md:pt-28 max-md:pb-20">
+    <article ref={containerRef} className="bl-intro-pending relative pt-36 pb-28 px-6 max-md:pt-28 max-md:pb-20">
       <div className="max-w-6xl mx-auto">
         {/* ===== HERO ===== */}
         <header className="text-center mb-14 max-md:mb-10">
