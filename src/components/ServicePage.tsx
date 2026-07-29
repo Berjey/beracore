@@ -620,22 +620,28 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
             </p>
           </div>
 
-          {/* Dots */}
-          <div className="sp-hero-dots flex justify-center gap-3 mb-6">
+          {/* Dots — buton 24x24px şeffaf dokunma hedefi (WCAG 2.5.8),
+              görünen nokta içteki span'dir. */}
+          <div className="sp-hero-dots flex justify-center items-center gap-1 mb-6">
             {service.subServices.map((ss, i) => (
               <button
                 key={ss.slug}
                 onClick={() => goTo(i)}
-                className="transition-all duration-400"
-                style={{
-                  width: i === subIndex ? '28px' : '8px',
-                  height: '8px',
-                  borderRadius: '4px',
-                  background: i === subIndex ? 'linear-gradient(90deg, #ffa9f9, #fff7ad)' : 'rgba(255,255,255,0.08)',
-                  boxShadow: i === subIndex ? '0 0 12px rgba(255,169,249,0.3)' : 'none',
-                }}
+                className="shrink-0 flex items-center justify-center w-6 h-6"
                 aria-label={ss.title}
-              />
+                aria-current={i === subIndex ? 'true' : undefined}
+              >
+                <span
+                  className="block transition-all duration-400"
+                  style={{
+                    width: i === subIndex ? '28px' : '8px',
+                    height: '8px',
+                    borderRadius: '4px',
+                    background: i === subIndex ? 'linear-gradient(90deg, #ffa9f9, #fff7ad)' : 'rgba(255,255,255,0.08)',
+                    boxShadow: i === subIndex ? '0 0 12px rgba(255,169,249,0.3)' : 'none',
+                  }}
+                />
+              </button>
             ))}
           </div>
         </div>
@@ -1187,7 +1193,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
               <div className="text-center mt-12">
                 <Link
                   href={`/hizmetler/${service.key}`}
-                  className="group inline-flex items-center gap-2 font-body text-[0.82rem] font-semibold tracking-wider uppercase text-t2 hover:text-accent transition-colors duration-300"
+                  className="group inline-flex items-center gap-2 min-h-[24px] py-1 font-body text-[0.82rem] font-semibold tracking-wider uppercase text-t2 hover:text-accent transition-colors duration-300"
                 >
                   Tüm {service.title} hizmetlerini gör
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>

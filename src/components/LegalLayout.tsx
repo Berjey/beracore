@@ -138,7 +138,7 @@ export default function LegalLayout({
         <div className="mt-16 pt-8 border-t border-white/[0.06] flex items-center justify-between flex-wrap gap-4 max-md:mt-12">
           <Link
             href="/"
-            className="group inline-flex items-center gap-2 font-body text-[0.85rem] text-t2 hover:text-accent transition-colors duration-300"
+            className="group inline-flex items-center gap-2 min-h-[24px] py-1 font-body text-[0.85rem] text-t2 hover:text-accent transition-colors duration-300"
           >
             <svg
               width="16" height="16" viewBox="0 0 24 24"
@@ -153,7 +153,7 @@ export default function LegalLayout({
           </Link>
           <Link
             href="/iletisim"
-            className="font-body text-[0.85rem] font-semibold gradient-text hover:opacity-80 transition-opacity duration-300"
+            className="inline-flex items-center min-h-[24px] py-1 font-body text-[0.85rem] font-semibold gradient-text hover:opacity-80 transition-opacity duration-300"
           >
             Sorunuz mu var? İletişime Geçin →
           </Link>
