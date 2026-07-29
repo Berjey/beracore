@@ -784,7 +784,7 @@ export default function ContactPage() {
                         <button
                           type="button"
                           onClick={() => handleCopy(m.copyValue!, m.key)}
-                          className="inline-flex items-center min-h-[24px] py-1 max-md:min-h-[44px] font-body text-[0.7rem] font-semibold tracking-[0.15em] uppercase transition-colors duration-400 hover:text-t1"
+                          className="inline-flex items-center min-h-[24px] py-1.5 max-md:min-h-[44px] font-body text-[0.7rem] font-semibold tracking-[0.15em] uppercase transition-colors duration-400 hover:text-t1"
                           style={{ color: `${accent}aa` }}>
                           {copied === m.key ? 'Kopyalandı ✓' : 'Kopyala'}
                         </button>
