@@ -82,14 +82,23 @@ export default function BlogIndex({ posts, categories }: Props) {
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 
-  // ===== Filtre değişince kart giriş animasyonu =====
+  // ===== Kart giriş: scroll ile aşağı indikçe reveal (batch) — filtre değişince yeniden kurulur =====
+  // Eski davranış tüm kartları (50) birden stagger'ladığı için son kart ~3sn'de geliyordu (lag).
+  // batch yalnızca EKRANA GİREN kartları animasyonlar → hem akıcı hem "scroll'da reveal".
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
-    const cards = grid.querySelectorAll('.bl-card');
-    if (!cards.length) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(cards, { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, stagger: 0.06, ease: 'power2.out' });
+      const cards = gsap.utils.toArray<HTMLElement>('.bl-card');
+      if (!cards.length) return;
+      gsap.set(cards, { y: 26, opacity: 0 });
+      ScrollTrigger.batch('.bl-card', {
+        start: 'top 94%',
+        once: true,
+        onEnter: (batch) =>
+          gsap.to(batch, { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: 'power2.out', overwrite: true }),
+      });
+      ScrollTrigger.refresh();
     }, grid);
     return () => ctx.revert();
   }, [activeCat]);
