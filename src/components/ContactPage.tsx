@@ -342,15 +342,10 @@ export default function ContactPage() {
             { y: 0, opacity: 1, duration: 0.45, ease: 'power2.out' },
             '-=0.3');
 
-        gsap.to('.ct-orbit-1', { rotation: 360, duration: 80, repeat: -1, ease: 'none' });
-        gsap.to('.ct-orbit-2', { rotation: -360, duration: 110, repeat: -1, ease: 'none' });
-        gsap.to('.ct-orbit-3', { rotation: 360, duration: 150, repeat: -1, ease: 'none' });
+        gsap.to('.ct-orbit-1', { rotation: 360, duration: 90, repeat: -1, ease: 'none' });
         gsap.to('.ct-orb', {
           y: '+=24', duration: 3.5, yoyo: true, repeat: -1, ease: 'sine.inOut',
           stagger: { each: 0.4, from: 'random' },
-        });
-        gsap.to('.ct-core', {
-          scale: 1.55, opacity: 0.7, duration: 2.5, yoyo: true, repeat: -1, ease: 'sine.inOut', delay: 1.4,
         });
         gsap.to('.ct-accent-glow', {
           opacity: 0.6, scale: 1.15, duration: 2.8, yoyo: true, repeat: -1, ease: 'sine.inOut', delay: 2,
@@ -368,10 +363,6 @@ export default function ContactPage() {
         gsap.to('.ct-hero-orbits', {
           scale: 1.6, opacity: 0.3, rotate: 20,
           scrollTrigger: { trigger: '.ct-hero-section', start: 'top top', end: 'bottom top', scrub: 0.8 },
-        });
-        gsap.to('.ct-core', {
-          scale: 0, opacity: 0,
-          scrollTrigger: { trigger: '.ct-hero-section', start: 'top top', end: 'bottom 50%', scrub: 0.4 },
         });
         container.querySelectorAll<HTMLElement>('.ct-orb').forEach((orb, i) => {
           const speed = 1.2 + (i % 5) * 0.5;
@@ -558,7 +549,7 @@ export default function ContactPage() {
       {/* ========================================================
           HERO
           ======================================================== */}
-      <section className="ct-hero-section ct-intro-pending relative min-h-[68vh] flex flex-col items-center justify-center text-center px-6 pt-28 pb-14 overflow-hidden max-md:min-h-[auto] max-md:pt-24 max-md:pb-10">
+      <section className="ct-hero-section ct-intro-pending relative flex flex-col items-center text-center px-6 pt-36 pb-16 overflow-hidden max-md:pt-28 max-md:pb-12">
         <div
           className="ct-hero-ambient pointer-events-none absolute inset-0 -z-30"
           style={{
@@ -567,43 +558,36 @@ export default function ContactPage() {
           }}
         />
 
-        <div className="ct-hero-orbits pointer-events-none absolute inset-0 -z-20 flex items-center justify-center">
-          <div className="ct-core absolute rounded-full"
+        <div className="ct-hero-orbits pointer-events-none absolute inset-0 -z-20 overflow-hidden">
+          {/* Teknoloji dokusu — kenarlara doğru silinen nokta ızgarası */}
+          <div
+            className="absolute inset-0"
             style={{
-              width: 8, height: 8,
-              background: 'radial-gradient(circle, #ffffff 0%, #ffa9f9 50%, transparent 80%)',
-              boxShadow: '0 0 24px rgba(255,169,249,0.8), 0 0 60px rgba(255,247,173,0.4)',
-            }} aria-hidden="true" />
-
-          <div className="ct-orbit-1 absolute max-md:!w-[360px] max-md:!h-[360px]" style={{ width: 480, height: 480 }}>
-            <div className="w-full h-full rounded-full" style={{ border: '1px solid rgba(255,247,173,0.14)' }} />
-            {[0, 120, 240].map((angle) => (
-              <div key={angle} className="absolute inset-0" style={{ transform: `rotate(${angle}deg)` }} aria-hidden="true">
-                <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
-                  style={{ background: '#fff7ad', boxShadow: '0 0 10px #fff7ad, 0 0 20px rgba(255,247,173,0.6)' }} />
-              </div>
-            ))}
-          </div>
-          <div className="ct-orbit-2 absolute max-md:!w-[520px] max-md:!h-[520px]" style={{ width: 700, height: 700 }}>
-            <div className="w-full h-full rounded-full" style={{ border: '1px dashed rgba(255,169,249,0.12)' }} />
-            {[60, 180, 300].map((angle) => (
-              <div key={angle} className="absolute inset-0" style={{ transform: `rotate(${angle}deg)` }} aria-hidden="true">
-                <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full"
-                  style={{ background: '#ffa9f9', boxShadow: '0 0 8px #ffa9f9, 0 0 18px rgba(255,169,249,0.6)' }} />
-              </div>
-            ))}
-          </div>
-          <div className="ct-orbit-3 absolute max-md:!w-[720px] max-md:!h-[720px]" style={{ width: 950, height: 950 }}>
-            <div className="w-full h-full rounded-full"
-              style={{
-                background:
-                  'conic-gradient(from 0deg, transparent 0deg, rgba(255,169,249,0.18) 45deg, transparent 90deg, transparent 270deg, rgba(255,247,173,0.14) 315deg, transparent 360deg)',
-                WebkitMask:
-                  'radial-gradient(circle, transparent 99%, #000 100%), radial-gradient(circle, #000 99.5%, transparent 100%)',
-                WebkitMaskComposite: 'source-in',
-                maskComposite: 'intersect',
-                padding: '1px',
-              }} />
+              backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)',
+              backgroundSize: '44px 44px',
+              WebkitMaskImage: 'radial-gradient(ellipse 62% 60% at 50% 34%, #000, transparent 74%)',
+              maskImage: 'radial-gradient(ellipse 62% 60% at 50% 34%, #000, transparent 74%)',
+            }}
+            aria-hidden="true"
+          />
+          {/* Tek zarif dönen halka — kenarda maskeyle silinir (kırpılma görünmez) */}
+          <div
+            className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] max-md:w-[400px] max-md:h-[400px]"
+            style={{
+              WebkitMaskImage: 'radial-gradient(circle, #000 50%, transparent 76%)',
+              maskImage: 'radial-gradient(circle, #000 50%, transparent 76%)',
+            }}
+            aria-hidden="true"
+          >
+            <div className="ct-orbit-1 relative w-full h-full">
+              <div className="w-full h-full rounded-full" style={{ border: '1px solid rgba(255,247,173,0.12)' }} />
+              {[0, 120, 240].map((angle) => (
+                <div key={angle} className="absolute inset-0" style={{ transform: `rotate(${angle}deg)` }} aria-hidden="true">
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
+                    style={{ background: '#fff7ad', boxShadow: '0 0 10px #fff7ad, 0 0 20px rgba(255,247,173,0.6)' }} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
