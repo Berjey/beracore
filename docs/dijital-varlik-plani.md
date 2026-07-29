@@ -64,6 +64,58 @@ En hızlı dönüş getiren, ücretsiz temel taşlar.
 
 ---
 
+## FAZ 1 — HAZIR PROFİL METİNLERİ (kopyala-yapıştır)
+
+### 🔵 Google İşletme Profili
+- **İşletme adı:** BERACORE
+- **İşletme türü:** "Hizmet bölgesi işletmesi" seç (fiziksel mağaza/adres göstermeden) → **Hizmet bölgesi: İstanbul** (+ Türkiye geneli eklenebilir)
+- **Birincil kategori:** Web tasarımcısı · **İkincil:** Yazılım şirketi, Reklam ajansı, İnternet pazarlama hizmeti
+- **Telefon:** +90 553 986 23 06 · **Web:** https://beracore.com
+- **Açıklama (750 karaktere kadar):**
+> BERACORE, İstanbul merkezli bir dijital deneyim stüdyosudur. Markaların dijitalde fark yaratması için tasarım, mühendislik ve pazarlamayı tek çatı altında birleştiririz. Hizmetlerimiz: yapay zeka destekli chatbot ve süreç otomasyonu; blockchain, akıllı kontrat ve fintech çözümleri; özel web ve mobil yazılım; UI/UX ve marka kimliği tasarımı; e-ticaret sitesi ve pazaryeri entegrasyonları; SEO ve dijital pazarlama. Şablon değil, işinize özel; ölçülebilir sonuç odaklı çalışırız. İletişim: info@beracore.com
+- **Hizmetler (ekle):** Web Tasarım · Yazılım Geliştirme · Mobil Uygulama · Yapay Zeka & Otomasyon · E-Ticaret · SEO & Dijital Pazarlama · Marka Kimliği · Blockchain & Fintech
+
+### 🔵 LinkedIn Şirket Sayfası
+- **Ad:** BERACORE · **Kullanıcı adı:** /company/beracore
+- **Sektör:** Bilgi Teknolojileri ve Hizmetleri (veya Yazılım Geliştirme) · **Şirket büyüklüğü:** 2-10 · **Konum:** İstanbul, Türkiye · **Web:** beracore.com
+- **Slogan (tagline, ≤120 kr):** `Markanız için unutulmaz dijital deneyimler | Yapay Zeka · Yazılım · Tasarım · E-Ticaret`
+- **Hakkında (About):**
+> BERACORE, İstanbul merkezli bir dijital deneyim stüdyosudur. Markaların dijitalde fark yaratması için tasarım, mühendislik ve pazarlamayı tek çatı altında birleştiririz.
+>
+> Hizmetlerimiz:
+> 🤖 Yapay Zeka & Otomasyon — chatbot, süreç otomasyonu, veri analizi
+> ⛓️ Blockchain & Fintech — akıllı kontrat, kripto borsa, ödeme altyapısı
+> 💻 Yazılım Geliştirme — web, mobil, özel yazılım, API
+> 🎨 Tasarım — UI/UX, web tasarım, marka kimliği
+> 🛒 E-Ticaret — site kurulumu, pazaryeri entegrasyonu
+> 📈 Dijital Pazarlama — SEO, sosyal medya, reklam yönetimi
+>
+> Şablon değil, işinize özel; ölçülebilir sonuç odaklı çalışırız.
+> 📩 info@beracore.com · 🌐 beracore.com
+- **Uzmanlık alanları (specialties):** web tasarım, yazılım geliştirme, mobil uygulama, yapay zeka, chatbot, otomasyon, blockchain, e-ticaret, pazaryeri entegrasyonu, UI/UX, marka kimliği, SEO, dijital pazarlama
+
+### 🔵 Instagram (@beracore)
+- **Ad:** BERACORE · **Kategori:** Bilgi teknolojisi şirketi / Dijital yaratıcı
+- **Bio (≤150 kr):**
+> İstanbul merkezli dijital stüdyo ✨
+> Yapay zeka · yazılım · web tasarım · e-ticaret · dijital pazarlama
+> 👇 Projeni konuşalım
+- **Link:** https://beracore.com
+
+### 🔵 X / Twitter (@beracore)
+- **Ad:** BERACORE · **Konum:** İstanbul, Türkiye · **Web:** beracore.com
+- **Bio (≤160 kr):**
+> İstanbul merkezli dijital stüdyo. Yapay zeka, yazılım, web tasarım, e-ticaret ve dijital pazarlama çözümleri. Markanız için unutulmaz dijital deneyimler.
+
+### 📝 İlk gönderi önerisi (LinkedIn/Instagram — tanıtım)
+> BERACORE artık burada 🚀
+> Markaların dijitalde fark yaratması için tasarım, mühendislik ve pazarlamayı tek çatı altında birleştiriyoruz: yapay zeka, yazılım, web & mobil, e-ticaret ve dijital pazarlama.
+> Bir fikriniz mi var, mevcut işinizi mi büyütmek istiyorsunuz? Konuşalım.
+> 🌐 beracore.com · 📩 info@beracore.com
+> #dijitalajans #webtasarım #yazılım #yapayzeka #eticaret #seo
+
+---
+
 ## FAZ 2 — Ajans dizinleri (yüksek otorite backlink + B2B lead) 🔲
 
 Güçlü domainlerden dofollow link + gerçek müşteri talebi. Ajanslar için en değerli kategori.
