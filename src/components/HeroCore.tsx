@@ -29,9 +29,19 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
     if (!canvas) return;
     const api = createCoreScene(canvas);
     sceneRef.current = api;
-    requestAnimationFrame(() => setTimeout(fireReady, 300));
-    const timer = setTimeout(fireReady, 4000);
-    return () => { clearTimeout(timer); api.dispose(); };
+
+    // İlk kare sonrası kısa gecikmeyle hazır sinyali; 4sn'de de emniyet ağı.
+    // Her ikisi de unmount'ta iptal edilir (aksi halde sökülmüş bileşende onReady tetiklenir).
+    let earlyTimer: ReturnType<typeof setTimeout> | undefined;
+    const raf = requestAnimationFrame(() => { earlyTimer = setTimeout(fireReady, 300); });
+    const fallbackTimer = setTimeout(fireReady, 4000);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      if (earlyTimer) clearTimeout(earlyTimer);
+      clearTimeout(fallbackTimer);
+      api.dispose();
+    };
   }, [fireReady]);
 
   useEffect(() => {

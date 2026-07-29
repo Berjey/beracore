@@ -128,8 +128,10 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-0.5">
+        {/* Desktop Links — lg (1024px) altında gösterilmez.
+            768px'te 9 menü öğesi + CTA sığmıyordu: öğeler iki satıra sarıyor ve
+            "Teklif Al" butonu ekran dışında kesiliyordu. Bu aralıkta mobil menü kullanılır. */}
+        <div className="hidden lg:flex items-center gap-0.5">
           {NAV_LINKS.map((link) => (
             link.label === 'Hizmetler' ? (
               <div key={link.id} className="relative" onMouseEnter={openHizmetler} onMouseLeave={closeHizmetler}>
@@ -189,7 +191,7 @@ export default function Navbar() {
         {/* Mobile Hamburger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+          className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
           aria-label={mobileOpen ? 'Menüyü kapat' : 'Menüyü aç'} aria-expanded={mobileOpen}
         >
           <span className={`block w-5 h-[1.5px] bg-t1 transition-all duration-400 ${mobileOpen ? 'rotate-45 translate-y-[4.5px]' : ''}`} />
@@ -199,7 +201,7 @@ export default function Navbar() {
       </nav>
 
       {/* ===== Mobile Menu ===== */}
-      <div className={`fixed inset-0 z-[8999] md:hidden transition-all duration-500 overflow-y-auto ${mobileOpen ? 'visible' : 'invisible pointer-events-none'}`}
+      <div className={`fixed inset-0 z-[8999] lg:hidden transition-all duration-500 overflow-y-auto ${mobileOpen ? 'visible' : 'invisible pointer-events-none'}`}
         style={{ background: 'rgba(26,26,26,0.97)' }}>
         <div className="min-h-full flex flex-col items-center justify-center py-24 px-6 gap-1.5">
           {NAV_LINKS.map((link, i) => {

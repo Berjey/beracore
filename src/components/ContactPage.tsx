@@ -173,6 +173,8 @@ export default function ContactPage() {
   const [kvkkReadEnd, setKvkkReadEnd] = useState(false);
   const kvkkScrollRef = useRef<HTMLDivElement>(null);
   const kvkkPanelRef = useRef<HTMLDivElement>(null);
+  // "Kopyalandı" rozetini sıfırlayan timer — unmount'ta temizlenir.
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ----- Helpers -----
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => {
@@ -273,9 +275,14 @@ export default function ContactPage() {
         document.body.removeChild(ta);
       }
       setCopied(key);
-      setTimeout(() => setCopied(null), 1800);
+      if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+      copiedTimerRef.current = setTimeout(() => setCopied(null), 1800);
     } catch { /* noop */ }
   };
+
+  useEffect(() => () => {
+    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+  }, []);
 
   // ----- Tilt + magnetic -----
   const handleTilt = (e: React.MouseEvent<HTMLElement>) => {
@@ -777,7 +784,7 @@ export default function ContactPage() {
                         <button
                           type="button"
                           onClick={() => handleCopy(m.copyValue!, m.key)}
-                          className="inline-flex items-center max-md:min-h-[44px] font-body text-[0.7rem] font-semibold tracking-[0.15em] uppercase transition-colors duration-400 hover:text-t1"
+                          className="inline-flex items-center min-h-[24px] py-1 max-md:min-h-[44px] font-body text-[0.7rem] font-semibold tracking-[0.15em] uppercase transition-colors duration-400 hover:text-t1"
                           style={{ color: `${accent}aa` }}>
                           {copied === m.key ? 'Kopyalandı ✓' : 'Kopyala'}
                         </button>
@@ -1038,7 +1045,7 @@ export default function ContactPage() {
                     <button
                       type="button"
                       onClick={openKvkk}
-                      className="font-body text-[0.78rem] text-accent hover:underline underline-offset-2 cursor-pointer inline-flex items-center gap-1.5">
+                      className="font-body text-[0.78rem] text-accent hover:underline underline-offset-2 cursor-pointer inline-flex items-center gap-1.5 min-h-[24px] py-1">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                         <path d="M14 2v6h6" />

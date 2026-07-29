@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export interface ShapeSceneAPI {
-  setShape: (shape: string, color: string) => void;
+  // Renk parametresi yok: şekiller her zaman kurumsal paleti kullanır.
+  setShape: (shape: string) => void;
   dispose: () => void;
 }
 
@@ -883,7 +884,7 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
   })();
 
   return {
-    setShape(shape: string, color: string) {
+    setShape(shape: string) {
       transitioning = true;
       tProg = 0;
       pendingShape = shape;

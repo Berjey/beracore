@@ -32,6 +32,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const shapeRef = useRef<SubShapeAPI | null>(null);
+  const shapeClickTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const lastSubIconRef = useRef<string | null>(null);
   // Sadece DIŞ subSlug değişimlerini (tarayıcı geri/ileri, doğrudan URL) state'e aktarmak için.
   // İç goTo() → setSubIndex + router.replace döngüsünde geri-resetleme yarışını engeller.
@@ -63,7 +64,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
     const api = createSubScene(c, () => setCanvasReady(true));
     shapeRef.current = api;
     if (service && sub) {
-      api.setShape(sub.icon, service.color);
+      api.setShape(sub.icon);
       lastSubIconRef.current = sub.icon;
     }
 
@@ -88,7 +89,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
     if (!shapeRef.current || !sub || !service) return;
     if (lastSubIconRef.current === sub.icon) return;
     lastSubIconRef.current = sub.icon;
-    shapeRef.current.setShape(sub.icon, service.color);
+    shapeRef.current.setShape(sub.icon);
   }, [subIndex, sub, service]);
 
   // ======================================================
@@ -370,11 +371,21 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
   const handleShapeClick = useCallback(() => {
     if (shapeClicked) return;
     setShapeClicked(true);
-    setTimeout(() => {
-      detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(() => setShapeClicked(false), 1000);
-    }, 700);
+    shapeClickTimersRef.current.push(
+      setTimeout(() => {
+        detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        shapeClickTimersRef.current.push(
+          setTimeout(() => setShapeClicked(false), 1000)
+        );
+      }, 700)
+    );
   }, [shapeClicked]);
+
+  // Şekil tıklama zincirindeki timer'lar unmount'ta temizlenir.
+  useEffect(() => {
+    const timers = shapeClickTimersRef.current;
+    return () => { timers.forEach(clearTimeout); };
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

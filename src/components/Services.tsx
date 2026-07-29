@@ -52,14 +52,14 @@ export default function Services() {
     if (!canvas) return;
     const api = createShapeScene(canvas);
     shapeRef.current = api;
-    api.setShape(services[0].shape, services[0].color);
+    api.setShape(services[0].shape);
     return () => api.dispose();
   }, []);
 
   const goTo = useCallback((index: number) => {
     const next = (index + services.length) % services.length;
     setActiveIndex(next);
-    shapeRef.current?.setShape(services[next].shape, services[next].color);
+    shapeRef.current?.setShape(services[next].shape);
   }, []);
 
   // Click on shape or button → zoom transition → open detail
@@ -99,7 +99,7 @@ export default function Services() {
           {/* Left arrow */}
           <button
             onClick={() => goTo(activeIndex - 1)}
-            className={`group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
+            className={`group relative shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
               border border-accent/20 hover:border-accent/50 hover:scale-110 active:scale-95
               max-md:w-11 max-md:h-11
               ${transitioning ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}
@@ -137,7 +137,7 @@ export default function Services() {
           {/* Right arrow */}
           <button
             onClick={() => goTo(activeIndex + 1)}
-            className={`group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
+            className={`group relative shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
               border border-accent/20 hover:border-accent/50 hover:scale-110 active:scale-95
               max-md:w-11 max-md:h-11
               ${transitioning ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}
@@ -181,21 +181,29 @@ export default function Services() {
 
           <p className="text-center text-sm font-body text-t3 font-light tracking-wide mb-8">{svc.subtitle}</p>
 
-          <div className="flex justify-center gap-3">
+          {/* Sayfa noktaları — buton 24x24px şeffaf dokunma hedefi (WCAG 2.5.8),
+              görünen nokta içteki span'dir. Böylece görsel tasarım değişmeden
+              mobilde parmakla isabet edilebilir bir alan oluşur. */}
+          <div className="flex justify-center items-center gap-1">
             {services.map((s, i) => (
               <button
                 key={s.key}
                 onClick={() => goTo(i)}
-                className="transition-all duration-400"
-                style={{
-                  width: i === activeIndex ? '28px' : '8px',
-                  height: '8px',
-                  borderRadius: '4px',
-                  background: i === activeIndex ? 'linear-gradient(90deg, #ffa9f9, #fff7ad)' : 'rgba(255,255,255,0.08)',
-                  boxShadow: i === activeIndex ? '0 0 12px rgba(255,169,249,0.3)' : 'none',
-                }}
+                className="shrink-0 flex items-center justify-center w-6 h-6"
                 aria-label={s.title}
-              />
+                aria-current={i === activeIndex ? 'true' : undefined}
+              >
+                <span
+                  className="block transition-all duration-400"
+                  style={{
+                    width: i === activeIndex ? '28px' : '8px',
+                    height: '8px',
+                    borderRadius: '4px',
+                    background: i === activeIndex ? 'linear-gradient(90deg, #ffa9f9, #fff7ad)' : 'rgba(255,255,255,0.08)',
+                    boxShadow: i === activeIndex ? '0 0 12px rgba(255,169,249,0.3)' : 'none',
+                  }}
+                />
+              </button>
             ))}
           </div>
         </div>

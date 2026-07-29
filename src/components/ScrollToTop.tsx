@@ -1,30 +1,41 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 export default function ScrollToTop() {
   const [visible, setVisible] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [clicking, setClicking] = useState(false);
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let tick = false;
+    let raf = 0;
     const onScroll = () => {
       if (tick) return;
       tick = true;
-      requestAnimationFrame(() => {
+      raf = requestAnimationFrame(() => {
         setVisible(window.scrollY > 400);
         tick = false;
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // Bekleyen timer unmount'ta temizlenir — aksi halde sökülmüş bileşende setState çağrılır.
+  useEffect(() => () => {
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
   }, []);
 
   const scrollToTop = useCallback(() => {
     setClicking(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => setClicking(false), 1200);
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+    clickTimerRef.current = setTimeout(() => setClicking(false), 1200);
   }, []);
 
   return (

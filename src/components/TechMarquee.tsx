@@ -45,6 +45,8 @@ function useMarqueeDrag(containerRef: React.RefObject<HTMLDivElement | null>) {
   const lastXRef = useRef(0);
   const lastTimeRef = useRef(0);
   const rafRef = useRef(0);
+  // Momentum bittiğinde CSS animasyonuna dönülecek mi? Sürüklemeden/tekerlekten sonra true olur.
+  const resumePendingRef = useRef(false);
 
   const applyOffset = useCallback(() => {
     const el = containerRef.current;
@@ -60,12 +62,21 @@ function useMarqueeDrag(containerRef: React.RefObject<HTMLDivElement | null>) {
     const inner = el.querySelector('[data-marquee-inner]') as HTMLElement;
     if (!inner) return;
 
-    // Momentum decay loop
+    // Tek momentum döngüsü. CSS animasyonuna dönüş de burada yapılır —
+    // ayrı bir özyinelemeli rAF kullanılmaz, aksi halde unmount'ta iptal edilemez
+    // ve hız hiç azalmadığı için sonsuza kadar dönerdi.
     const tick = () => {
       if (!draggingRef.current && Math.abs(velocityRef.current) > 0.1) {
         offsetRef.current += velocityRef.current;
         velocityRef.current *= 0.94; // friction
         applyOffset();
+      } else if (resumePendingRef.current && !draggingRef.current) {
+        // Momentum söndü → offset'i sıfırla ve CSS animasyonunu devral
+        resumePendingRef.current = false;
+        velocityRef.current = 0;
+        offsetRef.current = 0;
+        inner.style.transform = '';
+        inner.style.animationPlayState = '';
       }
       rafRef.current = requestAnimationFrame(tick);
     };
@@ -97,37 +108,15 @@ function useMarqueeDrag(containerRef: React.RefObject<HTMLDivElement | null>) {
       if (!draggingRef.current) return;
       draggingRef.current = false;
       el.style.cursor = '';
-      // Momentum will decay in tick loop, then CSS anim resumes
-      const waitForStop = () => {
-        if (Math.abs(velocityRef.current) < 0.1) {
-          velocityRef.current = 0;
-          // Smoothly reset offset and resume CSS animation
-          offsetRef.current = 0;
-          inner.style.transform = '';
-          inner.style.animationPlayState = '';
-        } else {
-          requestAnimationFrame(waitForStop);
-        }
-      };
-      requestAnimationFrame(waitForStop);
+      // Momentum tick döngüsünde sönecek, ardından CSS animasyonu devralacak
+      resumePendingRef.current = true;
     };
 
     // Scroll velocity boost
     const onWheel = (e: WheelEvent) => {
       velocityRef.current += e.deltaY * 0.3;
       inner.style.animationPlayState = 'paused';
-      // Resume after momentum dies
-      const waitForStop = () => {
-        if (Math.abs(velocityRef.current) < 0.1) {
-          velocityRef.current = 0;
-          offsetRef.current = 0;
-          inner.style.transform = '';
-          inner.style.animationPlayState = '';
-        } else {
-          requestAnimationFrame(waitForStop);
-        }
-      };
-      requestAnimationFrame(waitForStop);
+      resumePendingRef.current = true;
     };
 
     el.addEventListener('pointerdown', onDown);

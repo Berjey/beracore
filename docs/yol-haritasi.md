@@ -65,7 +65,7 @@ linki + ajans dizinleri (Clutch/GoodFirms) + sosyal + Google İşletme Profili. 
 
 ### 🟢 Adım 6 — İçerik sürekliliği 🛠
 Claude girdi beklemeden ilerletebilir:
-- Diğer şehirler için yerel sayfalar (Antalya / Konya / Adana …) — `city-pages-data.ts`'e CityPage + `CITY_SLUGS`'a slug ekle (Ankara/İzmir/Bursa 28 Tem 2026'da tamamlandı)
+- Diğer şehirler için yerel sayfalar (Antalya / Konya / Adana …) — `city-pages-data.ts` içindeki `cityPages` dizisine CityPage nesnesi eklemek yeterlidir; rotalar bundan otomatik türetilir (Ankara/İzmir/Bursa 28 Tem 2026'da tamamlandı)
 - Yeni ticari niyetli blog yazıları (fiyat / nasıl seçilir / karşılaştırma / platform rehberi)
 
 ---

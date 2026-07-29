@@ -911,8 +911,9 @@ export const cityPages: CityPage[] = [
   },
 ];
 
-/** Sitede yerel sayfası bulunan şehirler — route generateStaticParams ve gezinme için. */
-export const CITY_SLUGS = ['istanbul', 'ankara', 'izmir', 'bursa'] as const;
+// NOT: Şehir listesi ayrı bir sabitte TUTULMAZ. Rotalar `generateStaticParams`
+// içinde doğrudan `cityPages`'ten türetilir — tek doğruluk kaynağı budur.
+// Yeni şehir eklemek için sadece bu diziye CityPage nesneleri eklemek yeterlidir.
 
 export function getCityPage(citySlug: string, slug: string): CityPage | undefined {
   return cityPages.find((p) => p.citySlug === citySlug && p.slug === slug);
