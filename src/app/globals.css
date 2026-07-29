@@ -93,6 +93,18 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0;
 }
 
+/* ===== Hero giriş "flash" önleme (İletişim) — aynı kalıp (bkz. yukarısı) ===== */
+.ct-intro-pending .ct-hero-label,
+.ct-intro-pending .ct-char-main,
+.ct-intro-pending .ct-char-accent,
+.ct-intro-pending .ct-accent-glow,
+.ct-intro-pending .ct-hero-desc,
+.ct-intro-pending .ct-hero-cta,
+.ct-intro-pending .ct-qstat,
+.ct-intro-pending .ct-hero-line {
+  opacity: 0;
+}
+
 /* ===== Keyframes ===== */
 @keyframes fi { to { opacity: 1; } }
 

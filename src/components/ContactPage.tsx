@@ -81,28 +81,28 @@ const PROCESS_STEPS = [
     step: '01',
     title: 'Talebiniz bize ulaşır',
     time: 'Aynı gün',
-    desc: 'Formu gönderdiğiniz anda çekirdek ekibimize düşer; proje uzmanımız dosyanızı açar ve ilk değerlendirmeyi yapar.',
+    desc: 'Form ekibimize düşer; proje uzmanımız dosyanızı açar ve ilk değerlendirmeyi yapar.',
     iconPath: 'M22 2L11 13 M22 2l-7 20-4-9-9-4 20-7z',
   },
   {
     step: '02',
     title: 'Keşif görüşmesi',
     time: '1 — 2 gün',
-    desc: '30 dakikalık ücretsiz online keşif görüşmesinde hedefinizi, kısıtlarınızı ve beklentilerinizi dinliyoruz.',
+    desc: '30 dakikalık ücretsiz görüşmede hedef, kısıt ve beklentilerinizi dinleriz.',
     iconPath: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
   },
   {
     step: '03',
     title: 'Detaylı teklif',
     time: '3 — 5 gün',
-    desc: 'Kapsam, süreç, ekip yapısı, yatırım ve teslim takvimini içeren bağlayıcı bir teklif hazırlıyoruz.',
+    desc: 'Kapsam, süreç, yatırım ve teslim takvimini içeren net bir teklif hazırlarız.',
     iconPath: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
   },
   {
     step: '04',
     title: 'Projeye başlangıç',
     time: '1 — 2 hafta',
-    desc: 'Sözleşme imzası sonrası kick-off toplantısı; iletişim kanallarınız açılır, ekip atanır ve ilk sprint başlar.',
+    desc: 'Sözleşme sonrası kick-off; kanallarınız açılır, ekip atanır, ilk sprint başlar.',
     iconPath: 'M5 12h14 M12 5l7 7-7 7',
   },
 ];
@@ -304,7 +304,11 @@ export default function ContactPage() {
     const timer = setTimeout(() => {
       ctx = gsap.context(() => {
         // ===== HERO =====
-        const heroTl = gsap.timeline({ delay: 0.05 });
+        // onComplete: ilk-boya gizleme sınıfını kaldır (intro artık inline opacity ile açtı).
+        const heroTl = gsap.timeline({
+          delay: 0.05,
+          onComplete: () => container.querySelector('.ct-hero-section')?.classList.remove('ct-intro-pending'),
+        });
         heroTl
           .fromTo('.ct-hero-label',
             { y: 14, opacity: 0, letterSpacing: '0.7em' },
@@ -326,13 +330,17 @@ export default function ContactPage() {
             { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out' },
             '-=0.35')
           .fromTo('.ct-hero-line',
-            { scaleX: 0 },
-            { scaleX: 1, duration: 0.9, ease: 'power2.out' },
+            { scaleX: 0, opacity: 0 },
+            { scaleX: 1, opacity: 1, duration: 0.9, ease: 'power2.out' },
             '-=0.45')
           .fromTo('.ct-qstat',
             { y: 12, opacity: 0 },
             { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out', stagger: 0.05 },
-            '-=0.7');
+            '-=0.7')
+          .fromTo('.ct-hero-cta',
+            { y: 16, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.45, ease: 'power2.out' },
+            '-=0.3');
 
         gsap.to('.ct-orbit-1', { rotation: 360, duration: 80, repeat: -1, ease: 'none' });
         gsap.to('.ct-orbit-2', { rotation: -360, duration: 110, repeat: -1, ease: 'none' });
@@ -412,28 +420,12 @@ export default function ContactPage() {
           { y: 30, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
             scrollTrigger: { trigger: '.ct-process', start: 'top 85%', toggleActions: 'play none none reverse' } });
-        gsap.fromTo('.ct-process-line',
-          { scaleY: 0 },
+        gsap.fromTo('.ct-process-step',
+          { y: 30, opacity: 0 },
           {
-            scaleY: 1, ease: 'none',
-            scrollTrigger: { trigger: '.ct-process', start: 'top 70%', end: 'bottom 60%', scrub: 0.3 },
+            y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', stagger: 0.1,
+            scrollTrigger: { trigger: '.ct-process', start: 'top 80%', toggleActions: 'play none none reverse' },
           });
-        container.querySelectorAll<HTMLElement>('.ct-process-step').forEach((el) => {
-          gsap.fromTo(el,
-            { opacity: 0, x: 40, y: 20 },
-            {
-              opacity: 1, x: 0, y: 0, ease: 'power3.out',
-              scrollTrigger: { trigger: el, start: 'top 85%', end: 'top 55%', scrub: 0.5 },
-            });
-        });
-        container.querySelectorAll<HTMLElement>('.ct-process-dot').forEach((el) => {
-          gsap.fromTo(el,
-            { scale: 0 },
-            {
-              scale: 1, ease: 'back.out(2)',
-              scrollTrigger: { trigger: el, start: 'top 80%', end: 'top 55%', scrub: 0.3 },
-            });
-        });
 
         // ===== FAQ =====
         gsap.fromTo('.ct-faq-head',
@@ -447,15 +439,9 @@ export default function ContactPage() {
             scrollTrigger: { trigger: '.ct-faq', start: 'top 80%', toggleActions: 'play none none reverse' },
           });
 
-        // ===== CTA =====
-        gsap.fromTo('.ct-cta-inner',
-          { y: 40, opacity: 0, scale: 0.96 },
-          { y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out',
-            scrollTrigger: { trigger: '.ct-cta', start: 'top 85%', toggleActions: 'play none none reverse' } });
-
         requestAnimationFrame(() => ScrollTrigger.refresh());
       }, container);
-    }, 400);
+    }, 80);
 
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
@@ -572,7 +558,7 @@ export default function ContactPage() {
       {/* ========================================================
           HERO
           ======================================================== */}
-      <section className="ct-hero-section relative min-h-[92vh] flex flex-col items-center justify-center text-center px-6 pt-32 pb-24 overflow-hidden">
+      <section className="ct-hero-section ct-intro-pending relative min-h-[68vh] flex flex-col items-center justify-center text-center px-6 pt-28 pb-14 overflow-hidden max-md:min-h-[auto] max-md:pt-24 max-md:pb-10">
         <div
           className="ct-hero-ambient pointer-events-none absolute inset-0 -z-30"
           style={{
@@ -696,18 +682,40 @@ export default function ContactPage() {
               );
             })}
           </div>
+
+          {/* Hızlı aksiyonlar — doğrudan sonuca: forma zıpla / ara */}
+          <div className="ct-hero-cta mt-9 flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="#teklif"
+              className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(255,169,249,0.28)]"
+            >
+              Teklif Formunu Aç
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-y-0.5">
+                <path d="M12 5v14M5 12l7 7 7-7" />
+              </svg>
+            </a>
+            <a
+              href="tel:+905539862306"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/[0.12] text-t1 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent2/40 hover:text-accent2"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              0553 986 23 06
+            </a>
+          </div>
         </div>
 
-        <div className="ct-hero-line mt-14 h-px w-full max-w-md origin-center"
+        <div className="ct-hero-line mt-10 h-px w-full max-w-md origin-center"
           style={{ background: 'linear-gradient(90deg, transparent, var(--color-accent), var(--color-accent2), transparent)' }} />
       </section>
 
       {/* ========================================================
           CONTACT METHODS
           ======================================================== */}
-      <section className="ct-methods relative py-24 px-6 max-md:py-16">
+      <section className="ct-methods relative py-16 px-6 max-md:py-12">
         <div className="max-w-[1100px] mx-auto">
-          <div className="ct-methods-head text-center mb-14 max-md:mb-10">
+          <div className="ct-methods-head text-center mb-10 max-md:mb-8">
             <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent/60 mb-4">
               Doğrudan Kanallar
             </span>
@@ -817,7 +825,7 @@ export default function ContactPage() {
       {/* ========================================================
           FORM — consolidated card
           ======================================================== */}
-      <section className="ct-form-section relative py-28 px-6 border-t border-b border-border overflow-hidden max-md:py-20"
+      <section id="teklif" className="ct-form-section relative scroll-mt-24 py-20 px-6 border-t border-b border-border overflow-hidden max-md:py-16"
         style={{ background: 'linear-gradient(180deg, transparent, rgba(255,169,249,0.025) 50%, transparent)' }}>
         <div className="pointer-events-none absolute inset-0 -z-10"
           style={{ background: 'radial-gradient(900px 400px at 50% 50%, rgba(255,169,249,0.05), transparent 70%)' }} />
@@ -1115,97 +1123,49 @@ export default function ContactPage() {
       {/* ========================================================
           PROCESS TIMELINE
           ======================================================== */}
-      <section className="ct-process relative py-28 px-6 overflow-hidden max-md:py-20">
-        <div className="max-w-[880px] mx-auto">
-          <div className="ct-process-head text-center mb-16 max-md:mb-12">
+      <section className="ct-process relative py-16 px-6 overflow-hidden max-md:py-12">
+        <div className="max-w-[1100px] mx-auto">
+          <div className="ct-process-head text-center mb-10 max-md:mb-8">
             <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent/60 mb-4">
               Süreç
             </span>
-            <h2 className="font-body text-[clamp(1.8rem,3.8vw,2.6rem)] font-light tracking-tight leading-[1.2] mb-5">
+            <h2 className="font-body text-[clamp(1.6rem,3.4vw,2.3rem)] font-light tracking-tight leading-[1.2]">
               <ScrollText before="Formu gönderdikten " accent="sonra." />
             </h2>
-            <p className="font-body text-[0.95rem] text-t2 font-light max-w-xl mx-auto leading-relaxed">
-              Şeffaf, hızlı ve baskısız. İlk temas ile proje başlangıcı arasında neler olduğunu önceden bilin.
-            </p>
           </div>
 
-          <div className="relative">
-            <div className="pointer-events-none absolute left-[22px] top-4 bottom-4 w-px bg-white/[0.05]" />
-            <div
-              className="ct-process-line pointer-events-none absolute left-[22px] top-4 bottom-4 w-px origin-top"
-              style={{ background: 'linear-gradient(180deg, transparent, #ffa9f9, #fff7ad, transparent)' }}
-            />
-
-            <div className="relative space-y-10 max-md:space-y-7" style={{ perspective: '1400px' }}>
-              {PROCESS_STEPS.map((s, i) => {
-                const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
-                return (
-                  <div key={s.step} className="ct-process-step relative grid grid-cols-[auto,1fr] gap-6 max-md:gap-4">
-                    <div className="relative flex justify-center w-11 shrink-0 pt-5">
-                      <span
-                        className="ct-process-dot relative z-10 w-4 h-4 rounded-full"
-                        style={{
-                          background: `radial-gradient(circle, ${accent} 0%, ${accent}66 60%, transparent 100%)`,
-                          boxShadow: `0 0 0 4px var(--color-bg), 0 0 18px ${accent}88`,
-                        }} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {PROCESS_STEPS.map((s, i) => {
+              const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
+              return (
+                <div
+                  key={s.step}
+                  className="ct-process-step group relative flex flex-col p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden transition-all duration-400 hover:border-white/[0.16] hover:bg-white/[0.035] hover:-translate-y-1 max-md:p-5"
+                  style={{ '--accent': accent } as React.CSSProperties}
+                >
+                  <span className="pointer-events-none absolute top-0 left-0 right-0 h-px opacity-60"
+                    style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} aria-hidden="true" />
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-6"
+                      style={{ background: `${accent}14`, boxShadow: `0 0 0 1px ${accent}30 inset, 0 0 20px ${accent}22` }}>
+                      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <path d={s.iconPath} />
+                      </svg>
                     </div>
-
-                    <article
-                      onMouseMove={handleTilt}
-                      onMouseLeave={handleTiltLeave}
-                      className="ct-process-card group relative p-7 rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden transition-all duration-400 hover:border-white/[0.18] hover:bg-white/[0.035] cursor-default max-md:p-5 min-w-0"
-                      style={{ '--accent': accent, transformStyle: 'preserve-3d' } as React.CSSProperties}>
-                      {/* Accent border glow hover */}
-                      <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                        style={{ boxShadow: `0 0 0 1px ${accent} inset, 0 0 24px ${accent}44, 0 0 50px ${accent}1a` }}
-                        aria-hidden="true" />
-                      {/* Cursor radial */}
-                      <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                        style={{ background: `radial-gradient(280px circle at var(--mx) var(--my), ${accent}14, transparent 70%)` }}
-                        aria-hidden="true" />
-                      {/* Corner brackets */}
-                      {([
-                        ['top-2.5 left-2.5', 'TL'],
-                        ['top-2.5 right-2.5', 'TR'],
-                        ['bottom-2.5 left-2.5', 'BL'],
-                        ['bottom-2.5 right-2.5', 'BR'],
-                      ] as const).map(([pos, key]) => (
-                        <span key={key} aria-hidden="true"
-                          className={`pointer-events-none absolute w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out ${pos}`}
-                          style={{
-                            ...(key.startsWith('T') && { borderTop: `1.5px solid ${accent}` }),
-                            ...(key.startsWith('B') && { borderBottom: `1.5px solid ${accent}` }),
-                            ...(key.endsWith('L') && { borderLeft: `1.5px solid ${accent}` }),
-                            ...(key.endsWith('R') && { borderRight: `1.5px solid ${accent}` }),
-                            [`border${key.startsWith('T') ? 'Top' : 'Bottom'}${key.endsWith('L') ? 'Left' : 'Right'}Radius`]: '8px',
-                            filter: `drop-shadow(0 0 6px ${accent}88)`,
-                          }} />
-                      ))}
-
-                      <div className="relative">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-6"
-                            style={{ background: `${accent}14`, boxShadow: `0 0 0 1px ${accent}30 inset, 0 0 20px ${accent}22` }}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                              <path d={s.iconPath} />
-                            </svg>
-                          </div>
-                          <div className="min-w-0">
-                            <div className="font-body text-[0.65rem] font-semibold tracking-[0.25em] uppercase" style={{ color: `${accent}aa` }}>
-                              Adım {s.step} · {s.time}
-                            </div>
-                            <h3 className="font-heading text-[1.1rem] font-semibold text-t1 mt-0.5 transition-colors duration-400 group-hover:text-[color:var(--accent)] max-md:text-[1rem]">
-                              {s.title}
-                            </h3>
-                          </div>
-                        </div>
-                        <p className="font-body text-[0.9rem] text-t2 font-light leading-[1.7] max-md:text-[0.85rem]">{s.desc}</p>
-                      </div>
-                    </article>
+                    <span className="font-heading text-[1.7rem] font-bold leading-none" style={{ color: `${accent}2e` }}>
+                      {s.step}
+                    </span>
                   </div>
-                );
-              })}
-            </div>
+                  <div className="font-body text-[0.62rem] font-semibold tracking-[0.22em] uppercase mb-1.5" style={{ color: `${accent}aa` }}>
+                    {s.time}
+                  </div>
+                  <h3 className="font-heading text-[1.02rem] font-semibold text-t1 mb-2 transition-colors duration-400 group-hover:text-[color:var(--accent)]">
+                    {s.title}
+                  </h3>
+                  <p className="font-body text-[0.84rem] text-t3 font-light leading-[1.6]">{s.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -1213,9 +1173,9 @@ export default function ContactPage() {
       {/* ========================================================
           FAQ
           ======================================================== */}
-      <section className="ct-faq relative py-28 px-6 border-t border-border max-md:py-20">
+      <section className="ct-faq relative py-16 px-6 border-t border-border max-md:py-12">
         <div className="max-w-3xl mx-auto">
-          <div className="ct-faq-head text-center mb-14 max-md:mb-10">
+          <div className="ct-faq-head text-center mb-10 max-md:mb-8">
             <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-4">
               Sık Sorulanlar
             </span>
@@ -1273,55 +1233,9 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ========================================================
-          CTA
-          ======================================================== */}
-      <section className="ct-cta relative py-28 px-6 overflow-hidden max-md:py-20">
-        <div className="pointer-events-none absolute inset-0 -z-10"
-          style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(255,169,249,0.06) 0%, transparent 60%)' }} />
-
-        <div className="ct-cta-inner max-w-3xl mx-auto text-center">
-          <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent/60 mb-4">
-            Henüz Hazır Değil Misiniz?
-          </span>
-          <h2 className="font-body text-[clamp(1.8rem,4vw,2.8rem)] font-light tracking-tight leading-[1.2] mb-6">
-            <span className="text-t1">Önce </span>
-            <span className="gradient-text font-semibold">hizmetleri keşfedin</span>
-            <span className="text-t1">.</span>
-          </h2>
-          <p className="font-body text-[1rem] text-t2 font-light mb-10 leading-[1.8] max-md:text-[0.9rem]">
-            İhtiyacınız netleşmediyse, hizmet sayfalarımızda alt başlıklar ve örnek kullanım senaryolarıyla
-            birlikte ayrıntılı bilgi bulabilirsiniz.
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl mx-auto mb-10">
-            {services.map((svc, i) => {
-              const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
-              return (
-                <Link key={svc.key} href={`/hizmetler/${svc.key}/${svc.subServices[0].slug}`}
-                  className="group flex items-center gap-2.5 p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.015] hover:border-accent/20 hover:bg-white/[0.03] transition-all duration-400">
-                  <span className="w-1.5 h-1.5 rounded-full shrink-0 transition-transform duration-400 group-hover:scale-150"
-                    style={{ background: accent, boxShadow: `0 0 8px ${accent}` }} />
-                  <span className="font-body text-[0.82rem] font-medium text-t1 group-hover:text-accent transition-colors text-left">
-                    {svc.title}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center gap-4 flex-wrap justify-center">
-            <Link href="/hakkimizda"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-body text-[0.85rem] font-semibold tracking-[0.12em] uppercase border border-white/10 text-t1 transition-all duration-500 hover:-translate-y-1 hover:border-accent/30 hover:text-accent">
-              Biz Kimiz
-            </Link>
-            <a href="mailto:info@beracore.com"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-body text-[0.85rem] font-semibold tracking-[0.12em] uppercase border border-white/10 text-t1 transition-all duration-500 hover:-translate-y-1 hover:border-accent2/30 hover:text-accent2">
-              info@beracore.com
-            </a>
-          </div>
-        </div>
-      </section>
+      {/* CTA bölümü kaldırıldı (29 Tem 2026): iletişim sayfasında "önce hizmetleri
+          keşfedin" bandı kullanıcıyı dönüşümden uzaklaştırıyordu. Birincil aksiyon
+          artık form + doğrudan kanallar (e-posta/telefon). Hizmet linkleri Footer'da. */}
     </div>
 
     {/* ============================================================
