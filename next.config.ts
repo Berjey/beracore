@@ -33,7 +33,13 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/:path*',
-        headers: [{ key: 'Content-Security-Policy', value: csp }],
+        headers: [
+          { key: 'Content-Security-Policy', value: csp },
+          // Tarayıcı bağlam yalıtımı: başka origin'lerin window referansıyla
+          // bu sekmeye erişmesini engeller. Sitede OAuth/ödeme popup akışı yok,
+          // dış bağlantılar zaten rel="noopener" ile açılıyor → kırılma riski yok.
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+        ],
       },
     ];
   },
