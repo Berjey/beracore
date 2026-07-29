@@ -82,23 +82,29 @@ export default function BlogIndex({ posts, categories }: Props) {
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 
-  // ===== Kart giriş: scroll ile aşağı indikçe reveal (batch) — filtre değişince yeniden kurulur =====
-  // Eski davranış tüm kartları (50) birden stagger'ladığı için son kart ~3sn'de geliyordu (lag).
-  // batch yalnızca EKRANA GİREN kartları animasyonlar → hem akıcı hem "scroll'da reveal".
+  // ===== Kart giriş: scroll'a bağlı reveal — Hizmetler/Hakkımızda/Testimonials kartlarıyla AYNI stil.
+  // Her kart kendi scrollTrigger'ı + scrub ile aşağı indikçe belirir (yukarı çıkınca geri gizlenir).
+  // Filtre değişince gsap.context revert edilip yeniden kurulur; ekrandaki kartlar anında doğru duruma gelir.
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>('.bl-card');
-      if (!cards.length) return;
-      gsap.set(cards, { y: 26, opacity: 0 });
-      ScrollTrigger.batch('.bl-card', {
-        start: 'top 94%',
-        once: true,
-        onEnter: (batch) =>
-          gsap.to(batch, { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: 'power2.out', overwrite: true }),
+      cards.forEach((card, i) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 55, rotationX: -12, scale: 0.94 },
+          {
+            opacity: 1, y: 0, rotationX: 0, scale: 1, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: card,
+              start: `top ${88 - (i % 3) * 3}%`,
+              end: `top ${58 - (i % 3) * 3}%`,
+              scrub: 0.5,
+            },
+          }
+        );
       });
-      ScrollTrigger.refresh();
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     }, grid);
     return () => ctx.revert();
   }, [activeCat]);
