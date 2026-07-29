@@ -66,18 +66,18 @@ export default function ScrollProgress() {
   return (
     <nav
       aria-label="Sayfa bölümleri"
-      className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block max-2xl:left-4 print:hidden"
+      className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block max-2xl:right-4 print:hidden"
     >
-      <div className="relative flex flex-col gap-1">
+      <div className="relative flex flex-col gap-1 items-end">
         {/* Taban çizgi */}
         <span
           aria-hidden="true"
-          className="absolute left-[6px] top-[15px] bottom-[15px] w-px bg-white/10"
+          className="absolute right-[6px] top-[15px] bottom-[15px] w-px bg-white/10"
         />
         {/* İlerleme dolgusu */}
         <span
           aria-hidden="true"
-          className="absolute left-[6px] top-[15px] w-px"
+          className="absolute right-[6px] top-[15px] w-px"
           style={{
             height: `calc((100% - 30px) * ${progress})`,
             background: 'linear-gradient(180deg, var(--color-accent), var(--color-accent2))',
@@ -93,7 +93,7 @@ export default function ScrollProgress() {
               onClick={() => go(s.id)}
               aria-current={isActive ? 'true' : undefined}
               aria-label={`${s.label} bölümüne git`}
-              className="group relative flex items-center gap-3 h-[30px] cursor-pointer bg-transparent border-0 p-0"
+              className="group relative flex flex-row-reverse items-center gap-3 h-[30px] cursor-pointer bg-transparent border-0 p-0"
             >
               <span
                 className={`relative z-[1] block rounded-full transition-all duration-300 ${
@@ -102,7 +102,7 @@ export default function ScrollProgress() {
                     : 'w-[9px] h-[9px] group-hover:scale-125'
                 }`}
                 style={{
-                  marginLeft: isActive ? '0px' : '1.5px',
+                  marginRight: isActive ? '0px' : '1.5px',
                   background: passed
                     ? 'linear-gradient(135deg, var(--color-accent), var(--color-accent2))'
                     : 'transparent',
@@ -110,10 +110,10 @@ export default function ScrollProgress() {
                 }}
               />
               <span
-                className={`font-heading text-[0.7rem] font-semibold tracking-[0.14em] uppercase whitespace-nowrap transition-all duration-300 ${
+                className={`font-heading text-[0.7rem] font-semibold tracking-[0.14em] uppercase whitespace-nowrap text-right transition-all duration-300 ${
                   isActive
                     ? 'opacity-100 translate-x-0 gradient-text'
-                    : 'opacity-0 -translate-x-1 text-t3 group-hover:opacity-100 group-hover:translate-x-0'
+                    : 'opacity-0 translate-x-1 text-t3 group-hover:opacity-100 group-hover:translate-x-0'
                 }`}
               >
                 {s.label}
