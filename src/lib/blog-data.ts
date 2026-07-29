@@ -2772,6 +2772,11 @@ export function getCategoryColor(category: string): string {
   return CATEGORY_META[category]?.color ?? '#ffa9f9';
 }
 
+// Kategori meta (renk + stabil serviceKey — data-cat / iç link için).
+export function getCategoryMeta(category: string): CategoryMeta | undefined {
+  return CATEGORY_META[category];
+}
+
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return blogPosts.find((p) => p.slug === slug);
 }

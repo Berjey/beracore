@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
-import { getSortedPosts, getUsedCategories } from '@/lib/blog-data';
-import BlogIndex from '@/components/BlogIndex';
+import { getSortedPosts, getUsedCategories, type BlogPost } from '@/lib/blog-data';
+import BlogHome from '@/components/blog/BlogHome';
 
 const BASE_URL = 'https://beracore.com';
 
@@ -18,11 +18,25 @@ export const metadata: Metadata = {
     url: `${BASE_URL}/blog`,
     images: [{ url: '/beracore-bg.png', width: 600, height: 392, alt: 'BERACORE Blog' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog | BERACORE',
+    description: 'Dijital deneyim, yapay zeka ve teknoloji üzerine uygulanabilir rehberler.',
+    images: ['/beracore-bg.png'],
+  },
 };
 
 export default function BlogIndexPage() {
   const posts = getSortedPosts();
   const categories = getUsedCategories();
+
+  // "Popüler Konular" — analitik-güdümlü popülerlik verisi henüz yok; bunun yerine
+  // her kategoriden en yeni yazı seçilir (konu çeşitliliği + huni kapsaması).
+  // Not: admin/CRM fazında GA4 verisiyle gerçek popülerliğe bağlanabilir.
+  const picks = categories
+    .map((c) => posts.find((p) => p.category === c.name))
+    .filter((p): p is BlogPost => Boolean(p))
+    .slice(0, 6);
 
   const blogJsonLd = {
     '@context': 'https://schema.org',
@@ -36,14 +50,25 @@ export default function BlogIndexPage() {
       headline: p.title,
       url: `${BASE_URL}/blog/${p.slug}`,
       datePublished: p.publishedAt,
+      ...(p.updatedAt ? { dateModified: p.updatedAt } : {}),
       author: { '@type': 'Organization', name: p.author },
     })),
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: BASE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${BASE_URL}/blog` },
+    ],
   };
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
-      <BlogIndex posts={posts} categories={categories} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <BlogHome posts={posts} categories={categories} picks={picks} />
     </>
   );
 }
