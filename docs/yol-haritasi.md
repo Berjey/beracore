@@ -70,6 +70,55 @@ Claude girdi beklemeden ilerletebilir:
 
 ---
 
+## 2.5. ÜRETİM HAZIRLIK DENETİMİ (30 Tem 2026 — TAMAMLANDI)
+
+Gerçek Chrome'da 10 sayfa × 9 çözünürlük (320→1920px) = 90 kombinasyon test edildi.
+Test araçları `scratchpad`'de tutuldu (projeye bağımlılık eklenmedi).
+
+**Düzeltilen gerçek hatalar:**
+- 🔴 **TechMarquee sonsuz rAF sızıntısı** — `waitForStop` özyinelemeli döngüsü `rafRef`'te
+  izlenmiyordu; hızın söndüğü `tick` unmount'ta iptal edilince hız hiç azalmıyor ve döngü
+  **sonsuza kadar** dönüyordu. Marquee'yi kaydırıp sayfa değiştiren kullanıcıda oturum boyunca
+  CPU yakıyordu. Devam mantığı tek `tick` döngüsüne taşındı, iki kopya `waitForStop` silindi.
+- 🔴 **768px'te navbar kesilmesi** — 9 menü öğesi + CTA `md` (768px) kırılımında sığmıyordu;
+  öğeler iki satıra sarıyor, "Teklif Al" ekran dışında kalıyordu (ekran görüntüsüyle doğrulandı).
+  Masaüstü menü `lg` (1024px) kırılımına taşındı; 768-1023px artık mobil menü kullanıyor.
+- 🟡 **320px'te hizmet karuseli** — ok butonlarında `shrink-0` yoktu, flex onları 2px'e
+  sıkıştırıyordu (tıklanamaz). `shrink-0` eklendi + canvas akışkan yapıldı
+  (`min(280px,calc(100vw-160px))`) ki satır 320px'e sığsın.
+- 🟡 **Temizlenmeyen timer'lar** — HeroCore (rAF + iç setTimeout), ContactPage (kopyalandı
+  rozeti), ServicePage (şekil tıklama zinciri), ScrollToTop (rAF + timer) unmount'ta
+  iptal edilmiyordu → sökülmüş bileşende setState. Hepsi ref'e alınıp temizlendi.
+- 🟡 **WCAG 2.5.8 dokunma hedefleri: 76 → 0 ihlal** — ana sayfa ve hizmet detay nokta
+  butonları 8x8px'ti (24x24 şeffaf hedef + içte görsel nokta yapısına geçildi), "Kopyala",
+  KVKK butonu, footer iletişim linkleri ve 6 tek başına duran link 24px'e çıkarıldı.
+  Kalan 217 kayıt metin içi satır bağlantısı — standardın açık istisnası.
+- 🟢 **Ölü API yüzeyi** — `setShape(shape, color)` imzasındaki `color` her iki 3D modülde de
+  hiç kullanılmıyordu (şekiller daima kurumsal palet), 4 çağrı noktasından boşuna geçiliyordu.
+  Parametre kaldırıldı.
+- 🟢 **İkinci doğruluk kaynağı** — `CITY_SLUGS` sabiti kod tarafından hiç okunmuyordu ama
+  yol haritası "yeni şehir eklerken buraya da ekle" diyordu (yanıltıcı talimat). Sabit
+  silindi; rotalar zaten `cityPages`'ten türetiliyor.
+
+**Denetlenip temiz çıkanlar:** XSS yüzeyi (tüm `dangerouslySetInnerHTML` build-zamanı sabit
+JSON-LD, `innerHTML`/`eval`/kullanıcı girdisi yansıtma yok) · güvenlik başlıkları (HSTS/CSP/
+X-Frame/Referrer/Permissions) · CSP tek kaynak (`next.config.ts`, nginx'ten kaldırılmış, GA
+alan adları ID varken otomatik ekleniyor) · secret yönetimi (repoda sızıntı yok, `.env`
+git-dışı, istemciye sadece GA ölçüm kimliği) · API (405/400/413/422/429 doğru kodlar, hata
+gövdesinde iç detay yok, honeypot + çift katman hız sınırı) · 90 kombinasyonda **sıfır JS
+konsol hatası** · kullanılmayan dosya/export/CSS/asset/paket yok · tip kontrolü temiz.
+
+**Kapsamı olmayan başlıklar:** Proje veritabanı, auth/oturum ve ORM içermeyen bir SSG sitesi
+olduğu için SQL/NoSQL injection, N+1, index, transaction, authorization ve CSRF (çerez/oturum
+yok) bu mimaride karşılık bulmuyor.
+
+**Bilinçli kabul edilen durum:** Dekoratif yörünge/parıltı öğeleri ve marquee şeridi viewport
+dışına taşacak şekilde tasarlandı; `body { overflow-x: hidden }` bunları içeriyor ve
+**kullanıcı hiçbir sayfada/çözünürlükte yatay kaydırma yapamıyor** (Chrome'da `scrollTo`
+ile doğrulandı). Bu bir hata değil, tasarım tercihidir.
+
+---
+
 ## 3. TEKNİK İYİLEŞTİRME ÖNERİLERİ (aciliyeti düşük)
 
 - 🟢 **`/blog` sayfalama** — 50 yazı tek sayfada. Yazı sayısı ~60'ı geçince

@@ -131,6 +131,17 @@ tamamlananlar ve bilinçli kapsam-dışı kararlar orada. Önce onu oku.
   HTML dosya doğrulaması (`public/googleb8ca659074d30ada.html` — SİLİNMEMELİ), eski hesap + meta token kaldırıldı.
   İndeks durumu (24 Tem): 9 dizinde, 36 "keşfedildi-bekliyor" (yeni site, otorite/zaman meselesi, teknik hata değil).
 
+### Korunması gereken kalıplar (30 Tem 2026 üretim denetiminden)
+- **Nokta/karusel butonları:** görünen nokta içteki `<span>`, buton 24x24px şeffaf dokunma
+  hedefi (WCAG 2.5.8). Yeni karusel eklenirse bu kalıp kullanılmalı.
+- **Masaüstü navigasyon `lg` (1024px) kırılımında** açılır, `md` değil — 768px'te 9 öğe + CTA
+  sığmıyor ve buton kesiliyordu.
+- **Özyinelemeli `requestAnimationFrame` kullanma.** TechMarquee'de sonsuz döngü sızıntısına
+  yol açtı. Tek bir `tick` döngüsü + ref'te tutulan id + unmount'ta `cancelAnimationFrame`.
+- **setState çağıran her timer/rAF ref'e alınır ve unmount'ta iptal edilir.**
+- **Flex satırındaki sabit boyutlu butonlara `shrink-0`** — yoksa dar ekranda 2px'e sıkışıp
+  tıklanamaz hale geliyorlar.
+
 ### Dikkat edilecek teknik tuzaklar
 - **GA4 kuruldu** (28 Tem 2026, `G-NX5SRKJT2M`). Not: CSP artık **nginx'te değil `next.config.ts`'te**
   ve `NEXT_PUBLIC_GA_ID`'den otomatik kuruluyor — ID varken GA alan adlarını ekler, yokken tam sıkı kalır.
