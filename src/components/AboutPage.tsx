@@ -103,38 +103,40 @@ export default function AboutPage() {
     let ctx: gsap.Context | null = null;
     const timer = setTimeout(() => {
       ctx = gsap.context(() => {
+        // Not: Hero elemanlarının başlangıç gizli durumu (opacity:0 / scaleX:0) JSX'te inline
+        // verildi → ilk boyada düz metin "flash"ı olmaz; GSAP aşağıda animasyonla açar.
         // ===== HERO — sinematik giriş timeline =====
-        const heroTl = gsap.timeline({ delay: 0.2 });
+        const heroTl = gsap.timeline({ delay: 0.05 });
 
         heroTl
           .fromTo('.ab-hero-label',
             { y: 20, opacity: 0, letterSpacing: '0.8em' },
-            { y: 0, opacity: 1, letterSpacing: '0.5em', duration: 0.9, ease: 'power3.out' }
+            { y: 0, opacity: 1, letterSpacing: '0.5em', duration: 0.55, ease: 'power3.out' }
           )
           .fromTo('.ab-char-main',
             { y: 60, opacity: 0, rotationX: -80 },
-            { y: 0, opacity: 1, rotationX: 0, duration: 0.8, stagger: 0.035, ease: 'power3.out' },
-            '-=0.3'
+            { y: 0, opacity: 1, rotationX: 0, duration: 0.5, stagger: 0.022, ease: 'power3.out' },
+            '-=0.25'
           )
           .fromTo('.ab-char-accent',
             { y: 60, opacity: 0, rotationX: -80 },
-            { y: 0, opacity: 1, rotationX: 0, duration: 0.8, stagger: 0.035, ease: 'power3.out' },
-            '-=0.5'
+            { y: 0, opacity: 1, rotationX: 0, duration: 0.5, stagger: 0.022, ease: 'power3.out' },
+            '-=0.42'
           )
           .fromTo('.ab-accent-glow',
             { opacity: 0, scale: 0.4 },
-            { opacity: 0.4, scale: 1, duration: 1.2, ease: 'power2.out' },
-            '-=0.6'
+            { opacity: 0.4, scale: 1, duration: 0.8, ease: 'power2.out' },
+            '-=0.5'
           )
           .fromTo('.ab-hero-desc',
             { y: 30, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out' },
-            '-=0.4'
+            { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out' },
+            '-=0.5'
           )
           .fromTo('.ab-hero-line',
             { scaleX: 0 },
-            { scaleX: 1, duration: 1.4, ease: 'power2.out' },
-            '-=0.5'
+            { scaleX: 1, duration: 0.9, ease: 'power2.out' },
+            '-=0.45'
           );
 
         // Arkaplan: sürekli dönen yörünge halkaları
@@ -408,7 +410,7 @@ export default function AboutPage() {
 
         requestAnimationFrame(() => ScrollTrigger.refresh());
       }, container);
-    }, 400);
+    }, 80);
 
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
@@ -601,7 +603,7 @@ export default function AboutPage() {
         </div>
 
         <div className="ab-hero relative max-w-4xl mx-auto">
-          <span className="ab-hero-label inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/70 mb-7">
+          <span className="ab-hero-label inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/70 mb-7" style={{ opacity: 0 }}>
             Hakkımızda
           </span>
 
@@ -611,7 +613,7 @@ export default function AboutPage() {
           >
             <span className="inline-block text-t1 mr-[0.3em]">
               {Array.from('Dijitalin').map((ch, i) => (
-                <span key={i} className="ab-char-main inline-block" style={{ willChange: 'transform, opacity' }}>
+                <span key={i} className="ab-char-main inline-block" style={{ willChange: 'transform, opacity', opacity: 0 }}>
                   {ch}
                 </span>
               ))}
@@ -623,6 +625,7 @@ export default function AboutPage() {
                 style={{
                   background: 'linear-gradient(135deg, #ffa9f9, #fff7ad)',
                   borderRadius: '50%',
+                  opacity: 0,
                 }}
                 aria-hidden="true"
               />
@@ -637,6 +640,7 @@ export default function AboutPage() {
                     WebkitTextFillColor: 'transparent',
                     color: 'transparent',
                     willChange: 'transform, opacity',
+                    opacity: 0,
                   }}
                 >
                   {ch}
@@ -645,7 +649,7 @@ export default function AboutPage() {
             </span>
           </h1>
 
-          <p className="ab-hero-desc font-body text-[clamp(1rem,1.8vw,1.15rem)] text-t2 font-light leading-[1.8] max-w-2xl mx-auto">
+          <p className="ab-hero-desc font-body text-[clamp(1rem,1.8vw,1.15rem)] text-t2 font-light leading-[1.8] max-w-2xl mx-auto" style={{ opacity: 0 }}>
             2024&apos;te İstanbul&apos;da kurulan bir dijital deneyim stüdyosuyuz.
             Yapay zekâ, blockchain, yazılım, tasarım ve dijital pazarlama alanlarında; markanızın
             dijital geleceğini strateji, estetik ve mühendislikle birlikte şekillendiriyoruz.
@@ -657,6 +661,7 @@ export default function AboutPage() {
           style={{
             background:
               'linear-gradient(90deg, transparent, var(--color-accent), var(--color-accent2), transparent)',
+            transform: 'scaleX(0)',
           }}
         />
 
