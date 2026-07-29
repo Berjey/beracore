@@ -93,20 +93,22 @@ export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
     // Breathing scale
     const breath = 1 + Math.sin(t * 0.8) * 0.02;
 
-    // === SCROLL: yukarı uçar, küçülerek uzaklaşır ===
-    // Ease-in: önce yavaş yukarı, sonra hızlanır — "uçup gidiyor" hissi
-    const yOffset = Math.pow(p, 1.5) * 3.2;
+    // === SCROLL: dünya yukarı süzülerek çözülür ===
+    // Hero artık tek ekran (100vh). Dünya sayfayla birlikte doğal akışta yukarı süzülür ve
+    // scroll sonuna doğru tamamen çözülür → Manifesto'ya BOŞLUKSUZ geçiş (dünya bitişi = metin başı).
+    // Değerler görsel his içindir; kuyruk/erken kayboluş bu üç sabitle ayarlanır.
+    const yOffset = Math.pow(p, 1.35) * 0.9;
     sphere.position.set(floatX, yOffset + floatY, 0);
 
     // Hafif büyüme (yaklaşma hissi yok, çakışmaz)
-    const scaleBase = 1 + p * 0.25;
+    const scaleBase = 1 + p * 0.14;
     sphere.scale.setScalar(scaleBase * breath);
 
     // Camera zoom (sahnenin içine doğru)
-    camera.position.z = 3.8 - p * 0.8;
+    camera.position.z = 3.8 - p * 0.45;
 
-    // Dünya kayboluşu Hero'nun tam sonuna yaslanır — kayboluş = Hero bitişi, Manifesto'ya boşluksuz geçiş
-    planeMat.opacity = p > 0.70 ? Math.max(0, 1 - (p - 0.70) / 0.28) : 1;
+    // Kayarken çözülür (p 0.45 → 0.95). Ekranı terk ettiğinde Manifesto anında açılır.
+    planeMat.opacity = p > 0.45 ? Math.max(0, 1 - (p - 0.45) / 0.5) : 1;
 
     // Hover brightness
     const hBright = 1.0 + hover * 0.25;

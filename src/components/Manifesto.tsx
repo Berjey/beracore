@@ -53,7 +53,9 @@ export default function Manifesto() {
   const dP = Math.max(0, Math.min(1, (progress - 0.17) / 0.08));
 
   return (
-    <div ref={wrapperRef} id="manifesto" className="relative h-[200vh]">
+    // -mt: Manifesto hero'nun son bölümüyle örtüşür → dünya çözülür çözülmez "Dijitalin"
+    // yazılmaya başlar, aradaki boş starfield kapanır. Boşluk hissi bu değerle ayarlanır.
+    <div ref={wrapperRef} id="manifesto" className="relative h-[200vh] -mt-[40vh]">
       <div className="sticky top-0 h-screen flex items-center px-8 overflow-hidden max-md:px-5">
         <div className="max-w-5xl mx-auto w-full relative z-[1] text-center">
           <div className="mb-3 min-h-[1.1em]">

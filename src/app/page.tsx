@@ -21,6 +21,7 @@ import HomeFaq from '@/components/HomeFaq';
 import CtaBand from '@/components/CtaBand';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
+import ScrollProgress from '@/components/ScrollProgress';
 
 const HeroCore = dynamic(() => import('@/components/HeroCore'), { ssr: false });
 
@@ -66,6 +67,7 @@ export default function Home() {
       <Starfield />
       <CustomCursor />
       <Navbar />
+      <ScrollProgress />
 
       <main id="main" className="relative z-[1]">
         {/* Anlamsal H1 — SSR'da render edilir, ilk HTML yanıtında yer alır.
@@ -75,8 +77,9 @@ export default function Home() {
           BERACORE — Web Tasarım, Yazılım Geliştirme, Yapay Zeka ve E-Ticaret Çözümleri Sunan Dijital Deneyim Stüdyosu
         </h1>
         {/* SSR'da render edilen sabit yukseklikli sarmalayici (Suspense/ssr:false bailout'un DISINDA).
-            Hero slotu icin 150vh yer ayirir; HeroCore client'ta yuklenince Manifesto kaymaz -> CLS ~0 */}
-        <div className="w-full h-[150vh]">
+            Hero slotu icin tek ekran (100vh) yer ayirir; HeroCore client'ta yuklenince Manifesto
+            kaymaz -> CLS ~0. Tek ekran: dunya kayboldugunda Manifesto BOSLUKSUZ acilir. */}
+        <div className="w-full h-screen">
           <Suspense fallback={null}>
             <HeroCore onReady={handleReady} />
           </Suspense>
