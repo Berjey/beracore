@@ -82,31 +82,25 @@ export default function BlogIndex({ posts, categories }: Props) {
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 
-  // ===== Kart giriş: scroll'a bağlı reveal — Hizmetler/Hakkımızda/Testimonials kartlarıyla AYNI stil.
-  // Her kart kendi scrollTrigger'ı + scrub ile aşağı indikçe belirir (yukarı çıkınca geri gizlenir).
-  // Filtre değişince gsap.context revert edilip yeniden kurulur; ekrandaki kartlar anında doğru duruma gelir.
+  // ===== Kart giriş: her kart EKRANA GİRİNCE bir kez, hızlı ve akıcı açılır (scroll'a bağlı scrub YOK).
+  // Aynı satırdaki kartlar aynı yükseklikte olduğundan aynı anda (eş zamanlı) tetiklenir; satırlar
+  // aşağı indikçe sırayla belirir. Bir kez açılan kart yukarı kaydırınca gizlenmez.
+  // Filtre değişince gsap.context revert edilip yeniden kurulur.
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>('.bl-card');
-      // Sabit start/end (kolon offset'i YOK) → aynı satırdaki kartlar (aynı yükseklikte) EŞ ZAMANLI gelir;
-      // satırlar aşağı indikçe sırayla açılır.
       cards.forEach((card) => {
         gsap.fromTo(card,
-          { opacity: 0, y: 55, rotationX: -12, scale: 0.94 },
+          { opacity: 0, y: 40, scale: 0.97 },
           {
-            opacity: 1, y: 0, rotationX: 0, scale: 1, ease: 'power3.out',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 86%',
-              end: 'top 58%',
-              scrub: 0.5,
-            },
+            opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'power3.out',
+            scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: 'play none none none' },
           }
         );
       });
-      requestAnimationFrame(() => ScrollTrigger.refresh());
+      ScrollTrigger.refresh();
     }, grid);
     return () => ctx.revert();
   }, [activeCat]);
