@@ -90,15 +90,17 @@ export default function BlogIndex({ posts, categories }: Props) {
     if (!grid) return;
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>('.bl-card');
-      cards.forEach((card, i) => {
+      // Sabit start/end (kolon offset'i YOK) → aynı satırdaki kartlar (aynı yükseklikte) EŞ ZAMANLI gelir;
+      // satırlar aşağı indikçe sırayla açılır.
+      cards.forEach((card) => {
         gsap.fromTo(card,
           { opacity: 0, y: 55, rotationX: -12, scale: 0.94 },
           {
             opacity: 1, y: 0, rotationX: 0, scale: 1, ease: 'power3.out',
             scrollTrigger: {
               trigger: card,
-              start: `top ${88 - (i % 3) * 3}%`,
-              end: `top ${58 - (i % 3) * 3}%`,
+              start: 'top 86%',
+              end: 'top 58%',
               scrub: 0.5,
             },
           }
