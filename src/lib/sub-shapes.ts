@@ -578,6 +578,7 @@ export function createSubScene(canvas: HTMLCanvasElement, onReady?: () => void):
   const clock = new THREE.Clock();
   let raf = 0;
   let firstFrameShown = false;
+  let renderedFrames = 0;
   (function loop() {
     raf = requestAnimationFrame(loop);
     if (!visible) return;
@@ -611,10 +612,15 @@ export function createSubScene(canvas: HTMLCanvasElement, onReady?: () => void):
 
     renderer.render(scene, camera);
 
-    // İlk gerçek kare işlendi → tüketiciye bildir (canvas'ı görünür yapar, beyaz flash penceresini kapatır)
+    // Canvas'ı, WebGL karesi KESİNLİKLE ekrana basıldıktan sonra aç. Tek kare beklemek yetmiyor:
+    // WebGL render'ı ile tarayıcı composite'i arasında gecikme var; erken açarsan canvas'ın opak
+    // (beyaz) backing'i bir kare görünüyor. 2 kare çizip + bir rAF daha bekleyerek bunu kapatıyoruz.
     if (!firstFrameShown) {
-      firstFrameShown = true;
-      onReady?.();
+      renderedFrames++;
+      if (renderedFrames >= 2) {
+        firstFrameShown = true;
+        requestAnimationFrame(() => onReady?.());
+      }
     }
   })();
 

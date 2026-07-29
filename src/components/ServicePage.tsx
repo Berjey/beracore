@@ -537,11 +537,13 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                 ref={canvasRef}
                 className="relative w-[360px] h-[360px] max-md:w-[260px] max-md:h-[260px]"
                 style={{
+                  // opacity anlık (geçişsiz): içerik compositor'a düştükten sonra açılır, beyaz backing görünmez.
+                  // Yumuşak açılışı 3D nesnenin kendi WebGL intro'su (scale/opacity) sağlar.
                   opacity: canvasReady ? 1 : 0,
                   transform: shapeClicked ? 'scale(1.08)' : 'scale(1)',
                   filter: shapeClicked ? 'brightness(1.2)' : 'brightness(1)',
-                  transitionProperty: 'transform, filter, opacity',
-                  transitionDuration: '0.7s, 0.7s, 0.5s',
+                  transitionProperty: 'transform, filter',
+                  transitionDuration: '0.7s',
                   transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
                 }}
               />
