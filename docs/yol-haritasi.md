@@ -108,6 +108,39 @@ git-dışı, istemciye sadece GA ölçüm kimliği) · API (405/400/413/422/429 
 gövdesinde iç detay yok, honeypot + çift katman hız sınırı) · 90 kombinasyonda **sıfır JS
 konsol hatası** · kullanılmayan dosya/export/CSS/asset/paket yok · tip kontrolü temiz.
 
+**İkinci tur (aynı gün) eklenenler:**
+- 🟡 **Hata sınırları eklendi** — `error.tsx` (rota seviyesi, "Yeniden Dene" + ana sayfa/iletişim
+  çıkışları, `digest` referansı) ve `global-error.tsx` (kök layout patlarsa; kendi `<html>/<body>`
+  ve satır içi stille çalışır). Önceden bir client bileşeni hata atarsa Next.js'in stilsiz
+  İngilizce ekranı görünüyordu. `loading.tsx` eklenmedi — sayfalar SSG olduğu için anlamlı bir
+  yükleme durumu yok, gezinme göstergesi Navbar'da mevcut.
+- 🟢 **Cross-Origin-Opener-Policy: same-origin** — `next.config.ts` üzerinden eklendi
+  (nginx'e dokunulmadı, reload riski alınmadı). Sitede OAuth/ödeme popup akışı yok.
+
+**Ölçülen Core Web Vitals (gerçek Chrome, mobil profil 390px/DPR3):**
+
+| Sayfa | LCP | CLS | FCP | TTFB |
+|---|---|---|---|---|
+| `/` | 856ms | 0 | 672ms | 246ms |
+| `/blog` | 328ms | 0 | 332ms | 109ms |
+| blog yazısı | 212ms | 0 | 280ms | 90ms |
+| hizmet detay | 1664ms | 0 | 292ms | 109ms |
+| `/iletisim` | 1764ms | 0 | 344ms | 84ms |
+
+Eşikler: LCP <2500ms, CLS <0.1, FCP <1800ms, TTFB <800ms → **tamamı "iyi" bandında.**
+
+**Ölçülüp bilinçli DOKUNULMAYANLAR (kanıtlanamayan kazanç / kabul edilen takas):**
+- `planet.webp` 129 KB (1024×1024 3D doku) — ana sayfa transferinin en büyük tek kalemi.
+  Küçültmek cazip ama düzlemin ekrandaki piksel ayak izi kamera mesafesine bağlı; görsel
+  olarak güvenli olduğu **kanıtlanamadı**. Doku LCP'den sonra yükleniyor, CWV etkisi yok.
+  Marka merkezindeki görseli kanıtsız riske atmak yerine öneri olarak bırakıldı.
+- `/blog` RSC prefetch 95 KB — Next'in `<Link>` ön yüklemesi; gezinmeyi hızlandırıyor,
+  hiçbir şeyi bloklamıyor. `prefetch={false}` bayt kazandırır ama blog gezinmesini
+  yavaşlatır. Blog sayfalaması yapılırsa bu kalem kendiliğinden küçülür.
+- Font ağırlığı azaltma denendi ve **ölçülüp geri alındı**: Space Grotesk'te 2 ağırlık
+  kaldırmak çıktıyı hiç değiştirmedi (10 dosya / 261 KB aynı — `next/font` değişken font
+  indiriyor). Faydası ölçülemeyen değişiklik bırakılmadı.
+
 **Kapsamı olmayan başlıklar:** Proje veritabanı, auth/oturum ve ORM içermeyen bir SSG sitesi
 olduğu için SQL/NoSQL injection, N+1, index, transaction, authorization ve CSRF (çerez/oturum
 yok) bu mimaride karşılık bulmuyor.
