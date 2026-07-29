@@ -4,7 +4,16 @@ import Starfield from '@/components/Starfield';
 import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
+import ScrollProgress from '@/components/ScrollProgress';
 import ContactPage from '@/components/ContactPage';
+
+const CONTACT_SECTIONS = [
+  { label: 'Giriş', sel: '.ct-hero-section' },
+  { label: 'Kanallar', sel: '.ct-methods' },
+  { label: 'Teklif', sel: '#teklif' },
+  { label: 'Süreç', sel: '.ct-process' },
+  { label: 'SSS', sel: '.ct-faq' },
+];
 
 export const metadata: Metadata = {
   title: 'İletişim | BERACORE — Digital Experience Studio',
@@ -33,6 +42,7 @@ export default function IletisimPage() {
       <Starfield />
       <CustomCursor />
       <Navbar />
+      <ScrollProgress sections={CONTACT_SECTIONS} />
       <main id="main" className="relative z-[1]">
         <ContactPage />
       </main>

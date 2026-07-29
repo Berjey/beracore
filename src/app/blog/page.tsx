@@ -1,6 +1,14 @@
 import { Metadata } from 'next';
 import { getSortedPosts, getUsedCategories, type BlogPost } from '@/lib/blog-data';
 import BlogHome from '@/components/blog/BlogHome';
+import ScrollProgress from '@/components/ScrollProgress';
+
+const BLOG_SECTIONS = [
+  { label: 'Giriş', sel: '#blog-hero' },
+  { label: 'Son Yazılar', sel: '#blog-liste' },
+  { label: 'Popüler', sel: '#blog-populer' },
+  { label: 'İletişim', sel: '#blog-iletisim' },
+];
 
 const BASE_URL = 'https://beracore.com';
 
@@ -68,6 +76,7 @@ export default function BlogIndexPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <ScrollProgress sections={BLOG_SECTIONS} />
       <BlogHome posts={posts} categories={categories} picks={picks} />
     </>
   );

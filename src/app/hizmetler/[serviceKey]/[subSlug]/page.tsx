@@ -2,6 +2,18 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { services } from '@/lib/services-data';
 import ServicePage from '@/components/ServicePage';
+import ScrollProgress from '@/components/ScrollProgress';
+
+const SERVICE_SECTIONS = [
+  { label: 'Giriş', sel: '.sp-hero-section' },
+  { label: 'Rakamlar', sel: '[data-sp="stats"]' },
+  { label: 'Genel Bakış', sel: '[data-sp="overview"]' },
+  { label: 'Özellikler', sel: '[data-sp="features"]' },
+  { label: 'Süreç', sel: '[data-sp="process"]' },
+  { label: 'Faydalar', sel: '[data-sp="benefits"]' },
+  { label: 'SSS', sel: '[data-sp="faq"]' },
+  { label: 'İletişim', sel: '[data-sp="cta"]' },
+];
 
 interface Props {
   params: Promise<{ serviceKey: string; subSlug: string }>;
@@ -88,6 +100,7 @@ export default async function SubServicePage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <ScrollProgress sections={SERVICE_SECTIONS} />
       <ServicePage serviceKey={serviceKey} subSlug={subSlug} />
     </>
   );

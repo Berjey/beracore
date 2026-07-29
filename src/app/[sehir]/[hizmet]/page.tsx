@@ -2,8 +2,17 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { cityPages, getCityPage } from '@/lib/city-pages-data';
+import ScrollProgress from '@/components/ScrollProgress';
 
 const BASE_URL = 'https://beracore.com';
+
+const CITY_SECTIONS = [
+  { label: 'Giriş', sel: '#city-giris' },
+  { label: 'Detaylar', sel: '#city-detay' },
+  { label: 'Öne Çıkanlar', sel: '#city-ozet' },
+  { label: 'SSS', sel: '#city-sss' },
+  { label: 'İletişim', sel: '#city-cta' },
+];
 
 interface Props {
   params: Promise<{ sehir: string; hizmet: string }>;
@@ -91,6 +100,7 @@ export default async function CityServicePage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <ScrollProgress sections={CITY_SECTIONS} />
 
       <article className="relative pt-36 pb-28 px-6 max-md:pt-28 max-md:pb-20">
         <div className="max-w-3xl mx-auto">
@@ -104,7 +114,7 @@ export default async function CityServicePage({ params }: Props) {
           </nav>
 
           {/* Hero */}
-          <header className="mb-14 max-md:mb-10">
+          <header id="city-giris" className="mb-14 max-md:mb-10">
             <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-4">
               {page.city} · Hizmet Bölgesi
             </span>
@@ -117,7 +127,7 @@ export default async function CityServicePage({ params }: Props) {
           </header>
 
           {/* Sections */}
-          <div className="space-y-10">
+          <div id="city-detay" className="space-y-10">
             {page.sections.map((s, i) => (
               <section key={i}>
                 <h2 className="font-body text-[clamp(1.35rem,3vw,1.85rem)] font-semibold text-t1 tracking-tight mb-3">{s.h2}</h2>
@@ -127,7 +137,7 @@ export default async function CityServicePage({ params }: Props) {
           </div>
 
           {/* Bullets */}
-          <section className="mt-12 p-8 rounded-2xl border border-white/[0.07] bg-white/[0.015]">
+          <section id="city-ozet" className="mt-12 p-8 rounded-2xl border border-white/[0.07] bg-white/[0.015]">
             <h2 className="font-body text-[1.15rem] font-semibold text-t1 mb-5">{page.bullets.title}</h2>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {page.bullets.items.map((item, i) => (
@@ -153,7 +163,7 @@ export default async function CityServicePage({ params }: Props) {
           </section>
 
           {/* SSS */}
-          <section className="mt-16" aria-label="Sıkça Sorulan Sorular">
+          <section id="city-sss" className="mt-16" aria-label="Sıkça Sorulan Sorular">
             <h2 className="font-body text-[clamp(1.35rem,3vw,1.85rem)] font-semibold text-t1 tracking-tight mb-6">Sıkça Sorulan Sorular</h2>
             <div className="space-y-3">
               {page.faq.map((item, i) => (
@@ -169,7 +179,7 @@ export default async function CityServicePage({ params }: Props) {
           </section>
 
           {/* CTA */}
-          <section className="mt-16 text-center">
+          <section id="city-cta" className="mt-16 text-center">
             <p className="font-body text-[1.1rem] text-t2 font-light mb-6">
               {page.city}’daki projeniz için ücretsiz keşif görüşmesi yapalım.
             </p>

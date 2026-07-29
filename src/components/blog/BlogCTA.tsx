@@ -7,7 +7,7 @@ import { ArrowIcon } from './util';
    dönüşüm bandı. Birincil aksiyon iletişim, ikincil aksiyon hizmetler. */
 export default function BlogCTA() {
   return (
-    <section data-reveal="up" aria-labelledby="blog-cta-title">
+    <section id="blog-iletisim" data-reveal="up" aria-labelledby="blog-cta-title">
       <div className={styles.cta}>
         <span className={styles.ctaGlow} aria-hidden="true" />
         <div className="relative">

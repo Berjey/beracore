@@ -105,7 +105,7 @@ export default function BlogHome({ posts, categories, picks }: Props) {
         <span className={styles.ambientMesh} />
       </div>
 
-      <header className="relative z-10 mx-auto max-w-3xl px-6 text-center">
+      <header id="blog-hero" className="relative z-10 mx-auto max-w-3xl px-6 text-center">
         <span data-reveal="up" className="mb-5 inline-block font-body text-[0.7rem] font-semibold uppercase tracking-[0.5em] text-accent2/60">
           BERACORE Blog
         </span>
@@ -188,7 +188,7 @@ export default function BlogHome({ posts, categories, picks }: Props) {
         )}
 
         {/* Yazı listesi */}
-        <section aria-labelledby="blog-list-title">
+        <section id="blog-liste" aria-labelledby="blog-list-title">
           <div data-reveal="up" className="mb-8 flex items-end justify-between gap-4">
             <div>
               <span className={styles.sectionKicker}>{isDefault ? 'Arşiv' : 'Sonuçlar'}</span>
@@ -229,7 +229,7 @@ export default function BlogHome({ posts, categories, picks }: Props) {
 
         {/* Popüler konular (yalnızca varsayılan görünüm) */}
         {isDefault && picks.length > 0 && (
-          <section aria-labelledby="blog-popular-title" className="mt-20 max-md:mt-16">
+          <section id="blog-populer" aria-labelledby="blog-popular-title" className="mt-20 max-md:mt-16">
             <div data-reveal="up" className="mb-8">
               <span className={styles.sectionKicker}>Kategoriye göre</span>
               <h2 id="blog-popular-title" className={`${styles.sectionTitle} mt-2`}>Popüler Konular</h2>

@@ -2,6 +2,14 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { services } from '@/lib/services-data';
+import ScrollProgress from '@/components/ScrollProgress';
+
+const CATEGORY_SECTIONS = [
+  { label: 'Giriş', sel: '#cat-giris' },
+  { label: 'Hizmetler', sel: '#cat-liste' },
+  { label: 'Diğer', sel: '#cat-diger' },
+  { label: 'İletişim', sel: '#cat-cta' },
+];
 
 interface Props {
   params: Promise<{ serviceKey: string }>;
@@ -75,6 +83,7 @@ export default async function ServiceCategoryPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      <ScrollProgress sections={CATEGORY_SECTIONS} />
 
       <article className="relative pt-36 pb-28 px-6 max-md:pt-28 max-md:pb-20">
         <div className="max-w-5xl mx-auto">
@@ -90,7 +99,7 @@ export default async function ServiceCategoryPage({ params }: Props) {
           </nav>
 
           {/* Hero */}
-          <header className="mb-16 max-md:mb-12">
+          <header id="cat-giris" className="mb-16 max-md:mb-12">
             <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-4">
               Hizmet Kategorisi
             </span>
@@ -103,7 +112,7 @@ export default async function ServiceCategoryPage({ params }: Props) {
           </header>
 
           {/* Alt hizmet grid */}
-          <section aria-label={`${service.title} alt hizmetleri`}>
+          <section id="cat-liste" aria-label={`${service.title} alt hizmetleri`}>
             <h2 className="font-body text-[clamp(1.4rem,3vw,2rem)] font-light tracking-tight mb-8">
               {service.title} kapsamındaki hizmetlerimiz
             </h2>
@@ -139,7 +148,7 @@ export default async function ServiceCategoryPage({ params }: Props) {
           </section>
 
           {/* Diğer kategoriler — iç link ağı */}
-          <section aria-label="Diğer hizmet kategorileri" className="mt-20">
+          <section id="cat-diger" aria-label="Diğer hizmet kategorileri" className="mt-20">
             <h2 className="font-body text-[1.1rem] font-light text-t2 mb-5">Diğer hizmet kategorileri</h2>
             <div className="flex flex-wrap gap-3">
               {services.filter((s) => s.key !== service.key).map((s) => (
@@ -155,7 +164,7 @@ export default async function ServiceCategoryPage({ params }: Props) {
           </section>
 
           {/* CTA */}
-          <section className="mt-20 text-center">
+          <section id="cat-cta" className="mt-20 text-center">
             <p className="font-body text-[1.1rem] text-t2 font-light mb-8">
               {service.title} projeniz için uzman ekibimizle tanışın.
             </p>

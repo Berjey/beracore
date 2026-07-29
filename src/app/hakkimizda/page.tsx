@@ -4,7 +4,18 @@ import Starfield from '@/components/Starfield';
 import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
+import ScrollProgress from '@/components/ScrollProgress';
 import AboutPage from '@/components/AboutPage';
+
+const ABOUT_SECTIONS = [
+  { label: 'Giriş', sel: '.ab-hero-section' },
+  { label: 'Hikâye', sel: '.ab-story' },
+  { label: 'Rakamlar', sel: '.ab-stats' },
+  { label: 'Değerler', sel: '.ab-values' },
+  { label: 'Yolculuk', sel: '.ab-timeline' },
+  { label: 'Uzmanlık', sel: '.ab-services' },
+  { label: 'İletişim', sel: '.ab-cta' },
+];
 
 export const metadata: Metadata = {
   title: 'Hakkımızda | BERACORE — Digital Experience Studio',
@@ -51,6 +62,7 @@ export default function HakkimizdaPage() {
       <Starfield />
       <CustomCursor />
       <Navbar />
+      <ScrollProgress sections={ABOUT_SECTIONS} />
       <main id="main" className="relative z-[1]">
         <AboutPage />
       </main>

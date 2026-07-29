@@ -2,26 +2,36 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 
-// Anasayfadaki ana bölümler — Navbar/section id'leriyle birebir eşleşir.
-const SECTIONS = [
-  { id: 'hero', label: 'Ana Sayfa' },
-  { id: 'manifesto', label: 'Çekirdek' },
-  { id: 'services', label: 'Hizmetler' },
-  { id: 'why-us', label: 'Neden Biz' },
-  { id: 'process', label: 'Süreç' },
-  { id: 'referanslar', label: 'Referanslar' },
-  { id: 'faq', label: 'SSS' },
-  { id: 'iletisim', label: 'İletişim' },
+export interface SPSection {
+  /** Görsel etiket (lg+ ekranlarda görünür) */
+  label: string;
+  /** CSS seçici — bölümün DOM'daki konumu (id / class / [data-*]) */
+  sel: string;
+}
+
+// Varsayılan: anasayfa ana bölümleri (Navbar/section id'leriyle eşleşir).
+const HOME_SECTIONS: SPSection[] = [
+  { label: 'Ana Sayfa', sel: '#hero' },
+  { label: 'Çekirdek', sel: '#manifesto' },
+  { label: 'Hizmetler', sel: '#services' },
+  { label: 'Neden Biz', sel: '#why-us' },
+  { label: 'Süreç', sel: '#process' },
+  { label: 'Referanslar', sel: '#referanslar' },
+  { label: 'SSS', sel: '#faq' },
+  { label: 'İletişim', sel: '#iletisim' },
 ];
 
 /**
- * Sol kenarda dikey bölüm göstergesi + scroll ilerlemesi.
+ * Sağ kenarda dikey bölüm göstergesi + scroll ilerlemesi.
  * - Hangi bölümde olduğunu vurgular (aktif nokta + etiket).
  * - Dikey çizgi, toplam scroll ilerlemesiyle gradient olarak dolar.
  * - Noktaya tıklayınca ilgili bölüme yumuşak kayar.
- * Yalnızca lg+ ekranlarda görünür (mobilde içeriği kalabalıklaştırmamak için gizli).
+ * Yalnızca lg+ ekranlarda etiket görünür (mobilde noktalar kalır, içerik kalabalıklaşmaz).
+ *
+ * Her sayfa kendi `sections` listesini verir (selector tabanlı → mevcut class/id/[data-*]
+ * çapalarını referans alır, ekstra işaretleme gerekmez). Prop verilmezse anasayfa varsayılanı.
  */
-export default function ScrollProgress() {
+export default function ScrollProgress({ sections = HOME_SECTIONS }: { sections?: SPSection[] }) {
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0);
   const ticking = useRef(false);
@@ -34,8 +44,8 @@ export default function ScrollProgress() {
       const vh = window.innerHeight;
       const line = vh * 0.42; // viewport'un %42'sini geçen son bölüm = aktif
       let idx = 0;
-      for (let i = 0; i < SECTIONS.length; i++) {
-        const el = document.getElementById(SECTIONS[i].id);
+      for (let i = 0; i < sections.length; i++) {
+        const el = document.querySelector(sections[i].sel);
         if (!el) continue;
         if (el.getBoundingClientRect().top <= line) idx = i;
       }
@@ -44,7 +54,7 @@ export default function ScrollProgress() {
       const max = doc.scrollHeight - vh;
       setProgress(max > 0 ? Math.min(1, Math.max(0, doc.scrollTop / max)) : 0);
     });
-  }, []);
+  }, [sections]);
 
   useEffect(() => {
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -56,8 +66,8 @@ export default function ScrollProgress() {
     };
   }, [onScroll]);
 
-  const go = (id: string) => {
-    const el = document.getElementById(id);
+  const go = (sel: string) => {
+    const el = document.querySelector(sel);
     if (!el) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
@@ -83,14 +93,14 @@ export default function ScrollProgress() {
             background: 'linear-gradient(180deg, var(--color-accent), var(--color-accent2))',
           }}
         />
-        {SECTIONS.map((s, i) => {
+        {sections.map((s, i) => {
           const isActive = i === active;
           const passed = i <= active;
           return (
             <button
-              key={s.id}
+              key={s.sel}
               type="button"
-              onClick={() => go(s.id)}
+              onClick={() => go(s.sel)}
               aria-current={isActive ? 'true' : undefined}
               aria-label={`${s.label} bölümüne git`}
               className="group relative flex flex-row-reverse items-center gap-3 h-[30px] cursor-pointer bg-transparent border-0 p-0"
