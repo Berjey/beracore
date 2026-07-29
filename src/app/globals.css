@@ -59,6 +59,23 @@ h1, h2, h3, h4, h5, h6 {
   background-clip: text;
 }
 
+/* ===== Hero giriş "flash" önleme (ServicePage) =====
+   GSAP giriş animasyonu client'ta ~150ms sonra başlar. SSR HTML'i boyanınca hero
+   içeriği önce görünür olup sonra gizlenip animasyonla açılırsa "bug gibi" flash oluşur.
+   Bu class hero kabında (.sp-hero-section) dururken içerik ilk boyada gizli kalır; GSAP
+   intro'su inline opacity ile açar ve onComplete'te class JS ile kaldırılır (sub-geçişindeki
+   clearProps'un gizli class'ı yeniden ortaya çıkarmaması için). */
+.sp-intro-pending .sp-hero-back,
+.sp-intro-pending .sp-hero-breadcrumb,
+.sp-intro-pending .sp-hero-category,
+.sp-intro-pending .sp-shape-wrap,
+.sp-intro-pending .sp-hero-arrow,
+.sp-intro-pending .sp-hero-title,
+.sp-intro-pending .sp-hero-desc,
+.sp-intro-pending .sp-hero-dots {
+  opacity: 0;
+}
+
 /* ===== Keyframes ===== */
 @keyframes fi { to { opacity: 1; } }
 

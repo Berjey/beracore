@@ -99,7 +99,9 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
 
     const timer = setTimeout(() => {
       ctx = gsap.context(() => {
-        const tl = gsap.timeline({ delay: 0.05 });
+        // onComplete: ilk-boya gizleme class'ını kaldır. Bundan sonra elemanlar GSAP'ın
+        // inline opacity'siyle görünür; sub-geçişindeki clearProps varsayılan (görünür) döner.
+        const tl = gsap.timeline({ delay: 0.05, onComplete: () => hero.classList.remove('sp-intro-pending') });
         tl
           .fromTo('.sp-hero-back', { y: 10, opacity: 0 },
             { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' })
@@ -304,6 +306,9 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
     const newIdx = (index + len) % len;
     if (newIdx === subIndex) return;
 
+    // Intro henüz bitmediyse gizleme class'ını kaldır — clearProps sonrası elemanlar gizli kalmasın.
+    heroRef.current?.classList.remove('sp-intro-pending');
+
     transitionLock.current = true;
     setSubChanging(true);
 
@@ -391,7 +396,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
       {/* ================================================
           HERO — sinematik şekil + orbital dekor + intro
           ================================================ */}
-      <section ref={heroRef} className="sp-hero-section relative min-h-[92vh] flex flex-col items-center justify-center px-6 pt-28 pb-12 overflow-hidden">
+      <section ref={heroRef} className="sp-hero-section sp-intro-pending relative min-h-[92vh] flex flex-col items-center justify-center px-6 pt-28 pb-12 overflow-hidden">
         {/* Ambient glow */}
         <div className="sp-hero-ambient pointer-events-none absolute inset-0 -z-30"
           style={{
