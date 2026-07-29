@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { gsap } from 'gsap';
@@ -37,7 +37,6 @@ const SOCIALS: { label: string; href: string; icon: string }[] = [
 
 export default function Footer() {
   const pathname = usePathname();
-  const router = useRouter();
   const footerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -95,17 +94,17 @@ export default function Footer() {
           <div className="ft-col">
             <h3 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-5 gradient-text">Hizmetler</h3>
             <ul className="space-y-3">
-              {services.map((svc) => (<li key={svc.key}><Link href={`/hizmetler/${svc.key}/${svc.subServices[0].slug}`} className="font-body text-[0.85rem] text-t1/80 hover:text-accent transition-all duration-300 inline-flex items-center gap-2 group"><span className="w-1 h-1 rounded-full bg-accent/40 group-hover:bg-accent group-hover:scale-150 transition-all duration-300" />{svc.title}</Link></li>))}
+              {services.map((svc) => (<li key={svc.key}><Link href={`/hizmetler/${svc.key}/${svc.subServices[0].slug}`} className="font-body text-[0.85rem] text-t1/80 hover:text-accent transition-all duration-300 inline-flex items-center gap-2 py-1 group"><span className="w-1 h-1 rounded-full bg-accent/40 group-hover:bg-accent group-hover:scale-150 transition-all duration-300" />{svc.title}</Link></li>))}
             </ul>
           </div>
           <div className="ft-col">
             <h3 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-5 gradient-text">Kurumsal</h3>
             <ul className="space-y-3">
-              {KURUMSAL.map((item) => (<li key={item.id}><Link href={item.href} onClick={(e) => handleNav(e, item.id, item.href)} className="font-body text-[0.85rem] text-t1/80 hover:text-accent transition-all duration-300 inline-flex items-center gap-2 group"><span className="w-1 h-1 rounded-full bg-accent2/40 group-hover:bg-accent2 group-hover:scale-150 transition-all duration-300" />{item.label}</Link></li>))}
+              {KURUMSAL.map((item) => (<li key={item.id}><Link href={item.href} onClick={(e) => handleNav(e, item.id, item.href)} className="font-body text-[0.85rem] text-t1/80 hover:text-accent transition-all duration-300 inline-flex items-center gap-2 py-1 group"><span className="w-1 h-1 rounded-full bg-accent2/40 group-hover:bg-accent2 group-hover:scale-150 transition-all duration-300" />{item.label}</Link></li>))}
             </ul>
             <h3 className="font-body text-[0.72rem] font-bold tracking-[0.3em] uppercase mb-4 mt-8 gradient-text-reverse">Yasal</h3>
             <ul className="space-y-2.5">
-              {YASAL.map((item) => (<li key={item.href}><Link href={item.href} className="font-body text-[0.8rem] text-t2 hover:text-t1 transition-colors duration-300">{item.label}</Link></li>))}
+              {YASAL.map((item) => (<li key={item.href}><Link href={item.href} className="font-body text-[0.8rem] text-t2 hover:text-t1 transition-colors duration-300 inline-block py-1">{item.label}</Link></li>))}
             </ul>
           </div>
           <div className="ft-col">

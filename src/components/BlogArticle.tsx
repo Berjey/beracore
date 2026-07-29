@@ -6,6 +6,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { BlogPost, ContentBlock } from '@/lib/blog-data';
 import { getCategoryColor } from '@/lib/blog-data';
+import { formatDate } from '@/lib/format';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,12 +14,6 @@ interface Props {
   post: BlogPost;
   relatedPosts: BlogPost[];
   cityLink?: { href: string; title: string } | null;
-}
-
-const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-function formatDate(iso: string): string {
-  const [y, m, d] = iso.split('-');
-  return `${parseInt(d, 10)} ${MONTHS[parseInt(m, 10) - 1]} ${y}`;
 }
 
 function renderBlock(block: ContentBlock, i: number, accent: string) {

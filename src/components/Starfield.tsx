@@ -69,9 +69,10 @@ export default function Starfield() {
 
     // Hareket kısıtlıysa: statik tek kare çiz, döngü kurma.
     if (reduced) {
+      const onResizeStatic = () => { resize(); paint(0); };
       paint(0);
-      window.addEventListener('resize', () => { resize(); paint(0); });
-      return () => window.removeEventListener('resize', resize);
+      window.addEventListener('resize', onResizeStatic);
+      return () => window.removeEventListener('resize', onResizeStatic);
     }
 
     // ~35fps hedef: göz için farkı yok, CPU/GPU yükünü ~%40 azaltır.

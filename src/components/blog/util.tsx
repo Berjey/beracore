@@ -3,12 +3,8 @@ import styles from './blog.module.css';
 
 /* Blog UI için paylaşılan saf yardımcılar + küçük sunum parçaları. */
 
-const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-
-export function formatDate(iso: string): string {
-  const [y, m, d] = iso.split('-');
-  return `${parseInt(d, 10)} ${MONTHS[parseInt(m, 10) - 1]} ${y}`;
-}
+// Tarih biçimlendirme tek kaynakta (lib/format) — buradan yeniden ihraç edilir.
+export { formatDate } from '@/lib/format';
 
 /** Slug'dan stabil sayısal hash — kapak paterni (0/1/2) seçmek için. */
 export function slugHash(slug: string): number {

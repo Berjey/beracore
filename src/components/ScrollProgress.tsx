@@ -103,7 +103,7 @@ export default function ScrollProgress({ sections = HOME_SECTIONS }: { sections?
               onClick={() => go(s.sel)}
               aria-current={isActive ? 'true' : undefined}
               aria-label={`${s.label} bölümüne git`}
-              className="group relative flex flex-row-reverse items-center gap-3 h-[30px] cursor-pointer bg-transparent border-0 p-0"
+              className="group relative flex flex-row-reverse items-center gap-3 h-[30px] cursor-pointer bg-transparent border-0 py-0 pr-0 pl-4"
             >
               <span
                 className={`relative z-[1] block rounded-full transition-all duration-300 ${

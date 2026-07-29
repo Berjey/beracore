@@ -815,7 +815,6 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
   let transitioning = false;
   let tProg = 0;
   let pendingShape = '';
-  let pendingColor = '';
   let targetPositions: Float32Array | null = null;
 
   const clock = new THREE.Clock();
@@ -850,7 +849,6 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
         mat.uniforms.uColor2.value.set('#fff7ad');
 
         pendingShape = '';
-        pendingColor = '';
       }
 
       // Morph positions
@@ -889,7 +887,6 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
       transitioning = true;
       tProg = 0;
       pendingShape = shape;
-      pendingColor = color;
     },
     dispose() {
       cancelAnimationFrame(raf);

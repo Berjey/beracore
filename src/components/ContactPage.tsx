@@ -777,7 +777,7 @@ export default function ContactPage() {
                         <button
                           type="button"
                           onClick={() => handleCopy(m.copyValue!, m.key)}
-                          className="font-body text-[0.7rem] font-semibold tracking-[0.15em] uppercase transition-colors duration-400 hover:text-t1"
+                          className="inline-flex items-center max-md:min-h-[44px] font-body text-[0.7rem] font-semibold tracking-[0.15em] uppercase transition-colors duration-400 hover:text-t1"
                           style={{ color: `${accent}aa` }}>
                           {copied === m.key ? 'Kopyalandı ✓' : 'Kopyala'}
                         </button>
@@ -963,7 +963,7 @@ export default function ContactPage() {
                           const active = form.budget === b;
                           return (
                             <button key={b} type="button" onClick={() => set('budget', active ? '' : b)}
-                              className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
+                              className={`px-3.5 py-2.5 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
                                 ${active
                                   ? 'border-accent/40 bg-accent/10 text-accent'
                                   : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent/20 hover:text-t1'}`}>
@@ -982,7 +982,7 @@ export default function ContactPage() {
                           const active = form.timeline === t;
                           return (
                             <button key={t} type="button" onClick={() => set('timeline', active ? '' : t)}
-                              className={`px-3.5 py-2 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
+                              className={`px-3.5 py-2.5 rounded-lg font-body text-[0.78rem] font-medium border transition-all duration-300
                                 ${active
                                   ? 'border-accent2/40 bg-accent2/10 text-accent2'
                                   : 'border-white/[0.08] bg-white/[0.02] text-t2 hover:border-accent2/20 hover:text-t1'}`}>
@@ -1758,7 +1758,7 @@ function FloatingTextarea({
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-err` : undefined}
-          className="peer w-full px-5 pb-4 pt-1 bg-transparent font-body text-[0.9rem] max-md:text-[16px] text-t1 outline-none resize-none placeholder:text-t3/55 placeholder:font-light"
+          className="peer w-full px-5 pb-4 pt-1 bg-transparent font-body text-[0.9rem] max-md:text-[16px] text-t1 outline-none resize-none placeholder:text-t3/80 placeholder:font-light"
         />
         {maxLength && (
           <span className="absolute bottom-2.5 right-4 font-body text-[0.68rem] text-t3/70 tabular-nums pointer-events-none">

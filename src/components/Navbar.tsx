@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { services } from '@/lib/services-data';
@@ -28,7 +28,6 @@ export default function Navbar() {
   const [navigating, setNavigating] = useState(false);
   const hizmetlerTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
-  const router = useRouter();
 
   useEffect(() => {
     let tick = false;

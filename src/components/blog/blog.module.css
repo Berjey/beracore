@@ -124,7 +124,8 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--color-t1);
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  /* 16px: iOS Safari odakta otomatik zoom yapmasın (16px altı input zoomlar) */
+  font-size: 1rem;
   transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
 }
 .searchInput::placeholder { color: var(--color-t3); }

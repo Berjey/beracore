@@ -547,9 +547,19 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                   transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
                 }}
               />
+              {/* Beyaz-flash kapağı: WebGL ilk karesi compositor'a düşene kadar canvas'ın üstünü
+                  koyu opak bir div örter — düz div asla beyaz backing göstermez (garantili).
+                  canvasReady olunca kalkar; 3D nesne kendi WebGL intro'suyla yumuşak açılır. */}
+              {!canvasReady && (
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 z-10 pointer-events-none"
+                  style={{ background: 'var(--color-bg)' }}
+                />
+              )}
               {!shapeClicked && (
                 <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 animate-pulse">
-                  <span className="text-[0.6rem] font-body text-t3/60 tracking-wider uppercase">Detay için tıkla</span>
+                  <span className="text-[0.6rem] font-body text-t3/80 tracking-wider uppercase">Detay için tıkla</span>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-accent/40">
                     <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
@@ -973,10 +983,10 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
 
                         {/* Meta row — aşama label + counter */}
                         <div className="relative flex items-center justify-between mb-3">
-                          <span className="font-body text-[0.62rem] font-semibold tracking-[0.28em] uppercase text-t3/55 transition-colors duration-400 group-hover:text-[color:var(--accent)]">
+                          <span className="font-body text-[0.62rem] font-semibold tracking-[0.28em] uppercase text-t3 transition-colors duration-400 group-hover:text-[color:var(--accent)]">
                             Aşama {num}
                           </span>
-                          <span className="font-body text-[0.6rem] font-semibold tracking-[0.2em] text-t3/35">
+                          <span className="font-body text-[0.6rem] font-semibold tracking-[0.2em] text-t3/60">
                             {num} / {total}
                           </span>
                         </div>
