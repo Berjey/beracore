@@ -20,6 +20,9 @@
 html {
   scroll-behavior: smooth;
   scrollbar-width: none;
+  /* Koyu kök zemin + color-scheme: yenileme sırasında beyaz flash olmaz (bkz. layout.tsx inline) */
+  background: var(--color-bg);
+  color-scheme: dark;
 }
 html::-webkit-scrollbar { display: none; }
 

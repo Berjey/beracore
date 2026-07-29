@@ -145,7 +145,13 @@ const websiteLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="tr" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    // color-scheme + inline koyu zemin: tarayıcı CSS gelmeden önce kök zemini KOYU boyar →
+    // tam sayfa yenilemede beyaz flash (saydam canvas'ta "beyaz kare" olarak görünen) engellenir.
+    <html
+      lang="tr"
+      className={`${inter.variable} ${spaceGrotesk.variable}`}
+      style={{ colorScheme: 'dark', backgroundColor: '#1a1a1a' }}
+    >
       <head>
         <link
           rel="icon"
