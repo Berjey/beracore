@@ -84,11 +84,13 @@ export const metadata: Metadata = {
 
 // Sosyal profiller — Footer'daki SOCIALS ile aynı.
 // Google, sameAs ile marka kimliğini doğrular — dış sinyal olarak SEO'ya katkı sağlar.
-// NOT: Bu profillerin GERÇEKTEN açık ve sitene link veriyor olması gerekir.
+// NOT: Bu profillerin GERÇEKTEN açık ve sitene link veriyor olması gerekir. Hesaplar henüz
+// açılmadı → boş bırakıldı (var olmayan profile sameAs vermek doğrulanamaz sinyal olur).
+// Hesaplar `beracore` kullanıcı adıyla açılınca aşağıdaki satırları geri aç.
 const socialProfiles: string[] = [
-  'https://instagram.com/beracore',
-  'https://linkedin.com/company/beracore',
-  'https://x.com/beracore',
+  // 'https://instagram.com/beracore',
+  // 'https://linkedin.com/company/beracore',
+  // 'https://x.com/beracore',
 ];
 
 const jsonLd = {
@@ -129,7 +131,7 @@ const jsonLd = {
     },
   ],
   knowsLanguage: ['tr', 'en'],
-  sameAs: socialProfiles,
+  ...(socialProfiles.length ? { sameAs: socialProfiles } : {}),
 };
 
 const websiteLd = {
