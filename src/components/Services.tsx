@@ -131,7 +131,13 @@ export default function Services() {
           >
             <div className="absolute rounded-full blur-[50px] -z-10"
               style={{ width: '160px', height: '160px', background: 'rgba(255,169,249,0.05)' }} />
-            <canvas ref={canvasRef} className="relative w-[400px] h-[400px] max-md:w-[280px] max-md:h-[280px]" />
+            {/* Mobilde canvas akışkan: iki ok butonu (2×44px) + boşluklar (2×16px) +
+                bölüm yatay padding'i (2×20px) için yer bırakır. Sabit 280px'te satır
+                320px ekrana sığmıyor ve ok butonu ekran dışında kırpılıyordu. */}
+            <canvas
+              ref={canvasRef}
+              className="relative w-[400px] h-[400px] max-md:w-[min(280px,calc(100vw-160px))] max-md:h-[min(280px,calc(100vw-160px))]"
+            />
           </div>
 
           {/* Right arrow */}
