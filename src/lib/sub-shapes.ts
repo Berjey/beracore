@@ -477,10 +477,10 @@ const sceneRegistry = new WeakMap<HTMLCanvasElement, SubShapeAPI>();
 // ===== Create the 3D mesh scene =====
 // Minimal, sakin ve güvenilir: küçük taban ölçek, neredeyse statik idle,
 // temiz morph geçişi, WebGL context çakışmalarına karşı registry koruması.
-export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
-  // Bu canvas için zaten bir sahne varsa yeniden yaratma — mevcudu döndür.
+export function createSubScene(canvas: HTMLCanvasElement, onReady?: () => void): SubShapeAPI {
+  // Bu canvas için zaten bir sahne varsa yeniden yaratma — mevcudu döndür (ve hazır bildir).
   const existing = sceneRegistry.get(canvas);
-  if (existing) return existing;
+  if (existing) { onReady?.(); return existing; }
 
   // --- Scene & lights ---
   const scene = new THREE.Scene();
@@ -503,9 +503,6 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
-  // İlk WebGL karesi işlenene kadar canvas'ı gizle: bazı tarayıcılarda canvas katmanı ilk
-  // boyada bir kare opak (beyaz) görünebiliyor. İlk render'da (aşağıda) görünür yapılır.
-  canvas.style.opacity = '0';
 
   // --- Kullanıcı kontrolü (hafif) ---
   const controls = new OrbitControls(camera, canvas);
@@ -614,10 +611,10 @@ export function createSubScene(canvas: HTMLCanvasElement): SubShapeAPI {
 
     renderer.render(scene, camera);
 
-    // İlk gerçek kare işlendi → canvas'ı görünür yap (beyaz opak flash penceresini kapatır)
+    // İlk gerçek kare işlendi → tüketiciye bildir (canvas'ı görünür yapar, beyaz flash penceresini kapatır)
     if (!firstFrameShown) {
       firstFrameShown = true;
-      canvas.style.opacity = '1';
+      onReady?.();
     }
   })();
 

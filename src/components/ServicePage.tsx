@@ -23,6 +23,8 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
   const [subChanging, setSubChanging] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [shapeClicked, setShapeClicked] = useState(false);
+  // Canvas ilk WebGL karesi işlenene kadar SSR'dan itibaren opacity:0 → cold-load "beyaz kare" flash'ı önlenir.
+  const [canvasReady, setCanvasReady] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
   const gsapCtx = useRef<gsap.Context | null>(null);
@@ -55,10 +57,10 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
     const c = canvasRef.current;
     if (!c) return;
 
-    // Strict Mode re-mount — mevcut API'yi koru, yeniden init etme
-    if (shapeRef.current) return;
+    // Strict Mode re-mount — mevcut API'yi koru, yeniden init etme (canvas zaten çiziliyor → görünür yap)
+    if (shapeRef.current) { setCanvasReady(true); return; }
 
-    const api = createSubScene(c);
+    const api = createSubScene(c, () => setCanvasReady(true));
     shapeRef.current = api;
     if (service && sub) {
       api.setShape(sub.icon, service.color);
@@ -535,10 +537,11 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                 ref={canvasRef}
                 className="relative w-[360px] h-[360px] max-md:w-[260px] max-md:h-[260px]"
                 style={{
+                  opacity: canvasReady ? 1 : 0,
                   transform: shapeClicked ? 'scale(1.08)' : 'scale(1)',
                   filter: shapeClicked ? 'brightness(1.2)' : 'brightness(1)',
-                  transitionProperty: 'transform, filter',
-                  transitionDuration: '0.7s',
+                  transitionProperty: 'transform, filter, opacity',
+                  transitionDuration: '0.7s, 0.7s, 0.5s',
                   transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
                 }}
               />
