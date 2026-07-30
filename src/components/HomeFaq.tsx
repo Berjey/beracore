@@ -42,6 +42,18 @@ const FAQ_ITEMS = [
   },
 ];
 
+// Sayfada GÖRÜNEN sorularla birebir aynı FAQPage şeması. Hizmet ve blog
+// sayfalarında bu şema zaten vardı; anasayfadaki 8 soru şemasız kalmıştı.
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_ITEMS.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+
 export default function HomeFaq() {
   const sectionRef = useRef<HTMLElement>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -65,6 +77,7 @@ export default function HomeFaq() {
 
   return (
     <section ref={sectionRef} id="faq" className="py-32 px-8 max-md:px-5 max-md:py-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <div className="max-w-[750px] mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-body text-[clamp(2rem,4vw,3.2rem)] font-light tracking-tight leading-[1.15]">
@@ -76,13 +89,14 @@ export default function HomeFaq() {
             <div key={i} className="faq-item relative border rounded-2xl overflow-hidden transition-all duration-400"
               style={{ borderColor: openIndex === i ? 'rgba(255,169,249,0.2)' : 'rgba(255,255,255,0.06)', background: openIndex === i ? 'rgba(255,169,249,0.02)' : 'rgba(255,255,255,0.01)' }}>
               <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full transition-opacity duration-400" style={{ background: 'linear-gradient(to bottom, #ffa9f9, #fff7ad)', opacity: openIndex === i ? 1 : 0 }} />
-              <button onClick={() => toggle(i)} className="w-full flex items-center justify-between p-7 text-left font-body transition-colors duration-300" aria-expanded={openIndex === i}>
+              <button type="button" onClick={() => toggle(i)} className="w-full flex items-center justify-between p-7 text-left font-body transition-colors duration-300" aria-expanded={openIndex === i} aria-controls={`home-faq-${i}`}>
                 <span className="text-[1.02rem] font-medium pr-4" style={{ color: openIndex === i ? 'var(--color-accent)' : 'var(--color-t1)' }}>{item.q}</span>
                 <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-400" style={{ background: openIndex === i ? 'rgba(255,169,249,0.1)' : 'transparent' }}>
                   <svg className="w-4 h-4 transition-transform duration-400" style={{ color: openIndex === i ? '#ffa9f9' : 'var(--color-t3)', transform: openIndex === i ? 'rotate(180deg)' : 'rotate(0)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg>
                 </div>
               </button>
               <div
+                id={`home-faq-${i}`}
                 className="grid transition-all duration-500"
                 style={{ gridTemplateRows: openIndex === i ? '1fr' : '0fr', opacity: openIndex === i ? 1 : 0 }}
               >

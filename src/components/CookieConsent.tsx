@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import Link from 'next/link';
+import { readCookieDecision, writeCookieDecision } from '@/lib/cookie-consent';
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
-const STORAGE_KEY = 'beracore-cookie-consent'; // 'accepted' | 'rejected'
 
 /**
  * KVKK/GDPR çerez onayı + Google Analytics.
@@ -17,19 +17,18 @@ export default function CookieConsent() {
 
   useEffect(() => {
     if (!GA_ID) return;
-    const stored = localStorage.getItem(STORAGE_KEY);
-    setDecision(stored === 'accepted' || stored === 'rejected' ? stored : 'pending');
+    setDecision(readCookieDecision() ?? 'pending');
   }, []);
 
   // GA yapılandırılmamış → tamamen pasif
   if (!GA_ID || decision === null) return null;
 
   const accept = () => {
-    localStorage.setItem(STORAGE_KEY, 'accepted');
+    writeCookieDecision('accepted');
     setDecision('accepted');
   };
   const reject = () => {
-    localStorage.setItem(STORAGE_KEY, 'rejected');
+    writeCookieDecision('rejected');
     setDecision('rejected');
   };
 
@@ -51,7 +50,10 @@ export default function CookieConsent() {
       {/* Onay bekliyorsa banner */}
       {decision === 'pending' && (
         <div
-          role="dialog"
+          // role="dialog" + aria-live birlikte tutarsızdı (diyalog odak yönetimi
+          // bekler, canlı bölge ise duyurulur). Banner odağı çalmadığı için doğru
+          // semantik: nazikçe duyurulan bir bölge.
+          role="region"
           aria-live="polite"
           aria-label="Çerez tercihi"
           className="fixed bottom-4 left-4 right-4 z-[9500] mx-auto max-w-2xl rounded-2xl border border-white/10 bg-[#15131c]/95 backdrop-blur-md p-5 shadow-2xl max-md:bottom-3 max-md:left-3 max-md:right-3"

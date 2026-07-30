@@ -54,6 +54,17 @@ export default function Stats() {
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+
+    // SSR'da GERÇEK değerler basılır (Googlebot ve JS'siz kullanıcı "0 proje" görmez).
+    // Sayaç animasyonu için sıfırlama JS ile, mount anında yapılır; bölüm ilk ekranın
+    // altında olduğu için kullanıcı bu sıfırlamayı görmez.
+    const nums = Array.from(section.querySelectorAll<HTMLElement>('.stat-num'));
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      nums.forEach((el) => {
+        el.textContent = `${el.dataset.prefix ?? ''}0${el.dataset.suffix ?? ''}`;
+      });
+    }
+
     let ctx: gsap.Context | null = null;
     const timer = setTimeout(() => {
       ctx = gsap.context(() => {
@@ -203,7 +214,7 @@ export default function Stats() {
                   data-prefix={s.prefix || ''}
                   data-suffix={s.suffix}
                 >
-                  {s.prefix || ''}0{s.suffix}
+                  {s.prefix || ''}{s.value}{s.suffix}
                 </div>
 
                 {/* Label */}

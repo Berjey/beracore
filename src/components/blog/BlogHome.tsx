@@ -113,9 +113,12 @@ export default function BlogHome({ posts, categories, picks }: Props) {
           aria-label={`${HERO_LINE1} ${HERO_LINE2}`}
           className={`${styles.title} font-heading text-[clamp(2.4rem,6.5vw,4.4rem)] font-semibold leading-[1.03] tracking-tight`}
         >
-          <span aria-hidden="true" className="mr-[0.28em] inline-block text-t1">
+          {/* GERÇEK boşluk karakteri: başlık harflere bölündüğü için textContent
+              "İçgörüler veRehberler" olarak birleşiyordu (aria-label doğruydu ama
+              tarayıcı/örümcek metni yanlıştı). Görsel boşluk bu karakterden gelir. */}
+          <span aria-hidden="true" className="inline-block text-t1">
             <Chars text={HERO_LINE1} offset={0} />
-          </span>
+          </span>{' '}
           <span aria-hidden="true" className="relative inline-block">
             <span className={styles.titleGlow} aria-hidden="true" />
             <Chars text={HERO_LINE2} offset={HERO_LINE1.length} accent />
@@ -156,6 +159,7 @@ export default function BlogHome({ posts, categories, picks }: Props) {
           <button
             type="button"
             onClick={() => setActiveCat('Tümü')}
+            aria-pressed={activeCat === 'Tümü'}
             className={`${styles.pill} ${activeCat === 'Tümü' ? styles.pillActive : ''}`}
           >
             <span className={styles.pillDot} aria-hidden="true" />
@@ -167,6 +171,7 @@ export default function BlogHome({ posts, categories, picks }: Props) {
               key={cat.name}
               type="button"
               onClick={() => setActiveCat(cat.name)}
+              aria-pressed={activeCat === cat.name}
               className={`${styles.tint} ${styles.pill} ${activeCat === cat.name ? styles.pillActive : ''}`}
               data-cat={catKey(cat.name)}
             >
@@ -192,7 +197,9 @@ export default function BlogHome({ posts, categories, picks }: Props) {
           <div data-reveal="up" className="mb-8 flex items-end justify-between gap-4">
             <div>
               <span className={styles.sectionKicker}>{isDefault ? 'Arşiv' : 'Sonuçlar'}</span>
-              <h2 id="blog-list-title" className={`${styles.sectionTitle} mt-2`}>
+              {/* aria-live: arama/filtre sonucu sayısı ekran okuyucuya duyurulur —
+                  aksi halde liste sessizce değişiyordu. */}
+              <h2 id="blog-list-title" aria-live="polite" className={`${styles.sectionTitle} mt-2`}>
                 {isDefault ? 'Son Yazılar' : `${matches.length} sonuç`}
               </h2>
             </div>

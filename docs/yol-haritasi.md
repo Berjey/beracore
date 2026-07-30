@@ -15,7 +15,7 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalıs
 title/description/canonical/OG/schema/H1/alt eksiksiz, kırık link yok, yetim sayfa yok,
 http→https ve www→apex yönlendirmeleri çalışıyor, güvenlik başlıkları tam, gzip açık.
 
-**İçerik durumu: iyi.** 50 blog yazısı, 24 alt hizmet sayfası, 24 yerel sayfa (İstanbul, Ankara, İzmir, Bursa × 6 hizmet).
+**İçerik durumu: iyi.** 50 blog yazısı, 23 alt hizmet sayfası, 24 yerel sayfa (İstanbul, Ankara, İzmir, Bursa × 6 hizmet).
 
 **Asıl darboğaz: görünürlük.** Site yeni, otoritesi yok. Ana kelimelerde rakiplerin
 domain yaşı 15 yıla varıyor. Kısa vadede kazanılacak yer uzun kuyruk sorgular.
@@ -65,7 +65,7 @@ linki + ajans dizinleri (Clutch/GoodFirms) + sosyal + Google İşletme Profili. 
 
 ### 🟢 Adım 6 — İçerik sürekliliği 🛠
 Claude girdi beklemeden ilerletebilir:
-- Diğer şehirler için yerel sayfalar (Antalya / Konya / Adana …) — `city-pages-data.ts`'e CityPage + `CITY_SLUGS`'a slug ekle (Ankara/İzmir/Bursa 28 Tem 2026'da tamamlandı)
+- Diğer şehirler için yerel sayfalar (Antalya / Konya / Adana …) — `city-pages-data.ts`'teki `cityPages` dizisine CityPage eklemek yeterli (Ankara/İzmir/Bursa 28 Tem 2026'da tamamlandı)
 - Yeni ticari niyetli blog yazıları (fiyat / nasıl seçilir / karşılaştırma / platform rehberi)
 
 ---

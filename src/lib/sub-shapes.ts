@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export interface SubShapeAPI {
-  setShape: (shape: string, color: string) => void;
+  setShape: (shape: string) => void;
   dispose: () => void;
 }
 
@@ -48,8 +48,9 @@ function makeFillMatAccent(): THREE.MeshPhongMaterial {
 }
 
 // ===== Build 3D meshes for each sub-service =====
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function buildShape(name: string, _color: string): THREE.Group {
+// Renk kurumsal paletten sabit gelir (CORP_PINK / CORP_YELLOW); şekle göre renk
+// parametresi hiç kullanılmıyordu, imzadan kaldırıldı.
+function buildShape(name: string): THREE.Group {
   const g = new THREE.Group();
 
   const lineMat = makeLineMat();
@@ -626,12 +627,12 @@ export function createSubScene(canvas: HTMLCanvasElement, onReady?: () => void):
 
   // --- API ---
   const api: SubShapeAPI = {
-    setShape(shape: string, color: string) {
+    setShape(shape: string) {
       // Aynı şekilse hiçbir şey yapma.
       if (currentShape === shape) return;
       currentShape = shape;
 
-      const newGroup = buildShape(shape, color);
+      const newGroup = buildShape(shape);
       traverseMats(newGroup, m => { m.userData.baseOpacity = m.opacity; });
 
       if (!currentGroup) {
@@ -661,6 +662,10 @@ export function createSubScene(canvas: HTMLCanvasElement, onReady?: () => void):
       ro.disconnect();
       io.disconnect();
       if (currentGroup) disposeGroup(currentGroup);
+      // forceContextLoss + dispose: tarayıcı başına eşzamanlı WebGL bağlamı sayısı
+      // sınırlıdır (~16). Yalnızca dispose() bağlamı serbest bırakmadığı için
+      // alt hizmet sayfaları arasında gezinirken bağlam havuzu tükeniyordu.
+      renderer.forceContextLoss();
       renderer.dispose();
       sceneRegistry.delete(canvas);
     },

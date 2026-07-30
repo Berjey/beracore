@@ -11,8 +11,7 @@ export default function NotFound() {
   return (
     <main
       id="main"
-      className="relative z-[1] min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden"
-      style={{ background: '#0f0d16' }}
+      className="relative z-[1] min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden bg-bg"
     >
       {/* Arka plan glow */}
       <div

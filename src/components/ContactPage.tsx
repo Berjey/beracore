@@ -160,11 +160,17 @@ const INITIAL_FORM: FormState = {
 export default function ContactPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const submitBtnRef = useRef<HTMLButtonElement>(null);
+  // Honeypot alanı kontrolsüz (uncontrolled) — değeri gönderim anında ref'ten okunur.
+  // Öncesinde payload'a sabit `hp: ''` yazılıyordu; yani tuzak alanı doldurulsa bile
+  // sunucuya boş gidiyordu ve honeypot HİÇ çalışmıyordu.
+  const hpRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitState, setSubmitState] = useState<SubmitState>('idle');
   const [submitError, setSubmitError] = useState<string>('');
+  // Sunucunun ürettiği talep referansı — gönderilen e-postada da yer alır.
+  const [submitRef, setSubmitRef] = useState<string>('');
   const [copied, setCopied] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -197,10 +203,13 @@ export default function ContactPage() {
     const v = validate();
     setErrors(v);
     if (Object.keys(v).length > 0) {
-      // Scroll to first error
+      // İlk hatalı alana kaydır VE odağı oraya taşı (klavye/ekran okuyucu
+      // kullanıcısı sadece kaydırmadan hatayı bulamıyordu).
       const firstKey = Object.keys(v)[0];
-      const el = containerRef.current?.querySelector<HTMLElement>(`[data-field="${firstKey}"]`);
-      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const wrap = containerRef.current?.querySelector<HTMLElement>(`[data-field="${firstKey}"]`);
+      wrap?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const focusable = wrap?.querySelector<HTMLElement>('input, textarea, select, button');
+      focusable?.focus({ preventScroll: true });
       // Shake submit
       gsap.fromTo(submitBtnRef.current, { x: 0 },
         { x: 0, duration: 0.4, keyframes: [{ x: -8 }, { x: 8 }, { x: -6 }, { x: 6 }, { x: 0 }] });
@@ -223,25 +232,31 @@ export default function ContactPage() {
           timeline: form.timeline,
           message: form.message.trim(),
           consent: form.consent,
-          hp: '',
+          hp: hpRef.current?.value ?? '',
         }),
       });
 
+      const data: { ok?: boolean; ref?: string; error?: string; message?: string; fields?: FieldErrors } =
+        await res.json().catch(() => ({}));
+
       if (res.ok) {
+        setSubmitRef(data.ref ?? '');
         setSubmitState('success');
         return;
       }
 
-      const data: { error?: string; fields?: FieldErrors } = await res.json().catch(() => ({}));
       if (res.status === 422 && data.fields) {
         setErrors(data.fields);
         setSubmitState('idle');
         return;
       }
+      // 429 (hız sınırı) ve 413 (çok büyük istek) için sunucunun kendi açıklaması
+      // gösterilir — öncesinde hepsi tek genel mesaja düşüyordu.
       const msg =
-        data.error === 'mail_not_configured'
+        data.message ??
+        (data.error === 'mail_not_configured'
           ? 'Mail sunucusu henüz yapılandırılmadı. Lütfen info@beracore.com adresine yazın.'
-          : 'Talep gönderilemedi. Birkaç saniye sonra tekrar deneyin ya da info@beracore.com adresine yazın.';
+          : 'Talep gönderilemedi. Birkaç saniye sonra tekrar deneyin ya da info@beracore.com adresine yazın.');
       setSubmitError(msg);
       setSubmitState('error');
     } catch {
@@ -255,6 +270,8 @@ export default function ContactPage() {
     setErrors({});
     setSubmitState('idle');
     setSubmitError('');
+    setSubmitRef('');
+    if (hpRef.current) hpRef.current.value = '';
   };
 
   // ----- Copy to clipboard with fallback -----
@@ -456,10 +473,10 @@ export default function ContactPage() {
       ).filter((el) => !el.hasAttribute('aria-hidden'));
     };
 
-    // İlk focusable'ı odakla (açılışta kapat butonu değil, okuma alanı hedef)
+    // Açılışta odak doğrudan OKUMA ALANINA gider (kapat butonuna değil): kullanıcı
+    // ok tuşları/Page Down ile metni kaydırıp onay butonunu etkinleştirebilir.
     requestAnimationFrame(() => {
-      const focusables = getFocusables();
-      focusables[0]?.focus();
+      (kvkkScrollRef.current ?? getFocusables()[0])?.focus();
     });
 
     const onKey = (e: KeyboardEvent) => {
@@ -540,7 +557,7 @@ export default function ContactPage() {
   // Form başarıyla gönderildiğinde tüm sayfayı kaplayan success ekranı göster.
   // Hero, methods, form, process, FAQ, CTA section'ları gizlenir.
   if (submitState === 'success') {
-    return <SuccessState name={form.name} onReset={resetForm} />;
+    return <SuccessState name={form.name} refId={submitRef} onReset={resetForm} />;
   }
 
   return (
@@ -621,13 +638,16 @@ export default function ContactPage() {
             İletişim
           </span>
 
-          <h1 className="font-body text-[clamp(2.4rem,6vw,4.6rem)] font-light leading-[1.05] tracking-tight mb-8" style={{ perspective: '1000px' }}>
-            <span className="inline-block text-t1 mr-[0.3em]">
+          {/* aria-label + GERÇEK boşluk: başlık harflere bölündüğü için iki kelime
+              arasında metin düğümü yoktu; okunan metin "DijitalinEşiğindesiniz."
+              olarak birleşiyordu. Görsel boşluk artık bu boşluk karakterinden gelir. */}
+          <h1 aria-label="Dijitalin Eşiğindesiniz." className="font-body text-[clamp(2.4rem,6vw,4.6rem)] font-light leading-[1.05] tracking-tight mb-8" style={{ perspective: '1000px' }}>
+            <span aria-hidden="true" className="inline-block text-t1">
               {Array.from('Dijitalin').map((ch, i) => (
                 <span key={i} className="ct-char-main inline-block" style={{ willChange: 'transform, opacity' }}>{ch}</span>
               ))}
-            </span>
-            <span className="relative inline-block font-semibold">
+            </span>{' '}
+            <span aria-hidden="true" className="relative inline-block font-semibold">
               <span className="ct-accent-glow pointer-events-none absolute inset-0 -z-10 blur-[40px]"
                 style={{ background: 'linear-gradient(135deg, #ffa9f9, #fff7ad)', borderRadius: '50%' }}
                 aria-hidden="true" />
@@ -878,11 +898,11 @@ export default function ContactPage() {
                   </span>
                 </div>
 
-                {/* Honeypot */}
+                {/* Honeypot — bot doldurursa sunucu isteği sessizce yutar. */}
                 <div className="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none" aria-hidden="true">
                   <label>
                     Leave empty
-                    <input type="text" name="hp" tabIndex={-1} autoComplete="off" />
+                    <input ref={hpRef} type="text" name="hp" tabIndex={-1} autoComplete="off" />
                   </label>
                 </div>
 
@@ -898,6 +918,7 @@ export default function ContactPage() {
                       onChange={(v) => set('name', v)}
                       error={errors.name}
                       autoComplete="name"
+                      maxLength={120}
                     />
                     <FloatingInput
                       id="f-email"
@@ -908,6 +929,7 @@ export default function ContactPage() {
                       onChange={(v) => set('email', v)}
                       error={errors.email}
                       autoComplete="email"
+                      maxLength={160}
                     />
                     <FloatingInput
                       id="f-phone"
@@ -917,6 +939,7 @@ export default function ContactPage() {
                       onChange={(v) => set('phone', v)}
                       error={errors.phone}
                       autoComplete="tel"
+                      maxLength={40}
                     />
                     <FloatingInput
                       id="f-company"
@@ -926,6 +949,7 @@ export default function ContactPage() {
                       onChange={(v) => set('company', v)}
                       error={errors.company}
                       autoComplete="organization"
+                      maxLength={140}
                     />
                   </div>
                 </FormStep>
@@ -1018,9 +1042,15 @@ export default function ContactPage() {
                           type="checkbox"
                           checked={form.consent}
                           onChange={(e) => set('consent', e.target.checked)}
+                          aria-invalid={!!errors.consent}
+                          aria-describedby={errors.consent ? 'consent-err' : undefined}
                           className="peer sr-only"
                         />
+                        {/* Gerçek input sr-only olduğu için odak halkası GÖRSEL kutuya
+                            taşınır — aksi halde klavye kullanıcısı KVKK onay kutusunda
+                            hiçbir odak göstergesi görmüyordu. */}
                         <span className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-300
+                          peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent2
                           ${form.consent ? 'border-accent bg-accent/20' : errors.consent ? 'border-red-400/60 bg-red-500/5' : 'border-white/15 bg-white/[0.02] group-hover:border-accent/40'}`}>
                           {form.consent && (
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffa9f9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -1047,13 +1077,13 @@ export default function ContactPage() {
                     </button>
                   </div>
                   {errors.consent && (
-                    <p className="mt-2 ml-8 font-body text-[0.75rem] text-red-400/90">{errors.consent}</p>
+                    <p id="consent-err" role="alert" className="mt-2 ml-8 font-body text-[0.75rem] text-red-400/90">{errors.consent}</p>
                   )}
                 </div>
 
-                {/* Error banner */}
+                {/* Error banner — role="alert": gönderim hatası ekran okuyucuya duyurulur */}
                 {submitState === 'error' && submitError && (
-                  <div className="mt-6 mx-auto max-w-md p-4 rounded-xl border border-red-500/20 bg-red-500/5">
+                  <div role="alert" className="mt-6 mx-auto max-w-md p-4 rounded-xl border border-red-500/20 bg-red-500/5">
                     <div className="flex items-start gap-3">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
                         <circle cx="12" cy="12" r="10" />
@@ -1294,9 +1324,16 @@ export default function ContactPage() {
           />
 
           {/* scrollable body */}
+          {/* tabIndex + role: kaydırılabilir metin alanı KLAVYEYLE odaklanabilir olmalı.
+              Onay butonu "metni sonuna kadar kaydır" koşuluna bağlı; alan odaklanabilir
+              olmadığı için klavye kullanıcısı metni kaydıramıyor ve KVKK onayını HİÇ
+              veremiyordu (form gönderilemez hale geliyordu). */}
           <div
             ref={kvkkScrollRef}
             onScroll={handleKvkkScroll}
+            tabIndex={0}
+            role="region"
+            aria-label="KVKK aydınlatma metni — okumak için kaydırın"
             className="kvkk-scroll relative flex-1 overflow-y-auto px-8 py-7 max-md:px-5 max-md:py-6"
           >
             <p className="font-body text-[0.92rem] text-t2 font-light leading-[1.85] mb-9 max-md:text-[0.88rem] max-md:mb-7">
@@ -1429,15 +1466,15 @@ export default function ContactPage() {
 // SUCCESS STATE — tam sayfa, viewport sabit, responsive
 // Form başarıyla gönderildiğinde ContactPage bu komponenti render eder.
 // ============================================================
-function SuccessState({ name, onReset }: { name: string; onReset: () => void }) {
+function SuccessState({ name, refId, onReset }: { name: string; refId: string; onReset: () => void }) {
   const firstName = name ? name.trim().split(/\s+/)[0] : '';
-  const refId = useMemo(() => {
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const d = String(now.getDate()).padStart(2, '0');
-    const rand = Math.floor(1000 + Math.random() * 9000);
-    return `BRC-${y}${m}${d}-${rand}`;
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // Başarı ekranı tüm sayfayı değiştirdiği için odak buraya taşınır; ekran okuyucu
+  // "Talep alındı" başlığını okur. (Sadece aria-live yeterli değil: içerikle birlikte
+  // eklenen bir canlı bölge güvenilir biçimde duyurulmuyor.)
+  useEffect(() => {
+    headingRef.current?.focus();
   }, []);
 
   const timeNow = useMemo(() => {
@@ -1513,7 +1550,11 @@ function SuccessState({ name, onReset }: { name: string; onReset: () => void }) 
           Talep Alındı
         </span>
 
-        <h1 className="font-body text-[clamp(1.7rem,5.5vw,3.2rem)] font-light tracking-tight leading-[1.12] mb-5 sm:mb-6 px-2">
+        <h1
+          ref={headingRef}
+          tabIndex={-1}
+          className="font-body text-[clamp(1.7rem,5.5vw,3.2rem)] font-light tracking-tight leading-[1.12] mb-5 sm:mb-6 px-2 outline-none"
+        >
           <span className="text-t1">Teşekkürler{firstName ? `, ${firstName}` : ''} — </span>
           <span className="gradient-text font-semibold">ulaştık.</span>
         </h1>
@@ -1523,14 +1564,20 @@ function SuccessState({ name, onReset }: { name: string; onReset: () => void }) 
           Lütfen e-posta kutunuzu ve <span className="text-t1">spam klasörünüzü</span> kontrol edin.
         </p>
 
-        {/* Referans + zaman bloğu — profesyonel "talep kaydı" hissi */}
+        {/* Referans + zaman bloğu. refId SUNUCUDAN gelir ve talep e-postasının konusunda
+            da yer alır → müşteri bu numarayı söylediğinde ekip talebi bulabilir.
+            (Öncesinde numara tarayıcıda rastgele üretiliyordu ve hiçbir kaydı yoktu.) */}
         <div className="inline-flex items-center gap-3 flex-wrap justify-center px-4 py-2.5 mb-8 rounded-full border border-white/[0.06] bg-white/[0.02] max-md:px-3 max-md:py-2 max-md:gap-2 max-md:mb-7">
-          <span className="inline-flex items-center gap-1.5 font-body text-[0.68rem] text-t3 font-medium tracking-[0.15em] uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" aria-hidden="true" />
-            Ref
-          </span>
-          <span className="font-mono text-[0.78rem] text-t1 tabular-nums max-md:text-[0.72rem]">{refId}</span>
-          <span className="w-px h-3 bg-white/10" aria-hidden="true" />
+          {refId && (
+            <>
+              <span className="inline-flex items-center gap-1.5 font-body text-[0.68rem] text-t3 font-medium tracking-[0.15em] uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" aria-hidden="true" />
+                Ref
+              </span>
+              <span className="font-mono text-[0.78rem] text-t1 tabular-nums max-md:text-[0.72rem]">{refId}</span>
+              <span className="w-px h-3 bg-white/10" aria-hidden="true" />
+            </>
+          )}
           <span className="font-body text-[0.72rem] text-t3 font-light max-md:text-[0.68rem]">{timeNow}</span>
         </div>
 
@@ -1676,7 +1723,7 @@ function FormStep({
 // FLOATING LABEL INPUT
 // ============================================================
 function FloatingInput({
-  id, label, type, value, onChange, required, error, autoComplete,
+  id, label, type, value, onChange, required, error, autoComplete, maxLength,
 }: {
   id: string;
   label: string;
@@ -1686,6 +1733,8 @@ function FloatingInput({
   required?: boolean;
   error?: string;
   autoComplete?: string;
+  /** Sunucu tarafındaki sınırla aynı olmalı — aksi halde uzun girdi 413 ile döner. */
+  maxLength?: number;
 }) {
   const hasValue = value.length > 0;
   const field = id.replace(/^f-/, '');
@@ -1698,6 +1747,7 @@ function FloatingInput({
           type={type}
           value={value}
           required={required}
+          maxLength={maxLength}
           autoComplete={autoComplete}
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={!!error}
@@ -1741,11 +1791,14 @@ function FloatingTextarea({
   const field = id.replace(/^f-/, '');
   return (
     <div className="relative" data-field={field}>
-      <div className={`relative rounded-xl border transition-all duration-300
+      {/* `group` + group-focus-within: etiket DOM'da textarea'dan ÖNCE geldiği için
+          Tailwind'in `peer-focus:` varyantı burada hiç uygulanmıyordu (peer, kendisinden
+          sonra gelen kardeşleri hedefler) — etiket odakta renk değiştirmiyordu. */}
+      <div className={`group relative rounded-xl border transition-all duration-300
         ${error ? 'border-red-400/50 bg-red-500/[0.02]' : 'border-white/[0.08] bg-white/[0.03] focus-within:border-accent focus-within:bg-white/[0.05] focus-within:shadow-[0_0_0_3px_rgba(255,169,249,0.22)]'}`}>
         <label
           htmlFor={id}
-          className="block px-5 pt-3 pb-1 font-body text-[0.65rem] font-semibold tracking-[0.2em] uppercase text-t3 peer-focus:text-accent">
+          className="block px-5 pt-3 pb-1 font-body text-[0.65rem] font-semibold tracking-[0.2em] uppercase text-t3 transition-colors duration-300 group-focus-within:text-accent">
           {label}{required ? ' *' : ''}
         </label>
         <textarea

@@ -23,7 +23,9 @@ export default function BlogCTA() {
             <Link href="/iletisim" className={styles.ctaBtn}>
               Ücretsiz keşif görüşmesi <ArrowIcon size={15} />
             </Link>
-            <Link href="/hizmetler" className={styles.ctaGhost}>
+            {/* /hizmetler diye bir route YOK (kategori sayfaları /hizmetler/[key]).
+                Navbar, Footer ve breadcrumb'larla aynı hedef: anasayfa hizmetler bölümü. */}
+            <Link href="/#services" className={styles.ctaGhost}>
               Hizmetleri keşfet
             </Link>
           </div>

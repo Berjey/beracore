@@ -79,19 +79,10 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0;
 }
 
-/* ===== Hero giriş "flash" önleme (Blog liste + yazı) — aynı kalıp (bkz. yukarısı) ===== */
-.bl-intro-pending .bl-label,
-.bl-intro-pending .bl-char,
-.bl-intro-pending .bl-accent-glow,
-.bl-intro-pending .bl-sub,
-.bl-intro-pending .bl-line,
-.bl-intro-pending .bl-filter,
-.bl-intro-pending .bl-featured,
-.bl-intro-pending .bl-crumb,
-.bl-intro-pending .bl-meta,
-.bl-intro-pending .bl-h1 {
-  opacity: 0;
-}
+/* NOT: Eski blog liste sayfasına ait `.bl-intro-pending` bloğu kaldırıldı.
+   O sayfa CSS modülüyle yeniden kuruldu (blog.module.css) ve blog YAZISI sayfası
+   artık GSAP değil CSS animasyonu kullanıyor → gizleme sınıfına gerek yok
+   (bkz. aşağıdaki "Genel giriş / scroll reveal" bölümü). */
 
 /* ===== Hero giriş "flash" önleme (İletişim) — aynı kalıp (bkz. yukarısı) ===== */
 .ct-intro-pending .ct-hero-label,
@@ -105,6 +96,55 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0;
 }
 
+/* ===== Yasal sayfa girişi (LegalLayout) =====
+   Eskiden GSAP + ScrollTrigger ile yapılıyordu; 4 statik metin sayfasına yalnızca
+   iki fade-up için ~80 kB JS yükleniyordu. Saf CSS ile aynı his, sıfır JS
+   (LegalLayout artık sunucu bileşeni). prefers-reduced-motion global kuralı
+   animasyon süresini 0.01ms'e indirdiği için hareket kısıtlı modda anında görünür. */
+@keyframes lgIn {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+.lg-anim { animation: lgIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* ===== Genel giriş / scroll reveal (GSAP'siz) =====
+   Blog yazısı ve Footer bu mekanizmayı kullanır. Amaç: GSAP + ScrollTrigger
+   (~70 kB) yalnızca birkaç fade-up için TÜM sayfalara yüklenmesin.
+   `.rv-up` → yüklenmede tek seferlik giriş (gecikme inline verilir).
+   `[data-rv]` → scroll ile açılan bloklar; başlangıçta gizleme yalnızca JS kabı
+   `.rv-armed` işaretlerse uygulanır → JS çalışmazsa içerik görünür kalır. */
+@keyframes rvUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+.rv-up { animation: rvUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Açılış hareketi TRANSITION değil ANIMATION ile (ve fill-mode olmadan) yapılır:
+   animasyon bitince öğeye kalıcı bir `transform` yazılmaz. Aksi halde reveal
+   kuralı, kartların `hover:-translate-y-1` gibi Tailwind hover dönüşümlerini
+   kalıcı olarak eziyordu (hover yükselme etkisi kayboluyordu). */
+.rv-armed [data-rv] { opacity: 0; }
+.rv-armed [data-rv].is-in {
+  opacity: 1;
+  animation: rvUp 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== Footer girişi (GSAP yerine IntersectionObserver + CSS) ===== */
+.ft-armed .ft-line { transform: scaleX(0); }
+.ft-armed .ft-col { opacity: 0; transform: translateY(40px); }
+.ft-armed.ft-in .ft-line {
+  transform: scaleX(1);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ft-armed.ft-in .ft-col {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ft-armed.ft-in .ft-col:nth-child(2) { transition-delay: 0.06s; }
+.ft-armed.ft-in .ft-col:nth-child(3) { transition-delay: 0.12s; }
+.ft-armed.ft-in .ft-col:nth-child(4) { transition-delay: 0.18s; }
+
 /* ===== Keyframes ===== */
 @keyframes fi { to { opacity: 1; } }
 
@@ -112,11 +152,6 @@ h1, h2, h3, h4, h5, h6 {
   0% { clip-path: inset(0 100% 0 0); opacity: 0; transform: translateX(-10px); }
   60% { opacity: 1; }
   100% { clip-path: inset(0 0 0 0); opacity: 1; transform: translateX(0); }
-}
-
-@keyframes coreGlow {
-  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
 }
 
 @keyframes preLogoIn {

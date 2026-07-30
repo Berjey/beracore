@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 
 // Satır 1 — Hizmetler
 const ROW1 = [
@@ -38,111 +38,114 @@ const ROW4 = [
   'Büyük Veri & Analytics', 'Otonom Sistemler',
 ];
 
+/**
+ * Sürükle + momentum. Üç hata düzeltildi:
+ *  1. Her satır KALICI bir rAF döngüsü çalıştırıyordu (4 satır → hiç durmayan
+ *     4 döngü). Artık döngü yalnızca hareket varken çalışır, durunca kapanır.
+ *  2. `onUp`/`onWheel` her çağrıda YENİ bir rAF zinciri başlatıyordu; şeritte
+ *     hızlı scroll onlarca eşzamanlı zincir doğuruyordu. Tek döngü + tek bayrak.
+ *  3. Momentum bitince `transform` bir anda siliniyor, şerit zıplıyordu. Ofset
+ *     artık yumuşak biçimde sıfıra döner.
+ * Ayrıca dokunmatikte dikey kaydırma sürükleme sayılmaz (parmak dikey inerken
+ * şerit yana kaymıyor).
+ */
 function useMarqueeDrag(containerRef: React.RefObject<HTMLDivElement | null>) {
-  const velocityRef = useRef(0);
-  const offsetRef = useRef(0);
-  const draggingRef = useRef(false);
-  const lastXRef = useRef(0);
-  const lastTimeRef = useRef(0);
-  const rafRef = useRef(0);
-
-  const applyOffset = useCallback(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const inner = el.querySelector('[data-marquee-inner]') as HTMLElement;
-    if (!inner) return;
-    inner.style.transform = `translateX(${offsetRef.current}px)`;
-  }, [containerRef]);
-
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const inner = el.querySelector('[data-marquee-inner]') as HTMLElement;
+    const inner = el.querySelector<HTMLElement>('[data-marquee-inner]');
     if (!inner) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    // Momentum decay loop
-    const tick = () => {
-      if (!draggingRef.current && Math.abs(velocityRef.current) > 0.1) {
-        offsetRef.current += velocityRef.current;
-        velocityRef.current *= 0.94; // friction
-        applyOffset();
-      }
-      rafRef.current = requestAnimationFrame(tick);
+    let velocity = 0;
+    let offset = 0;
+    let dragging = false;
+    let axisLocked: 'x' | 'y' | null = null;
+    let lastX = 0, lastY = 0, lastT = 0;
+    let raf = 0;
+
+    const release = () => {
+      raf = 0;
+      velocity = 0;
+      offset = 0;
+      inner.style.transform = '';
+      inner.style.animationPlayState = '';
     };
-    rafRef.current = requestAnimationFrame(tick);
 
-    // Mouse events
+    const tick = () => {
+      if (dragging) { raf = requestAnimationFrame(tick); return; }
+      offset += velocity;
+      velocity *= 0.94;   // sürtünme
+      offset *= 0.9;      // ofseti yumuşakça sıfıra çek
+      inner.style.transform = `translateX(${offset}px)`;
+      if (Math.abs(velocity) < 0.1 && Math.abs(offset) < 0.5) { release(); return; }
+      raf = requestAnimationFrame(tick);
+    };
+    // rAF kimlikleri 1'den başlar → 0 "çalışmıyor" anlamına gelir.
+    const ensureLoop = () => { if (!raf) raf = requestAnimationFrame(tick); };
+
     const onDown = (e: PointerEvent) => {
-      draggingRef.current = true;
-      lastXRef.current = e.clientX;
-      lastTimeRef.current = Date.now();
-      velocityRef.current = 0;
+      dragging = true;
+      axisLocked = null;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      lastT = e.timeStamp;
+      velocity = 0;
       inner.style.animationPlayState = 'paused';
       el.style.cursor = 'grabbing';
+      ensureLoop();
     };
 
     const onMove = (e: PointerEvent) => {
-      if (!draggingRef.current) return;
-      const dx = e.clientX - lastXRef.current;
-      const now = Date.now();
-      const dt = Math.max(1, now - lastTimeRef.current);
-      velocityRef.current = dx / dt * 16; // normalize to ~60fps
-      offsetRef.current += dx;
-      lastXRef.current = e.clientX;
-      lastTimeRef.current = now;
-      applyOffset();
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+
+      // İlk anlamlı hareket yönü ekseni kilitler: dikey ise sürükleme iptal
+      // (dokunmatikte sayfa dikey kayarken şerit yana kaymasın).
+      if (!axisLocked && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+        axisLocked = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+        if (axisLocked === 'y') { dragging = false; el.style.cursor = ''; return; }
+      }
+
+      const dt = Math.max(1, e.timeStamp - lastT);
+      velocity = (dx / dt) * 16; // ~60fps'e normalize
+      offset += dx;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      lastT = e.timeStamp;
+      inner.style.transform = `translateX(${offset}px)`;
     };
 
     const onUp = () => {
-      if (!draggingRef.current) return;
-      draggingRef.current = false;
+      if (!dragging) return;
+      dragging = false;
       el.style.cursor = '';
-      // Momentum will decay in tick loop, then CSS anim resumes
-      const waitForStop = () => {
-        if (Math.abs(velocityRef.current) < 0.1) {
-          velocityRef.current = 0;
-          // Smoothly reset offset and resume CSS animation
-          offsetRef.current = 0;
-          inner.style.transform = '';
-          inner.style.animationPlayState = '';
-        } else {
-          requestAnimationFrame(waitForStop);
-        }
-      };
-      requestAnimationFrame(waitForStop);
+      ensureLoop(); // momentum + yumuşak dönüş
     };
 
-    // Scroll velocity boost
+    // Scroll velocity boost — şerit üzerinden geçerken hafif ivme.
     const onWheel = (e: WheelEvent) => {
-      velocityRef.current += e.deltaY * 0.3;
+      velocity += e.deltaY * 0.3;
       inner.style.animationPlayState = 'paused';
-      // Resume after momentum dies
-      const waitForStop = () => {
-        if (Math.abs(velocityRef.current) < 0.1) {
-          velocityRef.current = 0;
-          offsetRef.current = 0;
-          inner.style.transform = '';
-          inner.style.animationPlayState = '';
-        } else {
-          requestAnimationFrame(waitForStop);
-        }
-      };
-      requestAnimationFrame(waitForStop);
+      ensureLoop();
     };
 
     el.addEventListener('pointerdown', onDown);
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
     el.addEventListener('wheel', onWheel, { passive: true });
 
     return () => {
-      cancelAnimationFrame(rafRef.current);
+      if (raf) cancelAnimationFrame(raf);
       el.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
       el.removeEventListener('wheel', onWheel);
     };
-  }, [containerRef, applyOffset]);
+  }, [containerRef]);
 }
 
 function MarqueeRow({ items, duration, reverse = false }: { items: string[]; duration: number; reverse?: boolean }) {
@@ -168,7 +171,9 @@ function MarqueeRow({ items, duration, reverse = false }: { items: string[]; dur
               : 'none';
 
           return (
-            <span key={i} className="shrink-0 flex items-center gap-4 mx-3">
+            // Şerit kesintisiz akması için iki kez basılır; ikinci kopya ekran
+            // okuyucudan gizlenir (aynı 76 öğe iki kez okunmasın).
+            <span key={i} aria-hidden={i >= items.length ? 'true' : undefined} className="shrink-0 flex items-center gap-4 mx-3">
               <span className="w-1 h-1 rounded-full shrink-0 opacity-30" style={{ background: color }} />
               <span
                 className="font-heading text-[0.85rem] font-semibold tracking-[0.15em] uppercase whitespace-nowrap"

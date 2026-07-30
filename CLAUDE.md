@@ -3,14 +3,14 @@
 Bu dosya, yeni bir sohbette veya farklı bir bilgisayarda çalışmaya başlandığında
 projenin durumunu ve devam edilecek noktayı aktarır. Git ile taşındığı için her makinede bulunur.
 
-**Son güncelleme:** 28 Temmuz 2026
+**Son güncelleme:** 30 Temmuz 2026
 
 ---
 
 ## Proje
 
 BERACORE kurumsal web sitesi — Next.js 15 (App Router) + TypeScript + Tailwind, koyu tema, GSAP animasyon.
-6 hizmet kategorisi ve 24 alt hizmet: Yapay Zeka & Otomasyon, Blockchain & Fintech, Yazılım Geliştirme,
+6 hizmet kategorisi ve 23 alt hizmet (E-Ticaret 3, diğerleri 4'er): Yapay Zeka & Otomasyon, Blockchain & Fintech, Yazılım Geliştirme,
 Tasarım, E-Ticaret, Dijital Pazarlama. Site Türkçe, hedef pazar Türkiye.
 
 ## Deploy — tek komut
@@ -76,7 +76,7 @@ Her yazıda zorunlu standart:
 - `faq` dizisi → FAQPage schema + zengin sonuç
 - Kategori, `CATEGORY_META`'daki 6 değerden biri olmalı
 
-**Durum:** 50 yazı yayında, 24 alt hizmetin tamamı kapsanıyor.
+**Durum:** 50 yazı yayında, 23 alt hizmetin tamamı kapsanıyor.
 
 **Vaka çalışmaları / portfolyo sayfası YOK.** 27 Tem 2026'da `/calismalarimiz` kuruldu ancak
 kullanıcı gösterilecek yeterli proje olmadığı gerekçesiyle beğenmedi ve kaldırıldı.
@@ -102,7 +102,8 @@ Trendyol, Hepsiburada, N11 ve Amazon mağaza açma/entegrasyon rehberleri tamaml
 sayfa. Route `/istanbul/[hizmet]`'ten `/[sehir]/[hizmet]`'e genelleştirildi (mevcut İstanbul URL'leri
 korundu). Her şehir kendi ekonomik kimliğiyle özgün içerik taşır (Ankara: kamu/savunma/teknokent,
 İzmir: ihracat/üretici, Bursa: sanayi/imalat/B2B) — doorway/ince sayfa değil. Yeni şehir eklemek:
-`src/lib/city-pages-data.ts`'e CityPage nesnesi + `CITY_SLUGS`'a slug ekle.
+`src/lib/city-pages-data.ts`'teki `cityPages` dizisine CityPage nesnesi eklemek yeterlidir
+(generateStaticParams ve 404 kontrolü bu diziden türetilir; ayrıca tutulan bir şehir listesi YOK).
 
 **Kalan içerik boşlukları:** Yeni şehirler (Antalya/Konya/Adana vb.) ve sürekli yeni ticari blog yazıları.
 
@@ -130,6 +131,36 @@ tamamlananlar ve bilinçli kapsam-dışı kararlar orada. Önce onu oku.
 - ✅ Google Search Console mülkü iş hesabına devredildi (28 Tem 2026): sahip `berkealanelbusiness@gmail.com`,
   HTML dosya doğrulaması (`public/googleb8ca659074d30ada.html` — SİLİNMEMELİ), eski hesap + meta token kaldırıldı.
   İndeks durumu (24 Tem): 9 dizinde, 36 "keşfedildi-bekliyor" (yeni site, otorite/zaman meselesi, teknik hata değil).
+
+### 30 Temmuz 2026 — üretime hazırlık denetimi (kalıcı notlar)
+
+Kapsamlı QA turunda bulunup düzeltilen, **tekrar bozulmaması gereken** noktalar:
+
+- **Scroll-typewriter başlıklar metnin TAMAMINI DOM'da tutar.** `ScrollText` ve
+  `Manifesto` yazılmamış kısmı `opacity:0` ile render eder. Öncesinde sunucu HTML'inde
+  h2'ler boştu (`<h2><span></span></h2>`) → başlıklar SEO'da yok sayılıyordu.
+  Yalnızca "yazılan" kısmı render etmeye geri dönülmemeli.
+- **Harflere bölünmüş hero başlıklarında iki kelime arasında GERÇEK boşluk olmalı.**
+  Aksi halde metin "DijitalinÇekirdeğindeyiz" gibi birleşir. Hakkımızda / İletişim /
+  Blog h1'lerinde `{' '}` + `aria-label` bu yüzden var.
+- **gsap kök layout'a statik import EDİLMEZ.** `MotionGuard` gsap'ı dinamik import eder;
+  aksi halde ~70 kB gsap, gsap kullanmayan tüm sayfalara (50 blog yazısı, yasal, şehir,
+  kategori) yükleniyordu. `Footer`, `BlogArticle`, `LegalLayout` gsap yerine
+  `useReveal` + globals.css `[data-rv]` / `.lg-anim` / `.ft-*` mekanizmasını kullanır.
+- **three.js dinamik import edilir** (`Services`, `ServicePage`) → ilk yük paketine girmez.
+- **3D şekil sarmalayıcılarında `onClick` yerine `useTapOnly`.** OrbitControls ile
+  döndürmek için sürüklemek de `click` üretiyor; düz `onClick` sürükleme sonunda
+  gezinme/kaydırma tetikliyordu.
+- **WebGL sahneleri `renderer.forceContextLoss()` + `dispose()` ile kapatılır.**
+  Sadece dispose bağlamı bırakmıyor; sayfalar arası gezinmede bağlam havuzu (~16) tükeniyordu.
+- **robots.txt `/_next/` engellenmez** — Googlebot render için JS/CSS'e erişmek zorunda.
+- **Hız sınırı IP'si `x-real-ip`, sonra XFF'in SON değeri.** XFF'in ilk değeri istemci
+  tarafından uydurulabiliyor ve sınır atlanabiliyordu (nginx `$proxy_add_x_forwarded_for`
+  gerçek IP'yi sona ekler, `X-Real-IP`'yi ise komple ezer).
+- **Talep referans numarası SUNUCUDA üretilir** ve e-postanın konusunda yer alır.
+  Öncesinde tarayıcıda rastgele üretiliyordu; müşteriye hiçbir kaydı olmayan numara veriliyordu.
+- **Görünmez ama odaklanabilir öğe bırakılmaz.** Navbar alt menüsü `inert`,
+  ScrollToTop/WhatsApp `visibility:hidden`, Services bölümü açılana kadar `inert`.
 
 ### Dikkat edilecek teknik tuzaklar
 - **GA4 kuruldu** (28 Tem 2026, `G-NX5SRKJT2M`). Not: CSP artık **nginx'te değil `next.config.ts`'te**

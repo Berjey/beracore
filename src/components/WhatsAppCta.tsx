@@ -30,8 +30,9 @@ export default function WhatsAppCta() {
       style={{
         opacity: mounted ? 1 : 0,
         transform: mounted ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.8)',
-        pointerEvents: mounted ? 'auto' : 'none',
-        transitionProperty: 'opacity, transform',
+        // visibility: belirmeden önce Tab sırasında ve erişilebilirlik ağacında yer almasın.
+        visibility: mounted ? 'visible' : 'hidden',
+        transitionProperty: 'opacity, transform, visibility',
         transitionDuration: '0.5s',
         transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}

@@ -27,9 +27,11 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const api = createCoreScene(canvas);
+    // Poster, gezegen dokusu yüklenip ilk kare çizildiğinde kalkar (sabit gecikme
+    // yerine gerçek hazır olma anı). 4 sn güvenlik ağı: WebGL/doku başarısız olursa
+    // kullanıcı poster arkasında kilitli kalmaz.
+    const api = createCoreScene(canvas, fireReady);
     sceneRef.current = api;
-    requestAnimationFrame(() => setTimeout(fireReady, 300));
     const timer = setTimeout(fireReady, 4000);
     return () => { clearTimeout(timer); api.dispose(); };
   }, [fireReady]);

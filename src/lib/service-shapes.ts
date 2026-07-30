@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export interface ShapeSceneAPI {
-  setShape: (shape: string, color: string) => void;
+  setShape: (shape: string) => void;
   dispose: () => void;
 }
 
@@ -694,17 +694,8 @@ function makeGlowTex(sharp = false): THREE.CanvasTexture {
   return t;
 }
 
-export interface ShapeSceneOptions {
-  /** 'sub' = alt hizmet kartları (daha küçük parçacık, daha net) */
-  mode?: 'main' | 'sub';
-}
-
-export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOptions): ShapeSceneAPI {
-  const mode = opts?.mode ?? 'main';
-  const isSub = mode === 'sub';
-
-  // Sub: çok daha fazla parçacık, aynı büyük canvas — şekil net belli olsun
-  const particleCount = isSub ? 8000 : PARTICLES;
+export function createShapeScene(canvas: HTMLCanvasElement): ShapeSceneAPI {
+  const particleCount = PARTICLES;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
@@ -747,12 +738,12 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
   geo.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
 
   // Küçük sıkı parçacıklar, keskin glow → şekil net belli olsun
-  const ptSizeBase = isSub ? 3.5 : 5.5;
-  const ptSizeVar = isSub ? 0.4 : 0.8;
-  const ptScale = isSub ? 1.0 : 1.5;
-  const alphaBase = isSub ? 0.8 : 0.75;
-  const alphaVar = isSub ? 0.15 : 0.2;
-  const alphaMult = isSub ? 0.75 : 0.92;
+  const ptSizeBase = 5.5;
+  const ptSizeVar = 0.8;
+  const ptScale = 1.5;
+  const alphaBase = 0.75;
+  const alphaVar = 0.2;
+  const alphaMult = 0.92;
 
   const mat = new THREE.ShaderMaterial({
     uniforms: {
@@ -883,7 +874,7 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
   })();
 
   return {
-    setShape(shape: string, color: string) {
+    setShape(shape: string) {
       transitioning = true;
       tProg = 0;
       pendingShape = shape;
@@ -894,10 +885,14 @@ export function createShapeScene(canvas: HTMLCanvasElement, opts?: ShapeSceneOpt
       controls.dispose();
       ro.disconnect();
       obs.disconnect();
-      renderer.dispose();
       geo.dispose();
       mat.dispose();
       glowTex.dispose();
+      // forceContextLoss + dispose: tarayıcı başına eşzamanlı WebGL bağlamı sayısı
+      // sınırlıdır (~16). Yalnızca dispose() bağlamı serbest bırakmaz; sayfalar
+      // arasında gezinirken "too many active WebGL contexts" ile sahne kararıyordu.
+      renderer.forceContextLoss();
+      renderer.dispose();
     },
   };
 }

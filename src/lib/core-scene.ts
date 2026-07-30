@@ -5,7 +5,12 @@ export interface CoreSceneAPI {
   dispose: () => void;
 }
 
-export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
+/**
+ * @param onTextureReady Gezegen dokusu yüklenip ilk kare çizildiğinde çağrılır.
+ *   Poster (SSR kapak) tam bu anda kalkar; eskiden sabit ~300 ms sonra kalkıyordu
+ *   ve yavaş bağlantıda dokusuz/boş bir hero görünüyordu.
+ */
+export function createCoreScene(canvas: HTMLCanvasElement, onTextureReady?: () => void): CoreSceneAPI {
   const box = canvas.parentElement!;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
@@ -17,7 +22,14 @@ export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
 
   // Planet as billboard plane (the PNG is already a 3D-rendered sphere)
   const loader = new THREE.TextureLoader();
-  const planetTex = loader.load('/planet.webp');
+  let texLoaded = false;
+  const planetTex = loader.load(
+    '/planet.webp',
+    () => { texLoaded = true; },
+    undefined,
+    // Doku yüklenemezse poster sonsuza kadar kalmasın (HeroCore'un zaman aşımı da var).
+    () => { texLoaded = true; },
+  );
   planetTex.colorSpace = THREE.SRGBColorSpace;
   planetTex.minFilter = THREE.LinearMipMapLinearFilter;
   planetTex.magFilter = THREE.LinearFilter;
@@ -45,10 +57,13 @@ export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
   const onRS = () => { if (rsTick) return; rsTick = true; requestAnimationFrame(() => { resize(); rsTick = false; }); };
   window.addEventListener('resize', onRS, { passive: true });
 
-  let vis = true;
-  const obs = new IntersectionObserver(e => { vis = e[0].isIntersecting; }, { threshold: 0 });
+  // Görünürlük iki BAĞIMSIZ koşula bağlı; tek değişkeni ikisi birlikte yazınca
+  // sekmeye geri dönmek, canvas ekran dışında olsa bile render'ı yeniden açıyordu.
+  let onScreen = true;
+  let tabVisible = true;
+  const obs = new IntersectionObserver(e => { onScreen = e[0].isIntersecting; }, { threshold: 0 });
   obs.observe(canvas);
-  const onVis = () => { vis = !document.hidden; };
+  const onVis = () => { tabVisible = !document.hidden; };
   document.addEventListener('visibilitychange', onVis);
 
   // Hover
@@ -69,9 +84,10 @@ export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
   resize();
 
   let raf: number;
+  let readyFired = false;
   (function loop() {
     raf = requestAnimationFrame(loop);
-    if (!vis) return;
+    if (!onScreen || !tabVisible) return;
     const t = clock.getElapsedTime();
 
     scroll += (scrollTarget - scroll) * 0.06;
@@ -115,6 +131,13 @@ export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
     planeMat.color.setRGB(hBright, hBright, hBright);
 
     renderer.render(scene, camera);
+
+    // Doku yüklendikten sonraki İLK çizilmiş kareyi bekle → poster kalkarken
+    // gezegen gerçekten ekranda olur.
+    if (texLoaded && !readyFired) {
+      readyFired = true;
+      onTextureReady?.();
+    }
   })();
 
   return {
@@ -126,8 +149,10 @@ export function createCoreScene(canvas: HTMLCanvasElement): CoreSceneAPI {
       canvas.removeEventListener('mousemove', onMM);
       canvas.removeEventListener('mouseleave', onML);
       obs.disconnect();
-      renderer.dispose();
       planeGeo.dispose(); planeMat.dispose(); planetTex.dispose();
+      // Bkz. service-shapes: yalnızca dispose() WebGL bağlamını serbest bırakmaz.
+      renderer.forceContextLoss();
+      renderer.dispose();
     },
   };
 }

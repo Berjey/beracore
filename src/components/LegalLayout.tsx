@@ -1,11 +1,5 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import type { ReactNode } from 'react';
 
 type Section = {
   title: string;
@@ -18,48 +12,28 @@ type LegalLayoutProps = {
   intro: string;
   lastUpdated: string;
   sections: Section[];
+  /** Alt navigasyonun üstüne eklenen isteğe bağlı içerik (ör. çerez tercihi sıfırlama). */
+  footerExtra?: ReactNode;
 };
 
+/*
+ * SUNUCU bileşeni — bilinçli olarak 'use client' YOK.
+ * Giriş animasyonu önceden GSAP + ScrollTrigger ile yapılıyordu: 4 statik metin
+ * sayfasına yalnızca iki fade-up için ~80 kB istemci JS'i yükleniyordu. Aynı his
+ * globals.css'teki `.lg-anim` (CSS keyframes) ile sağlanıyor; sayfalar artık
+ * neredeyse sıfır JS ile geliyor. prefers-reduced-motion global kuralı animasyonu
+ * anında bitirdiği için hareket kısıtlı modda içerik doğrudan görünür.
+ */
 export default function LegalLayout({
   title,
   accent = 'Yasal',
   intro,
   lastUpdated,
   sections,
+  footerExtra,
 }: LegalLayoutProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    let ctx: gsap.Context | null = null;
-    const timer = setTimeout(() => {
-      ctx = gsap.context(() => {
-        gsap.fromTo('.lg-hero > *',
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.08 }
-        );
-
-        gsap.fromTo('.lg-section',
-          { y: 40, opacity: 0 },
-          {
-            y: 0, opacity: 1, duration: 0.7, stagger: 0.05, ease: 'power3.out',
-            scrollTrigger: {
-              trigger: '.lg-body',
-              start: 'top 80%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
-
-        requestAnimationFrame(() => ScrollTrigger.refresh());
-      }, container);
-    }, 400);
-    return () => { clearTimeout(timer); ctx?.revert(); };
-  }, []);
-
   return (
-    <main id="main" ref={containerRef} className="relative min-h-screen pt-32 pb-20 px-8 max-md:px-5 max-md:pt-24">
+    <main id="main" className="relative min-h-screen pt-32 pb-20 px-8 max-md:px-5 max-md:pt-24">
       {/* Arkaplan sinematik glow */}
       <div
         className="pointer-events-none absolute inset-0 -z-10"
@@ -71,7 +45,7 @@ export default function LegalLayout({
 
       <div className="max-w-[820px] mx-auto">
         {/* Hero */}
-        <div className="lg-hero mb-14 max-md:mb-10">
+        <div className="lg-hero lg-anim mb-14 max-md:mb-10">
           <span className="inline-block font-body text-[0.7rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-4">
             {accent}
           </span>
@@ -99,7 +73,11 @@ export default function LegalLayout({
         {/* İçerik */}
         <div className="lg-body space-y-10 max-md:space-y-8">
           {sections.map((section, i) => (
-            <section key={i} className="lg-section">
+            <section
+              key={i}
+              className="lg-section lg-anim"
+              style={{ animationDelay: `${0.08 + i * 0.05}s` }}
+            >
               <h2 className="font-heading text-[1.25rem] font-bold text-t1 mb-3 max-md:text-[1.1rem]">
                 <span
                   className="font-body text-[0.7rem] font-semibold tracking-[0.2em] mr-2 align-middle"
@@ -133,6 +111,8 @@ export default function LegalLayout({
             </section>
           ))}
         </div>
+
+        {footerExtra}
 
         {/* Alt navigasyon */}
         <div className="mt-16 pt-8 border-t border-white/[0.06] flex items-center justify-between flex-wrap gap-4 max-md:mt-12">

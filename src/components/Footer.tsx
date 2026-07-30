@@ -4,11 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { services } from '@/lib/services-data';
-
-gsap.registerPlugin(ScrollTrigger);
 
 // href ZORUNLU: Googlebot <button onClick> gezinmesini takip etmez.
 const KURUMSAL = [
@@ -39,23 +35,37 @@ export default function Footer() {
   const pathname = usePathname();
   const footerRef = useRef<HTMLElement>(null);
 
+  // Footer girişi: GSAP + ScrollTrigger yerine IntersectionObserver + CSS.
+  // Footer HER sayfada olduğu için gsap paketi (~70 kB) sitedeki tüm sayfalara
+  // yalnızca bu iki fade-up için yükleniyordu; artık yalnızca gerçekten karmaşık
+  // animasyonu olan sayfalar (anasayfa, hizmet, hakkımızda, iletişim) gsap indiriyor.
   useEffect(() => {
     const footer = footerRef.current;
     if (!footer) return;
-    let ctx: gsap.Context | null = null;
-    const timer = setTimeout(() => {
-      ctx = gsap.context(() => {
-        gsap.fromTo('.ft-line', { scaleX: 0 }, {
-          scaleX: 1,
-          scrollTrigger: { trigger: footer, start: 'top 95%', end: 'top 55%', scrub: 0.12 },
-        });
-        gsap.fromTo('.ft-col', { y: 40, opacity: 0 }, {
-          y: 0, opacity: 1, stagger: 0.03,
-          scrollTrigger: { trigger: footer, start: 'top 85%', end: 'top 35%', scrub: 0.15 },
-        });
-      }, footer);
-    }, 400);
-    return () => { clearTimeout(timer); ctx?.revert(); };
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      !('IntersectionObserver' in window)
+    ) {
+      return; // animasyon yok → içerik doğrudan görünür
+    }
+    footer.classList.add('ft-armed');
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          footer.classList.add('ft-in');
+          io.disconnect();
+        }
+      },
+      { rootMargin: '0px 0px -10% 0px' }
+    );
+    io.observe(footer);
+    // Güvenlik ağı: gözlemci tetiklenmezse footer gizli kalmasın.
+    const safety = window.setTimeout(() => footer.classList.add('ft-in'), 2500);
+    return () => {
+      io.disconnect();
+      window.clearTimeout(safety);
+      footer.classList.remove('ft-armed', 'ft-in');
+    };
   }, []);
 
   // <Link> üzerinden çağrılır; gezinmeyi Link yapar, burada yalnızca
@@ -124,9 +134,12 @@ export default function Footer() {
             <div className="p-5 rounded-2xl overflow-hidden relative" style={{ background: 'linear-gradient(135deg, rgba(255,169,249,0.08), rgba(255,247,173,0.05))' }}>
               <div className="absolute inset-0 rounded-2xl border border-accent/15" />
               <p className="font-body text-[0.85rem] text-t1 font-light mb-4 relative">Projenizi konuşalım — keşif görüşmesi ücretsiz.</p>
-              <a href="mailto:info@beracore.com" className="relative inline-flex items-center gap-2 w-full justify-center px-5 py-3 rounded-xl font-body text-[0.78rem] font-bold tracking-wider uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-400 hover:shadow-[0_8px_24px_rgba(255,169,249,0.25)] hover:scale-[1.02]">
+              {/* Sitedeki diğer tüm "Teklif Al" aksiyonlarıyla aynı hedef: teklif formu.
+                  Öncesinde mailto idi; hizmet/bütçe/takvim gibi yapılandırılmış bilgi
+                  toplanmadan ham e-postaya düşüyordu (doğrudan e-posta zaten yukarıda). */}
+              <Link href="/iletisim" className="relative inline-flex items-center gap-2 w-full justify-center px-5 py-3 rounded-xl font-body text-[0.78rem] font-bold tracking-wider uppercase bg-gradient-to-r from-accent to-accent2 text-bg transition-all duration-400 hover:shadow-[0_8px_24px_rgba(255,169,249,0.25)] hover:scale-[1.02]">
                 Teklif Al <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

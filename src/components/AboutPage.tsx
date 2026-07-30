@@ -607,18 +607,23 @@ export default function AboutPage() {
             Hakkımızda
           </span>
 
+          {/* aria-label + GERÇEK boşluk: başlık harflere bölündüğü için iki kelime
+              arasında metin düğümü yoktu; hem erişilebilir ad hem de tarayıcı/örümcek
+              tarafından okunan metin "DijitalinÇekirdeğindeyiz" olarak birleşiyordu.
+              Görsel boşluk artık mr-[0.3em] yerine bu boşluk karakterinden gelir. */}
           <h1
+            aria-label="Dijitalin Çekirdeğindeyiz"
             className="font-body text-[clamp(2.4rem,6vw,4.6rem)] font-light leading-[1.05] tracking-tight mb-8"
             style={{ perspective: '1000px' }}
           >
-            <span className="inline-block text-t1 mr-[0.3em]">
+            <span aria-hidden="true" className="inline-block text-t1">
               {Array.from('Dijitalin').map((ch, i) => (
                 <span key={i} className="ab-char-main inline-block" style={{ willChange: 'transform, opacity', opacity: 0 }}>
                   {ch}
                 </span>
               ))}
-            </span>
-            <span className="relative inline-block font-semibold">
+            </span>{' '}
+            <span aria-hidden="true" className="relative inline-block font-semibold">
               {/* Pulsing glow behind accent */}
               <span
                 className="ab-accent-glow pointer-events-none absolute inset-0 -z-10 blur-[40px]"

@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
-import ScrollReset from '@/components/ScrollReset';
 import MotionGuard from '@/components/MotionGuard';
 import CookieConsent from '@/components/CookieConsent';
 import WhatsAppCta from '@/components/WhatsAppCta';
@@ -11,20 +10,23 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  themeColor: '#0f0d16',
+  // Sayfanın gerçek zemin rengiyle AYNI olmalı (globals.css --color-bg) —
+  // aksi halde mobil tarayıcı çubuğu ile sayfa arasında renk kopması olur.
+  themeColor: '#1a1a1a',
   colorScheme: 'dark',
 };
 
+// `weight` verilmez → next/font DEĞİŞKEN (variable) fontu indirir: iki aile için
+// 9 ayrı statik dosya yerine subset başına tek dosya. Tüm ağırlıklar (100–900)
+// kullanılabilir kalır, toplam font yükü ve istek sayısı belirgin şekilde düşer.
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
-  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-body',
   display: 'swap',
 });
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500', '600', '700'],
   variable: '--font-heading',
   display: 'swap',
 });
@@ -76,10 +78,8 @@ export const metadata: Metadata = {
     description: 'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler.',
     images: ['/beracore-bg.png'],
   },
-  other: {
-    'theme-color': '#0f0d16',
-    'color-scheme': 'dark',
-  },
+  // NOT: theme-color / color-scheme yalnızca `viewport` export'unda tanımlanır.
+  // Burada tekrar verilirse Next aynı meta etiketini iki kez basar.
 };
 
 // Sosyal profiller — Footer'daki SOCIALS ile aynı.
@@ -158,12 +158,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="image/svg+xml"
           href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fff7ad'/%3E%3Cstop offset='100%25' stop-color='%23ffa9f9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%230f0d16'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='url(%23g)' stroke-width='2.6'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='url(%23g)'/%3E%3C/svg%3E"
         />
-        {/* Scroll to top on refresh — senkron çalışır, hydration beklemez */}
+        {/* Yenilemede sayfa başa döner — senkron çalışır, hydration beklemez.
+            scrollRestoration='manual' tarayıcının eski konumu geri yüklemesini kapatır,
+            bu yüzden ayrı bir scrollTo/beforeunload gerekmez.
+            `beforeunload` BİLEREK kullanılmıyor: kayıtlı bir beforeunload dinleyicisi
+            sayfayı back/forward cache (bfcache) dışına çıkarır → geri dönüşte tam yeniden
+            yükleme olur (Lighthouse "bfcache" uyarısı). pageshow ise bfcache'ten
+            geri dönüldüğünde konumu sıfırlar. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-              window.addEventListener('beforeunload', function() { window.scrollTo(0, 0); });
               window.addEventListener('pageshow', function(e) { if (e.persisted) window.scrollTo(0, 0); });
             `,
           }}
@@ -185,7 +190,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Ana içeriğe atla
         </a>
         <MotionGuard />
-        <ScrollReset />
         {children}
         <WhatsAppCta />
         <CookieConsent />

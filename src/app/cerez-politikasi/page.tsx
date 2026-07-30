@@ -5,6 +5,7 @@ import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import LegalLayout from '@/components/LegalLayout';
+import CookiePreferenceReset from '@/components/CookiePreferenceReset';
 
 export const metadata: Metadata = {
   title: 'Çerez Politikası | BERACORE',
@@ -65,6 +66,7 @@ export default function CerezPolitikasiPage() {
         intro="Web sitemizde kullandığımız çerezler, türleri, amaçları ve tercihlerinizi nasıl yönetebileceğiniz hakkında şeffaf bir özet."
         lastUpdated="Nisan 2026"
         sections={sections}
+        footerExtra={<CookiePreferenceReset />}
       />
       <Footer />
       <ScrollToTop />

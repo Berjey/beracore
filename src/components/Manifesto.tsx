@@ -32,6 +32,11 @@ export default function Manifesto() {
   }, []);
 
   useEffect(() => {
+    // Hareket kısıtlıysa: tüm metin doğrudan görünür, scroll dinleyicisi kurulmaz.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setProgress(1);
+      return;
+    }
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
     const wrapper = wrapperRef.current;
@@ -95,14 +100,30 @@ export default function Manifesto() {
   );
 }
 
+/* Yazılmamış kısım DOM'da kalır, yalnızca görünmez olur.
+   → sunucu HTML'inde başlıklar/paragraf boş değil (SEO), erişilebilir ad tam,
+   nihai yer baştan ayrıldığı için yazarken satır kaymaz (CLS yok). */
+const HIDDEN = { opacity: 0 } as const;
+
+/** Genişliği 0 olan kapsayıcıda konumlanan imleç → metni kaydırmaz. */
+function Caret() {
+  return (
+    <span aria-hidden="true" className="relative inline-block w-0 align-middle">
+      <span className="absolute left-[1px] top-1/2 -translate-y-1/2 block w-[2px] h-[0.85em] bg-accent animate-pulse" />
+    </span>
+  );
+}
+
 function Typewriter({ text, progress, className }: { text: string; progress: number; className?: string }) {
   const n = Math.floor(progress * text.length);
   const show = text.slice(0, n);
+  const rest = text.slice(n);
   const typing = progress > 0 && progress < 1;
   return (
     <span className={className}>
       {show}
-      {typing && <span className="inline-block w-[2px] h-[0.85em] bg-accent ml-[1px] animate-pulse align-middle" />}
+      {typing && <Caret />}
+      {rest && <span style={HIDDEN}>{rest}</span>}
     </span>
   );
 }
@@ -115,13 +136,18 @@ function TypewriterAccent({
   const full = before + accent;
   const n = Math.floor(progress * full.length);
   const typing = progress > 0 && progress < 1;
-  const showBefore = full.slice(0, Math.min(n, before.length));
-  const showAccent = n > before.length ? full.slice(before.length, n) : '';
+  const showBefore = before.slice(0, Math.min(n, before.length));
+  const restBefore = before.slice(showBefore.length);
+  const showAccent = accent.slice(0, Math.max(0, n - before.length));
+  const restAccent = accent.slice(showAccent.length);
   return (
     <span className={className}>
       {showBefore}
+      {typing && n <= before.length && <Caret />}
+      {restBefore && <span style={HIDDEN}>{restBefore}</span>}
       {showAccent && <span className={accentClass}>{showAccent}</span>}
-      {typing && <span className="inline-block w-[2px] h-[0.85em] bg-accent ml-[1px] animate-pulse align-middle" />}
+      {typing && n > before.length && <Caret />}
+      {restAccent && <span className={accentClass} style={HIDDEN}>{restAccent}</span>}
     </span>
   );
 }

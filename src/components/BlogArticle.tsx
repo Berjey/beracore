@@ -2,13 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { BlogPost, ContentBlock } from '@/lib/blog-data';
 import { getCategoryColor } from '@/lib/blog-data';
 import { formatDate } from '@/lib/format';
-
-gsap.registerPlugin(ScrollTrigger);
+import { useReveal } from '@/lib/use-reveal';
 
 interface Props {
   post: BlogPost;
@@ -19,14 +16,14 @@ interface Props {
 function renderBlock(block: ContentBlock, i: number, accent: string) {
   switch (block.type) {
     case 'h2':
-      return <h2 key={i} className="bl-reveal font-body text-[clamp(1.4rem,3vw,1.95rem)] font-semibold text-t1 tracking-tight mt-14 mb-4">{block.text}</h2>;
+      return <h2 key={i} data-rv className="font-body text-[clamp(1.4rem,3vw,1.95rem)] font-semibold text-t1 tracking-tight mt-14 mb-4">{block.text}</h2>;
     case 'h3':
-      return <h3 key={i} className="bl-reveal font-body text-[1.2rem] font-semibold text-t1 mt-9 mb-3">{block.text}</h3>;
+      return <h3 key={i} data-rv className="font-body text-[1.2rem] font-semibold text-t1 mt-9 mb-3">{block.text}</h3>;
     case 'p':
-      return <p key={i} className="bl-reveal font-body text-[1.05rem] text-t2 font-light leading-[1.85] mb-6">{block.text}</p>;
+      return <p key={i} data-rv className="font-body text-[1.05rem] text-t2 font-light leading-[1.85] mb-6">{block.text}</p>;
     case 'ul':
       return (
-        <ul key={i} className="bl-reveal mb-7 space-y-3">
+        <ul key={i} data-rv className="mb-7 space-y-3">
           {block.items.map((item, j) => (
             <li key={j} className="flex items-start gap-3 font-body text-[1.02rem] text-t2 font-light leading-relaxed">
               <span className="mt-2.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: accent }} aria-hidden="true" />
@@ -37,7 +34,7 @@ function renderBlock(block: ContentBlock, i: number, accent: string) {
       );
     case 'quote':
       return (
-        <blockquote key={i} className="bl-reveal my-10 pl-6 py-1 border-l-2 font-body text-[1.15rem] text-t1 font-light italic leading-relaxed" style={{ borderColor: accent }}>
+        <blockquote key={i} data-rv className="my-10 pl-6 py-1 border-l-2 font-body text-[1.15rem] text-t1 font-light italic leading-relaxed" style={{ borderColor: accent }}>
           {block.text}
         </blockquote>
       );
@@ -81,32 +78,14 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
     };
   }, []);
 
-  // Giriş + içerik reveal animasyonları
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    let ctx: gsap.Context | null = null;
-    const timer = setTimeout(() => {
-      ctx = gsap.context(() => {
-        const tl = gsap.timeline({ delay: 0.05, onComplete: () => container.classList.remove('bl-intro-pending') });
-        tl.fromTo('.bl-crumb', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' })
-          .fromTo('.bl-meta', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2')
-          .fromTo('.bl-h1', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.2');
-
-        // Çok sayıda tekil ScrollTrigger yerine batch — grup halinde, tek gözlemci, çok daha pürüzsüz.
-        gsap.set('.bl-reveal', { y: 24, opacity: 0 });
-        ScrollTrigger.batch('.bl-reveal', {
-          start: 'top 90%',
-          onEnter: (batch) =>
-            gsap.to(batch, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out', stagger: 0.08, overwrite: true }),
-        });
-      }, container);
-    }, 60);
-    return () => { clearTimeout(timer); ctx?.revert(); };
-  }, []);
+  // Giriş + içerik reveal — GSAP DEĞİL, CSS animasyonu + IntersectionObserver.
+  // Blog yazıları sitenin en çok taranan sayfaları; gsap + ScrollTrigger (~70 kB)
+  // yalnızca fade-up'lar için 50 sayfaya yükleniyordu. Hero girişi artık saf CSS
+  // (`rv-up`) olduğu için `bl-intro-pending` gizleme hilesine de gerek kalmadı.
+  useReveal(containerRef);
 
   return (
-    <div ref={containerRef} className="bl-intro-pending">
+    <div ref={containerRef}>
       {/* Okuma ilerleme çubuğu — GPU scaleX, transformOrigin sol */}
       <div className="fixed top-0 left-0 right-0 h-[3px] z-[60] bg-transparent">
         <div
@@ -119,7 +98,7 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
       <article className="relative pt-36 pb-24 px-6 max-md:pt-28 max-md:pb-16">
         <div className="max-w-2xl mx-auto">
           {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="bl-crumb mb-8">
+          <nav aria-label="Breadcrumb" className="rv-up mb-8">
             <ol className="flex flex-wrap items-center gap-2 font-body text-[0.78rem] text-t3">
               <li><Link href="/" className="hover:text-accent transition-colors">Ana Sayfa</Link></li>
               <li aria-hidden="true">/</li>
@@ -128,7 +107,7 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
           </nav>
 
           <header className="mb-12">
-            <div className="bl-meta flex flex-wrap items-center gap-3 mb-6 font-body text-[0.75rem] text-t3">
+            <div className="rv-up flex flex-wrap items-center gap-3 mb-6 font-body text-[0.75rem] text-t3" style={{ animationDelay: '0.08s' }}>
               <span
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-semibold tracking-wide"
                 style={{ background: `color-mix(in srgb, ${accent} 14%, transparent)`, color: accent }}
@@ -140,7 +119,7 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
               <span aria-hidden="true">·</span>
               <span>{post.readingMinutes} dk okuma</span>
             </div>
-            <h1 className="bl-h1 font-heading text-[clamp(2rem,5vw,3.1rem)] font-semibold tracking-tight leading-[1.08]">
+            <h1 className="rv-up font-heading text-[clamp(2rem,5vw,3.1rem)] font-semibold tracking-tight leading-[1.08]" style={{ animationDelay: '0.16s' }}>
               {post.title}
             </h1>
           </header>
@@ -153,14 +132,14 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
           {/* SSS — FAQPage schema ile zengin sonuç */}
           {post.faq && post.faq.length > 0 && (
             <section className="mt-16" aria-label="Sıkça Sorulan Sorular">
-              <h2 className="bl-reveal font-body text-[clamp(1.4rem,3vw,1.95rem)] font-semibold text-t1 tracking-tight mb-6">
+              <h2 data-rv className="font-body text-[clamp(1.4rem,3vw,1.95rem)] font-semibold text-t1 tracking-tight mb-6">
                 Sıkça Sorulan Sorular
               </h2>
               <div className="space-y-3">
                 {post.faq.map((item, i) => (
                   <details
                     key={i}
-                    className="bl-reveal group rounded-2xl border border-white/[0.07] bg-white/[0.015] overflow-hidden transition-colors duration-300 hover:border-white/[0.15]"
+                    data-rv className="group rounded-2xl border border-white/[0.07] bg-white/[0.015] overflow-hidden transition-colors duration-300 hover:border-white/[0.15]"
                   >
                     <summary className="flex items-center justify-between gap-4 cursor-pointer list-none px-6 py-5 font-body text-[1rem] font-semibold text-t1">
                       <span>{item.question}</span>
@@ -177,7 +156,7 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
 
           {/* İlgili hizmet — huni girişi */}
           {post.relatedService && (
-            <div className="bl-reveal mt-16 p-8 rounded-2xl border overflow-hidden relative text-center"
+            <div data-rv className="mt-16 p-8 rounded-2xl border overflow-hidden relative text-center"
               style={{ borderColor: `color-mix(in srgb, ${accent} 25%, transparent)`, background: `color-mix(in srgb, ${accent} 5%, transparent)` }}>
               <p className="font-body text-[1.02rem] text-t2 font-light mb-5">
                 Bu konuda profesyonel destek mi arıyorsunuz?
@@ -195,7 +174,7 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
 
           {/* Bağlamsal yerel iç link — İstanbul (yerel SEO) */}
           {cityLink && (
-            <p className="bl-reveal mt-6 text-center font-body text-[0.9rem] text-t3">
+            <p data-rv className="mt-6 text-center font-body text-[0.9rem] text-t3">
               İstanbul’da mısınız?{' '}
               <Link href={cityLink.href} className="text-accent hover:text-accent2 font-medium transition-colors">
                 {cityLink.title}
@@ -208,7 +187,7 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
         {/* İlgili yazılar — iç link ağı */}
         {relatedPosts.length > 0 && (
           <div className="max-w-5xl mx-auto mt-24">
-            <h2 className="bl-reveal font-body text-[1.4rem] font-light text-t1 text-center mb-10">
+            <h2 data-rv className="font-body text-[1.4rem] font-light text-t1 text-center mb-10">
               İlgili yazılar
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -218,7 +197,7 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
                   <Link
                     key={rp.slug}
                     href={`/blog/${rp.slug}`}
-                    className="bl-reveal group relative p-6 rounded-2xl border border-white/[0.06] bg-white/[0.015] transition-all duration-400 hover:border-white/[0.18] hover:bg-white/[0.035] hover:-translate-y-1"
+                    data-rv className="group relative p-6 rounded-2xl border border-white/[0.06] bg-white/[0.015] transition-all duration-400 hover:border-white/[0.18] hover:bg-white/[0.035] hover:-translate-y-1"
                     style={{ '--accent': c } as React.CSSProperties}
                   >
                     <span className="pointer-events-none absolute top-0 left-0 right-0 h-[2px] opacity-40 group-hover:opacity-100 transition-opacity duration-500"

@@ -6,7 +6,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { services } from '@/lib/services-data';
 import { getCityPagesByServiceHref } from '@/lib/city-pages-data';
-import { createSubScene, type SubShapeAPI } from '@/lib/sub-shapes';
+import type { SubShapeAPI } from '@/lib/sub-shapes';
+import { useTapOnly } from '@/lib/use-tap-only';
 import ScrollText from '@/components/ScrollText';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -52,6 +53,13 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
     }
   }, [subSlug, service]);
 
+  // Sahne asenkron kurulduğu için, kurulum bittiğinde O ANDAKİ şekil/renk gerekir.
+  // (İlk import çözülene kadar kullanıcı ok tuşlarıyla alt hizmeti değiştirmiş olabilir.)
+  const latestIcon = useRef<string | null>(null);
+  useEffect(() => {
+    latestIcon.current = sub?.icon ?? null;
+  });
+
   // Init 3D wireframe shape (Strict Mode güvenli: fake unmount'ta dispose etmez)
   useEffect(() => {
     const c = canvasRef.current;
@@ -60,18 +68,29 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
     // Strict Mode re-mount — mevcut API'yi koru, yeniden init etme (canvas zaten çiziliyor → görünür yap)
     if (shapeRef.current) { setCanvasReady(true); return; }
 
-    const api = createSubScene(c, () => setCanvasReady(true));
-    shapeRef.current = api;
-    if (service && sub) {
-      api.setShape(sub.icon, service.color);
-      lastSubIconRef.current = sub.icon;
-    }
+    let cancelled = false;
+    let api: SubShapeAPI | null = null;
+
+    // three.js + sahne kodu DİNAMİK yüklenir: sayfanın ilk JS paketinden çıkar,
+    // hidrasyon ve etkileşime hazır olma süresi belirgin şekilde kısalır. Canvas
+    // hazır olana kadar koyu kapak div'i durduğu için görsel bir boşluk oluşmaz.
+    import('@/lib/sub-shapes').then(({ createSubScene }) => {
+      if (cancelled || !c.isConnected) return;
+      api = createSubScene(c, () => setCanvasReady(true));
+      shapeRef.current = api;
+      const icon = latestIcon.current;
+      if (icon) {
+        api.setShape(icon);
+        lastSubIconRef.current = icon;
+      }
+    });
 
     return () => {
+      cancelled = true;
       // Strict Mode cleanup DOM'u sökmez — canvas hâlâ bağlıysa dispose'u atla.
       // Sadece gerçek unmount'ta (route değişimi, canvas DOM'dan çıktı) dispose et.
       queueMicrotask(() => {
-        if (!c.isConnected) {
+        if (!c.isConnected && api) {
           api.dispose();
           if (shapeRef.current === api) {
             shapeRef.current = null;
@@ -85,11 +104,11 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
 
   // Morph on sub change — aynı ikon için self-morph'u engelle
   useEffect(() => {
-    if (!shapeRef.current || !sub || !service) return;
+    if (!shapeRef.current || !sub) return;
     if (lastSubIconRef.current === sub.icon) return;
     lastSubIconRef.current = sub.icon;
-    shapeRef.current.setShape(sub.icon, service.color);
-  }, [subIndex, sub, service]);
+    shapeRef.current.setShape(sub.icon);
+  }, [subIndex, sub]);
 
   // ======================================================
   // HERO intro timeline (sadece mount'ta, sub değişiminde değil)
@@ -367,24 +386,36 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
         { scale: 1, opacity: 1, duration: 0.3, stagger: 0.03, ease: 'power2.out' }, 0.58);
   }, [service, subIndex]);
 
+  const shapeTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const handleShapeClick = useCallback(() => {
     if (shapeClicked) return;
     setShapeClicked(true);
-    setTimeout(() => {
+    shapeTimers.current.push(setTimeout(() => {
       detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(() => setShapeClicked(false), 1000);
-    }, 700);
+      shapeTimers.current.push(setTimeout(() => setShapeClicked(false), 1000));
+    }, 700));
   }, [shapeClicked]);
+  useEffect(() => () => { shapeTimers.current.forEach(clearTimeout); }, []);
 
+  // Şekli sürükleyerek döndürmek artık gezinmeyi/kaydırmayı tetiklemez (bkz. useTapOnly).
+  const shapeTap = useTapOnly(handleShapeClick);
+
+  // Sol/sağ ok ile alt hizmet gezinmesi. Form alanlarında veya bir öğe odakta
+  // yazı yazılırken devreye girmemesi gerekir. `Enter` BİLEREK bağlanmaz:
+  // dokümana bağlı bir Enter dinleyicisi, kullanıcı herhangi bir link/butonu
+  // klavyeyle çalıştırdığında da tetikleniyor ve sayfayı beklenmedik şekilde
+  // aşağı kaydırıyordu (şekil için zaten görünür bir buton var).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t?.closest('input, textarea, select, [contenteditable="true"]')) return;
       if (e.key === 'ArrowRight') goTo(subIndex + 1);
-      if (e.key === 'ArrowLeft') goTo(subIndex - 1);
-      if (e.key === 'Enter') handleShapeClick();
+      else if (e.key === 'ArrowLeft') goTo(subIndex - 1);
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [goTo, subIndex, handleShapeClick]);
+  }, [goTo, subIndex]);
 
   if (!service || !sub) return null;
 
@@ -523,8 +554,8 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
             </button>
 
             <div
-              className="sp-shape-wrap relative flex items-center justify-center cursor-pointer"
-              onClick={handleShapeClick}
+              className="sp-shape-wrap relative flex shrink-0 items-center justify-center cursor-pointer"
+              {...shapeTap}
             >
               <div className="absolute rounded-full -z-10 transition-all duration-700"
                 style={{
@@ -535,7 +566,9 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                 }} />
               <canvas
                 ref={canvasRef}
-                className="relative w-[360px] h-[360px] max-md:w-[260px] max-md:h-[260px]"
+                // Mobilde sabit 260px + iki ok (44px) + boşluklar 320px'lik ekranda
+                // satırı taşırıyordu; vw tabanlı üst sınır her genişlikte sığdırır.
+                className="relative w-[360px] h-[360px] max-md:w-[min(260px,52vw)] max-md:h-[min(260px,52vw)]"
                 style={{
                   // opacity anlık (geçişsiz): içerik compositor'a düştükten sonra açılır, beyaz backing görünmez.
                   // Yumuşak açılışı 3D nesnenin kendi WebGL intro'su (scale/opacity) sağlar.
@@ -614,17 +647,26 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
             {service.subServices.map((ss, i) => (
               <button
                 key={ss.slug}
+                type="button"
                 onClick={() => goTo(i)}
-                className="transition-all duration-400"
-                style={{
-                  width: i === subIndex ? '28px' : '8px',
-                  height: '8px',
-                  borderRadius: '4px',
-                  background: i === subIndex ? 'linear-gradient(90deg, #ffa9f9, #fff7ad)' : 'rgba(255,255,255,0.08)',
-                  boxShadow: i === subIndex ? '0 0 12px rgba(255,169,249,0.3)' : 'none',
-                }}
+                // Dokunma hedefi görsel noktadan bağımsız olarak 44px yüksekliğinde
+                // (WCAG 2.5.8); nokta içeride ortalanır.
+                className="flex items-center justify-center h-11 -my-[18px] transition-all duration-400"
                 aria-label={ss.title}
-              />
+                aria-current={i === subIndex ? 'true' : undefined}
+              >
+                <span
+                  aria-hidden="true"
+                  className="block transition-all duration-400"
+                  style={{
+                    width: i === subIndex ? '28px' : '8px',
+                    height: '8px',
+                    borderRadius: '4px',
+                    background: i === subIndex ? 'linear-gradient(90deg, #ffa9f9, #fff7ad)' : 'rgba(255,255,255,0.08)',
+                    boxShadow: i === subIndex ? '0 0 12px rgba(255,169,249,0.3)' : 'none',
+                  }}
+                />
+              </button>
             ))}
           </div>
         </div>
@@ -1088,9 +1130,11 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                     <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full transition-opacity duration-400"
                       style={{ background: `linear-gradient(to bottom, ${accent}, ${accent}00)`, opacity: open ? 1 : 0 }} />
                     <button
+                      type="button"
                       onClick={() => toggleFaq(i)}
                       className="w-full flex items-center justify-between gap-4 p-6 text-left max-md:p-5"
-                      aria-expanded={open}>
+                      aria-expanded={open}
+                      aria-controls={`sp-faq-${i}`}>
                       <span className="font-heading text-[1rem] font-semibold pr-4 max-md:text-[0.95rem]"
                         style={{ color: open ? accent : 'var(--color-t1)' }}>
                         {item.question}
@@ -1109,7 +1153,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                         </svg>
                       </span>
                     </button>
-                    <div className="grid transition-[grid-template-rows] duration-500 ease-out"
+                    <div id={`sp-faq-${i}`} className="grid transition-[grid-template-rows] duration-500 ease-out"
                       style={{ gridTemplateRows: open ? '1fr' : '0fr' }}>
                       <div className="overflow-hidden">
                         <p className="px-6 pb-6 font-body text-[0.92rem] text-t2 font-light leading-[1.8] max-md:px-5 max-md:pb-5">

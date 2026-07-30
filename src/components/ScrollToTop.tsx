@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 export default function ScrollToTop() {
   const [visible, setVisible] = useState(false);
@@ -21,14 +21,18 @@ export default function ScrollToTop() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scrollToTop = useCallback(() => {
     setClicking(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => setClicking(false), 1200);
+    if (clickTimer.current) clearTimeout(clickTimer.current);
+    clickTimer.current = setTimeout(() => setClicking(false), 1200);
   }, []);
+  useEffect(() => () => { if (clickTimer.current) clearTimeout(clickTimer.current); }, []);
 
   return (
     <button
+      type="button"
       onClick={scrollToTop}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
@@ -37,8 +41,11 @@ export default function ScrollToTop() {
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.8)',
-        pointerEvents: visible ? 'auto' : 'none',
-        transitionProperty: 'opacity, transform',
+        // visibility (pointerEvents yerine): görünmezken buton Tab sırasından ve
+        // erişilebilirlik ağacından da çıkar. Öncesinde klavye kullanıcısı
+        // görünmeyen "başa dön" butonuna odaklanabiliyordu.
+        visibility: visible ? 'visible' : 'hidden',
+        transitionProperty: 'opacity, transform, visibility',
         transitionDuration: '0.5s',
         transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}
@@ -49,7 +56,7 @@ export default function ScrollToTop() {
         <div
           className="absolute inset-0 rounded-full"
           style={{
-            background: `conic-gradient(from ${hovering ? '0deg' : '0deg'}, #ffa9f9, #fff7ad, #ffa9f9)`,
+            background: 'conic-gradient(from 0deg, #ffa9f9, #fff7ad, #ffa9f9)',
             animation: hovering || clicking ? 'spin 2s linear infinite' : 'spin 6s linear infinite',
             padding: '2px',
             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',

@@ -6,8 +6,9 @@ export default function Starfield() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const cv = canvasRef.current;
+    if (!cv) return;
+    const canvas: HTMLCanvasElement = cv; // closure içinde narrowing korunsun
     const ctx = canvas.getContext('2d', { alpha: true })!;
     const dpr = Math.min(devicePixelRatio, 2);
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -39,18 +40,23 @@ export default function Starfield() {
       }
     }
 
-    function resize() {
-      if (!canvas) return;
-      w = window.innerWidth * dpr;
-      h = window.innerHeight * dpr;
+    let lastCssW = 0, lastCssH = 0;
+
+    function resize(reseed: boolean) {
+      const cssW = window.innerWidth, cssH = window.innerHeight;
+      w = cssW * dpr;
+      h = cssH * dpr;
       canvas.width = w;
       canvas.height = h;
-      seedStars();
+      // canvas.width/height'a yazmak 2D context state'ini SIFIRLAR (fillStyle dahil).
+      // Bu satır olmadan yeniden boyutlandırmadan sonra yıldızlar siyah çiziliyor ve
+      // koyu zeminde tamamen kayboluyordu.
+      ctx.fillStyle = 'rgb(255,252,248)';
+      lastCssW = cssW;
+      lastCssH = cssH;
+      if (reseed) seedStars();
     }
-    resize();
-
-    // Tek renk; alfa string yerine globalAlpha ile — frame başına 0 string allocation.
-    ctx.fillStyle = 'rgb(255,252,248)';
+    resize(true);
 
     function paint(t: number) {
       ctx.clearRect(0, 0, w, h);
@@ -67,12 +73,31 @@ export default function Starfield() {
       ctx.globalAlpha = 1;
     }
 
+    // Mobilde adres çubuğu gizlenip görünürken `resize` sürekli tetiklenir ve yalnızca
+    // yükseklik ~60–120px değişir. Böyle durumlarda yıldızları yeniden dağıtmak tüm
+    // gökyüzünün zıplamasına yol açıyordu → yalnızca gerçek boyut değişiminde reseed.
+    const HEIGHT_TOLERANCE = 140;
+    let rafId = 0;
+    const onResize = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        const reseed =
+          window.innerWidth !== lastCssW ||
+          Math.abs(window.innerHeight - lastCssH) > HEIGHT_TOLERANCE;
+        resize(reseed);
+        if (reduced) paint(0);
+      });
+    };
+
     // Hareket kısıtlıysa: statik tek kare çiz, döngü kurma.
     if (reduced) {
-      const onResizeStatic = () => { resize(); paint(0); };
       paint(0);
-      window.addEventListener('resize', onResizeStatic);
-      return () => window.removeEventListener('resize', onResizeStatic);
+      window.addEventListener('resize', onResize);
+      return () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        window.removeEventListener('resize', onResize);
+      };
     }
 
     // ~35fps hedef: göz için farkı yok, CPU/GPU yükünü ~%40 azaltır.
@@ -89,8 +114,12 @@ export default function Starfield() {
     }
     raf = requestAnimationFrame(loop);
 
-    window.addEventListener('resize', resize);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
+    window.addEventListener('resize', onResize);
+    return () => {
+      cancelAnimationFrame(raf);
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', onResize);
+    };
   }, []);
 
   return (

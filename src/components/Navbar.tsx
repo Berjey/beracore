@@ -45,6 +45,23 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
+  // Escape: açık menü/alt menüyü kapat (klavye kullanıcısı için çıkış yolu).
+  useEffect(() => {
+    if (!mobileOpen && !hizmetlerOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setMobileOpen(false);
+      setHizmetlerOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [mobileOpen, hizmetlerOpen]);
+
+  // Bekleyen alt menü kapanış zamanlayıcısını unmount'ta temizle.
+  useEffect(() => () => {
+    if (hizmetlerTimeout.current) clearTimeout(hizmetlerTimeout.current);
+  }, []);
+
   // Sayfa geçiş loading — navigating bitince kapat
   useEffect(() => {
     if (navigating) {
@@ -99,8 +116,10 @@ export default function Navbar() {
           transitionDuration: navigating ? '0.15s' : '0.35s',
         }}
         aria-hidden={!navigating}
+        role="status"
       >
         <div className="flex flex-col items-center gap-4">
+          <span className="sr-only">Sayfa yükleniyor…</span>
           <Image src="/beracore.png" alt="BERACORE" width={58} height={38}
             className="h-10 w-auto drop-shadow-[0_0_20px_rgba(255,169,249,0.3)] animate-pulse" />
           <div className="w-8 h-8">
@@ -132,10 +151,23 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-0.5">
           {NAV_LINKS.map((link) => (
             link.label === 'Hizmetler' ? (
-              <div key={link.id} className="relative" onMouseEnter={openHizmetler} onMouseLeave={closeHizmetler}>
+              // Alt menü artık klavyeyle de açılır (onFocus) ve kapalıyken `inert`
+              // olduğu için içindeki 6 link Tab sırasına GİRMEZ. Öncesinde yalnızca
+              // opacity:0 idi → klavye kullanıcısı görünmez linklere odaklanıyordu.
+              <div
+                key={link.id}
+                className="relative"
+                onMouseEnter={openHizmetler}
+                onMouseLeave={closeHizmetler}
+                onFocus={openHizmetler}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHizmetlerOpen(false);
+                }}
+              >
                 <Link
                   href={link.href}
                   onClick={(e) => handleNav(e, link.id, link.href)}
+                  aria-expanded={hizmetlerOpen}
                   className="relative px-3 py-2 font-body text-[0.75rem] font-medium tracking-wide text-t1 transition-all duration-300 hover:text-accent group"
                 >
                   <span>{link.label}</span>
@@ -146,7 +178,8 @@ export default function Navbar() {
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-px bg-gradient-to-r from-accent to-accent2 group-hover:w-3/4 transition-all duration-400" />
                 </Link>
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 transition-all duration-300"
-                  style={{ opacity: hizmetlerOpen ? 1 : 0, transform: hizmetlerOpen ? 'translateY(0)' : 'translateY(-8px)', pointerEvents: hizmetlerOpen ? 'auto' : 'none' }}>
+                  inert={!hizmetlerOpen}
+                  style={{ opacity: hizmetlerOpen ? 1 : 0, transform: hizmetlerOpen ? 'translateY(0)' : 'translateY(-8px)' }}>
                   <div className="w-[280px] p-3 rounded-2xl bg-bg/95 backdrop-blur-[24px] border border-white/[0.08] shadow-[0_16px_48px_rgba(0,0,0,0.4)]">
                     {services.map((svc, i) => (
                       <Link key={svc.key} href={`/hizmetler/${svc.key}/${svc.subServices[0].slug}`} onClick={() => setHizmetlerOpen(false)}

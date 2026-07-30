@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { services } from '@/lib/services-data';
-import { createShapeScene, type ShapeSceneAPI } from '@/lib/service-shapes';
+import type { ShapeSceneAPI } from '@/lib/service-shapes';
+import { useTapOnly } from '@/lib/use-tap-only';
 
 export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -13,20 +14,34 @@ export default function Services() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [contentVisible, setContentVisible] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  // Sahne asenkron kurulduğu için kurulum anındaki seçili hizmet ref'ten okunur.
+  const activeIndexRef = useRef(0);
 
   const svc = services[activeIndex];
   const router = useRouter();
 
-  // Scroll-driven header
+  // Scroll-driven header — rAF ile throttle edilir. (Eskiden her scroll olayında
+  // getBoundingClientRect + stil yazımı yapılıyordu: okuma/yazma iç içe geçtiği
+  // için scroll sırasında layout thrash oluşuyordu.)
   useEffect(() => {
     const header = headerRef.current;
     if (!header) return;
-    const label = header.querySelector('.svc-label') as HTMLElement;
-    const words = header.querySelectorAll('.svc-word') as NodeListOf<HTMLElement>;
+    const label = header.querySelector<HTMLElement>('.svc-label');
+    const words = Array.from(header.querySelectorAll<HTMLElement>('.svc-word'));
+
+    // Hareket kısıtlıysa animasyon yok: her şey doğrudan görünür.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setContentVisible(true);
+      return;
+    }
+
     if (label) { label.style.opacity = '0'; label.style.transform = 'translateY(20px)'; }
     words.forEach(w => { w.style.opacity = '0'; w.style.transform = 'translateY(30px)'; });
 
-    const onScroll = () => {
+    let ticking = false;
+    let done = false;
+    const paint = () => {
+      ticking = false;
       const rect = header.getBoundingClientRect();
       const vh = window.innerHeight;
       const p = Math.max(0, Math.min(1, 1 - (rect.top / (vh * 0.75))));
@@ -40,26 +55,40 @@ export default function Services() {
         w.style.opacity = String(wp);
         w.style.transform = `translateY(${(1 - wp) * 30}px)`;
       });
-      if (p > 0.5 && !contentVisible) setContentVisible(true);
+      if (p > 0.5 && !done) { done = true; setContentVisible(true); }
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(paint);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    paint();
     return () => window.removeEventListener('scroll', onScroll);
-  }, [contentVisible]);
+  }, []);
 
+  // three.js + parçacık sahnesi DİNAMİK yüklenir → anasayfanın ilk JS paketinden
+  // çıkar. Bölüm ilk ekranın altında olduğu için görsel gecikme hissedilmez.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const api = createShapeScene(canvas);
-    shapeRef.current = api;
-    api.setShape(services[0].shape, services[0].color);
-    return () => api.dispose();
+    let cancelled = false;
+    let api: ShapeSceneAPI | null = null;
+    import('@/lib/service-shapes').then(({ createShapeScene }) => {
+      if (cancelled || !canvas.isConnected) return;
+      api = createShapeScene(canvas);
+      shapeRef.current = api;
+      api.setShape(services[activeIndexRef.current].shape);
+    });
+    return () => { cancelled = true; api?.dispose(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const goTo = useCallback((index: number) => {
     const next = (index + services.length) % services.length;
     setActiveIndex(next);
-    shapeRef.current?.setShape(services[next].shape, services[next].color);
+    activeIndexRef.current = next;
+    shapeRef.current?.setShape(services[next].shape);
   }, []);
 
   // Click on shape or button → zoom transition → open detail
@@ -67,6 +96,9 @@ export default function Services() {
     if (transitioning) return;
     setTransitioning(true);
   }, [transitioning]);
+
+  // Şekli sürükleyerek döndürmek artık sayfa geçişini tetiklemez (bkz. useTapOnly).
+  const shapeTap = useTapOnly(handleOpen);
 
   // After zoom animation completes, open the detail page
   useEffect(() => {
@@ -94,7 +126,12 @@ export default function Services() {
         </h2>
       </div>
 
-      <div className={`w-full max-w-3xl mx-auto transition-all duration-1000 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+      {/* inert: bölüm daha açılmamışken (opacity-0) içindeki butonlar klavye
+          sırasına GİRMEZ — aksi halde kullanıcı görünmez öğelere Tab'lıyordu. */}
+      <div
+        inert={!contentVisible}
+        className={`w-full max-w-3xl mx-auto transition-all duration-1000 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
+      >
         <div className="flex items-center justify-center gap-10 mb-6 max-md:gap-4">
           {/* Left arrow */}
           <button
@@ -122,8 +159,8 @@ export default function Services() {
 
           {/* Shape wrapper — this is what zooms */}
           <div
-            className="relative flex items-center justify-center cursor-pointer"
-            onClick={handleOpen}
+            className="relative flex shrink-0 items-center justify-center cursor-pointer"
+            {...shapeTap}
             style={{
               transform: transitioning ? 'scale(6)' : 'scale(1)',
               transition: 'transform 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -131,7 +168,10 @@ export default function Services() {
           >
             <div className="absolute rounded-full blur-[50px] -z-10"
               style={{ width: '160px', height: '160px', background: 'rgba(255,169,249,0.05)' }} />
-            <canvas ref={canvasRef} className="relative w-[400px] h-[400px] max-md:w-[280px] max-md:h-[280px]" />
+            {/* Mobilde sabit 280px, iki ok (44px) ve boşluklarla birlikte 320px'lik
+                ekranda satırı taşırıyordu. vw tabanlı üst sınır: 320px'te de
+                oklar + şekil yatay olarak sığar, taşma/kırpılma olmaz. */}
+            <canvas ref={canvasRef} className="relative w-[400px] h-[400px] max-md:w-[min(280px,50vw)] max-md:h-[min(280px,50vw)]" />
           </div>
 
           {/* Right arrow */}
@@ -185,17 +225,25 @@ export default function Services() {
             {services.map((s, i) => (
               <button
                 key={s.key}
+                type="button"
                 onClick={() => goTo(i)}
-                className="transition-all duration-400"
-                style={{
-                  width: i === activeIndex ? '28px' : '8px',
-                  height: '8px',
-                  borderRadius: '4px',
-                  background: i === activeIndex ? 'linear-gradient(90deg, #ffa9f9, #fff7ad)' : 'rgba(255,255,255,0.08)',
-                  boxShadow: i === activeIndex ? '0 0 12px rgba(255,169,249,0.3)' : 'none',
-                }}
+                // 44px dokunma hedefi (WCAG 2.5.8) — görsel nokta içeride ortalanır.
+                className="flex items-center justify-center h-11 -my-[18px] transition-all duration-400"
                 aria-label={s.title}
-              />
+                aria-current={i === activeIndex ? 'true' : undefined}
+              >
+                <span
+                  aria-hidden="true"
+                  className="block transition-all duration-400"
+                  style={{
+                    width: i === activeIndex ? '28px' : '8px',
+                    height: '8px',
+                    borderRadius: '4px',
+                    background: i === activeIndex ? 'linear-gradient(90deg, #ffa9f9, #fff7ad)' : 'rgba(255,255,255,0.08)',
+                    boxShadow: i === activeIndex ? '0 0 12px rgba(255,169,249,0.3)' : 'none',
+                  }}
+                />
+              </button>
             ))}
           </div>
         </div>
