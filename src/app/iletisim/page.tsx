@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ScrollProgress from '@/components/ScrollProgress';
 import ContactPage from '@/components/ContactPage';
+import { ogImages, twitterImages } from '@/lib/seo';
 
 const CONTACT_SECTIONS = [
   { label: 'Giriş', sel: '.ct-hero-section' },
@@ -25,13 +26,13 @@ export const metadata: Metadata = {
     locale: 'tr_TR',
     siteName: 'BERACORE',
     url: 'https://beracore.com/iletisim',
-    images: [{ url: '/beracore-bg.png', width: 600, height: 392, alt: 'BERACORE İletişim' }],
+    images: ogImages('BERACORE İletişim'),
   },
   twitter: {
     card: 'summary_large_image',
     title: 'İletişim | BERACORE',
     description: 'Projeniz için ücretsiz keşif görüşmesi ve teklif alın. BERACORE ile iletişime geçin.',
-    images: ['/beracore-bg.png'],
+    images: twitterImages,
   },
   alternates: { canonical: 'https://beracore.com/iletisim' },
 };

@@ -81,7 +81,6 @@ export default function Services() {
       api.setShape(services[activeIndexRef.current].shape);
     });
     return () => { cancelled = true; api?.dispose(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const goTo = useCallback((index: number) => {

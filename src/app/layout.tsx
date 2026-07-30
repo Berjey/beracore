@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
+import { SITE_URL, OG_IMAGE_ABSOLUTE, ogImages, twitterImages } from '@/lib/seo';
 import MotionGuard from '@/components/MotionGuard';
 import CookieConsent from '@/components/CookieConsent';
 import WhatsAppCta from '@/components/WhatsAppCta';
@@ -52,31 +53,24 @@ export const metadata: Metadata = {
   // Google Search Console doğrulaması artık HTML dosya yöntemiyle yapılıyor (iş hesabı
   // berkealanelbusiness): public/googleb8ca659074d30ada.html — bu dosya SİLİNMEMELİ.
   // Eski hesabın (kemalberkealanel) meta token'ı 28 Tem 2026'da mülk devrinde kaldırıldı.
-  metadataBase: new URL('https://beracore.com'),
+  metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'tr_TR',
-    url: 'https://beracore.com',
+    url: SITE_URL,
     title: 'BERACORE — Digital Experience Studio',
     description: 'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler.',
     siteName: 'BERACORE',
-    images: [
-      {
-        url: '/beracore-bg.png',
-        width: 600,
-        height: 392,
-        alt: 'BERACORE — Digital Experience Studio',
-      },
-    ],
+    images: ogImages('BERACORE — Digital Experience Studio'),
   },
   twitter: {
     card: 'summary_large_image',
     title: 'BERACORE — Digital Experience Studio',
     description: 'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler.',
-    images: ['/beracore-bg.png'],
+    images: twitterImages,
   },
   // NOT: theme-color / color-scheme yalnızca `viewport` export'unda tanımlanır.
   // Burada tekrar verilirse Next aynı meta etiketini iki kez basar.
@@ -96,14 +90,14 @@ const socialProfiles: string[] = [
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
-  '@id': 'https://beracore.com/#business',
+  '@id': `${SITE_URL}/#business`,
   name: 'BERACORE',
   alternateName: 'Beracore Digital Experience Studio',
-  url: 'https://beracore.com',
+  url: SITE_URL,
   description:
     'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üreten dijital deneyim stüdyosu.',
-  image: 'https://beracore.com/beracore-bg.png',
-  logo: 'https://beracore.com/beracore.png',
+  image: OG_IMAGE_ABSOLUTE,
+  logo: `${SITE_URL}/beracore.png`,
   email: 'info@beracore.com',
   telephone: '+905539862306',
   priceRange: '₺₺₺',
@@ -138,9 +132,9 @@ const websiteLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'BERACORE',
-  url: 'https://beracore.com',
+  url: SITE_URL,
   inLanguage: 'tr-TR',
-  publisher: { '@type': 'Organization', name: 'BERACORE', url: 'https://beracore.com' },
+  publisher: { '@type': 'Organization', name: 'BERACORE', url: SITE_URL },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

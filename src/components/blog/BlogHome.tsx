@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
-import type { BlogPost, CategoryMeta } from '@/lib/blog-data';
+import type { BlogPostSummary, CategoryMeta } from '@/lib/blog-data';
 import styles from './blog.module.css';
 import FeaturedPost from './FeaturedPost';
 import PostCard from './PostCard';
@@ -10,9 +10,9 @@ import BlogCTA from './BlogCTA';
 import { ArrowIcon, CategoryIcon, catKey } from './util';
 
 interface Props {
-  posts: BlogPost[];           // en yeni üstte
+  posts: BlogPostSummary[];    // en yeni üstte
   categories: CategoryMeta[];
-  picks: BlogPost[];           // popüler konular (kategori çeşitliliği)
+  picks: BlogPostSummary[];    // popüler konular (kategori çeşitliliği)
 }
 
 const HERO_LINE1 = 'İçgörüler ve';

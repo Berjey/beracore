@@ -2786,6 +2786,34 @@ export function getSortedPosts(): BlogPost[] {
   return [...blogPosts].sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
 }
 
+/**
+ * Liste/kart görünümlerinin ihtiyaç duyduğu ALANLAR.
+ *
+ * NEDEN VAR: `BlogHome` ve `BlogArticle` client bileşenleridir. Sunucudan bir
+ * client bileşenine tam `BlogPost` geçmek, o nesnenin TAMAMINI (yani `content`
+ * blokları ve `faq` dizisi dahil tüm yazı gövdesini) RSC payload'una serialize
+ * eder. Ölçüldü: `/blog` HTML'i bu yüzden 519 KB'a çıkmıştı — 50 yazının tüm
+ * metni, sadece başlık+özet gösteren bir liste sayfasına gömülüyordu.
+ *
+ * Kart/liste UI'ı yalnızca aşağıdaki 6 alanı okur. Sunucu→client sınırından
+ * SADECE bu tip geçmelidir; gövde isteyen tek yer yazı sayfasının kendisidir.
+ */
+export type BlogPostSummary = Pick<
+  BlogPost,
+  'slug' | 'title' | 'excerpt' | 'publishedAt' | 'category' | 'readingMinutes'
+>;
+
+export function toSummary(p: BlogPost): BlogPostSummary {
+  return {
+    slug: p.slug,
+    title: p.title,
+    excerpt: p.excerpt,
+    publishedAt: p.publishedAt,
+    category: p.category,
+    readingMinutes: p.readingMinutes,
+  };
+}
+
 // İçerikte bulunan kategorileri, CATEGORY_META sırasına göre döndürür (yazısı olanlar).
 export function getUsedCategories(): CategoryMeta[] {
   const used = new Set(blogPosts.map((p) => p.category));

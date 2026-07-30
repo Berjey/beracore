@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { services } from '@/lib/services-data';
 import ServicePage from '@/components/ServicePage';
 import ScrollProgress from '@/components/ScrollProgress';
+import { SITE_URL, ogImages, twitterImages } from '@/lib/seo';
 
 const SERVICE_SECTIONS = [
   { label: 'Giriş', sel: '.sp-hero-section' },
@@ -45,13 +46,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: 'tr_TR',
       siteName: 'BERACORE',
       url: `https://beracore.com/hizmetler/${serviceKey}/${subSlug}`,
-      images: [{ url: '/beracore-bg.png', width: 600, height: 392, alt: sub.title }],
+      images: ogImages(sub.title),
     },
     twitter: {
       card: 'summary_large_image',
       title: sub.metaTitle,
       description: sub.metaDescription,
-      images: ['/beracore-bg.png'],
+      images: twitterImages,
     },
     alternates: {
       canonical: `https://beracore.com/hizmetler/${serviceKey}/${subSlug}`,
@@ -70,7 +71,7 @@ export default async function SubServicePage({ params }: Props) {
     '@type': 'Service',
     name: sub.title,
     description: sub.description,
-    provider: { '@type': 'Organization', name: 'BERACORE', url: 'https://beracore.com' },
+    provider: { '@type': 'Organization', name: 'BERACORE', url: SITE_URL },
     areaServed: { '@type': 'Country', name: 'Turkey' },
     url: `https://beracore.com/hizmetler/${serviceKey}/${subSlug}`,
   };
@@ -89,7 +90,7 @@ export default async function SubServicePage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://beracore.com' },
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: SITE_URL },
       { '@type': 'ListItem', position: 2, name: service.title, item: `https://beracore.com/hizmetler/${serviceKey}` },
       { '@type': 'ListItem', position: 3, name: sub.title, item: `https://beracore.com/hizmetler/${serviceKey}/${subSlug}` },
     ],

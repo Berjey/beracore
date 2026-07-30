@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ScrollProgress from '@/components/ScrollProgress';
 import AboutPage from '@/components/AboutPage';
+import { SITE_URL, ogImages, twitterImages } from '@/lib/seo';
 
 const ABOUT_SECTIONS = [
   { label: 'Giriş', sel: '.ab-hero-section' },
@@ -28,13 +29,13 @@ export const metadata: Metadata = {
     locale: 'tr_TR',
     siteName: 'BERACORE',
     url: 'https://beracore.com/hakkimizda',
-    images: [{ url: '/beracore-bg.png', width: 600, height: 392, alt: 'BERACORE Hakkında' }],
+    images: ogImages('BERACORE Hakkında'),
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Hakkımızda | BERACORE',
     description: 'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle dijital deneyimler üreten BERACORE ekibini tanıyın.',
-    images: ['/beracore-bg.png'],
+    images: twitterImages,
   },
   alternates: { canonical: 'https://beracore.com/hakkimizda' },
 };
@@ -48,7 +49,7 @@ const jsonLd = {
   mainEntity: {
     '@type': 'Organization',
     name: 'BERACORE',
-    url: 'https://beracore.com',
+    url: SITE_URL,
     foundingDate: '2019',
     numberOfEmployees: { '@type': 'QuantitativeValue', minValue: 10, maxValue: 50 },
     address: { '@type': 'PostalAddress', addressLocality: 'İstanbul', addressCountry: 'TR' },

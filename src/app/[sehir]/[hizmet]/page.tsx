@@ -3,8 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { cityPages, getCityPage } from '@/lib/city-pages-data';
 import ScrollProgress from '@/components/ScrollProgress';
-
-const BASE_URL = 'https://beracore.com';
+import { SITE_URL, ogImages, twitterImages } from '@/lib/seo';
 
 const CITY_SECTIONS = [
   { label: 'Giriş', sel: '#city-giris' },
@@ -27,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = getCityPage(sehir, hizmet);
   if (!page) return {};
 
-  const url = `${BASE_URL}/${sehir}/${hizmet}`;
+  const url = `${SITE_URL}/${sehir}/${hizmet}`;
   return {
     title: page.metaTitle,
     description: page.metaDescription,
@@ -39,13 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: 'tr_TR',
       siteName: 'BERACORE',
       url,
-      images: [{ url: '/beracore-bg.png', width: 600, height: 392, alt: page.title }],
+      images: ogImages(page.title),
     },
     twitter: {
       card: 'summary_large_image',
       title: page.metaTitle,
       description: page.metaDescription,
-      images: ['/beracore-bg.png'],
+      images: twitterImages,
     },
   };
 }
@@ -55,7 +54,7 @@ export default async function CityServicePage({ params }: Props) {
   const page = getCityPage(sehir, hizmet);
   if (!page) notFound();
 
-  const url = `${BASE_URL}/${sehir}/${hizmet}`;
+  const url = `${SITE_URL}/${sehir}/${hizmet}`;
   const others = cityPages.filter((p) => p.citySlug === sehir && p.slug !== hizmet);
 
   const serviceJsonLd = {
@@ -67,7 +66,7 @@ export default async function CityServicePage({ params }: Props) {
     provider: {
       '@type': 'ProfessionalService',
       name: 'BERACORE',
-      url: BASE_URL,
+      url: SITE_URL,
       telephone: '+905539862306',
       areaServed: { '@type': 'City', name: page.city },
       address: { '@type': 'PostalAddress', addressLocality: page.city, addressCountry: 'TR' },
@@ -80,7 +79,7 @@ export default async function CityServicePage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: BASE_URL },
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: SITE_URL },
       { '@type': 'ListItem', position: 2, name: page.title, item: url },
     ],
   };

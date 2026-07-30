@@ -2,14 +2,14 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import type { BlogPost, ContentBlock } from '@/lib/blog-data';
+import type { BlogPost, BlogPostSummary, ContentBlock } from '@/lib/blog-data';
 import { getCategoryColor } from '@/lib/blog-data';
 import { formatDate } from '@/lib/format';
 import { useReveal } from '@/lib/use-reveal';
 
 interface Props {
   post: BlogPost;
-  relatedPosts: BlogPost[];
+  relatedPosts: BlogPostSummary[];
   cityLink?: { href: string; title: string } | null;
 }
 

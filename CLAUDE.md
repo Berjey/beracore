@@ -57,11 +57,28 @@ Korumalar: honeypot · alan doğrulama · HTML escape · nginx hız sınırı (`
 `nginx.conf` + site config) · uygulama katmanı hız sınırı (IP başına 10 dk'da 5, route.ts).
 Nginx limitine takılan istek HTML 503, uygulama limitine takılan JSON 429 döner.
 
-### Lint
-Projede ESLint kurulu değil ve `lint` script'i kaldırıldı (Next 15'te `next lint` kaldırıldığı için
-zaten çalışmıyordu, ESLint devDependency olarak da hiç eklenmemişti).
-Kalite kapısı **`npm run build`**'dir — tip kontrolü yapar.
-ESLint istenirse ayrı bir iş olarak kurulmalı (devDependency + `eslint.config.mjs`).
+### Kalite kapıları (30 Tem 2026'da tamamlandı)
+
+Sırayla çalıştırılır — hepsi hızlı, build öncesi ilk üçü saniyeler sürer:
+
+```
+npm run lint     # ESLint 9 flat config (eslint.config.mjs) — 0 uyarı toleransı
+npm test         # node:test, 25 test, ~0.2 sn — SIFIR ek bağımlılık
+npm run build    # tip kontrolü + 119 sayfa SSG
+npm run seo-audit
+```
+
+**ESLint** kuruldu (`eslint`, `eslint-config-next`, `typescript-eslint`, `@eslint/eslintrc`).
+`next/core-web-vitals` + `typescript-eslint/recommended` + `no-console`/`no-unused-vars`.
+`scripts/` ve `tests/` içinde `no-console` kapalıdır (araç kodu konsola yazar).
+`--max-warnings 0` → uyarı da hata sayılır.
+
+**Testler** Node'un yerleşik test çalıştırıcısını kullanır (vitest/jest YOK, bağımlılık eklenmedi).
+Node 24 TypeScript'i doğrudan çalıştırır; `@/` takma adını `scripts/test-loader.mjs` çözer.
+`.tsx` (JSX) kapsam dışıdır — Node tip soyma yapar, JSX dönüştürmez. Testler saf mantık ve
+veri modüllerini hedefler: referans bütünlüğü (kırık iç link), slug/meta kuralları,
+ilgili-yazı dağılımı, OG görsel ölçüsü ↔ sabit uyumu, doğrulama dosyalarının varlığı.
+`package.json`'da `"type": "module"` var (projede hiç `.js` dosyası yok, etkisi nötr).
 
 ---
 
@@ -172,7 +189,33 @@ Kapsamlı QA turunda bulunup düzeltilen, **tekrar bozulmaması gereken** noktal
 - **Flex satırındaki sabit boyutlu butonlara `shrink-0`** — yoksa dar ekranda 2px'e sıkışıp
   tıklanamaz hale geliyorlar.
 - **Hata sınırları:** `src/app/error.tsx` + `global-error.tsx` üretimde stilize Türkçe
-  ekran gösterir; kaldırılmamalı.
+  ekran gösterir; kaldırılmamalı. `global-error.tsx` içindeki `<a href="/">` bilinçlidir
+  (`Link` DEĞİL): kök layout çökmüşken istemci gezinmesi bozuk React ağacında kalır,
+  tam sayfa yükleme temiz durum garanti eder. ESLint istisnası gerekçesiyle yazılıdır.
+
+### 30 Temmuz 2026 — A serisi (kod tarafı kalan işler) kalıcı notları
+
+- **Client bileşenine TAM `BlogPost` GEÇİLMEZ.** `src/lib/blog-data.ts` içindeki
+  `BlogPostSummary` (6 alan) + `toSummary()` kullanılır. Sunucudan client'a tam nesne
+  geçmek yazının `content`/`faq` gövdesini RSC payload'una serialize eder: `/blog`
+  HTML'i bu yüzden 507 KB'tı, düzeltmeden sonra 220 KB (-%57). `BlogHome`, `PostCard`,
+  `FeaturedPost` ve `BlogArticle.relatedPosts` yalnızca özet tipini kabul eder.
+- **"İlgili Yazılar" `src/lib/related-posts.ts`'ten gelir.** Eski satır içi mantık
+  (`sameCat.slice(0,3)`) daima kategorinin en eski yazılarını seçiyordu → **50 yazının
+  26'sı (%52) hiç iç link almıyordu**. Yeni mantık: alaka → link eşitliği → tazelik,
+  tamamen deterministik (SSG için zorunlu). Sonuç: 0 yetim, dağılım 1-4.
+  Testler bunu doğrular; `getRelatedPosts` dışında bir seçim yazılmamalı.
+- **OG görseli `public/og-cover.png`, 1200×630, opak.** `npm run og-image`
+  (`scripts/make-og-image.mjs`) üretir; çıktı repoya commit edilir (VPS'te font
+  varlığına bağımlılık olmasın). Kartın "BERACORE" yazısı gerçek logo dosyasıdır,
+  yalnızca slogan/alan adı sistem fontuyla basılır. Ölçü değişirse `src/lib/seo.ts`
+  güncellenmeli — test ikisinin uyumunu kontrol eder ve uyuşmazsa patlar.
+- **`src/lib/seo.ts` tek kaynaktır.** `SITE_URL` ve OG görsel yolu/ölçüsü öncesinde
+  8 sayfa dosyasında kopyalıydı. Yeni sayfa eklerken `ogImages(alt)` / `twitterImages`
+  kullanılır, elle URL yazılmaz.
+- **Görsel yeniden sıkıştırma bit-birebir doğrulanır.** `sharp` PNG çıktısı için
+  `palette:false, quality:100` verilmezse sessizce palet nicemlemesi uygular (kayıplı).
+  Kayıpsız olduğu piksel karşılaştırmasıyla doğrulanmadan asset üzerine yazılmamalı.
 
 
 ### Dikkat edilecek teknik tuzaklar

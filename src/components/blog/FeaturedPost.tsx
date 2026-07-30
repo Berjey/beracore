@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import type { MouseEvent } from 'react';
-import type { BlogPost } from '@/lib/blog-data';
+import type { BlogPostSummary } from '@/lib/blog-data';
 import styles from './blog.module.css';
 import PostCover from './PostCover';
 import { ArrowIcon, CategoryBadge, catKey, formatDate } from './util';
 
 /* En yeni yazı — geniş, iki kolonlu vitrin kartı. */
-export default function FeaturedPost({ post }: { post: BlogPost }) {
+export default function FeaturedPost({ post }: { post: BlogPostSummary }) {
   const onMove = (e: MouseEvent<HTMLElement>) => {
     const el = e.currentTarget;
     const r = el.getBoundingClientRect();

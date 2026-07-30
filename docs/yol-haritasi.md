@@ -152,19 +152,90 @@ ile doğrulandı). Bu bir hata değil, tasarım tercihidir.
 
 ---
 
+## 2.6. A SERİSİ — KOD TARAFI KALAN İŞLER (30 Tem 2026 — TAMAMLANDI)
+
+Yol haritasındaki "teknik iyileştirme önerileri" listesi işlendi. Her madde ölçümle doğrulandı.
+
+**A1 — OG görseli** ✅ Önceki OG görseli `beracore-bg.png` idi: **600×392 ve şeffaf zeminli
+salt logo**. İki kusur birden — platformların beklediği 1200×630 (1.91:1) ölçüsünün altında
+(kart küçük/kırpık) ve şeffaf zemin platformun beyazına düşünce pastel logo okunaksız.
+Yerine gerçek bir sosyal kart üretildi: `public/og-cover.png`, 1200×630, opak marka zemini,
+logo + slogan + alan adı, 58 KB. Üreteç `scripts/make-og-image.mjs` (`npm run og-image`).
+Marka tipografisi uydurulmadı — karttaki "BERACORE" gerçek logo dosyasıdır (600×392 native,
+460px'e küçültülür → büyütme bulanıklığı yok). Eski dosya silindi.
+
+**A2 — Görsel ağırlığı** ✅ Ölçüldü ve yalnızca kanıtlanan kazanç uygulandı:
+`beracore.png` 112→102 KB, `icon-512.png` 21.8→17.6 KB, `icon-192.png` 6.5→6.0 KB —
+üçü de **bit-birebir kayıpsız** (piksel karşılaştırmasıyla doğrulandı, eşitlik sağlanmadan
+dosya yazılmıyor). `beracore-bg.png` (129 KB) tamamen kaldırıldı.
+WebP'ye çevirme YAPILMADI, gerekçesi ölçüldü: logolar `next/image` üzerinden gittiği için
+kullanıcıya zaten optimize WebP/AVIF sunuluyor; kaynak PNG'nin boyutu kullanıcıyı etkilemiyor.
+`planet.webp` yine dokunulmadı — kayıpsız hali 684 KB, q82 ise 107 KB (yalnızca 22 KB kazanç,
+karşılığında zaten kayıplı bir dokuda ikinci nesil kayıp). Değmez.
+
+**A3 — ESLint** ✅ Kuruldu: ESLint 9 flat config + `next/core-web-vitals` +
+`typescript-eslint` + `no-console`/`no-unused-vars`. `npm run lint` (`--max-warnings 0`).
+İlk taramada **yalnızca 5 bulgu** çıktı (kod tabanının durumu iyi):
+2'si `global-error.tsx`'teki bilinçli `<a href="/">` (gerekçelendirilmiş istisna yazıldı —
+kök layout çökmüşken tam sayfa yükleme gerekir), 2'si `Services`/`ServicePage` içinde
+artık hiçbir şeyi bastırmayan **ölü** `eslint-disable` yorumu (silindi), 1'i config'in
+kendi anonim export'u (düzeltildi). Sonuç: 0 hata / 0 uyarı.
+
+**A4 — `/blog` sayfalama** ⛔ **Yapılmadı — ama asıl sorun bulundu ve düzeltildi.**
+Ölçüm sırasında sayfalamadan çok daha ciddi bir kusur çıktı: `BlogHome` bir client
+bileşeni ve sunucu ona **tam `BlogPost` nesneleri** geçiyordu. Bu, 50 yazının TÜM
+gövdesini (`content` blokları + `faq`) yalnızca başlık/özet gösteren liste sayfasının
+RSC payload'una serialize ediyordu. `/blog` HTML'i bu yüzden **507 KB**'tı.
+Çözüm: `BlogPostSummary` (6 alan) tipi + `toSummary()`; sunucu→client sınırından yalnızca
+özet geçer. Sonuç: **507 KB → 220 KB (-%57)**, gzip ~32 KB. Yazı gövdelerinin artık
+sızmadığı üretilmiş HTML'de doğrulandı.
+Sayfalama bundan sonra gereksiz kaldı: (1) asıl 287 KB'lık şişkinlik kalktı,
+(2) sayfa **istemci tarafı anlık arama/filtreleme** yapıyor — bu tüm yazıların client'ta
+olmasını gerektirir; sayfalama bu özelliği bozar veya sunucu taraflı arama yazmayı
+(yeni özellik) zorunlu kılar. Yazı sayısı ~60'ı geçerse yeniden değerlendirilir.
+
+**A5 — İç link derinliği** ✅ **En yüksek SEO etkili düzeltme.** Eski satır içi mantık
+`[...sameCat, ...others].slice(0, 3)` idi ve `blogPosts` ekleme sırasında (en eski başta)
+olduğu için her yazı daima kategorisinin **aynı ilk üç (en eski)** yazısına link veriyordu.
+Ölçülen sonuç: **50 yazının 26'sı (%52) hiçbir yerden bağlamsal iç link almıyordu**;
+en çok link alan yazı 9 link topluyordu. En yeni 5 yazı: 0 link.
+Yeni `src/lib/related-posts.ts`: tüm blog grafiği bir kez, deterministik hesaplanır —
+sıralama ölçütü alaka (aynı kategori / aynı hizmet / aynı hizmet alanı) → **aldığı link
+sayısı (az olan önce)** → tazelik → slug. Sonuç: **0 yetim, dağılım 1-4 link**,
+en yeni yazılar 3-4 link alıyor. Determinizm zorunlu (SSG: rastgelelik her build'de
+tüm blog HTML'ini değiştirirdi) ve testle güvenceye alındı.
+
+**A6 — Otomatik test** ✅ **25 test, sıfır yeni bağımlılık.** Node 24 TypeScript'i doğrudan
+çalıştırdığı ve `node:test` yerleşik olduğu için vitest/jest kurulmadı; `@/` takma adını
+15 satırlık `scripts/test-loader.mjs` çözüyor. `npm test` ~0.2 sn.
+Kapsam bilinçli olarak `seo-audit`'in yapamadıklarına odaklı: referans bütünlüğü
+(her `relatedService.href` ve `cityPages.blogHref` gerçek sayfaya gidiyor mu — kırık iç
+link build'den ÖNCE yakalanır), slug biçimi/tekilliği, yinelenen başlık, meta uzunlukları,
+ilgili-yazı dağılımı + determinizmi, özet nesnesinin fazla alan taşımaması (payload
+sızıntısı güvencesi), OG görsel ölçüsünün `src/lib/seo.ts` sabitiyle uyumu,
+arama motoru doğrulama dosyalarının silinmemiş olması.
+
+**Yan kazanç — kod tekrarı kaldırıldı:** `https://beracore.com` 4 dosyada, OG görsel
+yolu+ölçüsü 8 dosyada kopyalıydı. Tek kaynak: `src/lib/seo.ts` (`SITE_URL`, `OG_IMAGE`,
+`ogImages()`, `twitterImages`, `OG_IMAGE_ABSOLUTE`).
+
+**Bu turda BULUNAN ama düzeltilMEYEN (içerik işi):** 24 şehir sayfasının tamamı
+246-302 kelime aralığında (SSS + maddeler dahil). Her biri kendi şehrine özgün metin
+taşıyor, kopya değil — ama hacim yerel rakiplerin altında. Genişletmek **içerik
+üretimidir** ve içerik üretimi bilinçli olarak duraklatılmış durumda. Test mevcut tabanı
+(240 kelime) regresyona karşı koruyor; kullanıcı içerik fazını açtığında bu ilk işlerden
+biri olmalı.
+
+---
+
 ## 3. TEKNİK İYİLEŞTİRME ÖNERİLERİ (aciliyeti düşük)
 
-- 🟢 **`/blog` sayfalama** — 50 yazı tek sayfada. Yazı sayısı ~60'ı geçince
-  sayfalama veya kategori bazlı bölme gerekir.
-- 🟢 **Yeni yazıların iç link derinliği** — en yeni yazılar yalnızca `/blog` listesinden
-  link alıyor; "ilgili yazılar" seçimi eskiler lehine çalışıyor. Seçim mantığı
-  iyileştirilebilir.
-- 🟢 **Görsel ağırlığı** — `beracore-bg.png` 129 KB, `beracore.png` 112 KB. WebP/AVIF'e
-  çevrilirse ilk yükleme hafifler.
-- 🟢 **ESLint** — projede kurulu değil (`lint` script'i kaldırıldı, `next lint` Next 15'te
-  yok). İstenirse devDependency + `eslint.config.mjs` ile ayrı bir iş olarak kurulur.
-  Şu anki kalite kapısı `npm run build` (tip kontrolü yapar).
+- 🟢 **`/blog` sayfalama** — yazı sayısı ~60'ı geçerse. Şu an gereksiz, gerekçesi §2.6/A4'te
+  (asıl şişkinlik giderildi, sayfa 32 KB gzip; istemci taraflı arama sayfalamayı engelliyor).
 - 🟢 **Core Web Vitals** 👤 — kesin skor için https://pagespeed.web.dev üzerinden canlı ölçüm.
+- 🟢 **Şehir sayfalarının içerik hacmi** — bkz. §2.6 sonu. İçerik fazı açılınca ilk iş.
+- 🟢 **Bileşen render testi** — `tests/` yalnızca saf mantık/veriyi kapsıyor. JSX testi
+  için jsdom + bir derleyici gerekir (Node tip soyma JSX dönüştürmez); ayrı bir iş.
 
 ---
 
@@ -213,6 +284,9 @@ Hangi bilgisayarda olursan ol:
 1. Proje klasörünü aç
 2. `git pull`
 3. Claude'a "kaldığımız yerden devam" de
+
+Kalite kapıları sırayla: `npm run lint` → `npm test` → `npm run build` → `npm run seo-audit`
+(ilk üçü saniyeler sürer, ayrıntı `CLAUDE.md`).
 
 Claude `CLAUDE.md` ve bu dosyayı okuyup nerede kalındığını görür.
 Deploy her zaman tek komut: `npm run deploy "commit mesajı"`

@@ -54,6 +54,10 @@ export default function GlobalError({
           >
             Yeniden Dene
           </button>
+          {/* Link DEĞİL, bilinçli <a>: bu ekran KÖK LAYOUT çöktüğünde
+              gösterilir. İstemci tarafı gezinme bozuk React ağacının içinde
+              kalır; tam sayfa yükleme temiz bir durumla başlamayı garanti eder. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
             href="/"
             style={{

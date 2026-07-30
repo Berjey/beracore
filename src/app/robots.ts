@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/seo';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -13,6 +14,6 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: 'https://beracore.com/sitemap.xml',
-    host: 'https://beracore.com',
+    host: SITE_URL,
   };
 }

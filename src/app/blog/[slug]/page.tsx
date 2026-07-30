@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { blogPosts, getPostBySlug } from '@/lib/blog-data';
+import { getRelatedPosts } from '@/lib/related-posts';
 import { cityPages } from '@/lib/city-pages-data';
 import BlogArticle from '@/components/BlogArticle';
-
-const BASE_URL = 'https://beracore.com';
+import { SITE_URL, OG_IMAGE_ABSOLUTE, ogImages, twitterImages } from '@/lib/seo';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(slug);
   if (!post) return {};
 
-  const url = `${BASE_URL}/blog/${slug}`;
+  const url = `${SITE_URL}/blog/${slug}`;
   return {
     title: post.metaTitle,
     description: post.metaDescription,
@@ -33,13 +33,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt ?? post.publishedAt,
-      images: [{ url: '/beracore-bg.png', width: 600, height: 392, alt: post.title }],
+      images: ogImages(post.title),
     },
     twitter: {
       card: 'summary_large_image',
       title: post.metaTitle,
       description: post.metaDescription,
-      images: ['/beracore-bg.png'],
+      images: twitterImages,
     },
   };
 }
@@ -49,12 +49,11 @@ export default async function BlogPostPage({ params }: Props) {
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
-  const url = `${BASE_URL}/blog/${slug}`;
+  const url = `${SITE_URL}/blog/${slug}`;
 
-  // İlgili yazılar: önce aynı kategori, yetmezse diğerleriyle tamamla (maks 3)
-  const sameCat = blogPosts.filter((p) => p.slug !== slug && p.category === post.category);
-  const others = blogPosts.filter((p) => p.slug !== slug && p.category !== post.category);
-  const relatedPosts = [...sameCat, ...others].slice(0, 3);
+  // İlgili yazılar: alaka + iç link eşitliği + tazelik (bkz. lib/related-posts.ts).
+  // Yalnızca özet döner — yazı gövdeleri client payload'una girmez.
+  const relatedPosts = getRelatedPosts(slug);
 
   // Bu yazıya bağlı şehir sayfası varsa bağlamsal iç link (yerel SEO).
   // Birden çok şehir aynı yazıya bağlı olabilir; ilk eşleşen (İstanbul) kullanılır.
@@ -66,17 +65,17 @@ export default async function BlogPostPage({ params }: Props) {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.metaDescription,
-    image: `${BASE_URL}/beracore-bg.png`,
+    image: OG_IMAGE_ABSOLUTE,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt ?? post.publishedAt,
     inLanguage: 'tr-TR',
     articleSection: post.category,
-    author: { '@type': 'Organization', name: post.author, url: BASE_URL },
+    author: { '@type': 'Organization', name: post.author, url: SITE_URL },
     publisher: {
       '@type': 'Organization',
       name: 'BERACORE',
-      url: BASE_URL,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/beracore.png` },
+      url: SITE_URL,
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/beracore.png` },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
     url,
@@ -86,8 +85,8 @@ export default async function BlogPostPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: BASE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${BASE_URL}/blog` },
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
       { '@type': 'ListItem', position: 3, name: post.title, item: url },
     ],
   };

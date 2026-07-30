@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import type { MouseEvent } from 'react';
-import type { BlogPost } from '@/lib/blog-data';
+import type { BlogPostSummary } from '@/lib/blog-data';
 import styles from './blog.module.css';
 import PostCover from './PostCover';
 import { ArrowIcon, CategoryBadge, catKey, formatDate } from './util';
 
 /* Grid kartı. Kapak + meta + başlık + özet + "Oku". Hover: elevation, kenarlık
    geçişi, imleç-takipli spotlight, kapak parallax. Renk kategoriye göre. */
-export default function PostCard({ post }: { post: BlogPost }) {
+export default function PostCard({ post }: { post: BlogPostSummary }) {
   const onMove = (e: MouseEvent<HTMLElement>) => {
     const el = e.currentTarget;
     const r = el.getBoundingClientRect();

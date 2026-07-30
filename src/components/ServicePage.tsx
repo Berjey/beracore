@@ -100,7 +100,6 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
         }
       });
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Morph on sub change — aynı ikon için self-morph'u engelle

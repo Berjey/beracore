@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { services } from '@/lib/services-data';
 import ScrollProgress from '@/components/ScrollProgress';
+import { SITE_URL, ogImages, twitterImages } from '@/lib/seo';
 
 const CATEGORY_SECTIONS = [
   { label: 'Giriş', sel: '#cat-giris' },
@@ -39,13 +40,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: 'tr_TR',
       siteName: 'BERACORE',
       url,
-      images: [{ url: '/beracore-bg.png', width: 600, height: 392, alt: service.title }],
+      images: ogImages(service.title),
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: ['/beracore-bg.png'],
+      images: twitterImages,
     },
   };
 }
@@ -61,7 +62,7 @@ export default async function ServiceCategoryPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://beracore.com' },
+      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: SITE_URL },
       { '@type': 'ListItem', position: 2, name: 'Hizmetler', item: 'https://beracore.com/#services' },
       { '@type': 'ListItem', position: 3, name: service.title, item: url },
     ],
