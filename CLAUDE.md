@@ -29,6 +29,29 @@ içermediği için iki yol birbirinden ayrışmıştı. `scripts/server-deploy.s
 
 Local + GitHub + canlı **her zaman aynı commit'te tutulur**. Kullanıcı bunu böyle istiyor.
 
+### ⚠️ Node/npm sürüm farkı — lockfile tuzağı (30 Tem 2026'da bir deploy'u patlattı)
+
+**VPS: Node 20.20.2 / npm 10.8.2 · Local (bu makine): Node 24.12 / npm 11.6.2**
+
+npm 11 ile `npm install` çalıştırmak, `sharp`'ın WASM alt bağımlılıklarını
+(`@emnapi/core`, `@emnapi/wasi-threads`) lockfile'a YAZMIYOR. npm 10 bunları bekliyor ve
+VPS'te `npm ci` **EUSAGE** ("package.json and package-lock.json are not in sync") ile
+patlıyor → deploy git push'tan sonra, build'den önce yarıda kalıyor.
+
+**Kural:** Local'de bağımlılık ekledikten/güncelledikten sonra, deploy'dan ÖNCE:
+```
+npx -y npm@10.8.2 install --package-lock-only --no-audit --no-fund
+npx -y npm@10.8.2 ci --dry-run --no-audit --no-fund   # doğrulama
+```
+
+Ayrıca `npm test` Node'un yerleşik TypeScript çalıştırmasına dayanır (Node ≥22.6) →
+**VPS'in Node 20'sinde çalışmaz.** Sorun değil: testler local kalite kapısıdır, deploy
+adımı yalnızca `npm ci` + `next build` yapar. Ama VPS'te test çalıştırmayı denemeyin.
+
+> 🔴 **Kullanıcıya sorulacak:** Node 20 destek ömrünü tamamladı (Nisan 2026). VPS'i
+> Node 24'e yükseltmek hem bu lockfile sürtünmesini bitirir hem güvenlik yamalarını
+> geri getirir. Üretim çalışma zamanını değiştirdiği için **karar kullanıcınındır.**
+
 ### VPS
 - Host `187.124.181.213`, user `root`, SSH alias `beracore` (Hostinger, Ubuntu)
 - Proje yolu `/var/www/beracore`, PM2 app adı `beracore`, Nginx + Let's Encrypt
