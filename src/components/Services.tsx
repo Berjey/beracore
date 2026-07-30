@@ -136,7 +136,7 @@ export default function Services() {
           {/* Left arrow */}
           <button
             onClick={() => goTo(activeIndex - 1)}
-            className={`group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
+            className={`group relative shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
               border border-accent/20 hover:border-accent/50 hover:scale-110 active:scale-95
               max-md:w-11 max-md:h-11
               ${transitioning ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}
@@ -168,16 +168,19 @@ export default function Services() {
           >
             <div className="absolute rounded-full blur-[50px] -z-10"
               style={{ width: '160px', height: '160px', background: 'rgba(255,169,249,0.05)' }} />
-            {/* Mobilde sabit 280px, iki ok (44px) ve boşluklarla birlikte 320px'lik
-                ekranda satırı taşırıyordu. vw tabanlı üst sınır: 320px'te de
-                oklar + şekil yatay olarak sığar, taşma/kırpılma olmaz. */}
-            <canvas ref={canvasRef} className="relative w-[400px] h-[400px] max-md:w-[min(280px,50vw)] max-md:h-[min(280px,50vw)]" />
+            {/* Mobilde canvas akışkan: iki ok butonu (2×44px) + boşluklar (2×16px) +
+                bölüm yatay padding'i (2×20px) için yer bırakır. Sabit 280px'te satır
+                320px ekrana sığmıyor ve ok butonu ekran dışında kırpılıyordu. */}
+            <canvas
+              ref={canvasRef}
+              className="relative w-[400px] h-[400px] max-md:w-[min(280px,calc(100vw-160px))] max-md:h-[min(280px,calc(100vw-160px))]"
+            />
           </div>
 
           {/* Right arrow */}
           <button
             onClick={() => goTo(activeIndex + 1)}
-            className={`group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
+            className={`group relative shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden
               border border-accent/20 hover:border-accent/50 hover:scale-110 active:scale-95
               max-md:w-11 max-md:h-11
               ${transitioning ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}
@@ -221,14 +224,17 @@ export default function Services() {
 
           <p className="text-center text-sm font-body text-t3 font-light tracking-wide mb-8">{svc.subtitle}</p>
 
-          <div className="flex justify-center gap-3">
+          {/* Sayfa noktaları — buton 24x24px şeffaf dokunma hedefi (WCAG 2.5.8),
+              görünen nokta içteki span'dir. Böylece görsel tasarım değişmeden
+              mobilde parmakla isabet edilebilir bir alan oluşur. */}
+          <div className="flex justify-center items-center gap-1">
             {services.map((s, i) => (
               <button
                 key={s.key}
                 type="button"
                 onClick={() => goTo(i)}
-                // 44px dokunma hedefi (WCAG 2.5.8) — görsel nokta içeride ortalanır.
-                className="flex items-center justify-center h-11 -my-[18px] transition-all duration-400"
+                // 24×24 dokunma hedefi (WCAG 2.5.8) — görsel nokta içeride ortalanır.
+                className="shrink-0 flex items-center justify-center w-6 h-6"
                 aria-label={s.title}
                 aria-current={i === activeIndex ? 'true' : undefined}
               >

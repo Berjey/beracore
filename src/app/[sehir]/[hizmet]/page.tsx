@@ -151,12 +151,12 @@ export default async function CityServicePage({ params }: Props) {
 
           {/* İç linkler — hizmet + blog */}
           <section className="mt-10 flex flex-wrap gap-4">
-            <Link href={page.serviceHref} className="group inline-flex items-center gap-2 font-body text-[0.85rem] font-semibold text-accent hover:text-accent2 transition-colors">
+            <Link href={page.serviceHref} className="group inline-flex items-center gap-2 min-h-[24px] py-1 font-body text-[0.85rem] font-semibold text-accent hover:text-accent2 transition-colors">
               {page.serviceLabel}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </Link>
             <span className="text-t3" aria-hidden="true">·</span>
-            <Link href={page.blogHref} className="group inline-flex items-center gap-2 font-body text-[0.85rem] font-semibold text-t2 hover:text-accent transition-colors">
+            <Link href={page.blogHref} className="group inline-flex items-center gap-2 min-h-[24px] py-1 font-body text-[0.85rem] font-semibold text-t2 hover:text-accent transition-colors">
               {page.blogLabel}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </Link>

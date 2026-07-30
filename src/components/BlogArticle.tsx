@@ -218,7 +218,7 @@ export default function BlogArticle({ post, relatedPosts, cityLink }: Props) {
         )}
 
         <div className="max-w-2xl mx-auto mt-14 text-center">
-          <Link href="/blog" className="inline-flex items-center gap-2 font-body text-[0.82rem] text-t3 hover:text-accent transition-colors">
+          <Link href="/blog" className="inline-flex items-center gap-2 min-h-[24px] py-1 font-body text-[0.82rem] text-t3 hover:text-accent transition-colors">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
             Tüm yazılar
           </Link>

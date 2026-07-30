@@ -911,13 +911,10 @@ export const cityPages: CityPage[] = [
   },
 ];
 
-/*
- * NOT: Burada elle tutulan bir `CITY_SLUGS` sabiti vardı ve HİÇBİR yerde
- * kullanılmıyordu — route'un generateStaticParams'ı doğrudan `cityPages`'ten
- * üretiyor, bilinmeyen şehir de getCityPage → notFound ile 404 dönüyor.
- * Kaldırıldı: yeni şehir eklemek için tek yapılacak `cityPages`'e CityPage
- * nesnesi eklemek (ikinci bir listeyi senkron tutmak gerekmez).
- */
+// NOT: Şehir listesi ayrı bir sabitte TUTULMAZ (eskiden kullanılmayan bir
+// `CITY_SLUGS` sabiti vardı, kaldırıldı). Rotalar `generateStaticParams` içinde
+// doğrudan `cityPages`'ten türetilir; bilinmeyen şehir getCityPage → notFound ile
+// 404 döner. Yeni şehir eklemek için sadece bu diziye CityPage eklemek yeterlidir.
 
 export function getCityPage(citySlug: string, slug: string): CityPage | undefined {
   return cityPages.find((p) => p.citySlug === citySlug && p.slug === slug);

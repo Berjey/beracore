@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export interface ShapeSceneAPI {
+  // Renk parametresi yok: şekiller her zaman kurumsal paleti kullanır.
   setShape: (shape: string) => void;
   dispose: () => void;
 }

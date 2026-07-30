@@ -32,8 +32,11 @@ export default function HeroCore({ onReady }: HeroCoreProps) {
     // kullanıcı poster arkasında kilitli kalmaz.
     const api = createCoreScene(canvas, fireReady);
     sceneRef.current = api;
-    const timer = setTimeout(fireReady, 4000);
-    return () => { clearTimeout(timer); api.dispose(); };
+    // Sabit gecikmeli "erken hazır" sinyali BİLEREK yok: poster, doku gerçekten
+    // yüklenip ilk kare çizilince kalkar. Tek emniyet ağı 4 sn (WebGL/doku hatası).
+    // Timer unmount'ta iptal edilir; aksi halde sökülmüş bileşende onReady tetiklenir.
+    const fallbackTimer = setTimeout(fireReady, 4000);
+    return () => { clearTimeout(fallbackTimer); api.dispose(); };
   }, [fireReady]);
 
   useEffect(() => {

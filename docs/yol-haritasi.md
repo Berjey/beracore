@@ -65,8 +65,90 @@ linki + ajans dizinleri (Clutch/GoodFirms) + sosyal + Google İşletme Profili. 
 
 ### 🟢 Adım 6 — İçerik sürekliliği 🛠
 Claude girdi beklemeden ilerletebilir:
-- Diğer şehirler için yerel sayfalar (Antalya / Konya / Adana …) — `city-pages-data.ts`'teki `cityPages` dizisine CityPage eklemek yeterli (Ankara/İzmir/Bursa 28 Tem 2026'da tamamlandı)
+- Diğer şehirler için yerel sayfalar (Antalya / Konya / Adana …) — `city-pages-data.ts` içindeki `cityPages` dizisine CityPage nesnesi eklemek yeterlidir; rotalar bundan otomatik türetilir (Ankara/İzmir/Bursa 28 Tem 2026'da tamamlandı)
 - Yeni ticari niyetli blog yazıları (fiyat / nasıl seçilir / karşılaştırma / platform rehberi)
+
+---
+
+## 2.5. ÜRETİM HAZIRLIK DENETİMİ (30 Tem 2026 — TAMAMLANDI)
+
+Gerçek Chrome'da 10 sayfa × 9 çözünürlük (320→1920px) = 90 kombinasyon test edildi.
+Test araçları `scratchpad`'de tutuldu (projeye bağımlılık eklenmedi).
+
+**Düzeltilen gerçek hatalar:**
+- 🔴 **TechMarquee sonsuz rAF sızıntısı** — `waitForStop` özyinelemeli döngüsü `rafRef`'te
+  izlenmiyordu; hızın söndüğü `tick` unmount'ta iptal edilince hız hiç azalmıyor ve döngü
+  **sonsuza kadar** dönüyordu. Marquee'yi kaydırıp sayfa değiştiren kullanıcıda oturum boyunca
+  CPU yakıyordu. Devam mantığı tek `tick` döngüsüne taşındı, iki kopya `waitForStop` silindi.
+- 🔴 **768px'te navbar kesilmesi** — 9 menü öğesi + CTA `md` (768px) kırılımında sığmıyordu;
+  öğeler iki satıra sarıyor, "Teklif Al" ekran dışında kalıyordu (ekran görüntüsüyle doğrulandı).
+  Masaüstü menü `lg` (1024px) kırılımına taşındı; 768-1023px artık mobil menü kullanıyor.
+- 🟡 **320px'te hizmet karuseli** — ok butonlarında `shrink-0` yoktu, flex onları 2px'e
+  sıkıştırıyordu (tıklanamaz). `shrink-0` eklendi + canvas akışkan yapıldı
+  (`min(280px,calc(100vw-160px))`) ki satır 320px'e sığsın.
+- 🟡 **Temizlenmeyen timer'lar** — HeroCore (rAF + iç setTimeout), ContactPage (kopyalandı
+  rozeti), ServicePage (şekil tıklama zinciri), ScrollToTop (rAF + timer) unmount'ta
+  iptal edilmiyordu → sökülmüş bileşende setState. Hepsi ref'e alınıp temizlendi.
+- 🟡 **WCAG 2.5.8 dokunma hedefleri: 76 → 0 ihlal** — ana sayfa ve hizmet detay nokta
+  butonları 8x8px'ti (24x24 şeffaf hedef + içte görsel nokta yapısına geçildi), "Kopyala",
+  KVKK butonu, footer iletişim linkleri ve 6 tek başına duran link 24px'e çıkarıldı.
+  Kalan 217 kayıt metin içi satır bağlantısı — standardın açık istisnası.
+- 🟢 **Ölü API yüzeyi** — `setShape(shape, color)` imzasındaki `color` her iki 3D modülde de
+  hiç kullanılmıyordu (şekiller daima kurumsal palet), 4 çağrı noktasından boşuna geçiliyordu.
+  Parametre kaldırıldı.
+- 🟢 **İkinci doğruluk kaynağı** — `CITY_SLUGS` sabiti kod tarafından hiç okunmuyordu ama
+  yol haritası "yeni şehir eklerken buraya da ekle" diyordu (yanıltıcı talimat). Sabit
+  silindi; rotalar zaten `cityPages`'ten türetiliyor.
+
+**Denetlenip temiz çıkanlar:** XSS yüzeyi (tüm `dangerouslySetInnerHTML` build-zamanı sabit
+JSON-LD, `innerHTML`/`eval`/kullanıcı girdisi yansıtma yok) · güvenlik başlıkları (HSTS/CSP/
+X-Frame/Referrer/Permissions) · CSP tek kaynak (`next.config.ts`, nginx'ten kaldırılmış, GA
+alan adları ID varken otomatik ekleniyor) · secret yönetimi (repoda sızıntı yok, `.env`
+git-dışı, istemciye sadece GA ölçüm kimliği) · API (405/400/413/422/429 doğru kodlar, hata
+gövdesinde iç detay yok, honeypot + çift katman hız sınırı) · 90 kombinasyonda **sıfır JS
+konsol hatası** · kullanılmayan dosya/export/CSS/asset/paket yok · tip kontrolü temiz.
+
+**İkinci tur (aynı gün) eklenenler:**
+- 🟡 **Hata sınırları eklendi** — `error.tsx` (rota seviyesi, "Yeniden Dene" + ana sayfa/iletişim
+  çıkışları, `digest` referansı) ve `global-error.tsx` (kök layout patlarsa; kendi `<html>/<body>`
+  ve satır içi stille çalışır). Önceden bir client bileşeni hata atarsa Next.js'in stilsiz
+  İngilizce ekranı görünüyordu. `loading.tsx` eklenmedi — sayfalar SSG olduğu için anlamlı bir
+  yükleme durumu yok, gezinme göstergesi Navbar'da mevcut.
+- 🟢 **Cross-Origin-Opener-Policy: same-origin** — `next.config.ts` üzerinden eklendi
+  (nginx'e dokunulmadı, reload riski alınmadı). Sitede OAuth/ödeme popup akışı yok.
+
+**Ölçülen Core Web Vitals (gerçek Chrome, mobil profil 390px/DPR3):**
+
+| Sayfa | LCP | CLS | FCP | TTFB |
+|---|---|---|---|---|
+| `/` | 856ms | 0 | 672ms | 246ms |
+| `/blog` | 328ms | 0 | 332ms | 109ms |
+| blog yazısı | 212ms | 0 | 280ms | 90ms |
+| hizmet detay | 1664ms | 0 | 292ms | 109ms |
+| `/iletisim` | 1764ms | 0 | 344ms | 84ms |
+
+Eşikler: LCP <2500ms, CLS <0.1, FCP <1800ms, TTFB <800ms → **tamamı "iyi" bandında.**
+
+**Ölçülüp bilinçli DOKUNULMAYANLAR (kanıtlanamayan kazanç / kabul edilen takas):**
+- `planet.webp` 129 KB (1024×1024 3D doku) — ana sayfa transferinin en büyük tek kalemi.
+  Küçültmek cazip ama düzlemin ekrandaki piksel ayak izi kamera mesafesine bağlı; görsel
+  olarak güvenli olduğu **kanıtlanamadı**. Doku LCP'den sonra yükleniyor, CWV etkisi yok.
+  Marka merkezindeki görseli kanıtsız riske atmak yerine öneri olarak bırakıldı.
+- `/blog` RSC prefetch 95 KB — Next'in `<Link>` ön yüklemesi; gezinmeyi hızlandırıyor,
+  hiçbir şeyi bloklamıyor. `prefetch={false}` bayt kazandırır ama blog gezinmesini
+  yavaşlatır. Blog sayfalaması yapılırsa bu kalem kendiliğinden küçülür.
+- Font ağırlığı azaltma denendi ve **ölçülüp geri alındı**: Space Grotesk'te 2 ağırlık
+  kaldırmak çıktıyı hiç değiştirmedi (10 dosya / 261 KB aynı — `next/font` değişken font
+  indiriyor). Faydası ölçülemeyen değişiklik bırakılmadı.
+
+**Kapsamı olmayan başlıklar:** Proje veritabanı, auth/oturum ve ORM içermeyen bir SSG sitesi
+olduğu için SQL/NoSQL injection, N+1, index, transaction, authorization ve CSRF (çerez/oturum
+yok) bu mimaride karşılık bulmuyor.
+
+**Bilinçli kabul edilen durum:** Dekoratif yörünge/parıltı öğeleri ve marquee şeridi viewport
+dışına taşacak şekilde tasarlandı; `body { overflow-x: hidden }` bunları içeriyor ve
+**kullanıcı hiçbir sayfada/çözünürlükte yatay kaydırma yapamıyor** (Chrome'da `scrollTo`
+ile doğrulandı). Bu bir hata değil, tasarım tercihidir.
 
 ---
 

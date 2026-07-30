@@ -64,6 +64,7 @@ function useMarqueeDrag(containerRef: React.RefObject<HTMLDivElement | null>) {
     let lastX = 0, lastY = 0, lastT = 0;
     let raf = 0;
 
+    // Boşta döngüyü TAMAMEN kapatır (yalnızca rAF'ı yeniden zamanlamaz).
     const release = () => {
       raf = 0;
       velocity = 0;
@@ -121,7 +122,7 @@ function useMarqueeDrag(containerRef: React.RefObject<HTMLDivElement | null>) {
       if (!dragging) return;
       dragging = false;
       el.style.cursor = '';
-      ensureLoop(); // momentum + yumuşak dönüş
+      ensureLoop(); // momentum + yumuşak dönüş, sonra CSS animasyonu devralır
     };
 
     // Scroll velocity boost — şerit üzerinden geçerken hafif ivme.

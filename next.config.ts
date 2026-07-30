@@ -35,9 +35,9 @@ const nextConfig: NextConfig = {
         source: '/:path*',
         headers: [
           { key: 'Content-Security-Policy', value: csp },
-          // Köken izolasyonu (Lighthouse "Best Practices"). Site hiçbir çapraz köken
-          // popup'ıyla window.opener üzerinden haberleşmez; dış linkler zaten
-          // target=_blank + rel="noopener" ile açılıyor.
+          // Köken izolasyonu (Lighthouse "Best Practices"): başka origin'lerin
+          // window referansıyla bu sekmeye erişmesini engeller. Sitede OAuth/ödeme
+          // popup akışı yok, dış bağlantılar zaten rel="noopener" ile açılıyor.
           // NOT: HSTS / X-Content-Type-Options / X-Frame-Options / Referrer-Policy /
           // Permissions-Policy başlıkları VPS'te nginx tarafından ekleniyor
           // (sites-available/beracore.com) — burada tekrar edilmez, çift başlık olmasın.

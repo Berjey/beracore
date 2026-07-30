@@ -33,6 +33,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const shapeRef = useRef<SubShapeAPI | null>(null);
+  const shapeClickTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const lastSubIconRef = useRef<string | null>(null);
   // Sadece DIŞ subSlug değişimlerini (tarayıcı geri/ileri, doğrudan URL) state'e aktarmak için.
   // İç goTo() → setSubIndex + router.replace döngüsünde geri-resetleme yarışını engeller.
@@ -386,16 +387,24 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
         { scale: 1, opacity: 1, duration: 0.3, stagger: 0.03, ease: 'power2.out' }, 0.58);
   }, [service, subIndex]);
 
-  const shapeTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const handleShapeClick = useCallback(() => {
     if (shapeClicked) return;
     setShapeClicked(true);
-    shapeTimers.current.push(setTimeout(() => {
-      detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      shapeTimers.current.push(setTimeout(() => setShapeClicked(false), 1000));
-    }, 700));
+    shapeClickTimersRef.current.push(
+      setTimeout(() => {
+        detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        shapeClickTimersRef.current.push(
+          setTimeout(() => setShapeClicked(false), 1000)
+        );
+      }, 700)
+    );
   }, [shapeClicked]);
-  useEffect(() => () => { shapeTimers.current.forEach(clearTimeout); }, []);
+
+  // Şekil tıklama zincirindeki timer'lar unmount'ta temizlenir.
+  useEffect(() => {
+    const timers = shapeClickTimersRef.current;
+    return () => { timers.forEach(clearTimeout); };
+  }, []);
 
   // Şekli sürükleyerek döndürmek artık gezinmeyi/kaydırmayı tetiklemez (bkz. useTapOnly).
   const shapeTap = useTapOnly(handleShapeClick);
@@ -642,16 +651,16 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
             </p>
           </div>
 
-          {/* Dots */}
-          <div className="sp-hero-dots flex justify-center gap-3 mb-6">
+          {/* Dots — buton 24x24px şeffaf dokunma hedefi (WCAG 2.5.8),
+              görünen nokta içteki span'dir. */}
+          <div className="sp-hero-dots flex justify-center items-center gap-1 mb-6">
             {service.subServices.map((ss, i) => (
               <button
                 key={ss.slug}
                 type="button"
                 onClick={() => goTo(i)}
-                // Dokunma hedefi görsel noktadan bağımsız olarak 44px yüksekliğinde
-                // (WCAG 2.5.8); nokta içeride ortalanır.
-                className="flex items-center justify-center h-11 -my-[18px] transition-all duration-400"
+                // 24×24 dokunma hedefi (WCAG 2.5.8) — görsel nokta içeride ortalanır.
+                className="shrink-0 flex items-center justify-center w-6 h-6"
                 aria-label={ss.title}
                 aria-current={i === subIndex ? 'true' : undefined}
               >
@@ -1220,7 +1229,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
               <div className="text-center mt-12">
                 <Link
                   href={`/hizmetler/${service.key}`}
-                  className="group inline-flex items-center gap-2 font-body text-[0.82rem] font-semibold tracking-wider uppercase text-t2 hover:text-accent transition-colors duration-300"
+                  className="group inline-flex items-center gap-2 min-h-[24px] py-1 font-body text-[0.82rem] font-semibold tracking-wider uppercase text-t2 hover:text-accent transition-colors duration-300"
                 >
                   Tüm {service.title} hizmetlerini gör
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>

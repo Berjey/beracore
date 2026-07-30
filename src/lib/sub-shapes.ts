@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export interface SubShapeAPI {
+  // Renk parametresi yok: şekiller her zaman kurumsal paleti (CORP_PINK/CORP_YELLOW) kullanır.
   setShape: (shape: string) => void;
   dispose: () => void;
 }
@@ -48,8 +49,8 @@ function makeFillMatAccent(): THREE.MeshPhongMaterial {
 }
 
 // ===== Build 3D meshes for each sub-service =====
-// Renk kurumsal paletten sabit gelir (CORP_PINK / CORP_YELLOW); şekle göre renk
-// parametresi hiç kullanılmıyordu, imzadan kaldırıldı.
+// Renk kurumsal paletten sabit gelir; şekle göre renk parametresi hiç
+// kullanılmıyordu, imzadan kaldırıldı.
 function buildShape(name: string): THREE.Group {
   const g = new THREE.Group();
 

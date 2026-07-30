@@ -161,6 +161,19 @@ Kapsamlı QA turunda bulunup düzeltilen, **tekrar bozulmaması gereken** noktal
   Öncesinde tarayıcıda rastgele üretiliyordu; müşteriye hiçbir kaydı olmayan numara veriliyordu.
 - **Görünmez ama odaklanabilir öğe bırakılmaz.** Navbar alt menüsü `inert`,
   ScrollToTop/WhatsApp `visibility:hidden`, Services bölümü açılana kadar `inert`.
+- **Nokta/karusel butonları:** görünen nokta içteki `<span>`, buton 24×24px şeffaf dokunma
+  hedefi (WCAG 2.5.8). Yeni karusel eklenirse bu kalıp kullanılmalı.
+- **Masaüstü navigasyon `lg` (1024px) kırılımında** açılır, `md` değil — 768px'te 9 öğe + CTA
+  sığmıyor ve buton kesiliyordu.
+- **Özyinelemeli/koşulsuz `requestAnimationFrame` kullanma.** TechMarquee'de kalıcı döngü
+  sızıntısına yol açtı: döngü yalnızca hareket varken çalışmalı, boşta kapanmalı;
+  id ref'te tutulmalı ve unmount'ta `cancelAnimationFrame` çağrılmalı.
+- **setState çağıran her timer/rAF ref'e alınır ve unmount'ta iptal edilir.**
+- **Flex satırındaki sabit boyutlu butonlara `shrink-0`** — yoksa dar ekranda 2px'e sıkışıp
+  tıklanamaz hale geliyorlar.
+- **Hata sınırları:** `src/app/error.tsx` + `global-error.tsx` üretimde stilize Türkçe
+  ekran gösterir; kaldırılmamalı.
+
 
 ### Dikkat edilecek teknik tuzaklar
 - **GA4 kuruldu** (28 Tem 2026, `G-NX5SRKJT2M`). Not: CSP artık **nginx'te değil `next.config.ts`'te**
