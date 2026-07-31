@@ -3,23 +3,46 @@
 **Tek kaynak dosya.** Sitenin mevcut durumu, yapılacaklar ve nasıl yapılacağı burada.
 Git ile taşınır — hangi bilgisayarda olursan ol aynı listeyi görürsün.
 
-**Son denetim:** 27 Temmuz 2026 (tam site denetimi: 84 sayfa tarandı, 0 SEO hatası)
+**Son denetim:** 30 Temmuz 2026 (üretime hazırlık + A serisi kod işleri — hepsi canlıda)
 
 Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalısın · 🛠 Claude yapar
 
 ---
 
+## 0. YENİ OTURUMA BAŞLARKEN — 30 SANİYELİK ÖZET
+
+**Kod tarafı bitti.** 30 Tem 2026'da iki tur denetim + A serisi tamamlandı ve canlıya alındı
+(son commit `4095eb3`). Local + GitHub + canlı aynı commit'te. Kalite kapıları: `npm run lint`
+(0/0) · `npm test` (25/25) · `npm run build` (119 sayfa) · `npm run seo-audit` (✅ temiz).
+
+**Sıradaki iş kodda DEĞİL.** Kalan üç blok, önem sırasıyla:
+
+| # | Ne | Kim | Nerede anlatılıyor |
+|---|----|-----|--------------------|
+| 1 | Search Console indeks sayısını oku, Claude'a söyle | 👤 sen | §2 Adım 1 |
+| 2 | **Node 20 → 24 yükseltme kararı** (VPS'in Node'u destek dışı) | 👤 karar senin | §2 Adım 1.5 |
+| 3 | Sosyal/dizin profilleri aç (LinkedIn, Instagram, X, Clutch…) | 👤 sen | `docs/dijital-varlik-plani.md` |
+
+Bunlardan sonra 🛠 Claude'un sırada bekleyen büyük işi: **Admin Panel + CRM Faz A**
+(`docs/panel-crm-plani.md`) — şu an gelen form talepleri hiçbir yere kaydedilmiyor.
+
+---
+
 ## 1. ŞU AN NE DURUMDAYIZ
 
-**Teknik durum: sağlam.** 27 Temmuz denetiminde 84 sayfanın tamamı tarandı:
-title/description/canonical/OG/schema/H1/alt eksiksiz, kırık link yok, yetim sayfa yok,
-http→https ve www→apex yönlendirmeleri çalışıyor, güvenlik başlıkları tam, gzip açık.
+**Teknik durum: sağlam ve doğrulanmış.** 27 Tem denetiminde 84 sayfa tarandı (0 SEO hatası);
+30 Tem'de üretime hazırlık turu + A serisi yapıldı. Güvenlik başlıkları tam, hata sınırları var,
+ölçülen Core Web Vitals'ın tamamı "iyi" bandında, bundle'lar %30-40 küçültüldü.
 
 **İçerik durumu: iyi.** 50 blog yazısı, 23 alt hizmet sayfası, 24 yerel sayfa (İstanbul, Ankara, İzmir, Bursa × 6 hizmet).
 
 **Asıl darboğaz: görünürlük.** Site yeni, otoritesi yok. Ana kelimelerde rakiplerin
 domain yaşı 15 yıla varıyor. Kısa vadede kazanılacak yer uzun kuyruk sorgular.
 Gerçekçi takvim: **4-6 ayda düzenli organik trafik.**
+
+**Bilinen, kabul edilmiş açıklar:** CSP'de `script-src 'unsafe-inline'` (kaldırmak sayfaları
+statik olmaktan çıkarır) · 4 sayfa tipinde gsap duruyor · şehir sayfaları 246-302 kelime
+(içerik fazı işi) · bileşen (JSX) render testi yok · Lighthouse skoru henüz ölçülmedi (👤).
 
 ---
 
@@ -35,6 +58,21 @@ Gerçekçi takvim: **4-6 ayda düzenli organik trafik.**
 
 > Not: 27 Temmuz'da navigasyondaki büyük bir tarama hatası düzeltildi (aşağıya bak).
 > Bu düzeltmenin etkisinin Search Console'a yansıması birkaç hafta sürebilir.
+
+### 🔴 Adım 1.5 — VPS Node sürümü: KARAR SENİN 👤
+**Durum:** VPS Node **20.20.2** / npm 10.8.2 çalıştırıyor. Node 20'nin destek ömrü
+**Nisan 2026'da doldu** → üretim sunucusu artık güvenlik yaması almıyor.
+
+**İki somut sorun yaratıyor:**
+1. **Güvenlik:** Yamalanmayan bir çalışma zamanı.
+2. **Deploy sürtünmesi:** Local'de npm 11 var, VPS'te npm 10. npm 11 `sharp`'ın WASM alt
+   bağımlılıklarını lockfile'a yazmıyor, VPS'te `npm ci` EUSAGE ile patlıyor (30 Tem'de bir
+   deploy'u yarıda kesti). Şu anki çözüm elle: bağımlılık değişince deploy'dan önce
+   `npx -y npm@10.8.2 install --package-lock-only` çalıştırmak (ayrıntı `CLAUDE.md`).
+
+**Node 24'e yükseltmek ikisini de bitirir.** Ama üretim çalışma zamanını değiştirdiği ve
+geri alması zahmetli olduğu için **Claude bunu sormadan yapmaz.** "Yükselt" dersen yapılır
+(önce pm2 dump + build doğrulaması, sonra nvm ile geçiş, sonra deploy testi).
 
 ### ✅ Adım 2 — Google Analytics 4 (28 Tem 2026 — TAMAMLANDI)
 GA4 mülkü açıldı, ölçüm kimliği **`G-NX5SRKJT2M`** VPS `/var/www/beracore/.env`'e eklendi ve
