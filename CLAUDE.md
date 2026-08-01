@@ -69,6 +69,24 @@ SSH anahtarı makineye özeldir. Yeni makinede:
    Windows'ta `ssh-copy-id`/`sshpass` yok; tek seferlik parola ile eklemek için
    `pip install paramiko` + kısa bir Python script'i en pratik yol. Parola kullanıcıda.
 
+#### Windows tuzağı: Smart App Control git'i öldürür
+Windows 11'de **Akıllı Uygulama Denetimi (Smart App Control)** açıksa `git.exe` ve `bash.exe`
+**hiçbir çıktı vermeden** `-1058471934` (`0xC0E90002`) ile çöker. Git bozuk sanılıp yeniden
+kurulur — fayda etmez, çünkü engellenen git'in imzasız MinGW DLL'leridir
+(`libiconv-2.dll`, `libpcre2-8-0.dll`, `libintl-8.dll`).
+
+Teşhis:
+```
+Get-WinEvent -LogName "Microsoft-Windows-CodeIntegrity/Operational" -MaxEvents 20 |
+  Where-Object { $_.Message -match "git" }
+(Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\CI\Policy").VerifiedAndReputablePolicyState
+```
+`1` = açık/zorlayıcı, `0` = kapalı.
+
+Çözüm: Windows Güvenliği → Uygulama ve tarayıcı denetimi → Akıllı Uygulama Denetimi → **Kapalı**
+(`windowsdefender://smartappcontrol`). **Geri döndürülemez** — bir kez kapatılınca Windows
+yeniden kurulmadan açılamaz, bu yüzden kullanıcı onayı şart. 2 Ağu 2026'da bu makinede kapatıldı.
+
 ### İletişim formu (çalışıyor)
 Form `src/app/api/contact/route.ts` nodemailer + SMTP kullanır. Ayarlar VPS'te
 `/var/www/beracore/.env` dosyasında (chmod 600, **git'e dahil değil**, şifre burada tutulur):
