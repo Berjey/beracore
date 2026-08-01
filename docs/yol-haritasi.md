@@ -3,7 +3,7 @@
 **Tek kaynak dosya.** Sitenin mevcut durumu, yapılacaklar ve nasıl yapılacağı burada.
 Git ile taşınır — hangi bilgisayarda olursan ol aynı listeyi görürsün.
 
-**Son denetim:** 30 Temmuz 2026 (üretime hazırlık + A serisi kod işleri — hepsi canlıda)
+**Son denetim:** 2 Ağustos 2026 (tam site denetimi + LCP/deploy/SSH düzeltmeleri — hepsi canlıda)
 
 Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalısın · 🛠 Claude yapar
 
@@ -11,9 +11,9 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalıs
 
 ## 0. YENİ OTURUMA BAŞLARKEN — 30 SANİYELİK ÖZET
 
-**Kod tarafı bitti.** 30 Tem 2026'da iki tur denetim + A serisi tamamlandı ve canlıya alındı
-(son commit `4095eb3`). Local + GitHub + canlı aynı commit'te. Kalite kapıları: `npm run lint`
-(0/0) · `npm test` (25/25) · `npm run build` (119 sayfa) · `npm run seo-audit` (✅ temiz).
+**Kod tarafı bitti.** 2 Ağu 2026'da tam site denetimi yapıldı ve bulunan her şey düzeltilip
+canlıya alındı (bkz. §2.7). Local + GitHub + canlı aynı commit'te. Kalite kapıları:
+`npm run lint` (0/0) · `npm test` (25/25) · `npm run build` (119 sayfa) · `npm run seo-audit` (✅ temiz).
 
 **Sıradaki iş kodda DEĞİL.** Kalan üç blok, önem sırasıyla:
 
@@ -23,8 +23,12 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalıs
 | 2 | **Node 20 → 24 yükseltme kararı** (VPS'in Node'u destek dışı) | 👤 karar senin | §2 Adım 1.5 |
 | 3 | Sosyal/dizin profilleri aç (LinkedIn, Instagram, X, Clutch…) | 👤 sen | `docs/dijital-varlik-plani.md` |
 
-Bunlardan sonra 🛠 Claude'un sırada bekleyen büyük işi: **Admin Panel + CRM Faz A**
-(`docs/panel-crm-plani.md`) — şu an gelen form talepleri hiçbir yere kaydedilmiyor.
+Bunlardan sonra 🛠 Claude'un sırada bekleyen iki büyük işi:
+1. **Admin Panel + CRM Faz A** (`docs/panel-crm-plani.md`) — şu an gelen form talepleri
+   hiçbir yere kaydedilmiyor; tek kayıt e-posta kutusu.
+2. **İçerik fazı** (kullanıcı açtığında) — 6 hizmet kategorisi sayfası 252-299 kelime,
+   24 şehir sayfası 246-302 kelime. Teknik hata değil; ticari sorgularda rakiplerin
+   2500+ kelimelik sayfalarıyla yarışamayacak hacim.
 
 ---
 
@@ -266,12 +270,74 @@ biri olmalı.
 
 ---
 
+## 2.7. TAM SİTE DENETİMİ (2 Ağustos 2026 — TAMAMLANDI)
+
+111 sitemap URL'i + 10 sayfa tipi × 9 çözünürlük + backend + sunucu denetlendi.
+
+**Düzeltilen gerçek hatalar:**
+- 🔴 **LCP'yi çerez bandı bozuyordu** — band yalnızca hidrasyondan sonra mount oluyordu ve
+  sayfanın **en büyük metin bloğu** (10608px²) olduğu için LCP öğesi haline geliyordu.
+  Ölçülen aday zinciri: `2568ms <P>"BERACORE" (7605px²)` → `5752ms <P>"Deneyiminizi…" (10608px²)`.
+  Çözüm: band artık SSR HTML'inde koşulsuz basılıyor, görünürlüğünü `layout.tsx`'teki senkron
+  `<head>` script'inin yazdığı `html[data-cc]` + `globals.css`'teki `.cc-banner` belirliyor.
+  4 senaryo doğrulandı (karar yok / kabul / red / karar verilmiş) — GA hâlâ onaysız yüklenmiyor.
+- 🔴 **Her deploy canlıda 500 penceresi açıyordu** — iki ayrı sebep: (1) `npm ci` node_modules'ü
+  silerken çalışan Next.js'in tembel require'ı patlıyordu (`Cannot find module './serve-static'`,
+  pm2 error log 1 Ağu 22:42), (2) `next build` çıktıyı çalışan `.next` üzerine yazıyordu.
+  Çözüm: kurulum yalnızca lockfile değiştiyse + uygulama durmuşken; derleme `.next-build`'e
+  yapılıp tek `mv` ile takas. Ayrıca `server-deploy.sh` artık stdin'den çalıştırılıyor
+  (kendini `git reset` ile güncellerken bash'in kademeli okuması bozuk komut çalıştırabiliyordu).
+- 🟡 **SSH parola girişi açıktı** — `/etc/ssh/sshd_config.d/01-beracore-hardening.conf` ile
+  kapatıldı (`PasswordAuthentication no` + `PermitRootLogin prohibit-password`), `fail2ban` kuruldu.
+  `authorized_keys`'ten sahibi doğrulanmamış **`emirhan`** anahtarı kullanıcı onayıyla kaldırıldı
+  (kalan 3: hostinger-managed, beracore-local-deploy, beracore-vps-deploy).
+- 🟡 **WCAG 2.5.8** — iletişim sayfasında telefon linki 23.55px'ti (`min-h-[24px] py-0.5` eklendi).
+- 🟡 **WCAG AA kontrast** — hizmet detayda "Detay için tıkla" 2.95:1. Sebep `animate-pulse`:
+  opaklığı 0.5'e indirip 9.6px metni eşiğin altına düşürüyordu. Nabız ok simgesine taşındı,
+  metin `text-t2` yapıldı.
+- 🟢 **8 sayfada `metaTitle` 60 karakteri aşıyordu** (Google kırpıyordu) — kısaltıldı.
+
+**Ölçülen Core Web Vitals — LCP düzeltmesi sonrası** (gerçek Chrome, mobil 390px/DPR3,
+**4× CPU kısıtlı + 4G** — Lighthouse mobil koşulu; 30 Tem tablosu kısıtlamasız ölçümdü):
+
+| Sayfa | LCP önce | LCP sonra | CLS | FCP | TTFB |
+|---|---|---|---|---|---|
+| `/` | 6252ms | **1392ms** | 0.002 | 1392ms | 242ms |
+| `/blog` | 3724ms | **708ms** | 0 | 708ms | 104ms |
+| blog yazısı | 1232ms | **556ms** | 0 | 556ms | 111ms |
+| hizmet detay | 5296ms | **2172ms** | 0 | 556ms | 110ms |
+| `/iletisim` | 4172ms | **2288ms** | 0 | 488ms | 100ms |
+| şehir | 792ms | **532ms** | 0 | 532ms | 114ms |
+
+Uzun görevler ana sayfada 2966ms → 592ms. Tamamı "iyi" bandında.
+
+**Denetlenip temiz çıkanlar:** 111/111 URL HTTP 200 · yetim sayfa 0 · kırık iç link 0 ·
+canonical/H1/JSON-LD/OG/twitter tam · yinelenen title/description yok · backend 23/23 senaryo
+(405/400/413/422/403 doğru, honeypot, tip zorlaması reddi, CRLF başlık enjeksiyonu ve XSS
+kaçışı, iç detay sızmıyor) · hız sınırı çalışıyor ve **sahte `X-Forwarded-For` ile atlatılamıyor** ·
+7/7 güvenlik başlığı · `.env`/`.git/config` erişilemiyor · 937 KB istemci paketinde sır yok ·
+90 kombinasyonda sıfır konsol hatası/JS istisnası · yatay kaydırma 12/12 testte 0px.
+
+**Yanlış pozitif olduğu kanıtlanıp DÜZELTİLMEYENLER** (uydurma düzeltme yapılmadı):
+360 tarayıcı bulgusunun 359'u ölçüm artefaktıydı — atlama linki odaklanınca 1×1'den 160×48'e
+çıkıyor (doğru erişilebilirlik kalıbı), 80 "taşma" `overflow-x:hidden` ile kırpılan dekoratif
+öğeler, 73 "HTTP 304" önbellek yanıtı. Kontrast taramasının ilk turu da güvenilmezdi
+(oklab/alfa/gradyan okunamıyor); oklab→sRGB dönüşümü + alfa birleştirmesiyle yeniden hesaplandı
+ve 8 sayfada tek gerçek ihlal kaldı.
+
+---
+
 ## 3. TEKNİK İYİLEŞTİRME ÖNERİLERİ (aciliyeti düşük)
 
 - 🟢 **`/blog` sayfalama** — yazı sayısı ~60'ı geçerse. Şu an gereksiz, gerekçesi §2.6/A4'te
   (asıl şişkinlik giderildi, sayfa 32 KB gzip; istemci taraflı arama sayfalamayı engelliyor).
 - 🟢 **Core Web Vitals** 👤 — kesin skor için https://pagespeed.web.dev üzerinden canlı ölçüm.
-- 🟢 **Şehir sayfalarının içerik hacmi** — bkz. §2.6 sonu. İçerik fazı açılınca ilk iş.
+  (2 Ağu'da kısıtlı Chrome ile ölçüldü, tamamı "iyi"; PageSpeed alan verisi ~4 hafta sonra dolar.)
+- 🟢 **Şehir sayfalarının içerik hacmi** (246-302 kelime) ve **6 hizmet kategorisi sayfası**
+  (252-299 kelime) — bkz. §2.6 sonu ve §2.7. İçerik fazı açılınca ilk iş.
+- 🟢 **SMTP şifresi rotasyonu** 👤 — `emirhan` anahtarı geçmişte root erişimine sahipti,
+  yani VPS'teki `.env` (SMTP şifresi) görülmüş olabilir. Hostinger panelinden
+  `info@beracore.com` şifresi değiştirilirse VPS `.env` güncellenmeli (🛠 Claude yapar).
 - 🟢 **Bileşen render testi** — `tests/` yalnızca saf mantık/veriyi kapsıyor. JSX testi
   için jsdom + bir derleyici gerekir (Node tip soyma JSX dönüştürmez); ayrı bir iş.
 
