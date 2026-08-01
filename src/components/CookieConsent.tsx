@@ -20,17 +20,19 @@ export default function CookieConsent() {
     setDecision(readCookieDecision() ?? 'pending');
   }, []);
 
-  // GA yapılandırılmamış → tamamen pasif
-  if (!GA_ID || decision === null) return null;
+  // GA yapılandırılmamış → tamamen pasif (banner da GA da yok)
+  if (!GA_ID) return null;
 
-  const accept = () => {
-    writeCookieDecision('accepted');
-    setDecision('accepted');
+  /** Kararı hem depolamaya hem <html data-cc> özniteliğine yazar.
+   *  Öznitelik CSS'i sürdüğü için band aynı karede gizlenir — React state'i
+   *  yalnızca GA'nın yüklenmesini kontrol eder. */
+  const karar = (v: 'accepted' | 'rejected') => {
+    writeCookieDecision(v);
+    document.documentElement.dataset.cc = v;
+    setDecision(v);
   };
-  const reject = () => {
-    writeCookieDecision('rejected');
-    setDecision('rejected');
-  };
+  const accept = () => karar('accepted');
+  const reject = () => karar('rejected');
 
   return (
     <>
@@ -47,17 +49,20 @@ export default function CookieConsent() {
         </>
       )}
 
-      {/* Onay bekliyorsa banner */}
-      {decision === 'pending' && (
-        <div
-          // role="dialog" + aria-live birlikte tutarsızdı (diyalog odak yönetimi
-          // bekler, canlı bölge ise duyurulur). Banner odağı çalmadığı için doğru
-          // semantik: nazikçe duyurulan bir bölge.
-          role="region"
-          aria-live="polite"
-          aria-label="Çerez tercihi"
-          className="fixed bottom-4 left-4 right-4 z-[9500] mx-auto max-w-2xl rounded-2xl border border-white/10 bg-[#15131c]/95 backdrop-blur-md p-5 shadow-2xl max-md:bottom-3 max-md:left-3 max-md:right-3"
-        >
+      {/* Band KOŞULSUZ render edilir (SSR HTML'inde yer alır); görünürlüğünü
+          globals.css'teki `.cc-banner` + `html[data-cc]` çifti belirler.
+          Koşullu render'a DÖNÜLMEMELİ: band hidrasyondan sonra belirdiğinde
+          sayfanın en büyük metin bloğu olarak LCP öğesi oluyor ve ana sayfada
+          LCP'yi 5,8 sn'ye çıkarıyordu. */}
+      <div
+        // role="dialog" + aria-live birlikte tutarsızdı (diyalog odak yönetimi
+        // bekler, canlı bölge ise duyurulur). Banner odağı çalmadığı için doğru
+        // semantik: nazikçe duyurulan bir bölge.
+        role="region"
+        aria-live="polite"
+        aria-label="Çerez tercihi"
+        className="cc-banner fixed bottom-4 left-4 right-4 z-[9500] mx-auto max-w-2xl rounded-2xl border border-white/10 bg-[#15131c]/95 backdrop-blur-md p-5 shadow-2xl max-md:bottom-3 max-md:left-3 max-md:right-3"
+      >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="font-body text-[0.85rem] leading-relaxed text-white/75">
               Deneyiminizi iyileştirmek için çerezler kullanıyoruz. Detaylar için{' '}
@@ -82,8 +87,7 @@ export default function CookieConsent() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </div>
     </>
   );
 }

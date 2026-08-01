@@ -1,5 +1,8 @@
 node_modules/
 .next/
+# deploy sirasinda kullanilan gecici build dizinleri (scripts/server-deploy.sh)
+.next-build/
+.next-eski/
 out/
 .DS_Store
 *.log

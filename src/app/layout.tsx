@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { SITE_URL, OG_IMAGE_ABSOLUTE, ogImages, twitterImages } from '@/lib/seo';
+import { COOKIE_CONSENT_KEY } from '@/lib/cookie-consent';
 import MotionGuard from '@/components/MotionGuard';
 import CookieConsent from '@/components/CookieConsent';
 import WhatsAppCta from '@/components/WhatsAppCta';
@@ -20,6 +21,9 @@ export const viewport: Viewport = {
 // `weight` verilmez → next/font DEĞİŞKEN (variable) fontu indirir: iki aile için
 // 9 ayrı statik dosya yerine subset başına tek dosya. Tüm ağırlıklar (100–900)
 // kullanılabilir kalır, toplam font yükü ve istek sayısı belirgin şekilde düşer.
+// Build zamanında okunur; yoksa çerez bandı da GA da hiç render edilmez.
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-body',
@@ -167,6 +171,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `,
           }}
         />
+        {/* Çerez kararını İLK BOYAMADAN ÖNCE senkron olarak oku ve <html data-cc="..."> yaz.
+            Neden: banner daha önce yalnızca hidrasyondan sonra mount oluyordu; sayfanın en
+            büyük metin bloğu olduğu için LCP öğesi haline geliyor ve ana sayfada LCP'yi
+            2,6 sn'den 5,8 sn'ye taşıyordu (4x CPU kısıtlı mobil ölçüm). Artık banner SSR
+            HTML'inde yer alır, görünürlüğünü bu öznitelik belirler → LCP ≈ FCP.
+            Kararı olan ziyaretçide banner hiç boyanmaz, yanıp sönme (flash) olmaz. */}
+        {GA_ID && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html:
+                `try{var v=localStorage.getItem(${JSON.stringify(COOKIE_CONSENT_KEY)});` +
+                `document.documentElement.dataset.cc=(v==='accepted'||v==='rejected')?v:'pending'}` +
+                `catch(e){document.documentElement.dataset.cc='pending'}`,
+            }}
+          />
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

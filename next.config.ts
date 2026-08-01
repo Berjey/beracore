@@ -29,6 +29,11 @@ const csp = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false, // X-Powered-By: Next.js ifşasını kaldır
+  // Deploy sırasında build çıktısı ÇALIŞAN sunucunun `.next` dizininin üzerine
+  // yazılırsa, o an sayfa isteyen ziyaretçi eski manifest'e göre artık var olmayan
+  // chunk'ları ister ve 500 alır. server-deploy.sh bu değişkeni `.next-build` yapıp
+  // derlemeyi ayrı dizinde bitirir, sonra tek bir `mv` ile takas eder.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   async headers() {
     return [
       {

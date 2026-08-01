@@ -8,6 +8,7 @@
 // ve IndexNow adimini icermedigi icin iki yol birbirinden ayrisiyordu.)
 
 import { execFileSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
@@ -37,8 +38,18 @@ if (capture('git', ['status', '--porcelain']).trim()) {
 console.log('[local] git push origin main')
 run('git', ['push', 'origin', 'main'])
 
-console.log('[remote] server-deploy.sh çalıştırılıyor')
-run('ssh', ['beracore', 'bash /var/www/beracore/scripts/server-deploy.sh'])
+// Script DOSYADAN DEĞİL, stdin'den çalıştırılır. Sebep: server-deploy.sh içindeki
+// `git reset --hard` script dosyasının kendisini de günceller; bash ise script'i
+// çalışırken kademeli okur. Dosyadan çalıştırılırsa, script'in kendisi değiştiği
+// deploy'larda bash yarıda kalan bayt konumundan devam edip bozuk komut çalıştırabilir.
+// Boru hattından okununca içerik VPS'teki dosyadan bağımsızdır ve az önce push'lanan
+// sürümün ta kendisidir.
+console.log('[remote] server-deploy.sh çalıştırılıyor (stdin üzerinden)')
+execFileSync('ssh', ['beracore', 'bash -s'], {
+  cwd: root,
+  input: readFileSync(resolve(root, 'scripts/server-deploy.sh')),
+  stdio: ['pipe', 'inherit', 'inherit'],
+})
 
 console.log('[remote] pm2 status')
 run('ssh', ['beracore', 'pm2 list'])

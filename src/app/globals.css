@@ -203,6 +203,15 @@ textarea:focus, textarea:focus-visible {
   background: linear-gradient(180deg, rgba(255, 169, 249, 0.55), rgba(255, 247, 173, 0.4));
 }
 
+/* ===== Çerez bandı görünürlüğü =====
+   Band SSR HTML'inde her zaman basılır; görünürlüğünü <head>'deki senkron script'in
+   yazdığı html[data-cc] belirler. Böylece ilk boyamada yerindedir ve hidrasyondan
+   sonra beliren "en büyük öğe" olarak LCP'yi geciktirmez.
+   Öznitelik hiç yazılmazsa (JS kapalı) band gizli kalır — bu durumda GA da yüklenmediği
+   için izleme çerezi set edilmez, onay istemek gerekmez. */
+.cc-banner { display: none; }
+html[data-cc='pending'] .cc-banner { display: block; }
+
 /* ===== Reduced Motion ===== */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
