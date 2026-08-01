@@ -20,8 +20,21 @@ npm run deploy "commit mesajı"
 ```
 
 `scripts/deploy.mjs` çalışır ve şunları sırayla yapar:
-local commit → `git push origin main` → SSH ile VPS'te `server-deploy.sh`
-(git reset --hard + npm ci + next build + pm2 restart) → IndexNow ile Bing/Yandex bildirimi.
+local commit → `git push origin main` → SSH ile VPS'te `server-deploy.sh` → IndexNow bildirimi.
+
+**Deploy artık kesintisiz (2 Ağu 2026'da düzeltildi).** Eski akış canlı sitede 500 üretiyordu:
+- `npm ci` node_modules'ü silip kurarken çalışan Next.js'in tembel require'ları patlıyordu
+  (`Cannot find module './serve-static'` → görsel optimizasyonu 500).
+- `next build` çıktıyı doğrudan `.next` üzerine yazdığı için o an sayfa isteyen ziyaretçi
+  artık var olmayan chunk'ları istiyordu.
+
+Yeni akış: bağımlılık kurulumu **yalnızca lockfile değiştiyse** ve uygulama durdurulmuşken
+yapılır; derleme `NEXT_DIST_DIR=.next-build` ile ayrı dizine yapılıp tek `mv` ile takas edilir.
+`next.config.ts`'teki `distDir: process.env.NEXT_DIST_DIR || '.next'` bunu mümkün kılar.
+
+`deploy.mjs` script'i VPS'te **dosyadan değil stdin'den** çalıştırır (`ssh beracore 'bash -s'`).
+Sebep: `server-deploy.sh` içindeki `git reset --hard` script'in kendisini de günceller ve bash
+script'i çalışırken kademeli okur → script'in değiştiği deploy'larda bozuk komut çalışabilirdi.
 
 **Tek deploy yolu budur.** Eski `scripts/deploy.sh` ve `scripts/indexnow-submit.sh` kaldırıldı:
 Windows'ta `bash` System32'deki WSL shim'ine gidiyordu ve bash sürümü IndexNow adımını
@@ -54,6 +67,16 @@ adımı yalnızca `npm ci` + `next build` yapar. Ama VPS'te test çalıştırmay
 
 ### VPS
 - Host `187.124.181.213`, user `root`, SSH alias `beracore` (Hostinger, Ubuntu)
+- **SSH yalnızca ANAHTAR ile** (2 Ağu 2026). `/etc/ssh/sshd_config.d/01-beracore-hardening.conf`:
+  `PasswordAuthentication no` + `PermitRootLogin prohibit-password`. Dosya `01-` önekli çünkü
+  `sshd_config.d/*.conf` alfabetik okunur ve OpenSSH bir ayarın **ilk** gördüğü değeri kullanır;
+  `50-cloud-init.conf` içindeki `yes` satırını ezmek için önce gelmesi gerekir.
+  Yedek `/root/ssh-yedek-20260802/`. Geri alma: dosyayı sil + `systemctl reload ssh`.
+  **Parola ile giriş artık mümkün değil** — yeni makine eklerken public key'i mevcut bir
+  makineden `authorized_keys`'e eklemek ZORUNLU (parolayla ekleme yolu kapandı).
+- `fail2ban` aktif (sshd jail, 5 deneme / 10 dk → 1 saat ban)
+- ⚠️ `authorized_keys` içinde **`emirhan`** yorumlu, sahibi doğrulanmamış bir anahtar var.
+  Root erişimi verir. Kullanıcıya soruldu, karar bekleniyor.
 - Proje yolu `/var/www/beracore`, PM2 app adı `beracore`, Nginx + Let's Encrypt
 - pm2-root servisi enabled (reboot'ta site kendiliğinden kalkar), certbot timer aktif
 - Nginx config `sites-available/beracore.com`: güvenlik başlıkları (CSP/HSTS/…),
@@ -229,6 +252,14 @@ Kapsamlı QA turunda bulunup düzeltilen, **tekrar bozulmaması gereken** noktal
 - **setState çağıran her timer/rAF ref'e alınır ve unmount'ta iptal edilir.**
 - **Flex satırındaki sabit boyutlu butonlara `shrink-0`** — yoksa dar ekranda 2px'e sıkışıp
   tıklanamaz hale geliyorlar.
+- **Çerez bandı KOŞULSUZ render edilir**, görünürlüğünü `globals.css`'teki `.cc-banner` +
+  `html[data-cc]` çifti belirler; değeri `layout.tsx`'teki senkron `<head>` script'i yazar.
+  `{decision === 'pending' && ...}` koşuluna DÖNÜLMEMELİ: band hidrasyondan sonra belirdiğinde
+  sayfanın en büyük metin bloğu (10608px²) olarak **LCP öğesi** oluyordu ve ana sayfada LCP'yi
+  1392ms yerine 6252ms yapıyordu (2 Ağu 2026 ölçümü, 4x CPU kısıtlı mobil).
+- **Geç beliren büyük overlay'lere dikkat.** Sitenin en büyük "içerikli" metni yalnızca
+  7605px² (hero başlığı harf harf animasyonlu span'lara bölündüğü için LCP adayı değil).
+  Bu yüzden sonradan mount olan herhangi bir geniş kutu kolayca LCP öğesi haline gelir.
 - **Hata sınırları:** `src/app/error.tsx` + `global-error.tsx` üretimde stilize Türkçe
   ekran gösterir; kaldırılmamalı. `global-error.tsx` içindeki `<a href="/">` bilinçlidir
   (`Link` DEĞİL): kök layout çökmüşken istemci gezinmesi bozuk React ağacında kalır,
