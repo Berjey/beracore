@@ -785,7 +785,7 @@ export default function ContactPage() {
                       </div>
                       {m.href ? (
                         <a href={m.href}
-                          className="font-heading text-[1.1rem] font-semibold text-t1 mb-1.5 transition-colors duration-400 hover:text-[color:var(--accent)] block truncate">
+                          className="font-heading text-[1.1rem] font-semibold text-t1 mb-1.5 transition-colors duration-400 hover:text-[color:var(--accent)] block truncate min-h-[24px] py-0.5">
                           {m.value}
                         </a>
                       ) : (

@@ -787,7 +787,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'odeme-altyapisi-nedir',
     title: 'Ödeme Altyapısı Nedir? Sanal POS ve Ödeme Sistemi Entegrasyonu 2026',
-    metaTitle: 'Ödeme Altyapısı Nedir? Sanal POS Entegrasyonu 2026 | BERACORE',
+    metaTitle: 'Ödeme Altyapısı Nedir? Sanal POS Kurulumu 2026 | BERACORE',
     metaDescription:
       'Ödeme altyapısı nedir, sanal POS ve ödeme sistemleri nasıl entegre edilir? PCI DSS güvenliği, taksit ve çoklu ödeme yöntemleri dahil 2026 rehberi BERACORE blogunda.',
     excerpt:
@@ -920,7 +920,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'grafik-tasarim-nedir-marka-icin-onemi',
     title: 'Grafik Tasarım Nedir ve Marka İçin Neden Önemlidir?',
-    metaTitle: 'Grafik Tasarım Nedir? Marka İçin Önemi ve Kullanımı | BERACORE',
+    metaTitle: 'Grafik Tasarım Nedir? Marka İçin Önemi | BERACORE',
     metaDescription:
       'Grafik tasarım nedir, hangi alanlarda kullanılır ve markanız için neden önemlidir? Görsel iletişimin satışa ve güvene etkisini anlatan rehber BERACORE blogunda.',
     excerpt:
@@ -965,7 +965,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'icerik-pazarlama-nedir-seo-strateji',
     title: 'İçerik Pazarlama Nedir? SEO Uyumlu İçerik Stratejisi Rehberi 2026',
-    metaTitle: 'İçerik Pazarlama Nedir? SEO İçerik Stratejisi 2026 | BERACORE',
+    metaTitle: 'İçerik Pazarlama ve SEO İçerik Stratejisi | BERACORE',
     metaDescription:
       'İçerik pazarlama nedir, neden işe yarar ve SEO uyumlu içerik stratejisi nasıl kurulur? Blog, huni ve anahtar kelime dahil 2026 rehberi.',
     excerpt:
@@ -1602,7 +1602,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'hepsiburada-magaza-acma-entegrasyon-rehberi',
     title: 'Hepsiburada Mağaza Açma ve Entegrasyon Rehberi',
-    metaTitle: 'Hepsiburada Mağaza Açma ve Entegrasyon Rehberi 2026 | BERACORE',
+    metaTitle: 'Hepsiburada Mağaza Açma ve Entegrasyon 2026 | BERACORE',
     metaDescription:
       'Hepsiburada’da mağaza nasıl açılır, hangi belgeler gerekir, komisyon ve kargo nasıl işler? Stok ve sipariş yönetimini entegrasyonla otomatikleştirme rehberi.',
     excerpt:
@@ -2219,7 +2219,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'erp-entegrasyonu-nedir',
     title: 'ERP Entegrasyonu Nedir? Sistemler Arası Veri Akışı Rehberi',
-    metaTitle: 'ERP Entegrasyonu Nedir? Süreç, Yöntemler ve Maliyet | BERACORE',
+    metaTitle: 'ERP Entegrasyonu Nedir? Yöntemler ve Maliyet | BERACORE',
     metaDescription:
       'ERP entegrasyonu nedir, nasıl yapılır? E-ticaret, muhasebe ve CRM sistemlerini ERP ile bağlama yöntemleri, maliyet kalemleri ve sık yapılan hatalar.',
     excerpt:

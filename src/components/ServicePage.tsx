@@ -598,10 +598,12 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
                   style={{ background: 'var(--color-bg)' }}
                 />
               )}
+              {/* Nabız SADECE ok simgesinde: animate-pulse opaklığı 0.5'e indiriyor ve
+                  9.6px'lik ipucu metnini WCAG AA eşiğinin (4.5:1) altına düşürüyordu. */}
               {!shapeClicked && (
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 animate-pulse">
-                  <span className="text-[0.6rem] font-body text-t3/80 tracking-wider uppercase">Detay için tıkla</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-accent/40">
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
+                  <span className="text-[0.6rem] font-body text-t2 tracking-wider uppercase">Detay için tıkla</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-accent/40 animate-pulse">
                     <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
                 </div>

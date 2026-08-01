@@ -74,7 +74,7 @@ export const cityPages: CityPage[] = [
     citySlug: 'istanbul',
     city: CITY,
     title: 'İstanbul Yazılım Firması',
-    metaTitle: 'İstanbul Yazılım Firması — Özel Yazılım Geliştirme | BERACORE',
+    metaTitle: 'İstanbul Yazılım Firması — Özel Geliştirme | BERACORE',
     metaDescription:
       'İstanbul’da özel yazılım geliştirme: web, mobil, API ve kurumsal sistemler. İşletmenize özel, ölçeklenebilir yazılım çözümleri için İstanbul merkezli BERACORE.',
     keyword: 'istanbul yazılım firması',
@@ -110,7 +110,7 @@ export const cityPages: CityPage[] = [
     citySlug: 'istanbul',
     city: CITY,
     title: 'İstanbul E-Ticaret Çözümleri',
-    metaTitle: 'İstanbul E-Ticaret Çözümleri — Site ve Entegrasyon | BERACORE',
+    metaTitle: 'İstanbul E-Ticaret Çözümleri — Site Kurulumu | BERACORE',
     metaDescription:
       'İstanbul’da e-ticaret sitesi kurulumu, pazaryeri entegrasyonu ve ödeme sistemleri. Satışa hazır, ölçeklenebilir e-ticaret altyapıları — İstanbul merkezli BERACORE.',
     keyword: 'istanbul e-ticaret',
@@ -218,7 +218,7 @@ export const cityPages: CityPage[] = [
     citySlug: 'istanbul',
     city: CITY,
     title: 'İstanbul Mobil Uygulama Geliştirme',
-    metaTitle: 'İstanbul Mobil Uygulama Geliştirme — iOS & Android | BERACORE',
+    metaTitle: 'İstanbul Mobil Uygulama — iOS & Android | BERACORE',
     metaDescription:
       'İstanbul’da mobil uygulama geliştirme: iOS, Android ve cross-platform. Fikirden mağaza yayınına kadar uçtan uca mobil çözümler için İstanbul merkezli BERACORE.',
     keyword: 'istanbul mobil uygulama',
