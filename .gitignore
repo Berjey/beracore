@@ -1,4 +1,6 @@
 node_modules/
+# yerel gelistirme veritabani (uretimde /var/www/beracore-data altinda)
+.data/
 .next/
 # deploy sirasinda kullanilan gecici build dizinleri (scripts/server-deploy.sh)
 .next-build/

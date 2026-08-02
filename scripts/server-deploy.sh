@@ -38,6 +38,19 @@ echo "[deploy] build -> .next-build (calisan .next'e dokunulmaz)"
 rm -rf .next-build
 NEXT_DIST_DIR=.next-build npm run build
 
+echo "[deploy] veritabani migrationlari"
+# Idempotent + surumlu. Build'den SONRA, restart'tan ONCE calisir: yeni kod ayaga
+# kalkmadan once semanin hazir olmasi gerekir. DB repo DISINDA (/var/www/beracore-data)
+# oldugu icin git reset --hard ona dokunmaz.
+# `--env-file` ile .env yuklenir: DB_PATH oradan gelir (kabuk ortaminda tanimli degil).
+# Node 20.6+ destekler; VPS Node 24 calistiriyor.
+if [ -f .env ]; then
+  node --env-file=.env scripts/migrate.mjs
+else
+  echo "[deploy] UYARI: .env yok, migration varsayilan yola calisiyor"
+  node scripts/migrate.mjs
+fi
+
 echo "[deploy] atomik takas"
 rm -rf .next-eski
 [ -d .next ] && mv .next .next-eski

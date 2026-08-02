@@ -11,16 +11,32 @@
  * bileşen render testi gerekirse ayrı bir iş olarak jsdom+derleyici gerekir.
  */
 
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join, resolve as resolvePath } from 'node:path';
 
 const ROOT = resolvePath(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(ROOT, 'src');
 
-/** Uzantısız yolu gerçek dosyaya bağlar (`.ts`, `.tsx`, `/index.ts`). */
+/** Yolun var olan bir DOSYA olup olmadığı (dizin ise false). */
+function dosyaMi(p) {
+  try {
+    return statSync(p).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Uzantısız yolu gerçek dosyaya bağlar (`.ts`, `.tsx`, `/index.ts`).
+ *
+ * Dizin kontrolü ZORUNLU: `@/lib/db` gibi bir takma ad var olan bir DİZİNE denk
+ * gelir. Yalnızca `existsSync` bakılırsa yol olduğu gibi döndürülür ve Node
+ * `ERR_UNSUPPORTED_DIR_IMPORT` verir — Next'in paketleyicisi bunu kendisi
+ * çözdüğü için hata sadece testlerde görülür.
+ */
 function withExtension(absPath) {
-  if (existsSync(absPath) && !absPath.endsWith('/')) return absPath;
+  if (dosyaMi(absPath)) return absPath;
   for (const candidate of [`${absPath}.ts`, `${absPath}.tsx`, join(absPath, 'index.ts')]) {
     if (existsSync(candidate)) return candidate;
   }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
+import { insertLead } from '@/lib/db/leads';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -185,6 +186,27 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, fields: errors }, { status: 422 });
   }
 
+  const ref = makeRef();
+
+  // ── Kalıcılık, HER ŞEYDEN ÖNCE ────────────────────────────────────────────
+  // Kayıt bilinçli olarak SMTP kontrolünden de ÖNCE alınır. Aksi halde e-posta
+  // yapılandırması bozulduğu anda (yanlış şifre, süresi dolmuş hesap, sağlayıcı
+  // arızası) gelen her talep sessizce kaybolurdu — panelin var olma sebebi tam
+  // olarak bunu önlemek. DB yazımı BAŞARISIZ olsa bile akış devam eder; form
+  // veritabanına bağımlı hale getirilmez (eski davranış aynen korunur).
+  let kaydedildi = false;
+  try {
+    insertLead({
+      ref, name, email, phone, company, service, budget, timeline, message,
+      ip: clientIp(req),
+      userAgent: req.headers.get('user-agent') ?? '',
+      mailSent: false,
+    });
+    kaydedildi = true;
+  } catch (err) {
+    console.error('[contact] lead kaydedilemedi (e-posta akisi etkilenmedi)', err);
+  }
+
   const {
     SMTP_HOST,
     SMTP_PORT,
@@ -197,10 +219,9 @@ export async function POST(req: Request) {
 
   if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS || !SMTP_FROM || !SMTP_TO) {
     console.error('[contact] SMTP env vars missing');
-    return NextResponse.json(
-      { ok: false, error: 'mail_not_configured' },
-      { status: 500 }
-    );
+    // Talep kaydedildiyse müşteri kaybolmadı → ziyaretçiye hata gösterme.
+    if (kaydedildi) return NextResponse.json({ ok: true, ref });
+    return NextResponse.json({ ok: false, error: 'mail_not_configured' }, { status: 500 });
   }
 
   const port = Number(SMTP_PORT);
@@ -212,7 +233,6 @@ export async function POST(req: Request) {
     pass: SMTP_PASS,
   });
 
-  const ref = makeRef();
   const subject = oneLine(`[${ref}] Yeni Teklif Talebi — ${name}${service ? ` · ${service}` : ''}`);
   const text =
     `Yeni teklif talebi BERACORE.com üzerinden alındı.\n\n` +
@@ -266,9 +286,21 @@ export async function POST(req: Request) {
       text,
       html,
     });
+    if (kaydedildi) {
+      try {
+        const { getDb } = await import('@/lib/db');
+        getDb().prepare('UPDATE leads SET mail_sent = 1 WHERE ref = ?').run(ref);
+      } catch {
+        /* bayrak güncellenemedi — kayıt duruyor, panelde "mail gitmedi" görünür */
+      }
+    }
     return NextResponse.json({ ok: true, ref });
   } catch (err) {
     console.error('[contact] send failed', err);
+    // Kayıt alındıysa talep GERÇEKTEN elimizde: ziyaretçiye hata gösterip onu
+    // rakibe göndermek yanlış olur. Panelde `mail_sent = 0` olarak işaretli kalır,
+    // yani gözden kaçmaz. Yalnızca hem DB hem e-posta başarısızsa hata döneriz.
+    if (kaydedildi) return NextResponse.json({ ok: true, ref });
     return NextResponse.json({ ok: false, error: 'send_failed' }, { status: 502 });
   }
 }

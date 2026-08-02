@@ -10,7 +10,10 @@ export default function robots(): MetadataRoute.Robots {
         // çıkar ve render edilen içerik eksik değerlendirilir.
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/'],
+        // `/admin` yönetim panelidir; kimlik doğrulama zaten koruyor ama arama
+        // sonuçlarında giriş sayfasının görünmesinin hiçbir faydası yok.
+        // (Sayfalar ayrıca `robots: noindex` meta'sı da basar — çift koruma.)
+        disallow: ['/api/', '/admin'],
       },
     ],
     sitemap: 'https://beracore.com/sitemap.xml',
