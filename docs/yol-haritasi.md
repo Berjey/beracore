@@ -52,16 +52,34 @@ statik olmaktan çıkarır) · 4 sayfa tipinde gsap duruyor · şehir sayfaları
 
 ## 2. SIRADAKİ ADIMLAR (öncelik sırasıyla)
 
-### 🔴 Adım 1 — Search Console indeksleme kontrolü 👤
-**Neden ilk sırada:** İndekslenmeyen sayfa hiç yazılmamış sayılır. Diğer her şey buna bağlı.
+### 🔴 Adım 1 — Search Console indeksleme (2 Ağu 2026'da OKUNDU)
 
-1. https://search.google.com/search-console → soldan **Dizine ekleme > Sayfalar**
-2. İki sayıyı not al: kaç sayfa **"Dizine eklendi"**, kaç sayfa **"Dizine eklenmedi"**
-3. Eklenmeyenlerin sebep listesine bak (en sık: "Taranmadı", "Keşfedildi - dizine eklenmedi")
-4. Bu iki sayıyı Claude'a söyle → sorun varsa teşhis edilip düzeltilecek
+**Okunan durum** (panelde `Last update: 7/24/26` — veri 24 Temmuz'a ait):
 
-> Not: 27 Temmuz'da navigasyondaki büyük bir tarama hatası düzeltildi (aşağıya bak).
-> Bu düzeltmenin etkisinin Search Console'a yansıması birkaç hafta sürebilir.
+| | Sayı |
+|---|---|
+| Dizine eklendi | **9** |
+| Dizine eklenmedi | **36** (tek sebep: `Discovered - currently not indexed`) |
+| Google'ın bildiği toplam | 45 |
+| Sitemap'teki toplam | **111** |
+
+**Üç ayrı okuma:**
+1. **Veri eski ve düzeltme öncesine ait.** 27 Tem'deki navigasyon (iç link) düzeltmesi bu
+   anlık görüntüden SONRA yapıldı → tablo o düzeltmenin etkisini hiç göstermiyor. Ayrıca
+   mülk 28 Tem'de iş hesabına devredildi, raporlama gecikmesi bununla da ilgili olabilir.
+2. **`Discovered - currently not indexed` = Google sayfayı BİLİYOR ama taramadı.** Teknik
+   hata değil; tarama bütçesi kararı. Yeni ve otoritesi olmayan sitelerde normaldir.
+   Çözümü teknik değil **otorite** (dış bağlantı + marka sinyali).
+3. **45 ≠ 111** → Google sitemap'teki URL'lerin çoğunu henüz keşfetmemiş bile.
+
+**Bu okuma sonrası bulunan ve düzeltilen gerçek hata:** `sitemap.ts` `new Date()` kullanıyordu;
+62 giriş her deploy'da "bugün güncellendi" diyordu. Google güvenilmez lastmod'u yok sayar —
+tam da tarama önceliğine ihtiyaç duyduğumuz noktada tek sinyali harcıyorduk. Düzeltildi
+(blog → gerçek yazı tarihi, şehir → `CITY_CONTENT_UPDATED`, statik/hizmet → tarih yok)
+ve 5 regresyon testiyle kilitlendi (`tests/sitemap.test.ts`).
+
+**Sıradaki ölçüm 👤:** ~2 hafta sonra aynı ekranı tekrar oku. Beklenti: "Dizine eklendi"
+artmalı, toplam bilinen sayfa 45'ten yukarı çıkmalı.
 
 ### 🔴 Adım 1.5 — VPS Node sürümü: KARAR SENİN 👤
 **Durum:** VPS Node **20.20.2** / npm 10.8.2 çalıştırıyor. Node 20'nin destek ömrü
