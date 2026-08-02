@@ -1,5 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import sitemap from '@/app/sitemap';
 import { blogPosts } from '@/lib/blog-data';
 import { cityPages, CITY_CONTENT_UPDATED } from '@/lib/city-pages-data';
@@ -18,25 +20,24 @@ const iso = (v: unknown) => (v instanceof Date ? v.toISOString() : String(v));
  * Aşağıdaki testler o hatanın sessizce geri gelmesini engeller.
  */
 
-test('sitemap lastmod ASLA build zamanı olmamalı (bugünün tarihi yasak)', () => {
-  const bugun = new Date().toISOString().slice(0, 10);
-  const suclular = entries
-    .filter((e) => e.lastModified && iso(e.lastModified).slice(0, 10) === bugun)
-    .map((e) => e.url);
+test('sitemap.ts build zamanı (new Date / Date.now) KULLANMAMALI', () => {
+  // Asıl koruma burada: "bugünün tarihi yasak" demek yanlış olurdu — içerik gerçekten
+  // bugün güncellenmiş olabilir (CITY_CONTENT_UPDATED bunun için var). Yasaklanması
+  // gereken şey tarihin İÇERİKTEN değil DERLEMEDEN gelmesi.
+  const kaynak = readFileSync(join(import.meta.dirname, '..', 'src', 'app', 'sitemap.ts'), 'utf8');
+  const kod = kaynak.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  assert.ok(!/new Date\s*\(\s*\)/.test(kod), 'sitemap.ts içinde `new Date()` var — lastmod build zamanına döner');
+  assert.ok(!/Date\.now\s*\(/.test(kod), 'sitemap.ts içinde `Date.now()` var — lastmod build zamanına döner');
+});
 
-  // Bir blog yazısı gerçekten bugün yayımlandıysa meşrudur — onları hariç tut.
-  const mesruBlog = new Set(
-    blogPosts
-      .filter((p) => (p.updatedAt ?? p.publishedAt).slice(0, 10) === bugun)
-      .map((p) => `${SITE_URL}/blog/${p.slug}`)
-  );
-  const gercekSuclular = suclular.filter((u) => !mesruBlog.has(u));
-
-  assert.deepEqual(
-    gercekSuclular,
-    [],
-    `Bu URL'ler lastmod olarak build tarihini yazıyor (new Date() sızmış olabilir):\n  ${gercekSuclular.join('\n  ')}`
-  );
+test('lastmod değerleri saat/dakika taşımaz (tarih düzeyinde sabit olmalı)', () => {
+  // Build zamanı damgası milisaniye taşır; içerik tarihi taşımaz. Bu fark,
+  // `new Date()` sızıntısını sessizce yakalayan ikinci güvencedir.
+  const zamanli = entries
+    .filter((e) => e.lastModified)
+    .filter((e) => !/^\d{4}-\d{2}-\d{2}(T00:00:00(\.000)?Z?)?$/.test(iso(e.lastModified).replace(/\.000Z$/, 'Z')))
+    .map((e) => `${e.url} -> ${iso(e.lastModified)}`);
+  assert.deepEqual(zamanli, [], `Bu girişler gün içi zaman damgası taşıyor:\n  ${zamanli.join('\n  ')}`);
 });
 
 test('sitemap lastmod değerleri geçerli ve gelecek tarihli değil', () => {
