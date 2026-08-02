@@ -6,6 +6,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollText from '@/components/ScrollText';
 import { services } from '@/lib/services-data';
+import { telHref, mailtoHref, konumMetni, type SirketBilgisi } from '@/lib/sirket';
+import { useSirket } from '@/components/SirketProvider';
 import { kvkkMeta, kvkkSections } from '@/lib/kvkk-data';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -24,29 +26,31 @@ type ContactMethod = {
   detail: string;
 };
 
-const METHODS: ContactMethod[] = [
+// İletişim kanalları merkezi şirket ayarlarından türetilir (bulgu A-08).
+// Sabit dizi yerine fonksiyon: değer artık render anında gelen `sirket`e bağlı.
+const methods = (s: SirketBilgisi): ContactMethod[] => [
   {
     key: 'mail',
     label: 'E-posta',
-    value: 'info@beracore.com',
-    href: 'mailto:info@beracore.com',
-    copyValue: 'info@beracore.com',
+    value: s.email,
+    href: mailtoHref(s),
+    copyValue: s.email,
     iconPath: 'M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6',
     detail: 'Aynı gün içinde yanıt',
   },
   {
     key: 'phone',
     label: 'Telefon',
-    value: '0553 986 23 06',
-    href: 'tel:+905539862306',
-    copyValue: '+905539862306',
+    value: s.telefonGorunen,
+    href: telHref(s),
+    copyValue: s.telefonE164,
     iconPath: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z',
-    detail: 'Hafta içi 09:00 — 17:00',
+    detail: s.calismaSaatleri,
   },
   {
     key: 'office',
     label: 'Stüdyo',
-    value: 'İstanbul, Türkiye',
+    value: konumMetni(s),
     href: '',
     iconPath: 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z M12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
     detail: 'Görüşme randevu ile',
@@ -158,6 +162,8 @@ const INITIAL_FORM: FormState = {
 // ============================================================
 
 export default function ContactPage() {
+  const sirket = useSirket();
+  const METHODS = methods(sirket);
   const containerRef = useRef<HTMLDivElement>(null);
   const submitBtnRef = useRef<HTMLButtonElement>(null);
   // Honeypot alanı kontrolsüz (uncontrolled) — değeri gönderim anında ref'ten okunur.
@@ -257,8 +263,8 @@ export default function ContactPage() {
       const msg =
         data.message ??
         (data.error === 'mail_not_configured'
-          ? 'Mail sunucusu henüz yapılandırılmadı. Lütfen info@beracore.com adresine yazın.'
-          : 'Talep gönderilemedi. Birkaç saniye sonra tekrar deneyin ya da info@beracore.com adresine yazın.');
+          ? `Mail sunucusu henüz yapılandırılmadı. Lütfen ${sirket.email} adresine yazın.`
+          : `Talep gönderilemedi. Birkaç saniye sonra tekrar deneyin ya da ${sirket.email} adresine yazın.`);
       setSubmitError(msg);
       setSubmitState('error');
     } catch {
@@ -564,7 +570,7 @@ export default function ContactPage() {
   // Form başarıyla gönderildiğinde tüm sayfayı kaplayan success ekranı göster.
   // Hero, methods, form, process, FAQ, CTA section'ları gizlenir.
   if (submitState === 'success') {
-    return <SuccessState name={form.name} refId={submitRef} onReset={resetForm} />;
+    return <SuccessState name={form.name} refId={submitRef} onReset={resetForm} sirket={sirket} />;
   }
 
   return (
@@ -706,13 +712,13 @@ export default function ContactPage() {
               </svg>
             </a>
             <a
-              href="tel:+905539862306"
+              href={telHref(sirket)}
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-body text-[0.8rem] font-semibold tracking-[0.12em] uppercase border border-white/[0.12] text-t1 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent2/40 hover:text-accent2"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
-              0553 986 23 06
+              {sirket.telefonGorunen}
             </a>
           </div>
         </div>
@@ -1131,7 +1137,7 @@ export default function ContactPage() {
 
                   <p className="mt-5 text-center font-body text-[0.76rem] text-t3 font-light max-w-md">
                     veya doğrudan{' '}
-                    <a href="mailto:info@beracore.com" className="text-accent hover:underline">info@beracore.com</a>
+                    <a href={mailtoHref(sirket)} className="text-accent hover:underline">{sirket.email}</a>
                     {' '}adresine yazın · Verileriniz yalnızca teklif sürecinde kullanılır.
                   </p>
                 </div>
@@ -1473,7 +1479,7 @@ export default function ContactPage() {
 // SUCCESS STATE — tam sayfa, viewport sabit, responsive
 // Form başarıyla gönderildiğinde ContactPage bu komponenti render eder.
 // ============================================================
-function SuccessState({ name, refId, onReset }: { name: string; refId: string; onReset: () => void }) {
+function SuccessState({ name, refId, onReset, sirket }: { name: string; refId: string; onReset: () => void; sirket: SirketBilgisi }) {
   const firstName = name ? name.trim().split(/\s+/)[0] : '';
   const headingRef = useRef<HTMLHeadingElement>(null);
 
@@ -1667,8 +1673,8 @@ function SuccessState({ name, refId, onReset }: { name: string; refId: string; o
         {/* Acil durum maili */}
         <p className="mt-8 sm:mt-10 font-body text-[0.74rem] sm:text-[0.78rem] text-t3 font-light">
           Aciliyet durumunda{' '}
-          <a href="mailto:info@beracore.com" className="text-accent hover:underline">
-            info@beracore.com
+          <a href={mailtoHref(sirket)} className="text-accent hover:underline">
+            {sirket.email}
           </a>
           {' '}adresine doğrudan yazabilirsiniz.
         </p>

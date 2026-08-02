@@ -3,6 +3,8 @@ import Navbar from '@/components/Navbar';
 import Starfield from '@/components/Starfield';
 import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
+import { getSirket } from '@/lib/db/settings';
+import { postalAddress, type SirketBilgisi } from '@/lib/sirket';
 import ScrollToTop from '@/components/ScrollToTop';
 import ScrollProgress from '@/components/ScrollProgress';
 import AboutPage from '@/components/AboutPage';
@@ -40,7 +42,8 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://beracore.com/hakkimizda' },
 };
 
-const jsonLd = {
+function aboutLd(sirket: SirketBilgisi) {
+  return {
   '@context': 'https://schema.org',
   '@type': 'AboutPage',
   name: 'BERACORE Hakkında',
@@ -50,16 +53,24 @@ const jsonLd = {
     '@type': 'Organization',
     name: 'BERACORE',
     url: SITE_URL,
-    foundingDate: '2019',
-    numberOfEmployees: { '@type': 'QuantitativeValue', minValue: 10, maxValue: 50 },
-    address: { '@type': 'PostalAddress', addressLocality: 'İstanbul', addressCountry: 'TR' },
+    // 2 Agu 2026 duzeltmesi (bulgu A-07): burada `foundingDate: '2019'` ve
+    // `numberOfEmployees: 10-50` yaziyordu. Ikisi de sitenin GORUNEN icerigiyle
+    // celisiyordu — zaman cizelgesi (AboutPage TIMELINE) ve ana sayfa sayaci
+    // kurulusu 2024, ekibi "5+" olarak gosteriyor. Google yapisal veriyi okur;
+    // gorunen sayfayla celisen bir iddia hem yanlis hem guven kaybettiricidir.
+    // `numberOfEmployees` tamamen kaldirildi: kanitlanmamis bir sayiyi yapisal
+    // veride yayinlamak, sayfada yayinlamaktan daha risklidir (makine okur, alintilar).
+    foundingDate: '2024',
+    address: postalAddress(sirket),
   },
-};
+  };
+}
 
 export default function HakkimizdaPage() {
+  const sirket = getSirket();
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutLd(sirket)) }} />
       <Starfield />
       <CustomCursor />
       <Navbar />

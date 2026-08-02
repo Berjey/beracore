@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { services } from '@/lib/services-data';
+import { telHref, mailtoHref, konumMetni } from '@/lib/sirket';
+import { useSirket } from '@/components/SirketProvider';
 
 // href ZORUNLU: Googlebot <button onClick> gezinmesini takip etmez.
 const KURUMSAL = [
@@ -31,7 +33,16 @@ const SOCIALS: { label: string; href: string; icon: string }[] = [
   // { label: 'X', href: 'https://x.com/beracore', icon: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z' },
 ];
 
+/**
+ * `sirket` prop'u BİLEREK ZORUNLU (opsiyonel + varsayılan değil).
+ *
+ * Gerekçe: bu bilgi 6+ dosyada kopyalıydı ve bir yerde eski kalması kaçınılmazdı
+ * (bulgu A-08). Prop opsiyonel olsaydı yeni bir kullanım yeri sessizce varsayılana
+ * düşer ve aynı ayrışma geri gelirdi. Zorunlu olduğunda derleyici, her kullanım
+ * yerinin merkezi kaynağı geçtiğini garanti eder.
+ */
 export default function Footer() {
+  const sirket = useSirket();
   const pathname = usePathname();
   const footerRef = useRef<HTMLElement>(null);
 
@@ -93,12 +104,12 @@ export default function Footer() {
             <Link href="/" className="inline-block mb-5"><Image src="/beracore.png" alt="BERACORE" width={58} height={38} className="h-8 w-auto drop-shadow-[0_0_14px_rgba(255,169,249,0.3)]" /></Link>
             <p className="font-body text-[0.85rem] text-t1/70 font-light leading-relaxed mb-6">Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler.</p>
             <div className="space-y-3">
-              <a href="mailto:info@beracore.com" className="flex items-center gap-2.5 min-h-[24px] py-0.5 font-body text-[0.85rem] text-t1 font-medium hover:text-accent transition-colors duration-300">
+              <a href={mailtoHref(sirket)} className="flex items-center gap-2.5 min-h-[24px] py-0.5 font-body text-[0.85rem] text-t1 font-medium hover:text-accent transition-colors duration-300">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffa9f9" strokeWidth="1.5" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><path d="M22 6l-10 7L2 6" /></svg>
-                info@beracore.com</a>
-              <a href="tel:+905539862306" className="flex items-center gap-2.5 min-h-[24px] py-0.5 font-body text-[0.85rem] text-t1 font-medium hover:text-accent transition-colors duration-300">
+                {sirket.email}</a>
+              <a href={telHref(sirket)} className="flex items-center gap-2.5 min-h-[24px] py-0.5 font-body text-[0.85rem] text-t1 font-medium hover:text-accent transition-colors duration-300">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff7ad" strokeWidth="1.5" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-                0553 986 23 06</a>
+                {sirket.telefonGorunen}</a>
             </div>
           </div>
           <div className="ft-col">
@@ -145,8 +156,8 @@ export default function Footer() {
         </div>
         <div className="h-px w-full mb-6" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,169,249,0.15), rgba(255,247,173,0.1), transparent)' }} />
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <p className="font-body text-[0.75rem] text-t2">© {new Date().getFullYear()} BERACORE. Tüm hakları saklıdır.</p>
-          <p className="font-body text-[0.7rem] text-t2/70">İstanbul, Türkiye</p>
+          <p className="font-body text-[0.75rem] text-t2">{`© ${new Date().getFullYear()} ${sirket.ad}. Tüm hakları saklıdır.`}</p>
+          <p className="font-body text-[0.7rem] text-t2/70">{konumMetni(sirket)}</p>
         </div>
       </div>
     </footer>

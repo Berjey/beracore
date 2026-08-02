@@ -2,9 +2,12 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { SITE_URL, OG_IMAGE_ABSOLUTE, ogImages, twitterImages } from '@/lib/seo';
 import { COOKIE_CONSENT_KEY } from '@/lib/cookie-consent';
+import { postalAddress, whatsappHref, type SirketBilgisi } from '@/lib/sirket';
+import { getSirket } from '@/lib/db/settings';
 import MotionGuard from '@/components/MotionGuard';
 import CookieConsent from '@/components/CookieConsent';
 import WhatsAppCta from '@/components/WhatsAppCta';
+import SirketProvider from '@/components/SirketProvider';
 import './globals.css';
 
 export const viewport: Viewport = {
@@ -80,57 +83,51 @@ export const metadata: Metadata = {
   // Burada tekrar verilirse Next aynı meta etiketini iki kez basar.
 };
 
-// Sosyal profiller — Footer'daki SOCIALS ile aynı.
-// Google, sameAs ile marka kimliğini doğrular — dış sinyal olarak SEO'ya katkı sağlar.
-// NOT: Bu profillerin GERÇEKTEN açık ve sitene link veriyor olması gerekir. Hesaplar henüz
-// açılmadı → boş bırakıldı (var olmayan profile sameAs vermek doğrulanamaz sinyal olur).
-// Hesaplar `beracore` kullanıcı adıyla açılınca aşağıdaki satırları geri aç.
-const socialProfiles: string[] = [
-  // 'https://instagram.com/beracore',
-  // 'https://linkedin.com/company/beracore',
-  // 'https://x.com/beracore',
-];
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
-  '@id': `${SITE_URL}/#business`,
-  name: 'BERACORE',
-  alternateName: 'Beracore Digital Experience Studio',
-  url: SITE_URL,
-  description:
-    'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üreten dijital deneyim stüdyosu.',
-  image: OG_IMAGE_ABSOLUTE,
-  logo: `${SITE_URL}/beracore.png`,
-  email: 'info@beracore.com',
-  telephone: '+905539862306',
-  priceRange: '₺₺₺',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'İstanbul',
-    addressRegion: 'İstanbul',
-    addressCountry: 'TR',
-  },
-  areaServed: [
-    { '@type': 'City', name: 'İstanbul' },
-    { '@type': 'Country', name: 'Türkiye' },
-  ],
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 41.0082,
-    longitude: 28.9784,
-  },
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '09:00',
-      closes: '17:00',
+/**
+ * Yapısal veri artık merkezi şirket ayarlarından üretilir (denetim bulgusu A-08).
+ * E-posta, telefon ve adres burada SABİT YAZILMAZ — panelden değiştirilince
+ * JSON-LD, Footer, iletişim sayfası ve WhatsApp butonu birlikte güncellenir.
+ *
+ * `sameAs` yalnızca gerçek sosyal profil girildiğinde üretilir; boş bir dizi
+ * yayınlamak arama motoruna bilgi vermez, yalnızca gürültü olur (A-18).
+ */
+function organizationLd(s: SirketBilgisi) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    '@id': `${SITE_URL}/#business`,
+    name: s.ad,
+    alternateName: 'Beracore Digital Experience Studio',
+    url: SITE_URL,
+    description:
+      'Yaratıcı tasarım, güçlü mühendislik ve modern teknolojilerle markanız için unutulmaz dijital deneyimler üreten dijital deneyim stüdyosu.',
+    image: OG_IMAGE_ABSOLUTE,
+    logo: `${SITE_URL}/beracore.png`,
+    email: s.email,
+    telephone: s.telefonE164,
+    priceRange: '₺₺₺',
+    address: postalAddress(s),
+    areaServed: [
+      { '@type': 'City', name: s.sehir },
+      { '@type': 'Country', name: s.ulke },
+    ],
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 41.0082,
+      longitude: 28.9784,
     },
-  ],
-  knowsLanguage: ['tr', 'en'],
-  ...(socialProfiles.length ? { sameAs: socialProfiles } : {}),
-};
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '09:00',
+        closes: '17:00',
+      },
+    ],
+    knowsLanguage: ['tr', 'en'],
+    ...(s.sosyal.length ? { sameAs: s.sosyal } : {}),
+  };
+}
 
 const websiteLd = {
   '@context': 'https://schema.org',
@@ -142,6 +139,11 @@ const websiteLd = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Sunucu bileşeni olduğu için veritabanını burada okuyabiliriz; istemci
+  // bileşenlerine (WhatsAppCta) hazır değer prop olarak geçirilir.
+  // `getSirket()` veritabanı okunamazsa kod varsayılanlarına düşer — panelin
+  // bir sorunu sitenin derlenmesini veya açılmasını engellemez.
+  const sirket = getSirket();
   return (
     // color-scheme + inline koyu zemin: tarayıcı CSS gelmeden önce kök zemini KOYU boyar →
     // tam sayfa yenilemede beyaz flash (saydam canvas'ta "beyaz kare" olarak görünen) engellenir.
@@ -189,7 +191,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd(sirket)) }}
         />
         <script
           type="application/ld+json"
@@ -204,8 +206,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Ana içeriğe atla
         </a>
         <MotionGuard />
-        {children}
-        <WhatsAppCta />
+        {/* Şirket bilgisi sunucuda BİR KEZ okunur, ağaca bağlamla verilir.
+            İstemci bileşenleri `useSirket()` ile alır — veritabanı modülünü
+            import etmeleri gerekmez (ederlerse `node:sqlite` tarayıcı paketine sızar). */}
+        <SirketProvider sirket={sirket}>{children}</SirketProvider>
+        <WhatsAppCta href={whatsappHref(sirket)} />
         <CookieConsent />
       </body>
     </html>

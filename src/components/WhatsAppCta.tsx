@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation';
 
 // Kalıcı WhatsApp iletişim butonu — her sayfada görünür.
 // Sağ altta ScrollToTop olduğu için sol altta konumlanır.
-const PHONE = '905539862306';
-const MESSAGE = 'Merhaba, BERACORE ile bir projem hakkında görüşmek istiyorum.';
-const HREF = `https://wa.me/${PHONE}?text=${encodeURIComponent(MESSAGE)}`;
-
-export default function WhatsAppCta() {
+//
+// Numara ve ön mesaj artık BURADA SABİT DEĞİL: kök düzen (sunucu bileşeni) merkezi
+// şirket ayarlarından okuyup hazır bağlantıyı prop olarak geçirir (bulgu A-08).
+// Bu bir istemci bileşeni olduğu için veritabanına kendisi erişemez — erişebilseydi
+// `node:sqlite` tarayıcı paketine sızardı.
+export default function WhatsAppCta({ href }: { href: string }) {
   const pathname = usePathname();
   const [hovering, setHovering] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -28,7 +29,7 @@ export default function WhatsAppCta() {
 
   return (
     <a
-      href={HREF}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="WhatsApp ile iletişime geçin"

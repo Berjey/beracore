@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { mailtoHref } from '@/lib/sirket';
+import { useSirket } from '@/components/SirketProvider';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -95,6 +97,7 @@ const TIMELINE = [
 ];
 
 export default function AboutPage() {
+  const sirket = useSirket();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1225,10 +1228,10 @@ export default function AboutPage() {
               </svg>
             </Link>
             <a
-              href="mailto:info@beracore.com"
+              href={mailtoHref(sirket)}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-body text-[0.88rem] font-semibold tracking-[0.12em] uppercase border border-white/10 text-t1 transition-all duration-500 hover:-translate-y-1 hover:border-accent/30 hover:text-accent"
             >
-              info@beracore.com
+              {sirket.email}
             </a>
           </div>
         </div>

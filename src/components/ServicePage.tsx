@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { telHref } from '@/lib/sirket';
+import { useSirket } from '@/components/SirketProvider';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -18,6 +20,7 @@ interface Props {
 }
 
 export default function ServicePage({ serviceKey, subSlug }: Props) {
+  const sirket = useSirket();
   const service = services.find(s => s.key === serviceKey);
   const initialIndex = service?.subServices.findIndex(ss => ss.slug === subSlug) ?? 0;
   const [subIndex, setSubIndex] = useState(initialIndex);
@@ -1288,7 +1291,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
               </svg>
             </Link>
             <p className="mt-8 font-body text-[0.82rem] text-t3">
-              veya <a href="tel:+905539862306" className="text-accent hover:text-accent2 transition-colors duration-300 font-medium">0553 986 23 06</a> numarasından bizi arayın
+              veya <a href={telHref(sirket)} className="text-accent hover:text-accent2 transition-colors duration-300 font-medium">{sirket.telefonGorunen}</a> numarasından bizi arayın
             </p>
           </div>
         </section>
