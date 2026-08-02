@@ -575,3 +575,81 @@ kalırdı. Artık sunucuda veritabanından çözülüp prop olarak geçiyor.
 - Hukuki sayfalar (4) hâlâ kodda — versiyonlama ile birlikte (Faz 1.5).
 - `seo-audit` veri katmanı hâlâ kod dosyalarını denetliyor; panelden düzenlenen içerik
   yalnızca HTML katmanında denetleniyor.
+
+---
+
+## Faz 1.5 + 1.6 — Hukuki metinler, versiyonlama ve form sınırları (2 Ağustos 2026)
+
+Denetim bulguları **A-11** (hukuki versiyonlama) ve **A-10** (uzunluk sınırı uyuşmazlığı)
+kapatıldı. **5/5 sayfa HTML birebir aynı** (4 hukuki sayfa + iletişim).
+
+### A-11 — "o tarihte hangi metin geçerliydi?"
+
+KVKK aydınlatma metni, gizlilik politikası, çerez politikası ve kullanım koşulları
+sayfalarında yalnızca **"Son güncelleme: Nisan 2026"** yazıyordu. Metnin ne zaman
+yürürlüğe girdiği, kimin onayladığı ve **neyin değiştiği** hiçbir yerde kayıtlı değildi.
+
+Bu bir düzen meselesi değil: bir uyuşmazlıkta *"kullanıcının verisini topladığımız
+tarihte hangi aydınlatma metni geçerliydi"* sorusunun tek cevabı bu kayıttır. Git
+geçmişi bu işi kısmen görüyordu; içerik koddan çıkınca o ağ da kalkıyordu.
+
+**Çözüm — paralel sistem KURULMADI.** `content_versions` zaten her kaydetmede önceki
+hâlin tam anlık görüntüsünü ve kaydedeni saklıyordu; eksik iki alan (`yururluk`,
+`degisiklik_notu`) oraya eklendi. Ayrı bir "legal_versions" tablosu, zamanla ayrışacak
+iki geçmiş demekti.
+
+**Hukuki metinlerde kurallar diğer içerikten katı:**
+
+| Kural | Gerekçe |
+|---|---|
+| Değişiklik notu **zorunlu** | "Ne değişti" yazılmamış revizyon, geçmiş kaydı olarak işe yaramaz |
+| Yürürlük tarihi **geriye alınamaz** | Revizyon geçmişi tutarsız bir zaman çizelgesi gösterirdi |
+| Tarih biçimi **YYYY-AA-GG** zorunlu | Serbest metin, sıralamayı ve karşılaştırmayı bozar |
+| En az bir bölüm | Boş bir hukuki metin yayınlanamaz |
+
+**Revizyon geçmişi ziyaretçiye de gösteriliyor** — hukuki sayfaların altında sürüm,
+yürürlük tarihi ve değişiklik notu listeleniyor. Eski sürümlerin **tam metni** bilerek
+yayınlanmıyor: bu ayrı bir karar ve ayrı bir URL şeması gerektirir.
+
+Görünen tarih metni ("Nisan 2026") ile makine tarihi (`2026-04-01`) **ayrı** tutuluyor.
+Taşımanın görünen metni değiştirmemesi için gerekliydi.
+
+### Yol boyunca kapatılan bir A-08 kalıntısı
+
+Dört hukuki metnin İÇİNDE `info@beracore.com` sabit geçiyordu. Panelden e-posta
+değiştirilse hukuki metinler eski adresi göstermeye devam edecekti — KVKK başvuru
+adresi olarak. Artık merkezi ayardan geliyor.
+
+### A-10 — form sınırları tek kaynağa bağlandı
+
+Sunucu mesaj için **4000**, istemci **2000** kabul ediyordu. Koddaki yorum bile "AYNI
+olmalı" diyordu; iki yerde tutmak bunu garanti etmiyor. Bugünkü hâliyle zararsızdı
+(istemci daha katıydı) ama ters yönde bir ayrışma, kullanıcının yazdığı metnin
+sessizce kırpılması demekti.
+
+`src/lib/form-limits.ts` tek kaynak. Test, iki tarafın da bu modülü kullandığını
+kilitler — değerlerin eşitliğini değil, **kaynağın tekliğini**.
+
+### Değişen dosyalar
+
+**Yeni:** `src/lib/db/migrations/006_hukuki_versiyonlama.sql` · `src/lib/legal-data.ts` ·
+`src/lib/form-limits.ts` · `src/app/admin/(korumali)/yasal/page.tsx` ·
+`src/app/admin/(korumali)/yasal/[id]/page.tsx` · `src/app/admin/yasal/[id]/kaydet/route.ts` ·
+`tests/yasal-db.test.ts` · `tests/form-limits.test.ts`
+
+**Değişen:** `scripts/icerik-aktar.mjs` · `src/lib/db/content.ts` · `src/lib/db/content-admin.ts` ·
+`src/components/LegalLayout.tsx` (revizyon geçmişi bölümü) · 4 hukuki `page.tsx` ·
+`src/app/api/contact/route.ts` · `src/components/ContactPage.tsx` ·
+`src/app/admin/(korumali)/layout.tsx`
+
+### Kalite kapıları
+
+`npm run lint` 0 uyarı · `npm test` **147 → 160** · `npm run build` 119 sayfa ·
+`npm run seo-audit` ✅ TEMİZ · `secret-scan` temiz · görünen içerik farkı **0/5 sayfa**
+
+### Bilinen eksikler
+
+- `kvkk-data.ts` hâlâ duruyor ve `ContactPage` içindeki KVKK modali onu okuyor;
+  yani panelden düzenlenen KVKK metni iletişim sayfasındaki modalde eski kalır.
+  Modal istemci tarafında olduğu için düzeltmesi prop/bağlam gerektiriyor → sıradaki.
+- Eski hukuki sürümlerin TAM METNİ public erişime açık değil (yalnızca revizyon listesi).

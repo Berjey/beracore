@@ -5,7 +5,15 @@ import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import LegalLayout from '@/components/LegalLayout';
+// Icerik veritabanindan okunur; tablo bossa/okunamazsa koddaki metne duser.
+import { getLegalDoc, getRevizyonlar } from '@/lib/db/content';
+import { getSirket } from '@/lib/db/settings';
+import { notFound } from 'next/navigation';
 import CookiePreferenceReset from '@/components/CookiePreferenceReset';
+
+const SLUG = 'cerez-politikasi';
+// Metinlerde gecen adres; merkezi ayardaki degerle degistirilir.
+const ESKI_EPOSTA = 'info@beracore.com';
 
 export const metadata: Metadata = {
   title: 'Çerez Politikası | BERACORE',
@@ -14,58 +22,34 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://beracore.com/cerez-politikasi' },
 };
 
-const sections = [
-  {
-    title: 'Çerez Nedir?',
-    body: 'Çerezler (cookies); ziyaret ettiğiniz web sitesi tarafından tarayıcınıza yerleştirilen küçük metin dosyalarıdır. Web sitesinin doğru çalışmasını, tercihlerinizin hatırlanmasını ve kullanım deneyiminin iyileştirilmesini sağlarlar.',
-  },
-  {
-    title: 'Kullandığımız Çerez Türleri',
-    body: [
-      'Zorunlu çerezler: Web sitesinin temel işlevlerinin çalışması için gereklidir; devre dışı bırakılamaz.',
-      'İşlevsel çerezler: Dil, tema ve oturum gibi kullanıcı tercihlerinin hatırlanmasını sağlar.',
-      'Performans ve analitik çerezler: Ziyaretçi davranışlarını anonim olarak analiz ederek site performansını iyileştirmeye yardımcı olur.',
-      'Pazarlama çerezleri: Açık rızanızla, ilginizi çekebilecek içerik ve kampanyaları sunmak amacıyla kullanılır.',
-    ],
-  },
-  {
-    title: 'Çerezlerin Saklanma Süresi',
-    body: 'Çerezler, oturum çerezleri ve kalıcı çerezler olarak iki ana grupta saklanır. Oturum çerezleri tarayıcınızı kapattığınızda silinir; kalıcı çerezler ise belirlenen süre boyunca cihazınızda kalır veya siz temizleyene kadar saklanır.',
-  },
-  {
-    title: 'Üçüncü Taraf Çerezleri',
-    body: 'Web sitemizde analitik, performans ölçümü ve içerik entegrasyonu amacıyla Google Analytics gibi üçüncü taraf hizmetleri kullanılabilir. Bu hizmetler, kendi gizlilik politikalarına tabidir ve ilgili hizmet sağlayıcının web sitesinden incelenebilir.',
-  },
-  {
-    title: 'Çerez Tercihlerinin Yönetimi',
-    body: [
-      'Tarayıcı ayarlarınızdan çerezleri silebilir, engelleyebilir veya belirli sitelere özel izin verebilirsiniz.',
-      'Zorunlu olmayan çerezleri devre dışı bırakmanız, web sitesinin bazı özelliklerinin beklenmedik şekilde çalışmasına yol açabilir.',
-      'Açık rıza kapsamındaki pazarlama ve analitik çerezleri, ilgili çerez bildirimimiz üzerinden reddedebilir veya daha sonra tarayıcı ayarlarınızdan güncelleyebilirsiniz.',
-    ],
-  },
-  {
-    title: 'Değişiklikler',
-    body: 'Bu çerez politikası; hizmet ve teknoloji güncellemelerine bağlı olarak dönem dönem revize edilebilir. Güncel politika her zaman bu sayfada yayımlanır; önemli değişikliklerde kullanıcılarımızı ayrıca bilgilendiririz.',
-  },
-  {
-    title: 'İletişim',
-    body: 'Çerez uygulamalarımıza ilişkin sorularınız veya talepleriniz için info@beracore.com adresi üzerinden bize ulaşabilirsiniz.',
-  },
-];
-
 export default function CerezPolitikasiPage() {
+  const dokuman = getLegalDoc(SLUG);
+  if (!dokuman) notFound();
+
+  // Iletisim adresi metinlerin ICINDE gecer. Merkezi ayardan gelmesi icin
+  // tohumda `{{eposta}}` yer tutucusu YOK — mevcut metin birebir korunuyor;
+  // bunun yerine adres, metinde gecen sabit deger ile degistiriliyor.
+  // Boylece panelden e-posta degisince hukuki metinler de guncellenir (A-08).
+  const eposta = getSirket().email;
+  const bolumler = dokuman.sections.map((b) => ({
+    ...b,
+    body: Array.isArray(b.body)
+      ? b.body.map((x) => x.replaceAll(ESKI_EPOSTA, eposta))
+      : b.body.replaceAll(ESKI_EPOSTA, eposta),
+  }));
+
   return (
     <>
       <Starfield />
       <CustomCursor />
       <Navbar />
       <LegalLayout
-        title="Çerez Politikası"
-        accent="Yasal"
-        intro="Web sitemizde kullandığımız çerezler, türleri, amaçları ve tercihlerinizi nasıl yönetebileceğiniz hakkında şeffaf bir özet."
-        lastUpdated="Nisan 2026"
-        sections={sections}
+        title={dokuman.title}
+        accent={dokuman.accent}
+        intro={dokuman.intro}
+        lastUpdated={dokuman.lastUpdated}
+        sections={bolumler}
+        revizyonlar={getRevizyonlar(SLUG)}
         footerExtra={<CookiePreferenceReset />}
       />
       <Footer />

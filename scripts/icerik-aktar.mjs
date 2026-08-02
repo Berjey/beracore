@@ -32,6 +32,7 @@ export async function aktar(db) {
     pathToFileURL(join(kok, 'src', 'lib', 'city-pages-data.ts')).href
   )
   const { services } = await import(pathToFileURL(join(kok, 'src', 'lib', 'services-data.ts')).href)
+  const { legalDocs } = await import(pathToFileURL(join(kok, 'src', 'lib', 'legal-data.ts')).href)
 
   const ekle = db.prepare(`
     INSERT OR IGNORE INTO content_pages
@@ -89,8 +90,46 @@ export async function aktar(db) {
 
   const sehir = await aktarSehirler(db, cityPages, CITY_CONTENT_UPDATED)
   const hizmet = await aktarHizmetler(db, services)
+  const yasal = await aktarYasal(db, legalDocs)
 
-  return { yeni, atlanan, toplam: blogPosts.length, sehir, hizmet }
+  return { yeni, atlanan, toplam: blogPosts.length, sehir, hizmet, yasal }
+}
+
+/**
+ * Hukuki metinler (4).
+ *
+ * SSS yok; govde yukunde bolumler (`sections`) ve gorunen "son guncelleme"
+ * metni durur. `guncelleme_tarihi` MAKINE tarihidir (yururluk) — sayfada gorunen
+ * serbest metinden ayridir, cunku revizyon gecmisi tarihe gore siralanir.
+ */
+async function aktarYasal(db, legalDocs) {
+  const ekle = db.prepare(`
+    INSERT OR IGNORE INTO content_pages
+      (tip, slug, dil, baslik, meta_title, meta_description, ozet, govde,
+       yayin_tarihi, guncelleme_tarihi, sira, durum)
+    VALUES ('yasal', ?, 'tr', ?, ?, ?, ?, ?, ?, ?, ?, 'yayinda')
+  `)
+
+  let yeni = 0
+  let atlanan = 0
+
+  db.exec('BEGIN')
+  try {
+    for (const [i, d] of legalDocs.entries()) {
+      const yuk = { accent: d.accent, sections: d.sections, lastUpdated: d.lastUpdated }
+      const sonuc = ekle.run(
+        d.slug, d.title, d.metaTitle, d.metaDescription, d.intro,
+        JSON.stringify(yuk), d.yururluk, d.yururluk, i,
+      )
+      if (Number(sonuc.changes) === 0) atlanan++; else yeni++
+    }
+    db.exec('COMMIT')
+  } catch (err) {
+    db.exec('ROLLBACK')
+    throw err
+  }
+
+  return { yeni, atlanan, toplam: legalDocs.length }
 }
 
 /**
@@ -257,6 +296,7 @@ async function main() {
     console.log(`[icerik] blog:  ${r.yeni} eklendi, ${r.atlanan} zaten vardi (toplam ${r.toplam})`)
     console.log(`[icerik] sehir: ${r.sehir.yeni} eklendi, ${r.sehir.atlanan} zaten vardi (toplam ${r.sehir.toplam})`)
     console.log(`[icerik] hizmet: ${r.hizmet.yeni} eklendi, ${r.hizmet.atlanan} zaten vardi (toplam ${r.hizmet.toplam})`)
+    console.log(`[icerik] yasal: ${r.yasal.yeni} eklendi, ${r.yasal.atlanan} zaten vardi (toplam ${r.yasal.toplam})`)
   } finally {
     db.close()
   }

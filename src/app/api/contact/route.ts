@@ -6,10 +6,14 @@ import { insertLead } from '@/lib/db/leads';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+import { FORM_LIMITS } from '@/lib/form-limits';
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Alan sınırları — ContactPage'deki maxLength değerleriyle AYNI olmalı.
-const LIMITS = { name: 120, email: 160, phone: 40, company: 140, message: 4000 } as const;
+// Alan sınırları TEK KAYNAKTAN gelir (bulgu A-10). Burada sabit yazıldığı sürece
+// istemcideki `maxLength` değerleriyle ayrışması an meselesiydi — nitekim ayrışmıştı
+// (mesaj: sunucu 4000, istemci 2000).
+const LIMITS = FORM_LIMITS;
 
 // ---- Basit hız sınırı ----
 // PM2 tek süreç (fork) çalıştığı için bellek içi sayaç yeterli.

@@ -22,6 +22,7 @@ import {
 } from '../blog-data';
 import { cityPages as cityPagesKod, type CityPage } from '../city-pages-data';
 import { services as servicesKod, toNav, type Service, type ServiceNav } from '../services-data';
+import { legalDocs as legalDocsKod, type LegalDoc, type LegalSection } from '../legal-data';
 
 interface SatirBlog {
   id: number;
@@ -368,4 +369,90 @@ export function getService(key: string): Service | undefined {
  */
 export function getServicesNav(): ServiceNav[] {
   return getServices().map(toNav);
+}
+
+// ─────────────────────────── hukuki metinler ───────────────────────────
+
+interface YasalYuku {
+  accent: string;
+  sections: LegalSection[];
+  lastUpdated: string;
+}
+
+const okuYasal = cache((): LegalDoc[] => {
+  try {
+    const satirlar = getDb()
+      .prepare(
+        `SELECT slug, baslik, meta_title, meta_description, ozet, govde, guncelleme_tarihi
+           FROM content_pages
+          WHERE tip = 'yasal' AND dil = 'tr' AND durum = 'yayinda'
+          ORDER BY sira`
+      )
+      .all() as unknown as {
+      slug: string; baslik: string; meta_title: string; meta_description: string;
+      ozet: string; govde: string; guncelleme_tarihi: string;
+    }[];
+
+    if (satirlar.length === 0) return legalDocsKod;
+
+    return satirlar.map((s) => {
+      const y = JSON.parse(s.govde) as YasalYuku;
+      return {
+        slug: s.slug,
+        title: s.baslik,
+        accent: y.accent,
+        metaTitle: s.meta_title,
+        metaDescription: s.meta_description,
+        intro: s.ozet,
+        lastUpdated: y.lastUpdated,
+        yururluk: s.guncelleme_tarihi,
+        sections: y.sections,
+      };
+    });
+  } catch (err) {
+    console.error('[icerik] hukuki metinler okunamadi, koddaki icerik kullaniliyor', err);
+    return legalDocsKod;
+  }
+});
+
+export function getLegalDocs(): LegalDoc[] {
+  return okuYasal();
+}
+
+export function getLegalDoc(slug: string): LegalDoc | undefined {
+  return getLegalDocs().find((d) => d.slug === slug);
+}
+
+export interface Revizyon {
+  surum: number;
+  yururluk: string;
+  degisiklik_notu: string;
+  onaylayan: string;
+  created_at: string;
+}
+
+/**
+ * Bir hukuki metnin PUBLIC revizyon geçmişi.
+ *
+ * Sayfanın altında listelenir. Amaç şeffaflık değil sadece; bir uyuşmazlıkta
+ * "o tarihte hangi metin geçerliydi" sorusunun cevabı burada durur (A-11).
+ *
+ * Tam metin anlık görüntüsü (`anlik`) BİLEREK dışarı verilmez: eski sürümlerin
+ * tam metnini yayınlamak ayrı bir karar ve ayrı bir URL şeması gerektirir;
+ * burada yalnızca "ne zaman, kim, ne değişti" listelenir.
+ */
+export function getRevizyonlar(slug: string): Revizyon[] {
+  try {
+    return getDb()
+      .prepare(
+        `SELECT v.surum, v.yururluk, v.degisiklik_notu, v.actor AS onaylayan, v.created_at
+           FROM content_versions v
+           JOIN content_pages p ON p.id = v.content_id
+          WHERE p.tip = 'yasal' AND p.slug = ?
+          ORDER BY v.surum DESC`
+      )
+      .all(slug) as unknown as Revizyon[];
+  } catch {
+    return [];
+  }
 }

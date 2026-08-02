@@ -6,12 +6,25 @@ type Section = {
   body: string | string[];
 };
 
+type Revizyon = {
+  surum: number;
+  yururluk: string;
+  degisiklik_notu: string;
+  created_at: string;
+};
+
 type LegalLayoutProps = {
   title: string;
   accent?: string;
   intro: string;
   lastUpdated: string;
   sections: Section[];
+  /**
+   * Revizyon geçmişi (bulgu A-11). Boşsa bölüm hiç basılmaz — ilk yayından
+   * sonra düzenleme yapılmamış bir metinde boş bir "geçmiş" başlığı göstermek,
+   * bilgi vermek yerine eksiklik izlenimi verir.
+   */
+  revizyonlar?: Revizyon[];
   /** Alt navigasyonun üstüne eklenen isteğe bağlı içerik (ör. çerez tercihi sıfırlama). */
   footerExtra?: ReactNode;
 };
@@ -30,6 +43,7 @@ export default function LegalLayout({
   intro,
   lastUpdated,
   sections,
+  revizyonlar = [],
   footerExtra,
 }: LegalLayoutProps) {
   return (
@@ -111,6 +125,29 @@ export default function LegalLayout({
             </section>
           ))}
         </div>
+
+        {revizyonlar.length > 0 && (
+          <section className="lg-anim mt-14 rounded-2xl border border-white/[0.07] bg-white/[0.015] p-6 max-md:mt-10 max-md:p-5">
+            <h2 className="font-heading text-[1.05rem] font-bold text-t1 mb-1.5">Revizyon Geçmişi</h2>
+            <p className="font-body text-[0.82rem] text-t3 font-light leading-[1.7] mb-5">
+              Bu metnin önceki sürümleri ve yürürlük tarihleri. Verilerinizin
+              işlendiği tarihte hangi metnin geçerli olduğunu buradan görebilirsiniz.
+            </p>
+            <ul className="space-y-3">
+              {revizyonlar.map((r) => (
+                <li key={r.surum} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="font-body text-[0.78rem] font-semibold text-accent2/80">v{r.surum}</span>
+                  <time dateTime={r.yururluk} className="font-body text-[0.82rem] text-t2">
+                    {r.yururluk}
+                  </time>
+                  {r.degisiklik_notu && (
+                    <span className="font-body text-[0.82rem] text-t3 font-light">{r.degisiklik_notu}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {footerExtra}
 

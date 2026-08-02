@@ -371,3 +371,86 @@ export function guncelleAltHizmet(id: number, g: AltHizmetGuncelleme, actor: str
     g.sss, actor
   );
 }
+
+// ─────────────────────────── hukuki metinler ───────────────────────────
+
+export interface YasalGuncelleme {
+  baslik: string;
+  meta_title: string;
+  meta_description: string;
+  intro: string;
+  accent: string;
+  lastUpdated: string;
+  /** Makine tarihi (YYYY-AA-GG). Revizyon geçmişi buna göre sıralanır. */
+  yururluk: string;
+  sections: { title: string; body: string | string[] }[];
+  degisiklik_notu: string;
+  durum: string;
+}
+
+/**
+ * Hukuki metni kaydeder ve revizyonu YÜRÜRLÜK TARİHİ + DEĞİŞİKLİK NOTU ile yazar
+ * (denetim bulgusu A-11).
+ *
+ * DEĞİŞİKLİK NOTU ZORUNLUDUR. Diğer içerik tiplerinde serbest, burada değil:
+ * "neyin değiştiği" yazılmamış bir hukuki revizyon, geçmiş kaydı olarak
+ * neredeyse işe yaramaz — bir uyuşmazlıkta sorulacak soru tam olarak budur.
+ *
+ * Yürürlük tarihi GERİYE alınamaz: yeni sürümün yürürlüğü, bir öncekinden erken
+ * olamaz. Aksi halde revizyon geçmişi tutarsız bir zaman çizelgesi gösterirdi.
+ */
+export function guncelleYasal(
+  id: number,
+  g: YasalGuncelleme,
+  actor: string
+): { ok: boolean; hata?: string } {
+  if (!ICERIK_DURUMLARI.includes(g.durum as (typeof ICERIK_DURUMLARI)[number])) {
+    return { ok: false, hata: 'gecersiz-durum' };
+  }
+  if (!g.baslik.trim()) return { ok: false, hata: 'baslik-bos' };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(g.yururluk)) return { ok: false, hata: 'gecersiz-tarih' };
+  if (!g.degisiklik_notu.trim()) return { ok: false, hata: 'not-bos' };
+
+  const db = getDb();
+  const mevcut = getIcerik(id);
+  if (!mevcut || mevcut.tip !== 'yasal') return { ok: false, hata: 'bulunamadi' };
+
+  if (g.yururluk < mevcut.guncelleme_tarihi) return { ok: false, hata: 'tarih-geriye' };
+  if (g.sections.length === 0) return { ok: false, hata: 'bolum-yok' };
+
+  const sonSurum = db
+    .prepare('SELECT COALESCE(MAX(surum), 0) AS s FROM content_versions WHERE content_id = ?')
+    .get(id) as { s: number };
+
+  db.exec('BEGIN');
+  try {
+    // Revizyon kaydı ÖNCEKİ hâli saklar; yürürlük ve not YENİ sürüme aittir.
+    // İkisi tek satırda: "şu tarihte yürürlüğe giren değişiklikten önceki metin buydu".
+    db.prepare(
+      `INSERT INTO content_versions (content_id, surum, anlik, actor, yururluk, degisiklik_notu)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).run(
+      id, Number(sonSurum.s) + 1, JSON.stringify(mevcut), actor,
+      g.yururluk, g.degisiklik_notu
+    );
+
+    const eskiYuk = JSON.parse(mevcut.govde) as Record<string, unknown>;
+    db.prepare(
+      `UPDATE content_pages
+          SET baslik = ?, meta_title = ?, meta_description = ?, ozet = ?, govde = ?,
+              guncelleme_tarihi = ?, durum = ?, updated_at = datetime('now')
+        WHERE id = ?`
+    ).run(
+      g.baslik, g.meta_title, g.meta_description, g.intro,
+      JSON.stringify({ ...eskiYuk, accent: g.accent, lastUpdated: g.lastUpdated, sections: g.sections }),
+      g.yururluk, g.durum, id
+    );
+
+    db.exec('COMMIT');
+    return { ok: true };
+  } catch (err) {
+    db.exec('ROLLBACK');
+    console.error('[icerik] hukuki metin kaydetme basarisiz', err);
+    return { ok: false, hata: 'kaydedilemedi' };
+  }
+}

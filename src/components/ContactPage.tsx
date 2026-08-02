@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useServices } from '@/components/ServicesProvider';
+import { FORM_LIMITS } from '@/lib/form-limits';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollText from '@/components/ScrollText';
@@ -935,7 +936,7 @@ export default function ContactPage() {
                       onChange={(v) => set('name', v)}
                       error={errors.name}
                       autoComplete="name"
-                      maxLength={120}
+                      maxLength={FORM_LIMITS.name}
                     />
                     <FloatingInput
                       id="f-email"
@@ -946,7 +947,7 @@ export default function ContactPage() {
                       onChange={(v) => set('email', v)}
                       error={errors.email}
                       autoComplete="email"
-                      maxLength={160}
+                      maxLength={FORM_LIMITS.email}
                     />
                     <FloatingInput
                       id="f-phone"
@@ -956,7 +957,7 @@ export default function ContactPage() {
                       onChange={(v) => set('phone', v)}
                       error={errors.phone}
                       autoComplete="tel"
-                      maxLength={40}
+                      maxLength={FORM_LIMITS.phone}
                     />
                     <FloatingInput
                       id="f-company"
@@ -966,7 +967,7 @@ export default function ContactPage() {
                       onChange={(v) => set('company', v)}
                       error={errors.company}
                       autoComplete="organization"
-                      maxLength={140}
+                      maxLength={FORM_LIMITS.company}
                     />
                   </div>
                 </FormStep>
@@ -1046,7 +1047,7 @@ export default function ContactPage() {
                     value={form.message}
                     onChange={(v) => set('message', v)}
                     error={errors.message}
-                    maxLength={2000}
+                    maxLength={FORM_LIMITS.message}
                   />
                 </FormStep>
 
