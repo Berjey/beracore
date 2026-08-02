@@ -13,7 +13,11 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalıs
 
 **Kod tarafı bitti.** 2 Ağu 2026'da tam site denetimi yapıldı ve bulunan her şey düzeltilip
 canlıya alındı (bkz. §2.7). Local + GitHub + canlı aynı commit'te. Kalite kapıları:
-`npm run lint` (0/0) · `npm test` (25/25) · `npm run build` (119 sayfa) · `npm run seo-audit` (✅ temiz).
+`npm run lint` (0/0) · `npm test` (30/30) · `npm run build` (119 sayfa) · `npm run seo-audit` (✅ temiz).
+
+**2 Ağu 2026 — CRM öncesi son tur tamamlandı:** sitemap `lastmod` hatası düzeltildi,
+6 hizmet kategorisi sayfası ince içerikten çıkarıldı (252-299 → 1005-1233 kelime + FAQPage),
+Faz 2 dizin profil metinleri hazırlandı. Tam tarama: **111 sayfa, 0 bulgu.**
 
 **Sıradaki iş kodda DEĞİL.** Kalan üç blok, önem sırasıyla:
 
@@ -26,9 +30,9 @@ canlıya alındı (bkz. §2.7). Local + GitHub + canlı aynı commit'te. Kalite 
 Bunlardan sonra 🛠 Claude'un sırada bekleyen iki büyük işi:
 1. **Admin Panel + CRM Faz A** (`docs/panel-crm-plani.md`) — şu an gelen form talepleri
    hiçbir yere kaydedilmiyor; tek kayıt e-posta kutusu.
-2. **İçerik fazı** (kullanıcı açtığında) — 6 hizmet kategorisi sayfası 252-299 kelime,
-   24 şehir sayfası 246-302 kelime. Teknik hata değil; ticari sorgularda rakiplerin
-   2500+ kelimelik sayfalarıyla yarışamayacak hacim.
+2. **İçerik fazı** (kullanıcı açtığında) — 6 hizmet kategorisi sayfası 2 Ağu'da çözüldü
+   (1005-1233 kelime). Kalan: **24 şehir sayfası 246-302 kelime**; aynı `overview`/`faq`
+   kalıbı `CityPage` tipine taşınarak çözülebilir.
 
 ---
 
@@ -46,7 +50,8 @@ Gerçekçi takvim: **4-6 ayda düzenli organik trafik.**
 
 **Bilinen, kabul edilmiş açıklar:** CSP'de `script-src 'unsafe-inline'` (kaldırmak sayfaları
 statik olmaktan çıkarır) · 4 sayfa tipinde gsap duruyor · şehir sayfaları 246-302 kelime
-(içerik fazı işi) · bileşen (JSX) render testi yok · Lighthouse skoru henüz ölçülmedi (👤).
+(içerik fazı işi — hizmet kategorileri 2 Ağu'da çözüldü) · bileşen (JSX) render testi yok ·
+Lighthouse skoru henüz ölçülmedi (👤) · **dış bağlantı ve sosyal profil YOK** (asıl darboğaz).
 
 ---
 
@@ -351,8 +356,12 @@ ve 8 sayfada tek gerçek ihlal kaldı.
   (asıl şişkinlik giderildi, sayfa 32 KB gzip; istemci taraflı arama sayfalamayı engelliyor).
 - 🟢 **Core Web Vitals** 👤 — kesin skor için https://pagespeed.web.dev üzerinden canlı ölçüm.
   (2 Ağu'da kısıtlı Chrome ile ölçüldü, tamamı "iyi"; PageSpeed alan verisi ~4 hafta sonra dolar.)
-- 🟢 **Şehir sayfalarının içerik hacmi** (246-302 kelime) ve **6 hizmet kategorisi sayfası**
-  (252-299 kelime) — bkz. §2.6 sonu ve §2.7. İçerik fazı açılınca ilk iş.
+- ✅ **6 hizmet kategorisi sayfası** — 2 Ağu 2026'da çözüldü: `Service` tipine `overview`
+  (4 bölüm) + `faq` (5 soru) eklendi, hub sayfasında render edilip FAQPage şemasına bağlandı.
+  Ölçüm: 252-299 → **1005-1233 kelime**, h2 sayısı 2 → 7. İçerik tavsiye/yöntem odaklı;
+  uydurma müşteri metriği veya referans yok.
+- 🟢 **Şehir sayfalarının içerik hacmi** (246-302 kelime) — 24 sayfa, aynı kalıp uygulanabilir.
+  Kategori sayfalarındaki `overview`/`faq` yaklaşımı `CityPage` tipine de taşınabilir.
 - 🟢 **SMTP şifresi rotasyonu** 👤 — `emirhan` anahtarı geçmişte root erişimine sahipti,
   yani VPS'teki `.env` (SMTP şifresi) görülmüş olabilir. Hostinger panelinden
   `info@beracore.com` şifresi değiştirilirse VPS `.env` güncellenmeli (🛠 Claude yapar).

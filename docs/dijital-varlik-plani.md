@@ -129,7 +129,62 @@ Güçlü domainlerden dofollow link + gerçek müşteri talebi. Ajanslar için e
 | 9 | **The Manifest** | themanifest.com | 🔲👤 |
 | 10 | **TechBehemoths** | techbehemoths.com | 🔲👤 |
 
-> 🛠 Claude her biri için hazır profil metni + hizmet açıklaması hazırlar.
+> ✅ 2 Ağu 2026 — hazır metinler aşağıda. Kopyala-yapıştır, uydurma metrik/referans YOK.
+
+### FAZ 2 — HAZIR DİZİN METİNLERİ (kopyala-yapıştır)
+
+Bu dizinlerin tamamı aynı çekirdek bilgiyi ister. Aşağıdaki blokları olduğu gibi kullan;
+NAP (ad-adres-telefon) §0'daki değerlerle **birebir aynı** kalmalı.
+
+**Tagline (60 karakter altı — çoğu dizin sınırlar):**
+```
+Dijital deneyim stüdyosu — tasarım, yazılım, yapay zeka
+```
+
+**Şirket açıklaması (dizin standardı, ~600 karakter):**
+```
+BERACORE, İstanbul merkezli bir dijital deneyim stüdyosudur. Markaların dijitalde
+fark yaratması için tasarım, mühendislik ve pazarlamayı tek çatı altında birleştiririz.
+Yapay zeka destekli chatbot ve süreç otomasyonu, blockchain ve fintech çözümleri,
+özel web ve mobil yazılım, UI/UX ve marka kimliği tasarımı, e-ticaret siteleri ve
+pazaryeri entegrasyonları ile SEO ve dijital pazarlama hizmetleri sunarız.
+Şablon çözümler yerine işinize özel sistemler kurar, teslim ettiğimiz projelerin
+kaynak kodunu müşteriye devrederiz. Türkiye pazarına odaklanır, Türkçe destek veririz.
+```
+
+**İngilizce sürüm (Clutch/GoodFirms/DesignRush uluslararası profillerde istenir):**
+```
+BERACORE is a digital experience studio based in Istanbul, Türkiye. We combine design,
+engineering and marketing under one roof to help brands stand out digitally. Our services
+include AI-powered chatbots and process automation, blockchain and fintech solutions,
+custom web and mobile software, UI/UX and brand identity design, e-commerce stores with
+marketplace integrations, and SEO and digital marketing. We build tailored systems rather
+than templates, and hand over full source code ownership to our clients.
+```
+
+**Hizmet dağılımı (dizinler yüzde ister — toplam 100 olmalı):**
+```
+Web Development ................ 25%
+UI/UX & Web Design ............. 20%
+AI / Automation ................ 15%
+E-Commerce Development ......... 15%
+Digital Marketing / SEO ........ 15%
+Blockchain & Fintech ........... 10%
+```
+
+**Sektör odağı:** KOBİ · E-ticaret · Fintech · Profesyonel hizmetler · Üretim/sanayi
+**Coğrafi odak:** Türkiye (İstanbul, Ankara, İzmir, Bursa) — uzaktan çalışma ile global
+**Çalışma dili:** Türkçe, İngilizce
+
+> ⚠️ **Ekip büyüklüğü, kuruluş yılı, saatlik ücret ve minimum proje bütçesi alanlarını
+> KENDİN doldur.** Bu alanlar doğrulanabilir işletme bilgisidir; uydurulmuş bir sayı
+> Clutch/GoodFirms doğrulama sürecinde sorun çıkarır ve marka güvenilirliğini zedeler.
+
+> ⚠️ **Referans/portfolyo alanı:** Clutch ve GoodFirms'te asıl ağırlık doğrulanmış müşteri
+> yorumlarındadır (platform müşteriyi arayarak teyit eder). Bu yüzden profili açtıktan sonra
+> memnun 2-3 müşteriden yorum bırakmalarını istemek, profili doldurmaktan daha değerlidir.
+> Sitedeki mevcut 3 yorum gerçek müşterilere ait — aynı kişilerden başlanabilir.
+
 
 ---
 
