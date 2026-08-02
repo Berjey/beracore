@@ -189,7 +189,9 @@ export default async function ServiceCategoryPage({ params }: Props) {
                   key={f.question}
                   className="group rounded-2xl border border-white/[0.06] bg-white/[0.015] px-6 py-5 transition-colors duration-300 hover:border-white/[0.14]"
                 >
-                  <summary className="flex cursor-pointer items-start justify-between gap-4 font-body text-[0.98rem] font-semibold text-t1 marker:content-none [&::-webkit-details-marker]:hidden">
+                  {/* min-h + py: soru tek satıra sığdığında yükseklik 23.5px'e düşüyor ve
+                      WCAG 2.5.8'in 24px dokunma hedefi alt sınırının altında kalıyordu. */}
+                  <summary className="flex min-h-[24px] cursor-pointer items-start justify-between gap-4 py-0.5 font-body text-[0.98rem] font-semibold text-t1 marker:content-none [&::-webkit-details-marker]:hidden">
                     {f.question}
                     <svg
                       width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
