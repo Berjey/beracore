@@ -1,0 +1,5 @@
+# Kabuk script'leri VPS'te bash ile calisir; CRLF satir sonlari
+# `set -euo pipefail` gibi satirlari bozar ("invalid option name").
+# Bu dosyalar her platformda LF ile checkout edilir.
+*.sh text eol=lf
+*.mjs text eol=lf
