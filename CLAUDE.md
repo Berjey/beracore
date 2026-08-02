@@ -348,7 +348,16 @@ Ancak geri döndürülmesi zor veya dışa dönük işlerde (sunucu güvenlik ay
 
 ## Yönetim Paneli (Faz A — 2 Ağu 2026, canlıda)
 
-`/admin` — gelen kutusu + lead yönetimi. **CMS değildir**; blog/sayfa içeriği kodda kalır.
+`/admin` — gelen kutusu + lead yönetimi + **şirket ayarları** + **metrikler**.
+Blog/sayfa içeriği şimdilik kodda (Faz 1.3'te veritabanına taşınacak).
+
+**Metrik kuralı (Faz 1.2):** ana sayfa ve Hakkımızda'daki rakamlar `company_metrics`
+tablosundan gelir ve **yalnızca `durum = 'yayinda'` olanlar render edilir**. Filtre
+`src/lib/db/metrics.ts` içindeki SORGUDADIR, bileşende değil — bir JSX dalını unutmak
+kuralı delmeye yetmesin diye. Panel de veri kaynağı boşken yayına almayı reddeder.
+Bugün `25+ proje`, `15+ müşteri`, `%97 memnuniyet` **taslak** durumda, yani sitede yok;
+kanıt girilip durum değiştirilince deploy'suz geri gelirler.
+**Koda tekrar sabit sayı yazma** — `tests/sirket-metrikleri.test.ts` bunu yakalar.
 Public site %100 statik ve SEO-bütün; panel aynı Next.js süreci içinde dinamik olarak yaşar
 (PM2/nginx/TLS değişmedi).
 

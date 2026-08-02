@@ -157,3 +157,92 @@ SEO/erişilebilirlik düzeltmeleri.
 **Kullanıcıdan gerekecek:** ticari unvan, vergi/MERSİS bilgisi, açık adres, çalışma saatleri ·
 sayısal iddiaların kanıtı (25+ proje, 15+ müşteri, %97 memnuniyet) · vaka çalışmaları için
 müşteri yayın izni.
+
+---
+
+## Faz 1.2 — Şirket metrikleri, kanıta bağlı (2 Ağustos 2026)
+
+Bulgu **A-07** (High) ve **A-09** (Medium) kapatıldı.
+
+### Yapılanlar
+
+`company_metrics` tablosu (migration `004_sirket_metrikleri.sql`) her metriği ölçüm
+yöntemi, veri kaynağı, kanıt bağlantısı ve son doğrulama tarihiyle birlikte tutar.
+
+**Yayın kuralı sorguda durur, bileşende değil.** `getMetrikler()` yalnızca
+`durum = 'yayinda'` satırları döner. Bir JSX dalını unutmak kuralı delmeye yetmez;
+delmek için sorguyu değiştirmek gerekir. Panel de veri kaynağı boşken yayına almayı
+reddeder — ve reddetme veri katmanındadır (`guncelleMetrik`), yalnızca formda değil.
+
+**Yayında (2):** `kurulus-yili` 2024 · `uzman-ekip` 5+ — şirketin kendi hakkında
+doğrudan bildiği, sitenin görünen içeriğiyle zaten tutarlı iki gerçek.
+
+**Taslak, yani public sitede GÖRÜNMÜYOR (3):** `tamamlanan-proje` 25+ ·
+`kurumsal-musteri` 15+ · `memnuniyet-orani` %97. Kanıt panele girilip durum
+"yayında" yapıldığında kendiliğinden geri gelirler; kod değişikliği gerekmez.
+
+### Taşıma sırasında bulunan üç ek çelişki
+
+Metrikler tek kaynağa toplanınca, aynı iddianın kodda dolaşan başka kopyaları çıktı:
+
+1. **`TechMarquee.tsx` kayan şeridi** `120+ Tamamlanan Proje` ve `50+ Kurumsal Müşteri`
+   diyordu — sayaç bölümünün söylediğinin ~4 katı, **aynı sayfada**. Ziyaretçi ikisini
+   yan yana görebiliyordu. Sayısal olmayan ifadelerle değiştirildi.
+2. **`AboutPage.tsx` zaman çizelgesi** düz metinde "15+ kurumsal müşteri ve 25+ teslim
+   edilmiş proje" tekrar ediyordu. Sayaç kartını kaldırıp bu cümleyi bırakmak iddiayı
+   kaldırmak değil saklamak olurdu.
+3. **`services-data.ts`** özel yazılım hizmetinde `8+ Yıl Deneyim` yazıyordu. Şirket
+   2024'te kuruldu → sitenin kendi zaman çizelgesiyle ve `foundingDate` yapısal
+   verisiyle doğrudan çelişki. `Agile · Çalışma Modeli` ile değiştirildi.
+
+### A-09 — sayaçlar JS'siz gerçek değeri gösteriyor
+
+`AboutPage.tsx` sunucu HTML'ine `0{suffix}` basıyordu: JavaScript çalışmayan ziyaretçi
+ve render etmeyen bot **"0+ Tamamlanan Proje"** görüyordu. Artık gerçek değer basılır,
+sıfırlama mount anında yapılır. `prefers-reduced-motion` açıkken hiç sıfırlanmaz.
+(`Stats.tsx` 30 Tem'de düzeltilmişti; `AboutPage` atlanmıştı — aynı hatanın ikinci kopyası.)
+
+### Değişen dosyalar
+
+**Yeni:** `src/lib/db/migrations/004_sirket_metrikleri.sql` · `src/lib/metrikler.ts` (saf,
+istemci güvenli) · `src/lib/db/metrics.ts` (yalnızca sunucu) · `src/components/MetrikProvider.tsx` ·
+`src/app/admin/(korumali)/metrikler/page.tsx` · `src/app/admin/metrikler/kaydet/route.ts` ·
+`tests/sirket-metrikleri.test.ts`
+
+**Değişen:** `src/app/layout.tsx` · `src/components/Stats.tsx` · `src/components/AboutPage.tsx` ·
+`src/components/TechMarquee.tsx` · `src/lib/services-data.ts` · `src/app/admin/(korumali)/layout.tsx`
+
+### Veritabanı değişikliği
+
+`company_metrics` tablosu + `idx_metrics_durum` indeksi. 5 kayıt tohumlandı
+(`INSERT OR IGNORE` → idempotent, elle düzenlenmiş kaydı ezmez). Yeni env değişkeni yok.
+
+### Kalite kapıları
+
+`npm run lint` 0 uyarı · `npm test` **93 → 104** · `npm run build` 119 sayfa ·
+`npm run seo-audit` ✅ TEMİZ · `secret-scan` temiz
+
+Üretilen HTML doğrulandı: ana sayfa ve `/hakkimizda` yalnızca `2024` ve `5+` basıyor;
+`25+`, `15+`, `%97`, `120+`, `50+` hiçbir sayfada yok.
+
+### Geri alma
+
+Kod: `git revert`. Veritabanı: tablo bırakılabilir (kod tabloyu bulamazsa `getMetrikler()`
+boş döner ve metrik bölümü gizlenir — site kırılmaz). Metrikleri hızlıca geri getirmek
+için panelden durum "yayında" yapmak yeterli; deploy gerekmez.
+
+### Bilinen eksikler
+
+- 23 alt hizmet sayfasındaki `SubService.stats` (92 sayı) hâlâ kodda sabit. Çoğu şirket
+  geçmişi değil ürün/kabiliyet iddiası ("%99.9 Uptime", "<2s Yanıt Süresi"); ayrı bir
+  sınıflandırma gerektiriyor → Faz 1.3.
+- `TechMarquee.tsx` içinde **`PCI DSS Uyumlu`** ve **`ISO Standartları`** ifadeleri duruyor.
+  Bunlar metrik değil sertifika iddiası; doğruysa kalmalı, değilse kaldırılmalı.
+  Karar kullanıcıya ait — 👤 **teyit bekliyor.**
+- Metrik **ekleme/silme** panelde yok (bilinçli): her metriğin ne ölçtüğü migration'da
+  tanımlıdır. Panelden serbestçe uydurulabilseydi kanıt kuralı anlamını yitirirdi.
+
+### Sonraki adım
+
+**Faz 1.3 — içeriğin veritabanına taşınması:** blog (50) → hizmetler (6+23) →
+şehirler (24) → hukuki (4). Her adımda öncesi/sonrası HTML denkliği doğrulanacak.

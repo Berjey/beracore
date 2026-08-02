@@ -24,7 +24,11 @@ const ROW2 = [
 const ROW3 = [
   'Uçtan Uca Çözüm', '7/24 Destek', 'Agile Metodoloji', 'Şeffaf Süreç',
   '%99.9 Uptime', 'PCI DSS Uyumlu', 'KVKK Uyumlu', 'ISO Standartları',
-  '120+ Tamamlanan Proje', '50+ Kurumsal Müşteri', 'Microservice Mimari',
+  // Burada '120+ Tamamlanan Proje' ve '50+ Kurumsal Müşteri' yazıyordu (bulgu A-07).
+  // İki sorun birdendi: sayılar kanıtsızdı VE aynı sayfadaki sayaç bölümünün
+  // söylediğinden (25+ / 15+) farklıydı — ziyaretçi ikisini yan yana görebiliyordu.
+  // Yerlerine, doğruluğu şirketin kendi çalışma biçiminden gelen ifadeler kondu.
+  'Uçtan Uca Sahiplik', 'Kurumsal İş Ortaklığı', 'Microservice Mimari',
   'CI/CD Pipeline', 'Penetrasyon Testi', 'Ölçeklenebilir Altyapı',
   'Tam Kaynak Kod Sahipliği', 'Haftalık Sprint Raporları',
 ];

@@ -349,7 +349,10 @@ export const services: Service[] = [
         features: ['Kurumsal ERP sistemleri', 'Özel CRM çözümleri', 'İş zekası (BI) & raporlama', 'Microservice mimari', 'Event-driven & message queue', 'Kubernetes & Docker containerization'],
         process: ['İş süreçleri analizi ve çözüm tasarımı', 'Mimari tasarım ve teknoloji stack belirleme', 'Modüler geliştirme ve entegrasyon', 'Eğitim, deployment ve destek'],
         benefits: ['İş süreçlerine tam uyumlu özel çözümler', 'Sınırsız ölçeklenebilirlik ve esneklik', 'Tam sahiplik ve bağımsızlık'],
-        stats: [{ value: '80+', label: 'Özel Proje' }, { value: '%95', label: 'SLA Oranı' }, { value: '%99.9', label: 'Uptime' }, { value: '8+', label: 'Yıl Deneyim' }],
+        stats: [{ value: '80+', label: 'Özel Proje' }, { value: '%95', label: 'SLA Oranı' }, { value: '%99.9', label: 'Uptime' }, /* "8+ Yıl Deneyim" yazıyordu — şirket 2024'te kuruldu, yani iddia
+           sitenin kendi zaman çizelgesiyle ve yapısal verideki `foundingDate`
+           ile ÇELİŞİYORDU (bulgu A-07). */
+        { value: 'Agile', label: 'Çalışma Modeli' }],
         faq: [
           { question: 'Özel yazılım ne zaman tercih edilmelidir?', answer: 'Hazır çözümler iş süreçlerinize uyum sağlayamadığında, benzersiz ihtiyaçlarınız olduğunda veya rekabet avantajı elde etmek istediğinizde özel yazılım doğru tercihdir.' },
           { question: 'Microservice mimari neden önemlidir?', answer: 'Microservice mimari, uygulamanızı bağımsız modüllere bölerek her birini ayrı ölçeklendirmenizi, güncellemenizi ve dağıtmanızı sağlar. Sistem dayanıklılığını artırır ve ekip verimliliğini yükseltir.' },

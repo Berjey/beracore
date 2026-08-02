@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { mailtoHref } from '@/lib/sirket';
 import { useSirket } from '@/components/SirketProvider';
+import { useMetrikler } from '@/components/MetrikProvider';
+import { metrikMetni } from '@/lib/metrikler';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -11,44 +13,13 @@ import { services } from '@/lib/services-data';
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Stat = {
-  value: number;
-  suffix: string;
-  label: string;
-  sub: string;
-  iconPath: string;
+// Tailwind sınıfları derleme anında taranır — `grid-cols-${n}` üretilen CSS'e girmez.
+const SUTUN: Record<number, string> = {
+  1: 'grid-cols-1',
+  2: 'grid-cols-2',
+  3: 'grid-cols-3',
+  4: 'grid-cols-4',
 };
-
-const STATS: Stat[] = [
-  {
-    value: 2024,
-    suffix: '',
-    label: 'Kuruluş Yılı',
-    sub: 'BERACORE stüdyosu',
-    iconPath: 'M12 2v4 M12 18v4 M4.93 4.93l2.83 2.83 M16.24 16.24l2.83 2.83 M2 12h4 M18 12h4 M4.93 19.07l2.83-2.83 M16.24 7.76l2.83-2.83',
-  },
-  {
-    value: 5,
-    suffix: '+',
-    label: 'Uzman Ekip',
-    sub: 'Disiplinlerarası çekirdek',
-    iconPath: 'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2 M9 11a4 4 0 100-8 4 4 0 000 8z M23 21v-2a4 4 0 00-3-3.87 M16 3.13a4 4 0 010 7.75',
-  },
-  {
-    value: 25,
-    suffix: '+',
-    label: 'Tamamlanan Proje',
-    sub: 'Teslim edilen',
-    iconPath: 'M22 11.08V12a10 10 0 11-5.93-9.14 M22 4L12 14.01l-3-3',
-  },
-  {
-    value: 15,
-    suffix: '+',
-    label: 'Kurumsal Müşteri',
-    sub: 'Aktif iş ortağı',
-    iconPath: 'M20 7h-4V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v3H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM10 4h4v3h-4V4z',
-  },
-];
 
 const VALUES = [
   {
@@ -92,17 +63,34 @@ const TIMELINE = [
   {
     period: '2026',
     title: 'Bugün',
-    desc: '6 ana hizmet alanında, 15+ kurumsal müşteri ve 25+ teslim edilmiş proje. Her yeni iş ortaklığı, stüdyomuzun hikâyesine bir sayfa daha ekliyor.',
+    // Burada "15+ kurumsal müşteri ve 25+ teslim edilmiş proje" yazıyordu. Aynı
+    // kanıtsız iddianın DÜZ METİN kopyasıydı: sayaç kartını kaldırıp bu cümleyi
+    // bırakmak, iddiayı kaldırmak değil saklamak olurdu (bulgu A-07).
+    desc: '6 ana hizmet alanında kurumsal müşterilerle çalışıyoruz. Her yeni iş ortaklığı, stüdyomuzun hikâyesine bir sayfa daha ekliyor.',
   },
 ];
 
 export default function AboutPage() {
   const sirket = useSirket();
+  // Metrikler veritabanından, yalnızca `durum = 'yayinda'` olanlar (bulgu A-07).
+  // Ana sayfadaki listeyle AYNI kayıtlardan gelir — daha önce iki dosyada
+  // kopyalanmıştı ve ayrışmalarını engelleyen hiçbir şey yoktu.
+  const STATS = useMetrikler('hakkimizda');
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    // SSR'da gerçek değerler basılır (bulgu A-09); sayaç animasyonu için sıfırlama
+    // burada, mount anında yapılır. Hareketi azaltılmış modda hiç sıfırlanmaz —
+    // o kullanıcı animasyon değil, doğru sayıyı görür.
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      container.querySelectorAll<HTMLElement>('.ab-stat-num').forEach((el) => {
+        el.textContent = `${el.dataset.prefix ?? ''}0${el.dataset.suffix ?? ''}`;
+      });
+    }
+
     let ctx: gsap.Context | null = null;
     const timer = setTimeout(() => {
       ctx = gsap.context(() => {
@@ -295,6 +283,7 @@ export default function AboutPage() {
           const numEl = el.querySelector<HTMLElement>('.ab-stat-num');
           if (!numEl) return;
           const target = parseInt(numEl.dataset.target || '0');
+          const prefix = numEl.dataset.prefix || '';
           const suffix = numEl.dataset.suffix || '';
           ScrollTrigger.create({
             trigger: el,
@@ -309,7 +298,7 @@ export default function AboutPage() {
                 duration,
                 ease: 'power2.out',
                 onUpdate: () => {
-                  numEl.textContent = Math.round(obj.n) + suffix;
+                  numEl.textContent = prefix + Math.round(obj.n) + suffix;
                 },
               });
             },
@@ -706,7 +695,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ========== STATS ========== */}
+      {/* ========== STATS ==========
+          Yayında metrik yoksa bölüm hiç basılmaz — "Rakamlarla" başlığı altında
+          boş ızgara bırakmaktansa bölüm görünmez. */}
+      {STATS.length > 0 && (
       <section
         className="ab-stats relative py-28 px-6 border-t border-b border-border overflow-hidden max-md:py-20"
         style={{
@@ -734,12 +726,16 @@ export default function AboutPage() {
 
         {/* Grid */}
         <div className="relative max-w-[1150px] mx-auto">
-          <div className="grid grid-cols-4 gap-0 max-lg:grid-cols-2 max-md:grid-cols-1">
+          <div
+            className={`grid gap-0 max-lg:grid-cols-2 max-md:grid-cols-1 ${
+              SUTUN[Math.min(STATS.length, 4)] ?? 'grid-cols-4'
+            }`}
+          >
             {STATS.map((stat, i) => {
               const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
               return (
                 <div
-                  key={stat.label}
+                  key={stat.anahtar}
                   className="ab-stat group relative px-6 py-8 text-center transition-colors duration-500 max-md:py-6"
                   style={{ '--accent': accent } as React.CSSProperties}
                 >
@@ -777,29 +773,36 @@ export default function AboutPage() {
                       fill="none" stroke={accent}
                       strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
                     >
-                      <path d={stat.iconPath} />
+                      <path d={stat.ikon} />
                     </svg>
                   </div>
 
-                  {/* Numara (count-up) */}
+                  {/* Numara (count-up)
+                      SSR'da GERÇEK değer basılır (bulgu A-09). Önceden `0{suffix}`
+                      yazıyordu: JavaScript çalışmayan ziyaretçi ve tarayıcısız
+                      tarayıcılar "0+ Tamamlanan Proje" görüyordu. Sıfırlama artık
+                      `useEffect` içinde, mount anında yapılır — bölüm ilk ekranın
+                      altında olduğu için kullanıcı bunu görmez.
+                      Ana sayfadaki `Stats` bileşeni aynı kalıbı kullanır. */}
                   <div
                     className="ab-stat-num font-heading font-bold leading-none tracking-tight mb-3 gradient-text"
                     style={{ fontSize: 'clamp(2.2rem, 4.6vw, 3.6rem)' }}
-                    data-target={stat.value}
-                    data-suffix={stat.suffix}
+                    data-target={stat.deger}
+                    data-prefix={stat.onEk}
+                    data-suffix={stat.sonEk}
                   >
-                    0{stat.suffix}
+                    {metrikMetni(stat)}
                   </div>
 
                   {/* Label */}
                   <div className="font-body text-[0.8rem] font-semibold text-t1 tracking-[0.05em] mb-1">
-                    {stat.label}
+                    {stat.baslik}
                   </div>
                   <div
                     className="font-body text-[0.68rem] font-light tracking-[0.12em] uppercase transition-colors duration-500"
                     style={{ color: `${accent}99` }}
                   >
-                    {stat.sub}
+                    {stat.altBaslik}
                   </div>
                 </div>
               );
@@ -807,6 +810,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ========== VALUES ========== */}
       <section className="ab-values py-28 px-6 max-md:py-20">

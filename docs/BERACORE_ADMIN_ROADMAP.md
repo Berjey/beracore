@@ -1,7 +1,7 @@
 # BERACORE — Yol Haritası (Business Operating System)
 
 **Onaylı plan.** `docs/panel-crm-plani.md`'nin yerini alır.
-**Son güncelleme:** 2 Ağustos 2026 — **Faz 0 tamamlandı**, Faz 1 sıradaki
+**Son güncelleme:** 2 Ağustos 2026 — **Faz 0 tamamlandı**, **Faz 1.1 ve 1.2 canlıda**, sırada Faz 1.3
 
 ---
 
@@ -95,20 +95,23 @@ Ayrıntılı bulgular: `BERACORE_SYSTEM_AUDIT.md` · Yapılanların kaydı: `BER
 
 ---
 
-## Faz 1 — sıradaki
+## Faz 1 — devam ediyor
 
 **Öncelik sırası** (her madde tek başına canlıya alınabilir):
 
-1. **Merkezi şirket ayarları** — telefon/e-posta/adres bugün 6+ dosyada kopyalı (A-08).
-   Tek kaynağa bağlanır; JSON-LD `sameAs` da buradan beslenir (A-18).
-2. **Şirket metrikleri** — kanıt alanlarıyla birlikte. **Kanıtsız metrik public sitede
-   görünmez** (A-07). Ticari sonucu var: kanıt gelene kadar ana sayfada bir bölüm boşalır.
-3. **İçeriğin veritabanına taşınması** — blog (50) → hizmet (6+23) → şehir (24) → hukuki (4).
+1. ✅ **Merkezi şirket ayarları** — telefon/e-posta/adres 6+ dosyada kopyalıydı (A-08).
+   Tek kaynağa bağlandı; JSON-LD `sameAs` da buradan besleniyor (A-18). `/admin/ayarlar`.
+2. ✅ **Şirket metrikleri** — kanıt alanlarıyla birlikte (A-07) + sayaçların JS'siz gerçek
+   değeri (A-09). `/admin/metrikler`. **Sonuç:** `25+ proje`, `15+ müşteri`, `%97 memnuniyet`
+   kanıt gelene kadar sitede **görünmüyor**; `2024` ve `5+ ekip` yayında kaldı.
+   Taşıma sırasında aynı iddianın üç ek kopyası bulundu ve düzeltildi (kayan şerit `120+`/`50+`,
+   zaman çizelgesi düz metni, hizmet sayfasında `8+ Yıl Deneyim` ↔ kuruluş 2024 çelişkisi).
+3. **İçeriğin veritabanına taşınması** ← **sıradaki** — blog (50) → hizmet (6+23) → şehir (24) → hukuki (4).
    Her adımda **aktarım öncesi/sonrası HTML birebir karşılaştırılır**.
 4. **Referanslar + vaka çalışmaları** — yalnızca yayın izni olan ve doğrulanmış kayıtlar.
 5. **Hukuki versiyonlama** (A-11) — versiyon, yürürlük tarihi, onaylayan, revizyon geçmişi.
-6. **SEO/erişilebilirlik düzeltmeleri** — sayaçların JS'siz gerçek değeri (A-09),
-   uzunluk limiti uyumsuzluğu (A-10).
+6. **SEO/erişilebilirlik düzeltmeleri** — uzunluk limiti uyumsuzluğu (A-10).
+   (A-09 sayaç düzeltmesi 1.2'de birlikte yapıldı — aynı bileşenler ele alınıyordu.)
 
 **Kullanıcıdan gerekecek:** ticari unvan, vergi dairesi/no, MERSİS, açık adres, çalışma
 saatleri · **sayısal iddiaların kanıtı** · vaka çalışması için müşteri yayın izni.

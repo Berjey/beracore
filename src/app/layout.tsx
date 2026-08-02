@@ -4,10 +4,12 @@ import { SITE_URL, OG_IMAGE_ABSOLUTE, ogImages, twitterImages } from '@/lib/seo'
 import { COOKIE_CONSENT_KEY } from '@/lib/cookie-consent';
 import { postalAddress, whatsappHref, type SirketBilgisi } from '@/lib/sirket';
 import { getSirket } from '@/lib/db/settings';
+import { getMetrikler } from '@/lib/db/metrics';
 import MotionGuard from '@/components/MotionGuard';
 import CookieConsent from '@/components/CookieConsent';
 import WhatsAppCta from '@/components/WhatsAppCta';
 import SirketProvider from '@/components/SirketProvider';
+import MetrikProvider from '@/components/MetrikProvider';
 import './globals.css';
 
 export const viewport: Viewport = {
@@ -144,6 +146,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // `getSirket()` veritabanı okunamazsa kod varsayılanlarına düşer — panelin
   // bir sorunu sitenin derlenmesini veya açılmasını engellemez.
   const sirket = getSirket();
+  // Yalnızca `durum = 'yayinda'` olan metrikler döner; kanıtı olmayan sayı
+  // buraya hiç ulaşmaz (bkz. src/lib/db/metrics.ts).
+  const metrikler = {
+    anaSayfa: getMetrikler('ana_sayfa'),
+    hakkimizda: getMetrikler('hakkimizda'),
+  };
   return (
     // color-scheme + inline koyu zemin: tarayıcı CSS gelmeden önce kök zemini KOYU boyar →
     // tam sayfa yenilemede beyaz flash (saydam canvas'ta "beyaz kare" olarak görünen) engellenir.
@@ -209,7 +217,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Şirket bilgisi sunucuda BİR KEZ okunur, ağaca bağlamla verilir.
             İstemci bileşenleri `useSirket()` ile alır — veritabanı modülünü
             import etmeleri gerekmez (ederlerse `node:sqlite` tarayıcı paketine sızar). */}
-        <SirketProvider sirket={sirket}>{children}</SirketProvider>
+        <SirketProvider sirket={sirket}>
+          <MetrikProvider metrikler={metrikler}>{children}</MetrikProvider>
+        </SirketProvider>
         <WhatsAppCta href={whatsappHref(sirket)} />
         <CookieConsent />
       </body>

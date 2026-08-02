@@ -4,52 +4,27 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollText from '@/components/ScrollText';
+import { useMetrikler } from '@/components/MetrikProvider';
+import { metrikMetni } from '@/lib/metrikler';
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Stat = {
-  value: number;
-  suffix: string;
-  prefix?: string;
-  label: string;
-  sublabel: string;
-  iconPath: string;
+// Tailwind sınıfları derleme anında TARANIR — `grid-cols-${n}` şeklinde kurulan
+// bir sınıf üretilen CSS'te yer almaz. Bu yüzden tam metin olarak yazılırlar.
+const SUTUN: Record<number, string> = {
+  1: 'grid-cols-1',
+  2: 'grid-cols-2',
+  3: 'grid-cols-3',
+  4: 'grid-cols-4',
 };
-
-const STATS: Stat[] = [
-  {
-    value: 25,
-    suffix: '+',
-    label: 'Tamamlanan Proje',
-    sublabel: 'Teslim edilen',
-    iconPath: 'M22 11.08V12a10 10 0 11-5.93-9.14 M22 4L12 14.01l-3-3',
-  },
-  {
-    value: 15,
-    suffix: '+',
-    label: 'Kurumsal Müşteri',
-    sublabel: 'Aktif iş ortağı',
-    iconPath: 'M20 7h-4V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v3H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM10 4h4v3h-4V4z',
-  },
-  {
-    value: 97,
-    prefix: '%',
-    suffix: '',
-    label: 'Memnuniyet Oranı',
-    sublabel: 'Müşteri geri bildirimi',
-    iconPath: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
-  },
-  {
-    value: 2024,
-    suffix: '',
-    label: 'Kuruluş Yılı',
-    sublabel: 'BERACORE stüdyosu',
-    iconPath: 'M12 2v4 M12 18v4 M4.93 4.93l2.83 2.83 M16.24 16.24l2.83 2.83 M2 12h4 M18 12h4 M4.93 19.07l2.83-2.83 M16.24 7.76l2.83-2.83',
-  },
-];
 
 export default function Stats() {
   const sectionRef = useRef<HTMLElement>(null);
+
+  // Metrikler artık kodda SABİT DEĞİL, veritabanından gelir ve yalnızca
+  // `durum = 'yayinda'` olanlar döner (bulgu A-07). Kanıtı olmayan bir sayı
+  // buraya hiç ulaşmaz; ekleyip çıkarmak için kod değişikliği gerekmez.
+  const STATS = useMetrikler('anaSayfa');
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -128,6 +103,11 @@ export default function Stats() {
     return () => { clearTimeout(timer); ctx?.revert(); };
   }, []);
 
+  // Yayında metrik yoksa bölüm HİÇ render edilmez — "Rakamlarla" başlığının
+  // altında boş bir ızgara bırakmak, sayıyı uydurmaktan sonraki en kötü seçenek.
+  // Kanıt panele girilip durum 'yayinda' yapıldığında bölüm kendiliğinden döner.
+  if (STATS.length === 0) return null;
+
   return (
     <section
       ref={sectionRef}
@@ -159,12 +139,18 @@ export default function Stats() {
 
       {/* Grid */}
       <div className="relative max-w-[1150px] mx-auto">
-        <div className="grid grid-cols-4 gap-0 max-lg:grid-cols-2 max-md:grid-cols-1">
+        {/* Sütun sayısı metrik sayısından türetilir: sabit `grid-cols-4` iken
+            yayındaki metrik 4'ten azsa ızgarada boş hücre kalıyordu. */}
+        <div
+          className={`grid gap-0 max-lg:grid-cols-2 max-md:grid-cols-1 ${
+            SUTUN[Math.min(STATS.length, 4)] ?? 'grid-cols-4'
+          }`}
+        >
           {STATS.map((s, i) => {
             const accent = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
             return (
               <div
-                key={s.label}
+                key={s.anahtar}
                 className="stat-card group relative px-6 py-8 text-center transition-colors duration-500 max-md:py-6"
                 style={{ '--accent': accent } as React.CSSProperties}
               >
@@ -202,7 +188,7 @@ export default function Stats() {
                     fill="none" stroke={accent}
                     strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
                   >
-                    <path d={s.iconPath} />
+                    <path d={s.ikon} />
                   </svg>
                 </div>
 
@@ -210,22 +196,22 @@ export default function Stats() {
                 <div
                   className="stat-num font-heading font-bold leading-none tracking-tight mb-3 gradient-text"
                   style={{ fontSize: 'clamp(2.2rem, 4.6vw, 3.6rem)' }}
-                  data-target={s.value}
-                  data-prefix={s.prefix || ''}
-                  data-suffix={s.suffix}
+                  data-target={s.deger}
+                  data-prefix={s.onEk}
+                  data-suffix={s.sonEk}
                 >
-                  {s.prefix || ''}{s.value}{s.suffix}
+                  {metrikMetni(s)}
                 </div>
 
                 {/* Label */}
                 <div className="font-body text-[0.8rem] font-semibold text-t1 tracking-[0.05em] mb-1">
-                  {s.label}
+                  {s.baslik}
                 </div>
                 <div
                   className="font-body text-[0.68rem] font-light tracking-[0.12em] uppercase transition-colors duration-500"
                   style={{ color: `${accent}99` }}
                 >
-                  {s.sublabel}
+                  {s.altBaslik}
                 </div>
               </div>
             );

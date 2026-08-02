@@ -18,9 +18,9 @@
 | A-04 | Yedek saklama kuralı hiçbir dosyayla eşleşmiyordu | Medium | ✅ Kapatıldı |
 | A-05 | Panel veri katmanının sıfır testi | **High** | ✅ Kapatıldı |
 | A-06 | Atomik takas ISR önbelleğini her deploy'da siliyor | Medium | ✅ Kapatıldı |
-| A-07 | Ana sayfa ve hizmet sayfalarındaki sayısal iddialar kanıtsız | **High** | 🔲 Faz 1 |
+| A-07 | Ana sayfa ve hizmet sayfalarındaki sayısal iddialar kanıtsız | **High** | ✅ Faz 1.2 |
 | A-08 | Şirket iletişim bilgileri 6+ dosyada kopyalı (tek kaynak yok) | Medium | 🔲 Faz 1 |
-| A-09 | Animasyonlu sayaçlar JS olmadan gerçek değeri göstermiyor | Medium | 🔲 Faz 1 |
+| A-09 | Animasyonlu sayaçlar JS olmadan gerçek değeri göstermiyor | Medium | ✅ Faz 1.2 |
 | A-10 | Sunucu ve istemci mesaj uzunluk limitleri uyuşmuyor (4000 / 2000) | Low | 🔲 Faz 1 |
 | A-11 | Hukuki metinler versiyonsuz, yürürlük tarihi izlenmiyor | Medium | 🔲 Faz 1 |
 | A-12 | Staging / preview ortamı yok | **High** | ✅ Kapatıldı (DNS bekliyor) |
@@ -94,13 +94,18 @@
 
 ## Açık bulgular
 
-### A-07 — Sayısal iddialar kanıtsız · **High** · Faz 1
+### A-07 — Sayısal iddialar kanıtsız · **High** · ✅ Faz 1.2'de kapatıldı (2 Ağu 2026)
 
-- **Bulgu:** `src/components/Stats.tsx` (`STATS`, satır 19): 25+ proje, 15+ müşteri, %97 memnuniyet, 2024. Aynı kalıp `AboutPage.tsx` (`STATS`, satır 20) ve 23 alt hizmet sayfasında (`SubService.stats`).
-- **Etki:** Doğrulanamayan iddia, ticari güvenilirlik ve (reklam mevzuatı açısından) uyum riski.
-- **Önerilen çözüm:** `CompanyMetric` modülü — her metrik için kapsam, ölçüm yöntemi, veri kaynağı, kanıt, son doğrulama tarihi, sorumlu ve durum (taslak/doğrulandı/yayında/arşiv). **Kanıtı olmayan metrik public sitede render edilmez.**
-- **Değişiklik riski:** Orta — kanıt sağlanana kadar ana sayfada bir bölüm boşalır. Ticari karar kullanıcıya aittir.
-- **Ayrıca:** Ekip üyelerinin BERACORE öncesi deneyimi ile şirketin kendi proje sayısı ayrı metrikler olmalıdır.
+- **Bulgu:** `Stats.tsx` ve `AboutPage.tsx` içinde kopyalı `STATS` dizileri: 25+ proje, 15+ müşteri, %97 memnuniyet, 2024, 5+ ekip. Ayrıca üç yerde daha aynı iddianın farklı kopyaları:
+  - `TechMarquee.tsx` kayan şeridi **120+ Tamamlanan Proje** ve **50+ Kurumsal Müşteri** diyordu — sayaç bölümünün söylediğinin (25+/15+) yaklaşık 4 katı, üstelik aynı sayfada.
+  - `AboutPage.tsx` zaman çizelgesi düz metinde "15+ kurumsal müşteri ve 25+ teslim edilmiş proje" tekrar ediyordu.
+  - `services-data.ts` özel yazılım hizmetinde **8+ Yıl Deneyim** yazıyordu; şirket 2024'te kuruldu → sitenin kendi zaman çizelgesiyle ve `foundingDate` yapısal verisiyle doğrudan çelişki.
+- **Etki:** Doğrulanamayan iddia, ticari güvenilirlik ve reklam mevzuatı uyum riski. Çelişkili sayılar ayrıca ziyaretçi tarafından yan yana görülebiliyordu.
+- **Uygulanan çözüm:** `company_metrics` tablosu (migration `004`) her metriği ölçüm yöntemi, veri kaynağı, kanıt bağlantısı ve son doğrulama tarihiyle tutar. **Filtre SORGUDA:** `getMetrikler()` yalnızca `durum = 'yayinda'` satırları döner; bir bileşenin kuralı unutması mümkün değil. Panel (`/admin/metrikler`) veri kaynağı boşken yayına almayı reddeder; reddetme veri katmanındadır, formda değil.
+- **Yayına alınanlar:** `kurulus-yili` (2024) ve `uzman-ekip` (5+) — şirketin kendi hakkında doğrudan bildiği, sitenin görünen içeriğiyle zaten tutarlı iki gerçek.
+- **Taslağa düşenler (public sitede GÖRÜNMÜYOR):** `tamamlanan-proje`, `kurumsal-musteri`, `memnuniyet-orani`. Kanıt panele girilip durum "yayında" yapıldığında kendiliğinden geri gelirler.
+- **Kalan iş (Faz 1.3):** 23 alt hizmet sayfasındaki `SubService.stats` (92 sayı) hâlâ kodda sabit. Bunların çoğu şirket geçmişi değil ürün/kabiliyet iddiası ("%99.9 Uptime", "<2s Yanıt Süresi"); ayrı bir sınıflandırma gerektiriyor. Doğrudan çelişki üreten tek kayıt ("8+ Yıl Deneyim") şimdi düzeltildi.
+- **Kullanıcıdan beklenen:** proje/müşteri sayısının dayandığı kayıt; memnuniyet oranı için anket yapıldıysa sonuçları.
 
 ### A-08 — İletişim bilgisi tek kaynakta değil · Medium · Faz 1
 
@@ -108,11 +113,11 @@
 - **Etki:** Numara değişince bir yerde eski kalması kaçınılmaz; NAP tutarsızlığı yerel SEO'yu doğrudan zayıflatır.
 - **Önerilen çözüm:** `CompanySettings` — tek kaynak; tüm bileşenler oradan okur.
 
-### A-09 — Sayaçlar JS olmadan gerçek değeri göstermiyor · Medium · Faz 1
+### A-09 — Sayaçlar JS olmadan gerçek değeri göstermiyor · Medium · ✅ Faz 1.2'de kapatıldı (2 Ağu 2026)
 
-- **Bulgu:** `Stats.tsx` sayaç animasyonu 0'dan sayıyor; JS çalışmazsa veya bot render etmezse gerçek değer DOM'da yok.
+- **Bulgu:** `AboutPage.tsx` sunucu HTML'ine `0{suffix}` basıyordu → JavaScript çalışmayan ziyaretçi ve render etmeyen bot "0+ Tamamlanan Proje" görüyordu. (`Stats.tsx` 30 Tem'de düzeltilmişti; `AboutPage` atlanmıştı.)
 - **Etki:** Erişilebilirlik + arama motorunun değeri okuyamaması.
-- **Önerilen çözüm:** Gerçek değer HTML'de basılır, animasyon yalnızca görsel katman olarak üzerine biner. (30 Tem'de `ScrollText`/`Manifesto` için aynı düzeltme yapıldı — kalıp mevcut.)
+- **Uygulanan çözüm:** SSR'da gerçek değer basılır; sıfırlama `useEffect` içinde, mount anında yapılır. Bölüm ilk ekranın altında olduğu için kullanıcı sıfırlamayı görmez. `prefers-reduced-motion` açıkken hiç sıfırlanmaz — o kullanıcı animasyon değil doğru sayıyı görür.
 
 ### A-10 — Mesaj uzunluk limitleri uyuşmuyor · Low · Faz 1
 
