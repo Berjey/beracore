@@ -34,22 +34,31 @@ else
   echo "[deploy] lockfile ayni -> bagimlilik kurulumu atlandi (kesinti yok)"
 fi
 
-echo "[deploy] build -> .next-build (calisan .next'e dokunulmaz)"
-rm -rf .next-build
-NEXT_DIST_DIR=.next-build npm run build
-
 echo "[deploy] veritabani migrationlari"
-# Idempotent + surumlu. Build'den SONRA, restart'tan ONCE calisir: yeni kod ayaga
-# kalkmadan once semanin hazir olmasi gerekir. DB repo DISINDA (/var/www/beracore-data)
-# oldugu icin git reset --hard ona dokunmaz.
+# Idempotent + surumlu. DB repo DISINDA (/var/www/beracore-data) oldugu icin
+# `git reset --hard` ona dokunmaz.
+#
+# SIRA: migration BUILD'DEN ONCE calisir.
+# 2 Agu 2026'ya kadar build'den SONRA calisiyordu ve gerekcesi "yeni kod ayaga
+# kalkmadan once sema hazir olsun" idi. Faz 1'de merkezi sirket ayarlari gelince
+# bu sira YANLIS hale geldi: statik sayfalar derleme aninda `company_settings`
+# tablosunu okuyor. Tablo henuz yokken build kod varsayilanlarina dusuyor (geri
+# dusme calisti, build kirilmadi) ama panelden girilen degerler bir sonraki
+# deploy'a kadar siteye YANSIMIYORDU — sessiz ve fark edilmesi zor bir hata.
+#
+# Once calistirmak guvenli: migrationlar eklemeli (CREATE TABLE IF NOT EXISTS,
+# yeni kolon). Build basarisiz olsa bile eski kod yeni tablolari gormezden gelir.
 # `--env-file` ile .env yuklenir: DB_PATH oradan gelir (kabuk ortaminda tanimli degil).
-# Node 20.6+ destekler; VPS Node 24 calistiriyor.
 if [ -f .env ]; then
   node --env-file=.env scripts/migrate.mjs
 else
   echo "[deploy] UYARI: .env yok, migration varsayilan yola calisiyor"
   node scripts/migrate.mjs
 fi
+
+echo "[deploy] build -> .next-build (calisan .next'e dokunulmaz)"
+rm -rf .next-build
+NEXT_DIST_DIR=.next-build npm run build
 
 echo "[deploy] atomik takas"
 rm -rf .next-eski
