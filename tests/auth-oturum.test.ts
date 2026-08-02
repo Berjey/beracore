@@ -10,11 +10,18 @@
  */
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
+import { randomBytes } from 'node:crypto';
 import { hazirla, migrasyonlariUygula, temizle } from './yardim/test-db';
 
 hazirla();
 // `AUTH_SECRET` auth modülü ilk kullanıldığında okunur; import'tan önce kurulmalı.
-process.env.AUTH_SECRET = 'test-icin-uydurma-anahtar-en-az-32-karakter-uzunlugunda';
+//
+// Değer KAYNAK KODA YAZILMAZ, her çalıştırmada üretilir. İki sebep:
+//  - `scripts/secret-scan.mjs` sabit bir `AUTH_SECRET=...` satırını (haklı olarak)
+//    sızıntı sayıp deploy'u durdurur. Tarayıcıya muafiyet eklemek, test dosyasında
+//    gerçek bir sırrın saklanabileceği kör nokta açardı.
+//  - Sabit test anahtarı zamanla "geçici olarak" üretime kopyalanma riski taşır.
+process.env.AUTH_SECRET = randomBytes(32).toString('base64url');
 
 type AuthModulu = typeof import('@/lib/auth');
 type DbModulu = typeof import('@/lib/db');

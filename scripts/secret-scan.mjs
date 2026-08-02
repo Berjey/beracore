@@ -50,6 +50,7 @@ const MUAF_DOSYALAR = new Set([
   'scripts/secret-scan.mjs',
   'scripts/hash-password.mjs',
   'tests/secret-scan.test.ts',
+  // NOT: tests/auth-oturum.test.ts MUAF DEGIL — test anahtarini calisma aninda uretir.
 ])
 
 const IKILI_UZANTILAR = new Set([
