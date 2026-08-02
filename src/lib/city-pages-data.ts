@@ -30,6 +30,20 @@ export interface CityPage {
   faq: { question: string; answer: string }[];
 }
 
+/**
+ * Şehir sayfası içeriğinin SON GERÇEK değişiklik tarihi (sitemap `lastmod` kaynağı).
+ *
+ * ELLE güncellenir — `new Date()` KULLANILMAZ. Sebep: sitemap eskiden build zamanını
+ * yazıyordu, yani içerik hiç değişmese de her deploy'da 62 sayfa "bugün güncellendi"
+ * diyordu. Google, güvenilmez bulduğu lastmod'u tamamen yok sayar; tam da sayfaların
+ * "Discovered - currently not indexed" durumunda olduğu bir dönemde tarama
+ * önceliklendirmesinde işimize yarayacak tek sinyali harcıyorduk.
+ *
+ * Bu tarih: 4 şehir × 6 hizmet yayılımının tamamlandığı gün (Ankara/İzmir/Bursa).
+ * Şehir metinlerinde anlamlı bir değişiklik yapınca BURAYI güncelleyin.
+ */
+export const CITY_CONTENT_UPDATED = '2026-07-28';
+
 const CITY = 'İstanbul';
 
 export const cityPages: CityPage[] = [
