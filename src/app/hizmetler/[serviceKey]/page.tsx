@@ -8,7 +8,8 @@ import { SITE_URL, ogImages, twitterImages } from '@/lib/seo';
 const CATEGORY_SECTIONS = [
   { label: 'Giriş', sel: '#cat-giris' },
   { label: 'Hizmetler', sel: '#cat-liste' },
-  { label: 'Diğer', sel: '#cat-diger' },
+  { label: 'Detaylar', sel: '#cat-detay' },
+  { label: 'SSS', sel: '#cat-sss' },
   { label: 'İletişim', sel: '#cat-cta' },
 ];
 
@@ -80,10 +81,23 @@ export default async function ServiceCategoryPage({ params }: Props) {
     })),
   };
 
+  // Kategori SSS'i → zengin sonuç adayı. Alt hizmet sayfalarındaki FAQPage ile
+  // aynı kalıp; sorular kategori seviyesinde ve birbirini tekrar etmiyor.
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: service.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <ScrollProgress sections={CATEGORY_SECTIONS} />
 
       <article className="relative pt-36 pb-28 px-6 max-md:pt-28 max-md:pb-20">
@@ -145,6 +159,51 @@ export default async function ServiceCategoryPage({ params }: Props) {
                   </Link>
                 );
               })}
+            </div>
+          </section>
+
+          {/* Kategori gövde içeriği — services-data.ts `overview` */}
+          <section id="cat-detay" aria-label={`${service.title} hakkında`} className="mt-20">
+            <div className="space-y-12">
+              {service.overview.map((sec) => (
+                <div key={sec.h2}>
+                  <h2 className="font-heading text-[clamp(1.3rem,2.6vw,1.75rem)] font-semibold tracking-tight text-t1 mb-4">
+                    {sec.h2}
+                  </h2>
+                  <p className="font-body text-[1rem] text-t2 font-light leading-[1.85] max-w-3xl">
+                    {sec.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* SSS — FAQPage şemasıyla eşleşir */}
+          <section id="cat-sss" aria-label="Sık sorulan sorular" className="mt-20">
+            <h2 className="font-heading text-[clamp(1.4rem,3vw,2rem)] font-semibold tracking-tight mb-8">
+              Sık Sorulan Sorular
+            </h2>
+            <div className="space-y-4 max-w-3xl">
+              {service.faq.map((f) => (
+                <details
+                  key={f.question}
+                  className="group rounded-2xl border border-white/[0.06] bg-white/[0.015] px-6 py-5 transition-colors duration-300 hover:border-white/[0.14]"
+                >
+                  <summary className="flex cursor-pointer items-start justify-between gap-4 font-body text-[0.98rem] font-semibold text-t1 marker:content-none [&::-webkit-details-marker]:hidden">
+                    {f.question}
+                    <svg
+                      width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      strokeWidth="2" strokeLinecap="round" aria-hidden="true"
+                      className="mt-0.5 shrink-0 text-accent/60 transition-transform duration-300 group-open:rotate-45"
+                    >
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                  </summary>
+                  <p className="mt-4 font-body text-[0.92rem] text-t2 font-light leading-[1.8]">
+                    {f.answer}
+                  </p>
+                </details>
+              ))}
             </div>
           </section>
 

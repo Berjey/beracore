@@ -22,6 +22,16 @@ export interface Service {
   glowColor: string;
   shape: 'sphere' | 'cube' | 'octahedron' | 'torus' | 'diamond' | 'ring';
   description: string;
+  /**
+   * Kategori hub sayfasının gövde içeriği (`/hizmetler/[key]`).
+   * 2 Ağu 2026'da eklendi: hub sayfaları 252-299 kelimeydi (hero paragrafı + kart
+   * listesi + CTA), ticari sorgularda yarışacak hacim yoktu ve 36 sayfa GSC'de
+   * "Discovered - currently not indexed" durumundaydı.
+   * İçerik tavsiye/yöntem odaklıdır — uydurma müşteri metriği veya referans YOKTUR.
+   */
+  overview: { h2: string; body: string }[];
+  /** Hub sayfasının SSS bloğu → FAQPage şeması + zengin sonuç. */
+  faq: { question: string; answer: string }[];
   subServices: SubService[];
 }
 
@@ -34,6 +44,31 @@ export const services: Service[] = [
     glowColor: 'rgba(167, 139, 250, 0.12)',
     shape: 'octahedron',
     description: 'İş süreçlerinizi yapay zeka ile dönüştürüyor, akıllı otomasyon çözümleriyle verimliliğinizi katlanarak artırıyoruz.',
+    overview: [
+      {
+        h2: 'Yapay zeka bir işletmeye ne zaman gerçekten değer katar?',
+        body: 'Yapay zeka her soruna uygun bir araç değildir. Değer ürettiği yer, tekrar eden, kural tabanlı ve hacimli işlerdir: her gün gelen yüzlerce benzer müşteri sorusu, elle girilen faturalar, farklı sistemler arasında kopyala-yapıştır yapılan veriler. Bu tür süreçlerde yapay zeka hem hatayı hem de harcanan saati düşürür. Buna karşılık ayda birkaç kez yapılan, her seferinde farklı yargı gerektiren işleri otomatikleştirmek genellikle kurulum maliyetini karşılamaz. Projeye başlamadan önce hangi sürecin ne kadar zaman aldığını ölçmenizi öneririz; otomasyonun geri dönüşü bu ölçümle hesaplanır, tahminle değil.',
+      },
+      {
+        h2: 'Hazır platform mu, özel geliştirme mi?',
+        body: 'Piyasada hazır chatbot ve otomasyon platformları var ve bazı ihtiyaçlar için doğru seçim onlardır. Hazır çözümler hızlı kurulur ve aylık abonelikle başlar; ancak veriniz üçüncü tarafta durur, özelleştirme sınırlıdır ve kullanıcı sayısı arttıkça maliyet doğrusal büyür. Özel geliştirme başlangıçta daha yüksek yatırım ister, buna karşılık kendi altyapınızda çalışır, mevcut ERP/CRM sisteminizle derin entegre olur ve büyüdükçe birim maliyeti düşer. Karar kriteri genellikle şudur: süreç işinizin ayırt edici bir parçasıysa özel geliştirme, standart bir destek hattıysa hazır platform daha mantıklıdır.',
+      },
+      {
+        h2: 'Veri güvenliği ve KVKK tarafı',
+        body: 'Yapay zeka projelerinin en çok atlanan boyutu veridir. Müşteri konuşmaları, fatura görselleri veya çalışan kayıtları kişisel veri içerir ve 6698 sayılı KVKK kapsamındadır. Kurduğumuz sistemlerde hangi verinin nerede işlendiği, ne kadar saklandığı ve yurt dışına aktarılıp aktarılmadığı en baştan tanımlanır. Dil modeli kullanılan senaryolarda, hassas alanların modele gönderilmeden önce maskelenmesi standart yaklaşımımızdır. Bu, hem yasal yükümlülük hem de pratik bir risk yönetimidir: bir kez dışarı çıkan veri geri alınamaz.',
+      },
+      {
+        h2: 'Nasıl ilerliyoruz',
+        body: 'Süreci küçük ve ölçülebilir başlatmayı tercih ediyoruz. Önce tek bir süreç seçilir, mevcut durumu ölçülür ve sınırlı kapsamlı bir pilot kurulur. Pilot gerçek kullanıcılarla çalıştıktan sonra elde edilen sayılar konuşur: yanıt süresi, insana devredilen konuşma oranı, işlem başına harcanan dakika. Sonuç beklentiyi karşılıyorsa kapsam genişletilir, karşılamıyorsa büyük bir yatırım yapılmadan yön değiştirilir. Bu yaklaşım, yapay zeka projelerinde en sık görülen hatayı — her şeyi aynı anda otomatikleştirmeye çalışıp hiçbirini tam bitirememeyi — önler.',
+      },
+    ],
+    faq: [
+      { question: 'Yapay zeka projesi ne kadar sürer?', answer: 'Kapsamla doğrudan ilişkilidir. Tek bir süreci kapsayan pilot uygulamalar genellikle 4-8 hafta içinde canlıya alınabilir. Birden fazla sistemle entegre olan, çok dilli veya özel model eğitimi gerektiren projeler 3-6 aya kadar uzayabilir. Süreyi en çok etkileyen faktör geliştirme değil, veriye erişim ve mevcut sistemlerin entegrasyona ne kadar açık olduğudur.' },
+      { question: 'Yapay zeka çalışanların yerini mi alacak?', answer: 'Uygulamada gördüğümüz tablo bu değil. Otomasyon en çok, çalışanların zamanının büyük kısmını yiyen tekrar eden işlerde etkili oluyor; karar gerektiren, istisna içeren ve müşteriyle ilişki kuran işler insanda kalıyor. Doğru kurgulanmış bir projede ekip aynı kişi sayısıyla daha fazla işi, daha az hatayla karşılar. Amaç kadro azaltmak değil, kapasiteyi yükseltmektir.' },
+      { question: 'Küçük bir işletme için yapay zeka pahalı değil mi?', answer: 'Tek seferde büyük bir sistem kurmaya çalışırsanız pahalıdır. Ancak tek bir dar süreçle başlayan projelerin bütçesi çok daha erişilebilirdir ve etkisi hızlı ölçülür. KOBİ\'ler için genellikle doğru başlangıç noktası, en çok zaman harcanan tek bir işi seçmek ve onu uçtan uca otomatikleştirmektir. Yatırımın karşılığı görüldükten sonra kapsam büyütülür.' },
+      { question: 'Mevcut sistemlerimizle entegre olur mu?', answer: 'Çoğu durumda evet. Muhasebe programları, ERP, CRM, e-ticaret altyapıları ve çağrı merkezi yazılımlarının büyük bölümü API sunar. API bulunmayan eski sistemlerde veritabanı seviyesinde veya dosya tabanlı entegrasyon yöntemleri kullanılabilir. Projeye başlamadan önce mevcut sistemlerinizin entegrasyon kabiliyetini inceleyip somut bir yol haritası çıkarıyoruz.' },
+      { question: 'Yapay zekanın verdiği yanlış cevaplardan nasıl korunuruz?', answer: 'Dil modelleri kendinden emin görünen yanlış cevaplar üretebilir; bu bilinen bir risktir ve tasarımla yönetilir. Kullandığımız yöntemler: modelin yalnızca sizin doğrulanmış içeriğinizden cevap üretmesi, emin olmadığı durumda konuşmayı insana devretmesi ve kritik işlemlerde onay adımı bulunması. Ayrıca canlıya alındıktan sonra konuşmalar düzenli olarak gözden geçirilir ve sistem buna göre iyileştirilir.' },
+    ],
     subServices: [
       {
         title: 'AI Chatbot & Asistan',
@@ -125,6 +160,31 @@ export const services: Service[] = [
     glowColor: 'rgba(125, 211, 252, 0.12)',
     shape: 'cube',
     description: 'Kripto para borsası, akıllı kontrat ve merkeziyetsiz finans çözümleriyle dijital finansın altyapısını kuruyoruz.',
+    overview: [
+      {
+        h2: 'Blockchain gerçekten gerekli mi, yoksa veritabanı yeter mi?',
+        body: 'Dürüst cevap: çoğu proje için normal bir veritabanı yeterlidir ve daha ucuzdur. Blockchain, birbirine güvenmeyen birden fazla tarafın aynı kaydı paylaşması gerektiğinde, kaydın sonradan değiştirilemez olması kritik olduğunda ve aracıyı ortadan kaldırmanın somut bir değeri olduğunda anlam kazanır. Tedarik zincirinde köken takibi, çok taraflı mutabakat, dijital varlık transferi bu tanıma uyar. Sadece \'modern görünsün\' diye blockchain kullanmak maliyeti ve karmaşıklığı gereksiz yere artırır. Bir projeye başlamadan önce bu soruyu açıkça sorup, cevabı hayırsa size bunu söyleriz.',
+      },
+      {
+        h2: 'Akıllı kontratlarda güvenlik pazarlık konusu değildir',
+        body: 'Akıllı kontratlar yayınlandıktan sonra çoğu durumda değiştirilemez ve doğrudan para taşır. Bu ikisi bir araya geldiğinde, sıradan yazılımda küçük sayılacak bir hata geri alınamaz kayba dönüşür. Bu yüzden kontrat geliştirmede test kapsamı, bilinen saldırı desenlerine (yeniden giriş, tam sayı taşması, yetki kontrolü eksikliği, fiyat manipülasyonu) karşı kontrol ve bağımsız denetim isteğe bağlı adımlar değildir. Yükseltilebilir kontrat mimarisi kullanılacaksa, yükseltme yetkisinin kimde olduğu ve nasıl korunduğu en kritik tasarım kararıdır.',
+      },
+      {
+        h2: 'Fintech tarafında düzenleme gerçeği',
+        body: 'Türkiye\'de ödeme, elektronik para ve kripto varlık hizmet sağlayıcılığı düzenlemeye tabidir; bazı faaliyetler lisans gerektirir. Teknik olarak yapılabilir olan her şey hukuki olarak serbest değildir. Bu nedenle fintech projelerinde mimariyi kurmadan önce iş modelinin hangi düzenleme kapsamına girdiğinin netleşmesi gerekir. Biz yazılım tarafını üstleniyoruz; lisans ve hukuki uygunluk için alanında uzman danışmanla çalışmanızı öneriyoruz. Bu ayrımı baştan yapmak, ilerleyen aşamada baştan yazılması gereken bir sistemden çok daha ucuzdur.',
+      },
+      {
+        h2: 'Nasıl ilerliyoruz',
+        body: 'Blockchain projelerinde en pahalı hata, yanlış zincir veya yanlış mimariyle başlayıp aylar sonra geri dönmektir. Bu yüzden ilk aşama teknoloji seçimi değil, ihtiyaç analizidir: kaç taraf var, işlem hacmi ne, gizlilik gereksinimi nedir, kullanıcı cüzdan yönetecek mi. Bu cevaplar zincir seçimini (herkese açık, izinli veya katman-2) belirler. Ardından küçük ve test ağında çalışan bir prototip çıkarılır, denetimden geçirilir ve ancak sonra ana ağa alınır.',
+      },
+    ],
+    faq: [
+      { question: 'Akıllı kontrat geliştirme ne kadar sürer?', answer: 'Standart bir token veya basit kilit kontratı birkaç hafta içinde tamamlanabilir. Çok adımlı iş mantığı içeren, harici veri kaynağı kullanan veya birden fazla kontratın birbiriyle konuştuğu sistemler 2-4 ay sürer. Bu sürenin önemli bir kısmı geliştirmeden çok test ve denetime ayrılır; akıllı kontratlarda bu adım kısaltılmaz.' },
+      { question: 'Akıllı kontrat denetimi şart mı?', answer: 'Gerçek değer taşıyacak her kontrat için evet. Kontrat yayınlandıktan sonra hatayı düzeltme imkânı çoğu zaman yoktur ve açıklar otomatik botlar tarafından dakikalar içinde bulunur. Bağımsız denetim ek bir maliyettir, ancak olası kaybın yanında küçük kalır. Denetim öncesi kendi test ve kontrol sürecimizi tamamlayarak denetim maliyetini ve bulgu sayısını düşürüyoruz.' },
+      { question: 'Hangi blockchain ağını seçmeliyiz?', answer: 'Seçim; işlem maliyeti, hız, güvenlik ve ekosistem büyüklüğü arasındaki dengeye göre yapılır. Yüksek güvenlik ve geniş ekosistem önceliğinizse Ethereum, düşük işlem maliyeti önemliyse katman-2 çözümleri veya alternatif ağlar, verinin yalnızca belirli kurumlar arasında paylaşılması gerekiyorsa izinli (permissioned) ağlar öne çıkar. Doğru cevap projeye göre değişir; tek bir ağı her projeye önermiyoruz.' },
+      { question: 'Kripto para borsası kurmak için neler gerekir?', answer: 'Teknik tarafta eşleştirme motoru, cüzdan altyapısı, güvenlik katmanı ve gerçek zamanlı veri akışı gerekir. Ancak asıl belirleyici olan düzenleme tarafıdır: müşteri tanıma (KYC), kara para aklamayla mücadele yükümlülükleri ve ilgili lisanslar. Bu nedenle borsa projelerinde yazılım geliştirmeyle hukuki süreci paralel yürütmek gerekir.' },
+      { question: 'Blockchain projesi mevcut sistemimize entegre edilebilir mi?', answer: 'Evet. Pratikte yaygın olan yaklaşım, blockchain\'i mevcut sistemin yerine koymak değil, yanına eklemektir: kritik kayıtlar zincire yazılır, günlük operasyon mevcut veritabanında yürür. Bu hem maliyeti düşürür hem geçişi kademeli hale getirir.' },
+    ],
     subServices: [
       {
         title: 'Kripto Para Borsası Yazılımı',
@@ -216,6 +276,31 @@ export const services: Service[] = [
     glowColor: 'rgba(240, 171, 252, 0.12)',
     shape: 'sphere',
     description: 'Modern teknolojilerle ölçeklenebilir, güvenli ve yüksek performanslı yazılım çözümleri geliştiriyoruz.',
+    overview: [
+      {
+        h2: 'Hazır çözüm mü, özel yazılım mı?',
+        body: 'Bu kararın tek doğru cevabı yoktur ve dürüst bir değerlendirme para kazandırır. Süreciniz sektörünüzdeki diğer şirketlerden çok farklı değilse, hazır bir ürün (ERP, muhasebe programı, hazır e-ticaret altyapısı) çok daha hızlı ve ucuzdur. Özel yazılım; iş akışınız rekabet avantajınızın parçasıysa, hazır ürünlerin zorladığı çalışma biçimi size sürekli maliyet çıkarıyorsa veya birden fazla sistemi birbirine bağlamanız gerekiyorsa mantıklı hale gelir. Kabaca ölçüt şudur: hazır üründe her ay yaptığınız manuel düzeltmelerin yıllık maliyeti, özel geliştirmenin maliyetine yaklaşıyorsa özel yazılım artık daha ucuzdur.',
+      },
+      {
+        h2: 'Teknoloji seçimi ve uzun ömür',
+        body: 'Bir yazılımın gerçek maliyeti yazıldığı gün değil, sonraki üç yılda ortaya çıkar. Bu yüzden teknoloji seçerken güncellik kadar sürdürülebilirliği gözetiyoruz: geniş topluluğa sahip, uzun süredir bakımı yapılan ve Türkiye\'de geliştirici bulunabilen teknolojiler tercih ediyoruz. Böylece bizimle çalışmaya devam etmeseniz bile projenizi devralacak birini bulabilirsiniz. Kod tabanının okunabilir olması, testlerin bulunması ve dokümantasyon bu devredilebilirliğin parçasıdır — bunlar \'lüks\' değil, satın aldığınız şeyin bir özelliğidir.',
+      },
+      {
+        h2: 'Kodun sizin olması ve bağımlılık riski',
+        body: 'Özel yazılım yaptırırken en kritik ama en az sorulan soru şudur: kod kime ait ve nerede duruyor? Teslim ettiğimiz projelerde kaynak kod sizindir ve kendi deponuza aktarılır. Sunucu erişimleri, alan adı ve üçüncü taraf hesapları sizin adınıza açılır. Bu, bizimle çalışmaya devam etmenizi tercihe dönüştürür, zorunluluğa değil. Ajans değiştirdiğinde sistemine erişemeyen çok sayıda işletme gördük; bu duruma düşmemek sözleşme aşamasında alınacak basit bir kararla mümkündür.',
+      },
+      {
+        h2: 'Nasıl ilerliyoruz',
+        body: 'Projeye tek seferde büyük bir teslimatla değil, çalışan parçalar halinde ilerliyoruz. Önce kapsamın en kritik çekirdeği tanımlanır ve kullanılabilir bir sürüm çıkarılır; siz gerçek veriyle denedikçe geri bildirim verirsiniz ve kapsam buna göre şekillenir. Bu yaklaşım, aylarca görülmeyen ve teslim gününde beklentiyi karşılamayan proje riskini büyük ölçüde ortadan kaldırır. Her aşamada ne yapıldığı ve ne kaldığı açıkça paylaşılır.',
+      },
+    ],
+    faq: [
+      { question: 'Özel yazılım projesi ne kadar sürer?', answer: 'Kapsama göre değişir. Tek bir işi çözen odaklı bir panel veya iç araç 4-8 hafta içinde kullanılabilir hale gelebilir. Birden fazla rolü, raporlamayı ve dış sistem entegrasyonlarını kapsayan iş uygulamaları 3-6 ay sürer. Süreyi en çok uzatan etken teknik zorluk değil, kapsamın proje sırasında sürekli değişmesidir; bu yüzden ilk aşamada kapsamı net yazıya dökmeye önem veriyoruz.' },
+      { question: 'Yazılım bittikten sonra bakım gerekir mi?', answer: 'Evet, ve bu bir kusur değil normaldir. Kullandığınız kütüphaneler güvenlik güncellemesi alır, tarayıcılar ve işletim sistemleri değişir, iş ihtiyacınız gelişir. Bakımsız bırakılan bir yazılım iki-üç yıl içinde güvenlik açığı taşıyan ve güncellenmesi pahalı bir yapıya dönüşür. Düzenli küçük güncellemeler, birikmiş büyük bir yenileme projesinden çok daha ucuzdur.' },
+      { question: 'Mevcut yazılımımız geliştirilebilir mi, sıfırdan mı yazılmalı?', answer: 'Önce mevcut kodu inceleyip dürüst bir değerlendirme yapıyoruz. Kod okunabilir ve mimari makulse, sıfırdan yazmak yerine iyileştirerek ilerlemek neredeyse her zaman daha ucuzdur. Sıfırdan yazmayı yalnızca teknoloji desteği tamamen bitmişse, güvenlik açıkları yapısalsa veya her küçük değişiklik orantısız maliyet çıkarıyorsa öneriyoruz. \'Baştan yazalım\' varsayılan cevabımız değildir.' },
+      { question: 'Proje sırasında kapsam değişirse ne oluyor?', answer: 'Değişiklik normaldir ve süreç buna göre kurgulanır. Küçük düzenlemeler mevcut plan içinde karşılanır; süreyi veya maliyeti etkileyen değişikliklerde etkisini önceden paylaşıp onayınızı alırız. Amaç sürprizi ortadan kaldırmaktır: proje sonunda beklenmedik bir fatura veya beklenmedik bir eksik olmasın.' },
+      { question: 'Yazılımın kaynak kodu bize ait olacak mı?', answer: 'Evet. Teslimde kaynak kod size devredilir ve kendi kod deponuza aktarılır. Sunucu, alan adı ve üçüncü taraf servis hesapları sizin adınıza açılır. Böylece ilerleyen dönemde çalışacağınız ekibi özgürce seçebilirsiniz.' },
+    ],
     subServices: [
       {
         title: 'Web Yazılım',
@@ -303,6 +388,31 @@ export const services: Service[] = [
     glowColor: 'rgba(253, 164, 175, 0.12)',
     shape: 'diamond',
     description: 'Kullanıcı odaklı tasarım anlayışıyla markanızın dijital yüzünü kusursuz şekilde oluşturuyoruz.',
+    overview: [
+      {
+        h2: 'İyi tasarım güzel görünmekten fazlasıdır',
+        body: 'Bir arayüzün başarısı, beğenilmesiyle değil kullanıcının amacına ne kadar hızlı ulaştığıyla ölçülür. Ziyaretçi ne yapacağını anlayamıyorsa, form fazla uzun geliyorsa veya mobilde butona ulaşmak zorsa, tasarım ne kadar estetik olursa olsun iş sonucunu düşürür. Bu yüzden tasarım sürecine görselden değil, kullanıcının izlediği yoldan başlıyoruz: kim geliyor, ne arıyor, hangi adımda vazgeçiyor. Görsel dil bu iskeletin üzerine kurulur; tersi sıralama, güzel ama işlevsiz sayfalar üretir.',
+      },
+      {
+        h2: 'Marka kimliği tek bir logodan ibaret değildir',
+        body: 'Logo, marka kimliğinin yalnızca en görünür parçasıdır. Kimliği asıl taşıyan şey tutarlılıktır: aynı renk paleti, aynı tipografi ölçeği, aynı ton ve aynı boşluk mantığı her temas noktasında tekrar ettiğinde marka tanınır hale gelir. Bu nedenle kimlik çalışmalarında logonun yanında kullanım kuralları, renk ve tipografi sistemi, sosyal medya ve basılı uygulama şablonları da teslim edilir. Kurallar olmadan verilen bir logo, birkaç ay içinde her yerde farklı görünen bir markaya dönüşür.',
+      },
+      {
+        h2: 'Erişilebilirlik bir ek özellik değil',
+        body: 'Yeterli renk kontrastı, klavyeyle kullanılabilirlik, ekran okuyucuya anlamlı gelen yapı ve dokunma hedeflerinin parmakla kullanılabilecek büyüklükte olması — bunlar azınlık için yapılan iyilikler değil, herkes için daha iyi arayüzler üretir. Güneş altında telefonuna bakan bir kullanıcı da düşük kontrastta zorlanır. Tasarımlarımızı WCAG AA ölçütlerine göre kuruyor ve teslim öncesi gerçek tarayıcıda ölçüyoruz; bu ölçüm tahmine bırakılmaz.',
+      },
+      {
+        h2: 'Tasarımdan koda geçiş',
+        body: 'Birçok projede kayıp, tasarımın koda dönüştüğü aşamada yaşanır: yazı tipleri kayar, boşluklar bozulur, mobilde beklenmedik taşmalar çıkar. Tasarım ve geliştirmeyi aynı ekip içinde yürüttüğümüz için bu kopukluğu baştan ortadan kaldırıyoruz. Tasarım dosyası bir resim değil, doğrudan koda karşılık gelen bir sistem olarak kurulur: renk ve ölçü değişkenleri, bileşen mantığı ve durum tanımları. Sonuç, ekranda gördüğünüzün tarayıcıda da aynısı olmasıdır.',
+      },
+    ],
+    faq: [
+      { question: 'Web tasarım projesi ne kadar sürer?', answer: 'Kurumsal tanıtım siteleri genellikle 3-6 hafta içinde tamamlanır. Çok sayfalı, özel içerik yapısı olan veya e-ticaret içeren projeler 6-12 haftaya uzayabilir. Süreyi en çok etkileyen unsur tasarım değil, içeriktir: metinler ve görseller hazırsa süreç belirgin biçimde kısalır.' },
+      { question: 'Hazır tema mı, özel tasarım mı?', answer: 'Bütçe sınırlıysa ve amaç hızlıca görünür olmaksa hazır tema makul bir başlangıçtır. Ancak hazır temalar genellikle ihtiyaç duymadığınız çok sayıda özelliği de yükler; bu da yavaş sayfa ve zayıf Core Web Vitals anlamına gelir. Markanızın ayırt edici görünmesi, sayfa hızının rekabet konusu olduğu bir sektörde çalışmanız veya standart dışı bir içerik yapınız varsa özel tasarım uzun vadede daha iyi sonuç verir.' },
+      { question: 'Tasarım sürecinde kaç revizyon hakkımız var?', answer: 'Çalışma biçimimiz sabit bir revizyon sayısı saymak üzerine kurulu değil. Süreci aşamalara bölüyoruz: önce yapı ve akış onaylanır, sonra görsel dil, en son detaylar. Her aşama onaylandıktan sonra bir sonrakine geçildiği için, projenin sonunda baştan başlamayı gerektiren büyük değişiklikler nadiren gerekir.' },
+      { question: 'Mobil uyumluluk dahil mi?', answer: 'Evet, ve sonradan eklenen bir katman olarak değil. Tasarım küçük ekran öncelikli kurulur, sonra büyük ekranlara genişletilir. Teslim öncesi 320 pikselden 1920 piksele kadar gerçek tarayıcıda kontrol edilir; taşma, kesilen buton veya okunamayan metin kalmadığı ölçümle doğrulanır.' },
+      { question: 'Logo tasarımında bize ne teslim ediliyor?', answer: 'Logonun yatay, dikey ve simge varyasyonları; baskı ve dijital için uygun dosya formatları (vektör dahil); renk kodları; tipografi seçimleri ve kullanım kuralları. Vektör dosyanın teslim edilmesi önemlidir — onsuz logonuzu büyük ölçekte kullanamazsınız.' },
+    ],
     subServices: [
       {
         title: 'Web Tasarım', slug: 'web-tasarim', image: '🎨', icon: 'palette',
@@ -382,6 +492,31 @@ export const services: Service[] = [
     glowColor: 'rgba(110, 231, 183, 0.12)',
     shape: 'torus',
     description: 'Satışlarınızı artıran, operasyonlarınızı kolaylaştıran güçlü e-ticaret platformları kuruyoruz.',
+    overview: [
+      {
+        h2: 'Doğru e-ticaret altyapısını seçmek',
+        body: 'E-ticarette en pahalı hata, yanlış altyapıyla başlayıp bir yıl sonra taşınmak zorunda kalmaktır. Kiralık paket sistemler hızlı başlangıç ve düşük giriş maliyeti sunar; buna karşılık özelleştirme sınırlıdır ve ciro arttıkça komisyon/abonelik yükü büyür. Açık kaynak altyapılar daha esnektir ama bakım sorumluluğu sizdedir. Özel geliştirme, standart dışı bir satış modeliniz veya yoğun entegrasyon ihtiyacınız varsa anlam kazanır. Karar verirken bugünkü ürün sayınıza değil, iki yıl sonraki hedefinize ve mevcut sistemlerinizle kurmanız gereken bağlantılara bakmanızı öneririz.',
+      },
+      {
+        h2: 'Dönüşüm oranı, trafikten daha ucuzdur',
+        body: 'Çoğu e-ticaret sitesinde en hızlı kazanç yeni ziyaretçi almaktan değil, gelen ziyaretçinin daha fazlasını müşteriye çevirmekten gelir. Sepeti terk ettiren nedenler genellikle tahmin edilebilir: beklenmedik kargo ücreti, zorunlu üyelik, uzun form, güven vermeyen ödeme adımı, mobilde zor kullanılan arayüz ve yavaş açılan sayfalar. Bunların her biri ölçülebilir ve düzeltilebilir. Reklam bütçesini artırmadan önce bu adımların gözden geçirilmesi, aynı trafikten belirgin biçimde daha fazla sipariş çıkarır.',
+      },
+      {
+        h2: 'Pazaryeri ve kendi siteniz birlikte çalışmalı',
+        body: 'Trendyol, Hepsiburada, N11 ve Amazon hazır müşteri kitlesine erişim sağlar; ancak müşteri ilişkisi ve marj büyük ölçüde platformda kalır. Kendi siteniz ise marjı ve müşteri verisini size bırakır, karşılığında trafiği kendiniz üretmeniz gerekir. Sağlıklı kurgu ikisini birlikte kullanmaktır: pazaryerleri hacim ve bilinirlik, kendi siteniz kârlılık ve tekrar satış. Bunun işleyebilmesi için stok ve fiyatın tek merkezden yönetilmesi şarttır; aksi halde aşırı satış ve iptal sorunları hızla büyür.',
+      },
+      {
+        h2: 'Entegrasyonlar operasyonu belirler',
+        body: 'E-ticaretin görünmeyen ama en belirleyici tarafı entegrasyonlardır: muhasebe ve e-fatura, kargo firmaları, ödeme altyapısı, stok yönetimi ve pazaryeri bağlantıları. Bu halkalardan biri elle yürüdüğünde sipariş sayısı arttıkça operasyon tıkanır ve hata oranı yükselir. Kurduğumuz sistemlerde bu akışların otomatik ve birbiriyle tutarlı çalışmasına öncelik veriyoruz; çünkü büyümenin önündeki engel çoğu zaman satış değil, operasyondur.',
+      },
+    ],
+    faq: [
+      { question: 'E-ticaret sitesi kurmak ne kadar sürer?', answer: 'Hazır altyapı üzerine kurulan, standart ödeme ve kargo entegrasyonları olan bir mağaza 3-6 haftada satışa açılabilir. Özel tasarım, ERP entegrasyonu veya pazaryeri bağlantıları içeren projeler 2-4 ay sürer. Ürün görselleri ve açıklamalarının hazır olması süreci belirgin şekilde hızlandırır.' },
+      { question: 'Sanal POS almak için neler gerekir?', answer: 'Banka veya ödeme kuruluşuyla anlaşma, şirket belgeleri, alan adının şirketiniz adına olması ve sitede mesafeli satış sözleşmesi, iade/iptal koşulları, teslimat bilgileri ile iletişim bilgilerinin eksiksiz yayınlanmış olması gerekir. Ödeme kuruluşları başvuru sırasında bu sayfaları kontrol eder; eksikse başvuru reddedilir. Teknik entegrasyonu biz üstleniyoruz.' },
+      { question: 'Pazaryerinde mi satmalıyım, kendi sitemde mi?', answer: 'İkisi rakip değil tamamlayıcıdır. Pazaryeri hazır trafik ve hızlı başlangıç sağlar, kendi siteniz daha yüksek marj ve müşteri verisi bırakır. Yeni markalar için yaygın ve mantıklı sıralama, pazaryerinde hacim ve deneyim kazanıp kendi sitesini paralel büyütmektir. Kritik nokta stok ve fiyatı tek yerden yönetmektir.' },
+      { question: 'Mevcut mağazamı taşırsam SEO\'m zarar görür mü?', answer: 'Doğru yapılmazsa ciddi biçimde görebilir. Taşıma sırasında eski URL\'lerin yenilerine kalıcı yönlendirme (301) ile bağlanması, ürün ve kategori adreslerinin korunması, sayfa başlıkları ile açıklamaların taşınması ve site haritasının güncellenmesi gerekir. Bu adımlar planlanarak yapıldığında sıralama kaybı genellikle geçici ve sınırlı olur.' },
+      { question: 'Kaç ürünle başlamalıyım?', answer: 'Ürün sayısından çok, ürün sayfalarının kalitesi belirleyicidir. Özgün açıklama, doğru görsel ve net teslimat bilgisi taşıyan az sayıda ürün; kopya açıklamalı yüzlerce üründen daha iyi sonuç verir. Arama motorları da kullanıcılar da bu farkı ayırt eder.' },
+    ],
     subServices: [
       {
         title: 'E-Ticaret Yazılım', slug: 'e-ticaret-yazilim', image: '🛒', icon: 'cart',
@@ -444,6 +579,31 @@ export const services: Service[] = [
     glowColor: 'rgba(253, 230, 138, 0.12)',
     shape: 'ring',
     description: 'Veriye dayalı stratejilerle markanızı hedef kitlenize ulaştırıyor, sürdürülebilir büyüme sağlıyoruz.',
+    overview: [
+      {
+        h2: 'Dijital pazarlamada gerçekçi beklenti',
+        body: 'Bu alanda en büyük hayal kırıklığı, yanlış zaman beklentisinden doğar. SEO kalıcı ve maliyeti zamanla düşen bir kanaldır ama ilk anlamlı sonuçları genellikle 4-6 ayda verir; yeni bir alan adında bu süre daha uzun olabilir. Reklam ise ödeme yaptığınız gün trafik getirir, ödemeyi kestiğinizde durur. İkisi birbirinin alternatifi değil, farklı zaman ölçeklerinde çalışan iki araçtır. Size \'iki haftada ilk sayfa\' diyen bir teklif alırsanız, bunun gerçekçi olmadığını bilin. Biz baştan gerçekçi bir takvim veriyoruz; çünkü yanlış beklentiyle başlayan iş ilişkisi üçüncü ayda kopuyor.',
+      },
+      {
+        h2: 'Ölçemediğiniz şeyi yönetemezsiniz',
+        body: 'Pazarlama harcamasının değerlendirilebilmesi için önce ölçümün doğru kurulması gerekir: hangi kanaldan gelen ziyaretçi ne yapıyor, form dolduranların kaçı gerçek talebe dönüşüyor, bir müşteri edinmenin maliyeti ne. Analitik ve dönüşüm takibi kurulmadan yapılan reklam harcaması, sonucunu göremediğiniz bir yatırımdır. Çalışmaya genellikle bu altyapıyı kurarak başlıyoruz; ilk aydaki en değerli çıktı çoğu zaman kampanya değil, artık neyin işe yaradığını görebiliyor olmanızdır.',
+      },
+      {
+        h2: 'İçerik, arama görünürlüğünün temelidir',
+        body: 'Arama motorlarında kalıcı yer edinmenin teknik kısayolu yoktur. Sıralamayı belirleyen şey, kullanıcının sorusuna gerçekten cevap veren içeriktir. Bu, rakiplerin yazdığını farklı kelimelerle tekrarlamak değil; fiyatı etkileyen faktörleri açıklamak, karşılaştırma yapmak, gerçek soruları cevaplamak anlamına gelir. Böyle bir içerik hem sıralamaya girer hem de sayfaya gelen ziyaretçiyi müşteri adayına dönüştürür. Yapay zekayla toplu üretilmiş, kontrolden geçmemiş içerik ise kısa vadede hacim, uzun vadede güven kaybı üretir.',
+      },
+      {
+        h2: 'Sürdürülebilir yöntemler, kısayol değil',
+        body: 'Toplu satın alınan bağlantılar, otomatik yorumlar ve yapay trafik kısa vadede rakam üretebilir; ancak arama motorlarının yaptırımına açıktır ve alınan ceza çoğu zaman kazanılandan pahalıya mal olur. Kullandığımız yöntemler kalıcı olanlardır: teknik sağlamlık, doğru yapılandırılmış içerik, gerçek dijital varlıklar ve zamanla biriken otorite. Bu yol daha yavaştır, karşılığında geriye dönük risk bırakmaz.',
+      },
+    ],
+    faq: [
+      { question: 'SEO çalışmasının sonuçları ne zaman görülür?', answer: 'Teknik düzeltmelerin etkisi haftalar içinde görülebilir. İçerik ve otorite çalışmalarının sıralamaya yansıması genellikle 4-6 ayı bulur; yeni bir alan adında bu süre daha uzun olabilir çünkü arama motorlarının siteye güven geliştirmesi zaman alır. Rekabetin düşük olduğu uzun kuyruk sorgularda ilk hareketler daha erken görülür.' },
+      { question: 'SEO mu, reklam mı tercih etmeliyim?', answer: 'Acil satışa ihtiyacınız varsa reklam, kalıcı ve zamanla ucuzlayan trafik istiyorsanız SEO. Bütçe elverdiğinde en sağlıklısı ikisini birlikte yürütmektir: reklam kısa vadede talep üretirken SEO altyapıyı kurar. Bütçe kısıtlıysa ve zaman varsa SEO ile başlamak uzun vadede daha yüksek getiri sağlar.' },
+      { question: 'Sosyal medya yönetimi satışa dönüşür mü?', answer: 'Doğrudan satış beklentisi çoğu B2B iş için gerçekçi değildir; sosyal medyanın asıl işlevi bilinirlik, güven ve hatırlanabilirliktir. Karar süreci uzun olan hizmetlerde müşteri sizi aylar önce görüp, ihtiyaç doğduğunda aramaya başlar. Ölçmesi zor ama etkisi gerçek olan bu katkıyı, tek başına \'kaç satış geldi\' sorusuyla değerlendirmek yanıltıcı olur.' },
+      { question: 'Google Ads bütçesi ne kadar olmalı?', answer: 'Sektöre ve rekabete göre tıklama maliyetleri büyük fark gösterdiği için tek bir rakam vermek doğru olmaz. Sağlıklı yaklaşım, dar bir anahtar kelime grubuyla ölçülebilir bir bütçede başlamak, tıklama başına maliyet ve dönüşüm oranı verisi biriktikten sonra bütçeyi bilinçli artırmaktır. Veri olmadan yapılan yüksek bütçeli başlangıçlar genellikle pahalı bir öğrenme sürecine dönüşür.' },
+      { question: 'Çalışmanın sonuçlarını nasıl takip edeceğiz?', answer: 'Analitik ve arama konsolu kurulumu yapılır; hangi sorgulardan geldiğiniz, hangi sayfaların çalıştığı ve form dönüşümleri düzenli olarak raporlanır. Amacımız raporun anlaşılır olması: sıralama tablosu değil, işinize dokunan sayılar. Neyin çalışmadığını da aynı açıklıkla paylaşırız.' },
+    ],
     subServices: [
       {
         title: 'SEO', slug: 'seo', image: '🔍', icon: 'search',
