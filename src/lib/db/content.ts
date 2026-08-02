@@ -23,6 +23,7 @@ import {
 import { cityPages as cityPagesKod, type CityPage } from '../city-pages-data';
 import { services as servicesKod, toNav, type Service, type ServiceNav } from '../services-data';
 import { legalDocs as legalDocsKod, type LegalDoc, type LegalSection } from '../legal-data';
+import { referanslar as referanslarKod, type Referans } from '../referans-data';
 
 interface SatirBlog {
   id: number;
@@ -455,4 +456,49 @@ export function getRevizyonlar(slug: string): Revizyon[] {
   } catch {
     return [];
   }
+}
+
+// ─────────────────────────── müşteri referansları ───────────────────────────
+
+/**
+ * Public sitede gösterilecek referanslar.
+ *
+ * İKİ KOŞUL BİRDEN: `durum = 'yayinda'` VE `yayin_izni = 1`. İzin, durumdan
+ * ayrı bir kapıdır — bir referansı yanlışlıkla yayına almak, izni olmayan bir
+ * firmanın adını ve ticari ilişkiyi kamuya açıklamak demektir. Filtre sorguda
+ * durur, bileşende değil (metriklerle aynı gerekçe).
+ */
+const okuReferans = cache((): Referans[] => {
+  try {
+    const satirlar = getDb()
+      .prepare(
+        `SELECT marka, kisi, unvan, kategori, proje, metin
+           FROM testimonials
+          WHERE durum = 'yayinda' AND yayin_izni = 1
+          ORDER BY sira, id`
+      )
+      .all() as unknown as {
+      marka: string; kisi: string; unvan: string;
+      kategori: string; proje: string; metin: string;
+    }[];
+
+    // Kayıt yoksa koda düşülür; ama İZİNSİZ kayıt asla buraya gelmez.
+    if (satirlar.length === 0) return referanslarKod;
+
+    return satirlar.map((s) => ({
+      brand: s.marka,
+      name: s.kisi,
+      role: s.unvan,
+      category: s.kategori,
+      project: s.proje,
+      text: s.metin,
+    }));
+  } catch (err) {
+    console.error('[icerik] referanslar okunamadi, koddaki icerik kullaniliyor', err);
+    return referanslarKod;
+  }
+});
+
+export function getReferanslar(): Referans[] {
+  return okuReferans();
 }

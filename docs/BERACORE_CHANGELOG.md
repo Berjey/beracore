@@ -654,3 +654,128 @@ kilitler — değerlerin eşitliğini değil, **kaynağın tekliğini**.
   üstelik burası kullanıcının onay verdiği metnin gösterildiği yer. Metin artık sunucudan
   prop olarak geçiyor, `kvkk-data.ts` SİLİNDİ. `/iletisim` HTML'i birebir aynı.
 - Eski hukuki sürümlerin TAM METNİ public erişime açık değil (yalnızca revizyon listesi).
+
+---
+
+## Faz 1.4 — Müşteri referansları izin kaydıyla (2 Ağustos 2026)
+
+3 müşteri yorumu `testimonials` tablosuna taşındı ve `/admin/referanslar`
+üzerinden yönetilebilir hale geldi. **Ana sayfa HTML'i birebir aynı.**
+
+### Neden izin alanı var
+
+Bir müşteri yorumunu **firma adıyla** yayınlamak, o firmanın sizinle çalıştığını
+kamuya açıklaması demektir. İzin kaydı tutulmadığında "bunu yayınlayabilir miyiz"
+sorusunun cevabı kimsenin hafızasında kalır.
+
+Kural veri katmanında: **`durum='yayinda'` VE `yayin_izni=1`** olmayan kayıt public
+sorgudan hiç dönmez. Panel de izin kaynağı yazılmadan yayına almayı reddeder.
+
+`dogrulandi` ayrı bir alan: izin var ama metin müşteriden değil de bizim kalemimizden
+çıkmışsa bu ikisi aynı şey değildir. Uydurma referans üretmenin önündeki engel teknik
+değil kayıtsaldır — **kimin söylediği yazılı olmalı.**
+
+**Yeni referans HER ZAMAN izinsiz ve taslak başlar.** Ekleme formunda "yayınla"
+seçeneği bilerek yok: izin sorusu bir onay kutusuna indirgenmemeli.
+
+Mevcut 3 yorum izinli ve yayında olarak tohumlandı — bunlar gerçek müşterilere ait
+(kullanıcı teyidi, 27 Tem 2026) ve zaten yayındaydı; izin alanını boş bırakmak
+gerçek bir referansı sebepsiz siteden düşürürdü.
+
+### Ana sayfa sunucu kabuğuna ayrıldı
+
+`src/app/page.tsx` tamamen `'use client'` idi ve veritabanından okuyamıyordu.
+Gövde `HomeClient.tsx`'e taşındı; `page.tsx` artık yalnızca veriyi okuyup geçiren
+bir sunucu kabuğu.
+
+Referanslar **kök düzene KONMADI** bilerek: yalnızca ana sayfa kullanıyor, bağlama
+konulsaydı 3 yorumun metni 119 sayfanın hepsinin yüküne girerdi.
+
+### Vaka çalışmaları — bilerek YAPILMADI
+
+Spec vaka çalışması modülü istiyor, ancak GmsGarage / Arovela / KriptoMall için
+**yayın izni yok**. İzinsiz vaka çalışması yayınlamak, referans yayınlamaktan daha
+kapsamlı bir açıklamadır (proje detayı, teknoloji, sonuçlar).
+
+Boş bir `/calismalarimiz` sayfası açmak da doğru değil: ince içerik hem ziyaretçiye
+hem arama motoruna olumsuz sinyal. Modül, izin geldiğinde kurulacak.
+👤 **Kullanıcıdan bekleniyor.**
+
+### Kalite kapıları
+
+`npm run lint` 0 uyarı · `npm test` **160 → 169** · `npm run build` 119 sayfa ·
+`npm run seo-audit` ✅ TEMİZ · `secret-scan` temiz · ana sayfa içerik farkı **0**
+
+---
+
+# FAZ 1 KAPANIŞ RAPORU — 2 Ağustos 2026
+
+## Tamamlananlar
+
+| Alt faz | İş | Bulgu |
+|---|---|---|
+| 1.1 | Merkezi şirket ayarları + anlık tazeleme | A-08, A-18 |
+| 1.2 | Metrikler kanıta bağlandı · sayaçlar JS'siz doğru | A-07, A-09 |
+| 1.2b | 92 hizmet istatistiği + sertifika iddiaları temizlendi | A-07 |
+| 1.3a | 50 blog yazısı veritabanına + panel + sürüm geçmişi | — |
+| 1.3b | 24 şehir sayfası veritabanına + sayfa başına `lastmod` | — |
+| 1.3c | 6+23 hizmet sayfası veritabanına + istemci paketi temizliği | — |
+| 1.4 | 3 referans izin kaydıyla veritabanına | — |
+| 1.5 | 4 hukuki metin + yürürlük/revizyon geçmişi | A-11 |
+| 1.6 | Form uzunluk sınırları tek kaynağa | A-10 |
+
+**Kapatılan denetim bulguları:** A-07, A-08, A-09, A-10, A-11, A-18 (6 madde).
+
+## Sayılarla
+
+- **107 sayfa** içeriği artık panelden yönetiliyor (50 blog + 29 hizmet + 24 şehir + 4 hukuki)
+- **7 veritabanı migration'ı**, tamamı idempotent ve üretimde uygulanmış
+- **Testler: 93 → 169** (+76)
+- **Görünen içerik farkı: 0** — 51 + 24 + 32 + 5 sayfa karşılaştırıldı, tamamı birebir aynı
+- Uzun hizmet metni tarayıcı paketinden tamamen çıktı
+
+## Mimari sonuç
+
+Site **statik kalmaya devam ediyor**. İçerik veritabanından geliyor ama panelde
+kaydetme `revalidatePath` tetikliyor → HTML yeniden üretiliyor ve ziyaretçiye yine
+hazır dosya servis ediliyor. SEO tarafında kaybedilen bir şey yok.
+
+Her içerik tipinde aynı üç güvenlik ağı: **sürüm geçmişi** (git commit'lerinin yerine) ·
+**kod tarafı geri düşme** (veritabanı okunamazsa site koddaki içerikle çalışır) ·
+**gece SQLite yedeği** (geri yükleme Faz 0'da test edildi).
+
+## Taşımanın yakaladığı gerçek hatalar
+
+Öncesi/sonrası HTML karşılaştırması olmasaydı sessizce yayına gidecek olanlar:
+
+1. **`/blog` sıralaması** — 13 yazı aynı yayın gününü paylaşıyor; eşitlik bozucu
+   değişince öne çıkan yazı ve tüm kart dizilimi kaydı.
+2. **Çalışma saatleri metni** — `09:00 — 17:00` yerine `09:00–17:00` üretiliyordu.
+3. **JSON-LD çelişkileri** — kuruluş 2019 / 10-50 çalışan, sitede 2024 / 5+ yazarken.
+4. **Kayan şeritte 120+ proje** — sayaç bölümü aynı sayfada 25+ diyordu.
+5. **`8+ Yıl Deneyim`** — şirket 2024'te kuruldu.
+6. **Şehir sayfalarında sabit telefon** — merkezileştirme atlamıştı.
+7. **KVKK modali koddan okuyordu** — kullanıcının onay verdiği metnin gösterildiği yer.
+
+## Bilinen eksikler (Faz 2+)
+
+- Panelden **yeni** blog/hizmet/şehir ekleme yok — mevcut kayıtları düzenleme var.
+  Slug üretimi, sitemap ve iç link grafiği etkileri ayrı ele alınmalı.
+- Sürüm geri yükleme tek tıkla değil (anlık görüntü saklanıyor, okunabiliyor).
+- Eski hukuki sürümlerin tam metni public erişime açık değil.
+- `seo-audit` veri katmanı hâlâ kod dosyalarını denetliyor.
+- Vaka çalışmaları modülü — 👤 müşteri izni bekliyor.
+
+## Kullanıcıdan bekleyenler
+
+| Ne | Neden |
+|---|---|
+| Ticari unvan, vergi dairesi/no, MERSİS, açık adres | Yasal metinler ve faturalar |
+| `25+ proje`, `15+ müşteri`, `%97 memnuniyet` kanıtı | Şu an sitede görünmüyorlar |
+| Vaka çalışması yayın izni | Modül bunsuz kurulmayacak |
+| `staging.beracore.com` DNS A kaydı | Ön izleme ortamına tarayıcıdan erişim |
+
+## Sonraki faz
+
+**Faz 2 — panel çekirdeği:** kullanıcılar, roller ve yetkiler (RBAC), MFA,
+denetim günlüğü arayüzü, bildirimler, dosya yönetimi, global arama.

@@ -19,17 +19,17 @@
 | A-05 | Panel veri katmanının sıfır testi | **High** | ✅ Kapatıldı |
 | A-06 | Atomik takas ISR önbelleğini her deploy'da siliyor | Medium | ✅ Kapatıldı |
 | A-07 | Ana sayfa ve hizmet sayfalarındaki sayısal iddialar kanıtsız | **High** | ✅ Faz 1.2 |
-| A-08 | Şirket iletişim bilgileri 6+ dosyada kopyalı (tek kaynak yok) | Medium | 🔲 Faz 1 |
+| A-08 | Şirket iletişim bilgileri 6+ dosyada kopyalı (tek kaynak yok) | Medium | ✅ Faz 1 |
 | A-09 | Animasyonlu sayaçlar JS olmadan gerçek değeri göstermiyor | Medium | ✅ Faz 1.2 |
-| A-10 | Sunucu ve istemci mesaj uzunluk limitleri uyuşmuyor (4000 / 2000) | Low | 🔲 Faz 1 |
-| A-11 | Hukuki metinler versiyonsuz, yürürlük tarihi izlenmiyor | Medium | 🔲 Faz 1 |
+| A-10 | Sunucu ve istemci mesaj uzunluk limitleri uyuşmuyor (4000 / 2000) | Low | ✅ Faz 1.6 |
+| A-11 | Hukuki metinler versiyonsuz, yürürlük tarihi izlenmiyor | Medium | ✅ Faz 1 |
 | A-12 | Staging / preview ortamı yok | **High** | ✅ Kapatıldı (DNS bekliyor) |
 | A-13 | Nodemailer transporter singleton env değişiminde yenilenmiyor | Low | 🔲 Faz 3 |
 | A-14 | Rate limit belleğe bağlı — ikinci süreçte çöker | Medium | 🔲 Faz 3 |
 | A-15 | `CITY_CONTENT_UPDATED` elle güncelleniyor | Low | 🔲 Faz 2 |
 | A-16 | Tek kullanıcı, rol/yetki ayrımı yok | **High** | 🔲 Faz 2 |
 | A-17 | İç link alanları serbest metin (kırık link üretebilir) | Medium | 🔲 Faz 2 |
-| A-18 | JSON-LD `sameAs` boş — sosyal profil sinyali yok | Low | 🔲 Faz 1 |
+| A-18 | JSON-LD `sameAs` boş — sosyal profil sinyali yok | Low | ✅ Faz 1.6 |
 
 ---
 
@@ -119,11 +119,11 @@
 - **Etki:** Erişilebilirlik + arama motorunun değeri okuyamaması.
 - **Uygulanan çözüm:** SSR'da gerçek değer basılır; sıfırlama `useEffect` içinde, mount anında yapılır. Bölüm ilk ekranın altında olduğu için kullanıcı sıfırlamayı görmez. `prefers-reduced-motion` açıkken hiç sıfırlanmaz — o kullanıcı animasyon değil doğru sayıyı görür.
 
-### A-10 — Mesaj uzunluk limitleri uyuşmuyor · Low · Faz 1
+### A-10 — Mesaj uzunluk limitleri uyuşmuyor · Low · ✅ Faz 1.6'da kapatıldı
 
 - **Bulgu:** `api/contact/route.ts` `LIMITS.message = 4000`, `ContactPage.tsx` `maxLength = 2000`. Koddaki yorum "AYNI olmalı" diyor.
 - **Etki:** Bugün zararsız (istemci daha katı). Ters çevrilirse sessiz veri kaybı olur.
-- **Önerilen çözüm:** Tek sabitten türet; testle kilitle.
+- **Uygulanan çözüm:** `src/lib/form-limits.ts` tek kaynak. Test, iki tarafın da bu modülü kullandığını doğrular — değerlerin eşitliğini değil, KAYNAĞIN tekliğini; eşitlik testi, ikisi de yanlış olduğunda geçerdi.
 
 ### A-11 — Hukuki metinler versiyonsuz · Medium · Faz 1
 

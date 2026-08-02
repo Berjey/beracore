@@ -363,6 +363,25 @@ Ancak geri döndürülmesi zor veya dışa dönük işlerde (sunucu güvenlik ay
 `/admin` — gelen kutusu + lead yönetimi + **şirket ayarları** + **metrikler**.
 Blog/sayfa içeriği şimdilik kodda (Faz 1.3'te veritabanına taşınacak).
 
+**Faz 1 tamamlandı (2 Ağu 2026).** 107 sayfanın içeriği panelden yönetiliyor:
+blog (50), hizmet (6+23), şehir (24), hukuki (4) + referanslar, metrikler, şirket ayarları.
+Tümü `content_pages` tablosunda; okuma `src/lib/db/content.ts`, yazma `content-admin.ts`.
+Kod tarafındaki `*-data.ts` dosyaları TOHUM ve GERİ DÜŞME kaynağı olarak kaldı.
+
+⚠️ **Aktarım (`scripts/icerik-aktar.mjs`) `INSERT OR IGNORE`'dur, var olanı EZMEZ.**
+Senkronizasyona çevirmeyin: panelden yapılan her düzenleme deploy'da geri alınırdı.
+
+⚠️ **İçerik taşıyan her değişiklikte öncesi/sonrası HTML karşılaştırın.** Bu kontrol
+Faz 1'de 7 gerçek hata yakaladı (blog sıralaması, çalışma saatleri metni, JSON-LD
+çelişkileri, kayan şerit rakamları…). Ayrıntı: `docs/BERACORE_CHANGELOG.md`.
+
+**Referans kuralı (Faz 1.4):** `durum='yayinda'` VE `yayin_izni=1` olmayan referans
+public sorgudan hiç dönmez. Yeni referans her zaman izinsiz + taslak başlar.
+**Uydurma referans eklenmez** — mevcut 3 yorum gerçek müşterilere aittir.
+
+**Hukuki kuralı (Faz 1.5):** her kaydetmede yürürlük tarihi + değişiklik notu ZORUNLU,
+yürürlük geriye alınamaz, revizyon geçmişi ziyaretçiye de gösterilir (A-11).
+
 **Metrik kuralı (Faz 1.2):** ana sayfa ve Hakkımızda'daki rakamlar `company_metrics`
 tablosundan gelir ve **yalnızca `durum = 'yayinda'` olanlar render edilir**. Filtre
 `src/lib/db/metrics.ts` içindeki SORGUDADIR, bileşende değil — bir JSX dalını unutmak

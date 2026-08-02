@@ -1,7 +1,7 @@
 # BERACORE — Yol Haritası (Business Operating System)
 
 **Onaylı plan.** `docs/panel-crm-plani.md`'nin yerini alır.
-**Son güncelleme:** 2 Ağustos 2026 — **Faz 0 tamamlandı**, **Faz 1.1, 1.2 ve 1.3a canlıda**, sırada Faz 1.3b
+**Son güncelleme:** 2 Ağustos 2026 — **Faz 0 tamamlandı**, **Faz 0 ve Faz 1 TAMAMLANDI**, sırada Faz 2 (panel çekirdeği)
 
 ---
 
@@ -95,7 +95,7 @@ Ayrıntılı bulgular: `BERACORE_SYSTEM_AUDIT.md` · Yapılanların kaydı: `BER
 
 ---
 
-## Faz 1 — devam ediyor
+## Faz 1 — ✅ tamamlandı (2 Ağu 2026)
 
 **Öncelik sırası** (her madde tek başına canlıya alınabilir):
 

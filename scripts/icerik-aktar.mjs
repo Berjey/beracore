@@ -33,6 +33,7 @@ export async function aktar(db) {
   )
   const { services } = await import(pathToFileURL(join(kok, 'src', 'lib', 'services-data.ts')).href)
   const { legalDocs } = await import(pathToFileURL(join(kok, 'src', 'lib', 'legal-data.ts')).href)
+  const { referanslar } = await import(pathToFileURL(join(kok, 'src', 'lib', 'referans-data.ts')).href)
 
   const ekle = db.prepare(`
     INSERT OR IGNORE INTO content_pages
@@ -91,8 +92,50 @@ export async function aktar(db) {
   const sehir = await aktarSehirler(db, cityPages, CITY_CONTENT_UPDATED)
   const hizmet = await aktarHizmetler(db, services)
   const yasal = await aktarYasal(db, legalDocs)
+  const referans = await aktarReferanslar(db, referanslar)
 
-  return { yeni, atlanan, toplam: blogPosts.length, sehir, hizmet, yasal }
+  return { yeni, atlanan, toplam: blogPosts.length, sehir, hizmet, yasal, referans }
+}
+
+/**
+ * Musteri referanslari.
+ *
+ * `yayin_izni = 1` ve `durum='yayinda'` olarak tohumlanir: bu uc yorum ZATEN
+ * yayinda ve gercek musterilere ait (kullanici teyidi, 27 Tem 2026). Aktarim
+ * sitede gorunen hicbir seyi degistirmemeli — izin alanini 0 birakmak, gercek
+ * bir referansi sebepsiz yere siteden dusururdu.
+ *
+ * YENI eklenen referanslarda varsayilan bunun TERSIDIR (izin yok, taslak):
+ * bkz. 007_referanslar.sql kolon varsayilanlari.
+ */
+async function aktarReferanslar(db, referanslar) {
+  const ekle = db.prepare(`
+    INSERT OR IGNORE INTO testimonials
+      (marka, kisi, unvan, kategori, proje, metin,
+       yayin_izni, izin_kaynagi, izin_tarihi, dogrulandi, durum, sira)
+    VALUES (?, ?, ?, ?, ?, ?, 1, ?, '2026-07-27', 1, 'yayinda', ?)
+  `)
+
+  let yeni = 0
+  let atlanan = 0
+
+  db.exec('BEGIN')
+  try {
+    for (const [i, r] of referanslar.entries()) {
+      const sonuc = ekle.run(
+        r.brand, r.name, r.role, r.category, r.project, r.text,
+        'Musteri teyidi — 27 Tem 2026',
+        i,
+      )
+      if (Number(sonuc.changes) === 0) atlanan++; else yeni++
+    }
+    db.exec('COMMIT')
+  } catch (err) {
+    db.exec('ROLLBACK')
+    throw err
+  }
+
+  return { yeni, atlanan, toplam: referanslar.length }
 }
 
 /**
@@ -297,6 +340,7 @@ async function main() {
     console.log(`[icerik] sehir: ${r.sehir.yeni} eklendi, ${r.sehir.atlanan} zaten vardi (toplam ${r.sehir.toplam})`)
     console.log(`[icerik] hizmet: ${r.hizmet.yeni} eklendi, ${r.hizmet.atlanan} zaten vardi (toplam ${r.hizmet.toplam})`)
     console.log(`[icerik] yasal: ${r.yasal.yeni} eklendi, ${r.yasal.atlanan} zaten vardi (toplam ${r.yasal.toplam})`)
+    console.log(`[icerik] referans: ${r.referans.yeni} eklendi, ${r.referans.atlanan} zaten vardi (toplam ${r.referans.toplam})`)
   } finally {
     db.close()
   }
