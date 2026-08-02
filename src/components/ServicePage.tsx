@@ -6,8 +6,7 @@ import { useSirket } from '@/components/SirketProvider';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { services } from '@/lib/services-data';
-import { getCityPagesByServiceHref } from '@/lib/city-pages-data';
+import type { Service } from '@/lib/services-data';
 import type { SubShapeAPI } from '@/lib/sub-shapes';
 import { useTapOnly } from '@/lib/use-tap-only';
 import ScrollText from '@/components/ScrollText';
@@ -15,13 +14,22 @@ import ScrollText from '@/components/ScrollText';
 gsap.registerPlugin(ScrollTrigger);
 
 interface Props {
-  serviceKey: string;
+  /**
+   * Hizmet artık PROP olarak gelir, modülden import EDİLMEZ (Faz 1.3c).
+   *
+   * Önceden bu bileşen tüm `services` dizisini import edip kendi kaydını
+   * buluyordu; 23 alt hizmetin uzun metni bu yüzden tarayıcı paketindeydi.
+   * Ayrıca içerik veritabanına taşındıktan sonra panelden yapılan düzenleme
+   * burada görünmezdi — sayfa hâlâ koddaki kopyayı okuyordu.
+   */
+  service: Service;
   subSlug: string;
+  /** İlgili şehir sayfaları; sunucuda veritabanından çözülür. */
+  cityLinks: { citySlug: string; slug: string; city: string; title: string }[];
 }
 
-export default function ServicePage({ serviceKey, subSlug }: Props) {
+export default function ServicePage({ service, subSlug, cityLinks }: Props) {
   const sirket = useSirket();
-  const service = services.find(s => s.key === serviceKey);
   const initialIndex = service?.subServices.findIndex(ss => ss.slug === subSlug) ?? 0;
   const [subIndex, setSubIndex] = useState(initialIndex);
   const [subChanging, setSubChanging] = useState(false);
@@ -431,7 +439,7 @@ export default function ServicePage({ serviceKey, subSlug }: Props) {
   if (!service || !sub) return null;
 
   const otherSubs = service.subServices.filter((_, i) => i !== subIndex);
-  const cityLinks = getCityPagesByServiceHref(`/hizmetler/${service.key}/${sub.slug}`);
+
   const toggleFaq = (i: number) => setOpenFaq(prev => prev === i ? null : i);
 
   return (

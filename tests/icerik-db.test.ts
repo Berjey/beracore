@@ -71,7 +71,6 @@ test('aktarım İDEMPOTENT — ikinci çalıştırma hiçbir şey eklemez', asyn
   assert.equal(r.yeni, 0);
   assert.equal(r.atlanan, 50);
 
-  const db = testDb();
   const sssKod = blogPosts.reduce((t, p) => t + (p.faq?.length ?? 0), 0);
   // SSS çiftlenmemeli — en kolay gözden kaçacak hata bu.
   assert.equal(sssSayisi(), sssKod);

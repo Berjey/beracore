@@ -492,3 +492,86 @@ HTML denkliği **24/24 birebir aynı** · sitemap birebir aynı
 - Yeni şehir ekleme panelde yok (rota ve iç link yapısı koddan türüyor) → kod tarafı.
 - Hizmet sayfaları (6 kategori + 23 alt hizmet) hâlâ kodda → sırada.
 - Hukuki sayfalar (4) hâlâ kodda; versiyonlama ile birlikte ele alınacak (Faz 1.5).
+
+---
+
+## Faz 1.3c — Hizmet sayfaları veritabanına taşındı (2 Ağustos 2026)
+
+6 hizmet kategorisi ve 23 alt hizmet `content_pages` tablosuna girdi;
+`/admin/hizmetler` üzerinden düzenlenebilir hale geldi.
+
+**Görünen içerik farkı: 32 sayfanın 32'sinde 0** (29 hizmet sayfası + ana sayfa +
+Hakkımızda + İletişim).
+
+### Üç içerik tipinin en karmaşığı
+
+Blog ve şehirden farkı: hizmet verisi hem **iç içe** (kategori → alt hizmetler) hem de
+**6 istemci bileşeni** tarafından okunuyordu. Kategori (`tip='hizmet'`) ve alt hizmet
+(`tip='hizmet-alt'`) ayrı satırlarda tutuluyor — ayrı URL, ayrı meta, ayrı SSS taşıdıkları
+için. Tek satırda iç içe JSON olsalardı tek bir alt hizmeti düzenlemek tüm kategoriyi
+yeniden yazmak olur ve sürüm geçmişi anlamsızlaşırdı.
+
+### Yol boyunca kapatılan bir paket sorunu
+
+`Navbar`, `Footer`, ana sayfa hizmet bölümü, `Hakkımızda`, `İletişim` ve `ServicePage`
+`services-data.ts`'i **doğrudan import ediyordu**. Sonuç: 23 alt hizmetin tüm uzun metni
+(`longDescription`, `features`, `process`, `benefits`, `faq`) **her sayfanın tarayıcı
+paketindeydi** — beşi bu alanların hiçbirini kullanmadığı hâlde.
+
+Aynı hata blogda yapılmış ve `/blog` HTML'ini 507 KB'a çıkarmıştı (`BlogPostSummary` notu).
+
+Çözüm iki katmanlı:
+- **Gezinme** için hafif `ServiceNav` tipi (başlık, slug, renk, ikon, kısa açıklama),
+  kök düzenden bağlamla veriliyor.
+- **Uzun içerik** yalnızca onu render eden sayfaya prop olarak gidiyor; `ServicePage`
+  artık `services` dizisini import etmiyor, `service` propu alıyor.
+
+Doğrulandı: uzun hizmet metni artık **tarayıcı paketinde hiç yok**; yalnızca ilgili
+hizmet sayfasının RSC yükünde. Ana sayfa onu hiç taşımıyor.
+
+Ölçülen takas: hizmet sayfası HTML'i 139 KB → 163 KB (o sayfanın kendi içeriği artık
+inline), buna karşılık ~60 KB'lık paylaşılan JS parçası tamamen kalktı. İlk ziyarette
+net kazanç; sayfalar arası gezinmede fark ihmal edilebilir (metin, brotli ile sıkışıyor).
+
+### 3D sahneyi kıracak bir tuzak kapatıldı
+
+`Services.tsx` WebGL sahnesini `useEffect(..., [])` ile bir kez kuruyordu ve `services`
+modül sabiti olduğu için bu doğruydu. Bağlamdan gelince liste her render'da yeni kimlik
+alabiliyor; doğrudan bağımlılığa eklenseydi **sahne her seferinde yeniden yaratılır ve
+WebGL bağlamı sızardı** — 30 Tem'de bağlam havuzunun tükenmesi tam bu yüzden yaşanmıştı.
+Liste bir `ref` üzerinden okunuyor; kimlik değişimi sahneyi etkilemiyor.
+
+Ayrıca görsel kimlik alanları (`color`, `glowColor`, `shape`, `icon`, `image`) panelden
+**düzenlenemez**: geçersiz bir `shape` değeri 3D sahneyi kırar. Yazma katmanı bunları
+mevcut kayıttan koruyor; test doğruluyor.
+
+### Şehir bağlantıları da düzeldi
+
+`ServicePage` ilgili şehir linklerini KODDAKİ şehir listesinden buluyordu. Şehir içeriği
+1.3b'de veritabanına taşındığı için panelden değiştirilen bir bağlantı burada eski
+kalırdı. Artık sunucuda veritabanından çözülüp prop olarak geçiyor.
+
+### Değişen dosyalar
+
+**Yeni:** `src/components/ServicesProvider.tsx` ·
+`src/app/admin/(korumali)/hizmetler/page.tsx` ·
+`src/app/admin/(korumali)/hizmetler/[id]/page.tsx` ·
+`src/app/admin/hizmetler/[id]/kaydet/route.ts` · `tests/hizmet-db.test.ts`
+
+**Değişen:** `scripts/icerik-aktar.mjs` · `src/lib/db/content.ts` · `src/lib/db/content-admin.ts` ·
+`src/lib/services-data.ts` (`ServiceNav` + `toNav`) · `src/app/layout.tsx` ·
+`src/app/hizmetler/[serviceKey]/page.tsx` · `src/app/hizmetler/[serviceKey]/[subSlug]/page.tsx` ·
+`src/app/sitemap.ts` · `src/components/ServicePage.tsx` · `Navbar` · `Footer` · `Services` ·
+`AboutPage` · `ContactPage` · `src/app/admin/(korumali)/layout.tsx`
+
+### Kalite kapıları
+
+`npm run lint` 0 uyarı · `npm test` **138 → 147** · `npm run build` 119 sayfa ·
+`npm run seo-audit` ✅ TEMİZ · `secret-scan` temiz · görünen içerik farkı **0/32 sayfa**
+
+### Bilinen eksikler
+
+- Yeni hizmet/alt hizmet ekleme panelde yok (rota, 3D şekil ve ikon seti koddan türüyor).
+- Hukuki sayfalar (4) hâlâ kodda — versiyonlama ile birlikte (Faz 1.5).
+- `seo-audit` veri katmanı hâlâ kod dosyalarını denetliyor; panelden düzenlenen içerik
+  yalnızca HTML katmanında denetleniyor.

@@ -5,11 +5,13 @@ import { COOKIE_CONSENT_KEY } from '@/lib/cookie-consent';
 import { postalAddress, whatsappHref, type SirketBilgisi } from '@/lib/sirket';
 import { getSirket } from '@/lib/db/settings';
 import { getMetrikler } from '@/lib/db/metrics';
+import { getServicesNav } from '@/lib/db/content';
 import MotionGuard from '@/components/MotionGuard';
 import CookieConsent from '@/components/CookieConsent';
 import WhatsAppCta from '@/components/WhatsAppCta';
 import SirketProvider from '@/components/SirketProvider';
 import MetrikProvider from '@/components/MetrikProvider';
+import ServicesProvider from '@/components/ServicesProvider';
 import './globals.css';
 
 export const viewport: Viewport = {
@@ -152,6 +154,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     anaSayfa: getMetrikler('ana_sayfa'),
     hakkimizda: getMetrikler('hakkimizda'),
   };
+  // Gezinme için HAFİF liste — uzun hizmet metinleri istemciye gitmez.
+  const hizmetler = getServicesNav();
   return (
     // color-scheme + inline koyu zemin: tarayıcı CSS gelmeden önce kök zemini KOYU boyar →
     // tam sayfa yenilemede beyaz flash (saydam canvas'ta "beyaz kare" olarak görünen) engellenir.
@@ -218,7 +222,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             İstemci bileşenleri `useSirket()` ile alır — veritabanı modülünü
             import etmeleri gerekmez (ederlerse `node:sqlite` tarayıcı paketine sızar). */}
         <SirketProvider sirket={sirket}>
-          <MetrikProvider metrikler={metrikler}>{children}</MetrikProvider>
+          <MetrikProvider metrikler={metrikler}>
+            <ServicesProvider services={hizmetler}>{children}</ServicesProvider>
+          </MetrikProvider>
         </SirketProvider>
         <WhatsAppCta href={whatsappHref(sirket)} />
         <CookieConsent />

@@ -251,3 +251,123 @@ export function guncelleIcerik(
     return { ok: false, hata: 'kaydedilemedi' };
   }
 }
+
+// ─────────────────────────── hizmet sayfaları ───────────────────────────
+
+export interface KategoriGuncelleme {
+  baslik: string;
+  ozet: string;
+  subtitle: string;
+  overview: { h2: string; body: string }[];
+  durum: string;
+  sss: { soru: string; cevap: string }[];
+}
+
+export interface AltHizmetGuncelleme {
+  baslik: string;
+  meta_title: string;
+  meta_description: string;
+  ozet: string;
+  longDescription: string;
+  features: string[];
+  process: string[];
+  benefits: string[];
+  stats: { value: string; label: string }[];
+  durum: string;
+  sss: { soru: string; cevap: string }[];
+}
+
+/**
+ * Ortak kaydetme: sürüm al → güncelle → SSS'i yeniden yaz, tek transaction.
+ *
+ * `govde` yükünün GÖRSEL KİMLİK alanları (color, glowColor, shape, icon, image)
+ * panelden gelmez, mevcut kayıttan korunur. Bunlar 3D sahneyi ve ikon setini
+ * besliyor; serbest metin olarak düzenlenebilseydi geçersiz bir `shape` değeri
+ * WebGL sahnesini kırardı.
+ */
+function kaydet(
+  id: number,
+  tip: string,
+  alanlar: {
+    baslik: string; meta_title: string; meta_description: string; ozet: string;
+    durum: string; yeniYuk: (eski: Record<string, unknown>) => Record<string, unknown>;
+  },
+  sss: { soru: string; cevap: string }[],
+  actor: string
+): { ok: boolean; hata?: string } {
+  if (!ICERIK_DURUMLARI.includes(alanlar.durum as (typeof ICERIK_DURUMLARI)[number])) {
+    return { ok: false, hata: 'gecersiz-durum' };
+  }
+  if (!alanlar.baslik.trim()) return { ok: false, hata: 'baslik-bos' };
+
+  const db = getDb();
+  const mevcut = getIcerik(id);
+  if (!mevcut || mevcut.tip !== tip) return { ok: false, hata: 'bulunamadi' };
+
+  const eskiYuk = JSON.parse(mevcut.govde) as Record<string, unknown>;
+  const oncekiSss = getSss(id);
+  const sonSurum = db
+    .prepare('SELECT COALESCE(MAX(surum), 0) AS s FROM content_versions WHERE content_id = ?')
+    .get(id) as { s: number };
+
+  db.exec('BEGIN');
+  try {
+    db.prepare('INSERT INTO content_versions (content_id, surum, anlik, actor) VALUES (?, ?, ?, ?)')
+      .run(id, Number(sonSurum.s) + 1, JSON.stringify({ ...mevcut, sss: oncekiSss }), actor);
+
+    db.prepare(
+      `UPDATE content_pages
+          SET baslik = ?, meta_title = ?, meta_description = ?, ozet = ?, govde = ?,
+              durum = ?, updated_at = datetime('now')
+        WHERE id = ?`
+    ).run(
+      alanlar.baslik, alanlar.meta_title, alanlar.meta_description, alanlar.ozet,
+      JSON.stringify(alanlar.yeniYuk(eskiYuk)), alanlar.durum, id
+    );
+
+    db.prepare('DELETE FROM content_faq WHERE content_id = ?').run(id);
+    const ekle = db.prepare('INSERT INTO content_faq (content_id, soru, cevap, sira) VALUES (?, ?, ?, ?)');
+    sss.forEach((f, i) => {
+      if (f.soru.trim() && f.cevap.trim()) ekle.run(id, f.soru, f.cevap, i);
+    });
+
+    db.exec('COMMIT');
+    return { ok: true };
+  } catch (err) {
+    db.exec('ROLLBACK');
+    console.error('[icerik] hizmet kaydetme basarisiz', err);
+    return { ok: false, hata: 'kaydedilemedi' };
+  }
+}
+
+export function guncelleKategori(id: number, g: KategoriGuncelleme, actor: string) {
+  return kaydet(
+    id, 'hizmet',
+    {
+      baslik: g.baslik, meta_title: '', meta_description: '', ozet: g.ozet, durum: g.durum,
+      // color/glowColor/shape korunur — bkz. `kaydet` notu.
+      yeniYuk: (eski) => ({ ...eski, subtitle: g.subtitle, overview: g.overview }),
+    },
+    g.sss, actor
+  );
+}
+
+export function guncelleAltHizmet(id: number, g: AltHizmetGuncelleme, actor: string) {
+  return kaydet(
+    id, 'hizmet-alt',
+    {
+      baslik: g.baslik, meta_title: g.meta_title, meta_description: g.meta_description,
+      ozet: g.ozet, durum: g.durum,
+      // icon/image korunur.
+      yeniYuk: (eski) => ({
+        ...eski,
+        longDescription: g.longDescription,
+        features: g.features,
+        process: g.process,
+        benefits: g.benefits,
+        stats: g.stats,
+      }),
+    },
+    g.sss, actor
+  );
+}

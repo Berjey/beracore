@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
-import { services } from '@/lib/services-data';
+
 // Sitemap de veritabanindan okur: panelden eklenen bir yazi sitemap'e
 // girmezse arama motoru onu gec kesfeder.
-import { getBlogPosts, getCityPages, getCityLastMod } from '@/lib/db/content';
+import { getBlogPosts, getCityPages, getCityLastMod, getServices } from '@/lib/db/content';
 import { CITY_CONTENT_UPDATED } from '@/lib/city-pages-data';
 import { SITE_URL } from '@/lib/seo';
 
@@ -37,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const serviceEntries: MetadataRoute.Sitemap = [];
-  services.forEach((service) => {
+  getServices().forEach((service) => {
     // Kategori hub sayfası
     serviceEntries.push({
       url: `${SITE_URL}/hizmetler/${service.key}`,

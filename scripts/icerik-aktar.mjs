@@ -31,6 +31,7 @@ export async function aktar(db) {
   const { cityPages, CITY_CONTENT_UPDATED } = await import(
     pathToFileURL(join(kok, 'src', 'lib', 'city-pages-data.ts')).href
   )
+  const { services } = await import(pathToFileURL(join(kok, 'src', 'lib', 'services-data.ts')).href)
 
   const ekle = db.prepare(`
     INSERT OR IGNORE INTO content_pages
@@ -87,8 +88,90 @@ export async function aktar(db) {
   }
 
   const sehir = await aktarSehirler(db, cityPages, CITY_CONTENT_UPDATED)
+  const hizmet = await aktarHizmetler(db, services)
 
-  return { yeni, atlanan, toplam: blogPosts.length, sehir }
+  return { yeni, atlanan, toplam: blogPosts.length, sehir, hizmet }
+}
+
+/**
+ * Hizmet kategorileri (6) ve alt hizmetler (23).
+ *
+ * İki AYRI tip olarak yazılır:
+ *   tip='hizmet'      slug='ai'                       → kategori hub sayfası
+ *   tip='hizmet-alt'  slug='ai/ai-chatbot-asistan'    → alt hizmet sayfası
+ *
+ * Neden ayrı: ikisi ayrı URL, ayrı meta ve ayrı SSS taşıyor. Tek satırda iç içe
+ * JSON olarak tutulsalardı panelde tek bir alt hizmeti düzenlemek tüm kategoriyi
+ * yeniden yazmak olurdu ve sürüm geçmişi anlamsızlaşırdı.
+ *
+ * Görsel kimlik alanları (color, glowColor, shape, icon, image) de yükte durur:
+ * bunlar içerik değil ama sayfayla birlikte taşınmazsa kategori kodda, metni
+ * veritabanında olan bölünmüş bir model çıkardı.
+ */
+async function aktarHizmetler(db, services) {
+  const ekle = db.prepare(`
+    INSERT OR IGNORE INTO content_pages
+      (tip, slug, dil, baslik, meta_title, meta_description, ozet, govde,
+       kategori, sira, durum)
+    VALUES (?, ?, 'tr', ?, ?, ?, ?, ?, ?, ?, 'yayinda')
+  `)
+  const idBul = db.prepare("SELECT id FROM content_pages WHERE tip=? AND slug=? AND dil='tr'")
+  const sssEkle = db.prepare('INSERT INTO content_faq (content_id, soru, cevap, sira) VALUES (?, ?, ?, ?)')
+  const sssVar = db.prepare('SELECT COUNT(*) AS n FROM content_faq WHERE content_id = ?')
+
+  let yeni = 0
+  let atlanan = 0
+
+  const sssYaz = (tip, slug, faq) => {
+    const { id } = idBul.get(tip, slug)
+    if (Number(sssVar.get(id).n) === 0) {
+      ;(faq ?? []).forEach((f, k) => sssEkle.run(id, f.question, f.answer, k))
+    }
+  }
+
+  db.exec('BEGIN')
+  try {
+    for (const [i, s] of services.entries()) {
+      const kategoriYuk = {
+        subtitle: s.subtitle,
+        color: s.color,
+        glowColor: s.glowColor,
+        shape: s.shape,
+        overview: s.overview,
+      }
+
+      let sonuc = ekle.run(
+        'hizmet', s.key, s.title, '', '', s.description,
+        JSON.stringify(kategoriYuk), s.key, i,
+      )
+      if (Number(sonuc.changes) === 0) { atlanan++ } else { yeni++; sssYaz('hizmet', s.key, s.faq) }
+
+      for (const [k, sub] of s.subServices.entries()) {
+        const altYuk = {
+          image: sub.image,
+          icon: sub.icon,
+          longDescription: sub.longDescription,
+          features: sub.features,
+          process: sub.process,
+          benefits: sub.benefits,
+          stats: sub.stats,
+        }
+
+        const altSlug = `${s.key}/${sub.slug}`
+        sonuc = ekle.run(
+          'hizmet-alt', altSlug, sub.title, sub.metaTitle, sub.metaDescription,
+          sub.description, JSON.stringify(altYuk), s.key, k,
+        )
+        if (Number(sonuc.changes) === 0) { atlanan++ } else { yeni++; sssYaz('hizmet-alt', altSlug, sub.faq) }
+      }
+    }
+    db.exec('COMMIT')
+  } catch (err) {
+    db.exec('ROLLBACK')
+    throw err
+  }
+
+  return { yeni, atlanan, toplam: services.length + services.reduce((t, s) => t + s.subServices.length, 0) }
 }
 
 /**
@@ -173,6 +256,7 @@ async function main() {
     const r = await aktar(db)
     console.log(`[icerik] blog:  ${r.yeni} eklendi, ${r.atlanan} zaten vardi (toplam ${r.toplam})`)
     console.log(`[icerik] sehir: ${r.sehir.yeni} eklendi, ${r.sehir.atlanan} zaten vardi (toplam ${r.sehir.toplam})`)
+    console.log(`[icerik] hizmet: ${r.hizmet.yeni} eklendi, ${r.hizmet.atlanan} zaten vardi (toplam ${r.hizmet.toplam})`)
   } finally {
     db.close()
   }

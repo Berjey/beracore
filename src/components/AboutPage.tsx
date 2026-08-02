@@ -6,10 +6,10 @@ import { useSirket } from '@/components/SirketProvider';
 import { useMetrikler } from '@/components/MetrikProvider';
 import { metrikMetni } from '@/lib/metrikler';
 import Link from 'next/link';
+import { useServices } from '@/components/ServicesProvider';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollText from '@/components/ScrollText';
-import { services } from '@/lib/services-data';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,6 +71,10 @@ const TIMELINE = [
 ];
 
 export default function AboutPage() {
+  // Hizmet listesi kök düzenden bağlamla gelir (Faz 1.3c). Doğrudan import
+  // edilseydi 23 alt hizmetin tüm uzun metni bu sayfanın paketine girerdi.
+  const services = useServices();
+
   const sirket = useSirket();
   // Metrikler veritabanından, yalnızca `durum = 'yayinda'` olanlar (bulgu A-07).
   // Ana sayfadaki listeyle AYNI kayıtlardan gelir — daha önce iki dosyada

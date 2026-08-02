@@ -1,12 +1,23 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useServices } from '@/components/ServicesProvider';
 import { useRouter } from 'next/navigation';
-import { services } from '@/lib/services-data';
 import type { ShapeSceneAPI } from '@/lib/service-shapes';
 import { useTapOnly } from '@/lib/use-tap-only';
 
 export default function Services() {
+  // Hizmet listesi kök düzenden bağlamla gelir (Faz 1.3c). Doğrudan import
+  // edilseydi 23 alt hizmetin tüm uzun metni bu sayfanın paketine girerdi.
+  const services = useServices();
+  // WebGL sahnesi ve geçiş callback'leri bir kez kurulur ve bağımlılıkları BOŞTUR.
+  // `services` artık modül sabiti değil bağlamdan geliyor; doğrudan bağımlılığa
+  // eklemek sahneyi her render kimliği değişiminde yeniden yaratırdı (WebGL
+  // bağlamı sızdırırdı — 30 Tem'de bağlam havuzu tükenmesi tam bu yüzden yaşandı).
+  // Ref, en güncel listeyi taşır; kimlik değişimi sahneyi etkilemez.
+  const servicesRef = useRef(services);
+  servicesRef.current = services;
+
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -78,16 +89,17 @@ export default function Services() {
       if (cancelled || !canvas.isConnected) return;
       api = createShapeScene(canvas);
       shapeRef.current = api;
-      api.setShape(services[activeIndexRef.current].shape);
+      api.setShape(servicesRef.current[activeIndexRef.current].shape);
     });
     return () => { cancelled = true; api?.dispose(); };
   }, []);
 
   const goTo = useCallback((index: number) => {
-    const next = (index + services.length) % services.length;
+    const liste = servicesRef.current;
+    const next = (index + liste.length) % liste.length;
     setActiveIndex(next);
     activeIndexRef.current = next;
-    shapeRef.current?.setShape(services[next].shape);
+    shapeRef.current?.setShape(liste[next].shape);
   }, []);
 
   // Click on shape or button → zoom transition → open detail

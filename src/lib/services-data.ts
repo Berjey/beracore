@@ -677,3 +677,53 @@ export const services: Service[] = [
     ],
   },
 ];
+
+/**
+ * Gezinme (navigation) için HAFİF hizmet tipi.
+ *
+ * NEDEN VAR: `Service` nesnesi `longDescription`, `features`, `process`,
+ * `benefits`, `faq` ve `overview` alanlarıyla birlikte çok ağır. Navbar, Footer,
+ * ana sayfa hizmet bölümü, Hakkımızda ve İletişim sayfaları bunların HİÇBİRİNİ
+ * kullanmıyor — yalnızca başlık, slug, renk ve ikon istiyorlar.
+ *
+ * Tam nesneyi istemciye vermek, 23 alt hizmetin tüm uzun metnini her sayfanın
+ * paketine sokuyordu. Aynı hata blogda da yapılmıştı (`BlogPostSummary`
+ * tanımındaki nota bakın): `/blog` HTML'i 507 KB olmuştu.
+ */
+export interface SubServiceNav {
+  title: string;
+  slug: string;
+  icon: string;
+  image: string;
+  description: string;
+}
+
+export interface ServiceNav {
+  key: string;
+  title: string;
+  subtitle: string;
+  color: string;
+  glowColor: string;
+  shape: Service['shape'];
+  description: string;
+  subServices: SubServiceNav[];
+}
+
+export function toNav(s: Service): ServiceNav {
+  return {
+    key: s.key,
+    title: s.title,
+    subtitle: s.subtitle,
+    color: s.color,
+    glowColor: s.glowColor,
+    shape: s.shape,
+    description: s.description,
+    subServices: s.subServices.map((ss) => ({
+      title: ss.title,
+      slug: ss.slug,
+      icon: ss.icon,
+      image: ss.image,
+      description: ss.description,
+    })),
+  };
+}

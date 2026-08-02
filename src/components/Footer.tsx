@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useServices } from '@/components/ServicesProvider';
 import Image from 'next/image';
-import { services } from '@/lib/services-data';
 import { telHref, mailtoHref, konumMetni } from '@/lib/sirket';
 import { useSirket } from '@/components/SirketProvider';
 
@@ -42,6 +42,10 @@ const SOCIALS: { label: string; href: string; icon: string }[] = [
  * yerinin merkezi kaynağı geçtiğini garanti eder.
  */
 export default function Footer() {
+  // Hizmet listesi kök düzenden bağlamla gelir (Faz 1.3c). Doğrudan import
+  // edilseydi 23 alt hizmetin tüm uzun metni bu sayfanın paketine girerdi.
+  const services = useServices();
+
   const sirket = useSirket();
   const pathname = usePathname();
   const footerRef = useRef<HTMLElement>(null);

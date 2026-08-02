@@ -21,6 +21,7 @@ import {
   type ContentBlock,
 } from '../blog-data';
 import { cityPages as cityPagesKod, type CityPage } from '../city-pages-data';
+import { services as servicesKod, toNav, type Service, type ServiceNav } from '../services-data';
 
 interface SatirBlog {
   id: number;
@@ -239,4 +240,132 @@ export function getCityLastMod(citySlug: string, slug: string): string | undefin
   } catch {
     return undefined;
   }
+}
+
+// ─────────────────────────── hizmet sayfaları ───────────────────────────
+
+interface KategoriYuku {
+  subtitle: string;
+  color: string;
+  glowColor: string;
+  shape: Service['shape'];
+  overview: { h2: string; body: string }[];
+}
+
+interface AltYuku {
+  image: string;
+  icon: string;
+  longDescription: string;
+  features: string[];
+  process: string[];
+  benefits: string[];
+  stats: { value: string; label: string }[];
+}
+
+interface SatirHizmet {
+  id: number;
+  tip: string;
+  slug: string;
+  baslik: string;
+  meta_title: string;
+  meta_description: string;
+  ozet: string;
+  govde: string;
+  kategori: string;
+  sira: number;
+}
+
+/**
+ * Hizmet ağacını veritabanından kurar.
+ *
+ * Kategori (`tip='hizmet'`) ve alt hizmet (`tip='hizmet-alt'`) ayrı satırlarda
+ * durur; burada `Service.subServices` altında yeniden birleştirilir. Kategori
+ * sırası ve alt hizmet sırası `sira` kolonundan gelir — koddaki dizilim
+ * korunsun diye (blogda eşit tarihlerde sırayı kaybetme hatası yaşandı).
+ */
+const okuHizmet = cache((): Service[] => {
+  try {
+    const db = getDb();
+    const satirlar = db
+      .prepare(
+        `SELECT id, tip, slug, baslik, meta_title, meta_description, ozet, govde, kategori, sira
+           FROM content_pages
+          WHERE tip IN ('hizmet', 'hizmet-alt') AND dil = 'tr' AND durum = 'yayinda'
+          ORDER BY sira`
+      )
+      .all() as unknown as SatirHizmet[];
+
+    const kategoriler = satirlar.filter((s) => s.tip === 'hizmet');
+    if (kategoriler.length === 0) return servicesKod;
+
+    const sss = db
+      .prepare('SELECT content_id, soru, cevap FROM content_faq ORDER BY content_id, sira')
+      .all() as unknown as { content_id: number; soru: string; cevap: string }[];
+
+    const sssHarita = new Map<number, { question: string; answer: string }[]>();
+    for (const f of sss) {
+      const liste = sssHarita.get(f.content_id) ?? [];
+      liste.push({ question: f.soru, answer: f.cevap });
+      sssHarita.set(f.content_id, liste);
+    }
+
+    return kategoriler.map((k) => {
+      const ky = JSON.parse(k.govde) as KategoriYuku;
+      const altlar = satirlar
+        .filter((s) => s.tip === 'hizmet-alt' && s.kategori === k.slug)
+        .sort((a, b) => a.sira - b.sira);
+
+      return {
+        key: k.slug,
+        title: k.baslik,
+        subtitle: ky.subtitle,
+        color: ky.color,
+        glowColor: ky.glowColor,
+        shape: ky.shape,
+        description: k.ozet,
+        overview: ky.overview,
+        faq: sssHarita.get(k.id) ?? [],
+        subServices: altlar.map((a) => {
+          const ay = JSON.parse(a.govde) as AltYuku;
+          return {
+            title: a.baslik,
+            // `slug` kolonunda `kategori/alt` birleşik duruyor.
+            slug: a.slug.slice(k.slug.length + 1),
+            image: ay.image,
+            icon: ay.icon,
+            description: a.ozet,
+            longDescription: ay.longDescription,
+            features: ay.features,
+            process: ay.process,
+            benefits: ay.benefits,
+            stats: ay.stats,
+            faq: sssHarita.get(a.id) ?? [],
+            metaTitle: a.meta_title,
+            metaDescription: a.meta_description,
+          };
+        }),
+      };
+    });
+  } catch (err) {
+    console.error('[icerik] hizmetler okunamadi, koddaki icerik kullaniliyor', err);
+    return servicesKod;
+  }
+});
+
+export function getServices(): Service[] {
+  return okuHizmet();
+}
+
+export function getService(key: string): Service | undefined {
+  return getServices().find((s) => s.key === key);
+}
+
+/**
+ * İstemci bileşenlerine verilecek HAFİF liste.
+ *
+ * Kök düzen bunu bağlamla aşağı verir. Tam `Service` nesnesi verilseydi 23 alt
+ * hizmetin tüm uzun metni her sayfanın RSC yüküne girerdi.
+ */
+export function getServicesNav(): ServiceNav[] {
+  return getServices().map(toNav);
 }

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { services } from '@/lib/services-data';
+// İçerik veritabanından okunur; tablo boşsa/okunamazsa koddaki içeriğe düşer.
+import { getServices, getService, getCityPages } from '@/lib/db/content';
 import ServicePage from '@/components/ServicePage';
 import ScrollProgress from '@/components/ScrollProgress';
 import { SITE_URL, ogImages, twitterImages } from '@/lib/seo';
@@ -22,7 +23,7 @@ interface Props {
 
 export async function generateStaticParams() {
   const params: { serviceKey: string; subSlug: string }[] = [];
-  for (const service of services) {
+  for (const service of getServices()) {
     for (const sub of service.subServices) {
       params.push({ serviceKey: service.key, subSlug: sub.slug });
     }
@@ -32,7 +33,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { serviceKey, subSlug } = await params;
-  const service = services.find(s => s.key === serviceKey);
+  const service = getService(serviceKey);
   const sub = service?.subServices.find(ss => ss.slug === subSlug);
   if (!service || !sub) return {};
 
@@ -62,9 +63,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SubServicePage({ params }: Props) {
   const { serviceKey, subSlug } = await params;
-  const service = services.find(s => s.key === serviceKey);
+  const service = getService(serviceKey);
   const sub = service?.subServices.find(ss => ss.slug === subSlug);
   if (!service || !sub) notFound();
+
+  // Şehir bağlantıları SUNUCUDA çözülür. Önceden `ServicePage` bunu kendi içinde
+  // koddaki şehir listesinden buluyordu; şehir içeriği veritabanına taşındıktan
+  // sonra (Faz 1.3b) panelden değiştirilen bir bağlantı burada eski kalırdı.
+  const cityLinks = getCityPages()
+    .filter((c) => c.serviceHref === `/hizmetler/${serviceKey}/${subSlug}`)
+    .map((c) => ({ citySlug: c.citySlug, slug: c.slug, city: c.city, title: c.title }));
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -102,7 +110,7 @@ export default async function SubServicePage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <ScrollProgress sections={SERVICE_SECTIONS} />
-      <ServicePage serviceKey={serviceKey} subSlug={subSlug} />
+      <ServicePage service={service} subSlug={subSlug} cityLinks={cityLinks} />
     </>
   );
 }

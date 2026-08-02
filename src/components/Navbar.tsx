@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { services } from '@/lib/services-data';
+import { useServices } from '@/components/ServicesProvider';
 
 // href ZORUNLU: Googlebot <button onClick> gezinmesini takip etmez.
 // Her gezinme öğesi gerçek bir <a href> olarak render edilir; yumuşak kaydırma
@@ -22,6 +22,10 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
+  // Hizmet listesi kök düzenden bağlamla gelir (Faz 1.3c). Doğrudan import
+  // edilseydi 23 alt hizmetin tüm uzun metni bu sayfanın paketine girerdi.
+  const services = useServices();
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hizmetlerOpen, setHizmetlerOpen] = useState(false);

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { services } from '@/lib/services-data';
+import { getServices, getService } from '@/lib/db/content';
 import ScrollProgress from '@/components/ScrollProgress';
 import { SITE_URL, ogImages, twitterImages } from '@/lib/seo';
 
@@ -18,12 +18,12 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return services.map((service) => ({ serviceKey: service.key }));
+  return getServices().map((service) => ({ serviceKey: service.key }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { serviceKey } = await params;
-  const service = services.find((s) => s.key === serviceKey);
+  const service = getService(serviceKey);
   if (!service) return {};
 
   const title = `${service.title} Hizmetleri | BERACORE`;
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ServiceCategoryPage({ params }: Props) {
   const { serviceKey } = await params;
-  const service = services.find((s) => s.key === serviceKey);
+  const service = getService(serviceKey);
   if (!service) notFound();
 
   const url = `https://beracore.com/hizmetler/${serviceKey}`;
@@ -213,7 +213,7 @@ export default async function ServiceCategoryPage({ params }: Props) {
           <section id="cat-diger" aria-label="Diğer hizmet kategorileri" className="mt-20">
             <h2 className="font-body text-[1.1rem] font-light text-t2 mb-5">Diğer hizmet kategorileri</h2>
             <div className="flex flex-wrap gap-3">
-              {services.filter((s) => s.key !== service.key).map((s) => (
+              {getServices().filter((s) => s.key !== service.key).map((s) => (
                 <Link
                   key={s.key}
                   href={`/hizmetler/${s.key}`}
