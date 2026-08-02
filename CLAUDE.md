@@ -3,7 +3,36 @@
 Bu dosya, yeni bir sohbette veya farklı bir bilgisayarda çalışmaya başlandığında
 projenin durumunu ve devam edilecek noktayı aktarır. Git ile taşındığı için her makinede bulunur.
 
-**Son güncelleme:** 2 Ağustos 2026
+**Son güncelleme:** 3 Ağustos 2026
+
+---
+
+## 📍 KALDIĞIMIZ YER (3 Ağustos 2026)
+
+**Commit:** `39b3483` — local = GitHub = VPS, çalışma alanı temiz, dal `main`.
+
+**Faz 0 ve Faz 1 TAMAMLANDI ve canlıda.** Kapatılan denetim bulguları:
+A-07, A-08, A-09, A-10, A-11, A-18.
+
+- 107 sayfanın içeriği panelden yönetiliyor (50 blog · 29 hizmet · 24 şehir · 4 hukuki)
+  + referanslar, metrikler, şirket ayarları
+- 7 migration, tamamı üretimde uygulanmış
+- Testler **169**, lint 0 uyarı, `seo-audit` temiz, build 119 sayfa
+- Faz 1 boyunca **görünen içerik farkı 0** (112 sayfa öncesi/sonrası karşılaştırıldı)
+
+**SIRADAKİ İŞ: Faz 2 — panel çekirdeği.** Kullanıcılar, roller ve yetkiler (RBAC),
+MFA, denetim günlüğü arayüzü, bildirimler, dosya yönetimi, global arama.
+Kapsam: `docs/BERACORE_ADMIN_ROADMAP.md`. Yapılanların tam kaydı:
+`docs/BERACORE_CHANGELOG.md` (Faz 1 kapanış raporu en sonda).
+
+### ⏸ Kullanıcıdan beklenenler (bunlar gelmeden ilerlemeyen işler)
+
+| Ne | Engellediği iş |
+|---|---|
+| Vaka çalışması yayın izni (GmsGarage, Arovela, KriptoMall) | Vaka çalışmaları modülü — izinsiz KURULMAYACAK |
+| `25+ proje`, `15+ müşteri`, `%97 memnuniyet` kanıtı | Bu metrikler şu an sitede GÖRÜNMÜYOR (taslak) |
+| Ticari unvan, vergi dairesi/no, MERSİS, açık adres | Yasal metinler ve faturalar |
+| `staging.beracore.com` DNS A kaydı → `187.124.181.213` | Staging'e tarayıcıdan erişim (şimdilik SSH tüneli) |
 
 ---
 
@@ -91,12 +120,30 @@ yapar; testler local kalite kapısıdır.
   `cp .bak`, `nginx -t`, sonra `systemctl reload nginx` (yedekler `.bak-*` olarak durur).
 
 ### Yeni bir bilgisayarda kurulum
-SSH anahtarı makineye özeldir. Yeni makinede:
+
+```
+git clone https://github.com/Berjey/beracore.git && cd beracore
+npm ci
+node scripts/migrate.mjs        # yerel .data/beracore.db semasini kurar
+node scripts/icerik-aktar.mjs   # 107 sayfa icerigi koddan tohumlar
+npm run lint && npm test && npm run build
+```
+
+`.data/` git'te DEĞİLDİR (yerel geliştirme veritabanı). Yukarıdaki iki komut onu
+sıfırdan kurar; **üretim verisi çekilmez ve çekilmemelidir** — spec'in "production
+verisini test için kullanma" kuralı. Yerel veritabanı yalnızca tohum içeriğini taşır.
+
+**SSH anahtarı makineye özeldir.** Yeni makinede:
 1. `~/.ssh/config`'e `beracore` alias'ı ve key yolu tanımlı mı bak
 2. `ssh -o BatchMode=yes beracore "hostname"` → `srv1544645` dönüyorsa hazır
-3. Dönmüyorsa: anahtar üret, public key'i sunucudaki `/root/.ssh/authorized_keys`'e ekle.
-   Windows'ta `ssh-copy-id`/`sshpass` yok; tek seferlik parola ile eklemek için
-   `pip install paramiko` + kısa bir Python script'i en pratik yol. Parola kullanıcıda.
+3. Dönmüyorsa: anahtar üret, public key'i **mevcut bir makineden** sunucudaki
+   `/root/.ssh/authorized_keys`'e ekle. ⚠️ Parola ile SSH girişi 2 Ağu 2026'da
+   KAPATILDI — parolayla anahtar ekleme yolu artık yok.
+
+**⚠️ Panel parolası git'e dahil DEĞİLDİR ve hash'inden geri çıkarılamaz.**
+Kullanıcının kendi kayıtlarında olmalı. Kaybolursa yenisi üretilir:
+`node scripts/hash-password.mjs 'yeni-parola'` → çıktıyı VPS `.env`'e yaz → deploy.
+(Parolada `$` KULLANMA — dotenv-expand hash'i bozar.)
 
 #### Windows tuzağı: Smart App Control git'i öldürür
 Windows 11'de **Akıllı Uygulama Denetimi (Smart App Control)** açıksa `git.exe` ve `bash.exe`
