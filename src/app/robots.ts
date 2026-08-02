@@ -1,7 +1,16 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/seo';
+import { STAGING } from '@/lib/ortam';
 
 export default function robots(): MetadataRoute.Robots {
+  // Staging üretimin birebir kopyasıdır → yinelenen içerik riski. Tarama tamamen
+  // kapatılır. İkinci koruma `X-Robots-Tag: noindex` başlığıdır (next.config.ts):
+  // robots.txt taramayı engeller ama zaten bilinen bir URL'in indekslenmesini
+  // kesin olarak durdurmaz.
+  if (STAGING) {
+    return { rules: [{ userAgent: '*', disallow: '/' }] };
+  }
+
   return {
     rules: [
       {

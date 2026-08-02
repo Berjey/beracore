@@ -47,6 +47,12 @@ const nextConfig: NextConfig = {
           // Permissions-Policy başlıkları VPS'te nginx tarafından ekleniyor
           // (sites-available/beracore.com) — burada tekrar edilmez, çift başlık olmasın.
           { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+          // Staging ortamı üretimin birebir kopyasıdır → yinelenen içerik riski.
+          // robots.txt taramayı engeller ama zaten bilinen bir URL'in indekslenmesini
+          // kesin durdurmaz; bu başlık onu da kapatır. Üretimde hiç eklenmez.
+          ...(process.env.BERACORE_ORTAM === 'staging'
+            ? [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }]
+            : []),
         ],
       },
     ];
