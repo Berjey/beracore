@@ -201,9 +201,26 @@ korundu). Her şehir kendi ekonomik kimliğiyle özgün içerik taşır (Ankara:
 
 ## Görünürlük, yapılacaklar, durum
 
-➡️ **Tek kaynak: `docs/yol-haritasi.md`.** Sıradaki adımlar, kullanıcıdan beklenenler,
-tamamlananlar ve bilinçli kapsam-dışı kararlar orada. Önce onu oku.
-(Eski `site-tamamlama-plani.md` ve `gorunurluk-rehberi.md` birleştirilip kaldırıldı.)
+➡️ **Önce `docs/BERACORE_ADMIN_ROADMAP.md`'yi oku.** 2 Ağu 2026'da başlayan
+**Business Operating System** programının yol haritası orada: fazlar, kilitli kararlar,
+kullanıcıdan beklenenler.
+
+| Konu | Dosya |
+|---|---|
+| Program yol haritası | `docs/BERACORE_ADMIN_ROADMAP.md` |
+| Ne inşa ediliyor, neden | `docs/BERACORE_ADMIN_BPDD_v0.1.md` |
+| Denetim bulguları (18 madde, açık/kapalı) | `docs/BERACORE_SYSTEM_AUDIT.md` |
+| Veri modeli (mevcut + planlanan şema) | `docs/BERACORE_DATA_MODEL.md` |
+| Güvenlik modeli ve tehdit tablosu | `docs/BERACORE_SECURITY_MODEL.md` |
+| AI çalışanları ve yetki sınırları | `docs/BERACORE_AI_WORKFORCE.md` |
+| Entegrasyon mimarisi | `docs/BERACORE_INTEGRATIONS.md` |
+| Test planı ve kapsam | `docs/BERACORE_TEST_PLAN.md` |
+| **Yapılanların kaydı (faz raporları)** | `docs/BERACORE_CHANGELOG.md` |
+| Site/SEO durumu ve geçmişi | `docs/yol-haritasi.md` |
+| Dijital varlık/platform planı | `docs/dijital-varlik-plani.md` |
+
+`docs/panel-crm-plani.md` kaldırıldı — yerini `BERACORE_ADMIN_ROADMAP.md` aldı.
+(Daha önce `site-tamamlama-plani.md` ve `gorunurluk-rehberi.md` de birleştirilip kaldırılmıştı.)
 
 ### Kısa özet
 - Teknik durum sağlam: 27 Tem 2026 tam denetiminde 84 sayfa tarandı, **0 SEO hatası**.
@@ -374,7 +391,39 @@ oturum kaydı DB'de (silinince erişim ANINDA biter). `middleware.ts` edge'de im
   Doğrulama sunucunun kendi sayfaları üzerinden yapılmalı.
 
 ### Panel bakımı
-- Parola değiştirme: `node scripts/hash-password.mjs 'yeni-parola'` → çıktıyı VPS `.env`'e yaz → deploy
-- Yedek: her gece 03:30 `/usr/local/bin/beracore-db-yedek.sh` (sqlite `.backup`, gzip, 30 gün saklama)
-  → `/var/backups/beracore/`. Log: `/var/log/beracore-yedek.log`
+- Parola değiştirme: `node scripts/hash-password.mjs 'yeni-parola'` → çıktıyı VPS `.env`'e yaz → deploy.
+  **Parolada `$` KULLANMA** (dotenv-expand hash'i bozar). Hash'i VPS'e yazmadan önce yerelde
+  doğrula — yanlış hash panele kilitler.
+- Yedek: her gece 03:30 `/usr/local/bin/beracore-yedek.sh` → `/var/backups/beracore/`.
+  Kaynak dosya repoda: `scripts/vps-yedek.sh` (kurulum: `scp` + `chmod +x`).
+  DB (`db-*.db.gz`, yazmadan önce `integrity_check`) **ve** yapılandırma (`config-*.tar.gz`:
+  `.env`, nginx, pm2 dump, sshd conf, authorized_keys, crontab) alınır. Log:
+  `/var/log/beracore-yedek.log`. Eski script'ler `/root/yedek-script-oncesi-20260802/`.
 - Oturumları toptan iptal: VPS'te `sqlite3 /var/www/beracore-data/beracore.db "DELETE FROM sessions"`
+
+### 2 Ağustos 2026 — Faz 0 kalıcı notları
+
+- **🔴 Sır tarayıcı deploy'u durdurur.** `scripts/secret-scan.mjs` `deploy.mjs` içinde
+  **push'tan ÖNCE** çalışır. Sebebi acı: `uretim-kimlik.tmp` canlı panel parolasını ve
+  `AUTH_SECRET`'i **herkese açık** GitHub deposuna taşımıştı (`.gitignore` `.env*`'i
+  kapsıyordu, `*.tmp`'yi kapsamıyordu). Geçmiş `git filter-repo` ile temizlendi, kimlikler
+  rotasyona sokuldu. **Tarayıcıya muafiyet EKLEME** — bunun yerine sabiti koddan kaldır
+  (test anahtarları çalışma anında üretilir). Muafiyet, o dosyada gerçek bir sırrın
+  saklanabileceği kör nokta açar.
+- **Yedek doğrulanmadan yedek sayılmaz.** Denetimde iki şey birden çıktı: üretim `.env`
+  hiçbir yedekte yoktu (eski script Nisan tarihli `.env.local`'i alıyordu) ve DB yedeği
+  hiç çalışmamıştı. Geri yükleme artık test edildi (satır sayıları canlıyla birebir).
+- **Atomik takas `.next/cache`'i taşır.** Yoksa her deploy ISR önbelleğini siliyordu.
+  Faz 2'de içerik DB'ye taşınınca bu, her deploy'da tüm sayfaların soğuması demek olurdu.
+- **Denetim günlüğüne silme fonksiyonu eklenmez.** `src/lib/db/activity.ts` bilerek
+  yalnızca yazma+okuma sunar; `db-flags-activity.test.ts` bunu kilitler.
+- **Tanımsız özellik bayrağı KAPALI sayılır.** Migration çalışmamış bir ortamda yarım
+  modül kazara açılmasın diye (`src/lib/db/flags.ts`).
+- **Test DB'si gerçek migration dosyalarını çalıştırır** (`tests/yardim/test-db.ts`).
+  Şemayı testte elle yazmak, zamanla üretimden ayrışıp var olmayan bir veritabanını
+  doğrulamaya başlamak demektir. `hazirla()` mutlaka `getDb()` kullanan modüller import
+  edilmeden önce çağrılır → test dosyaları modülleri **dinamik** import eder.
+- **Script'i import eden test, script'i ÇALIŞTIRIR.** `secret-scan.mjs` ilk yazıldığında
+  import edilince `process.exit` çağırıp test koşucusunu öldürüyordu; testler "1 test
+  geçti" görünüp sessizce atlanıyordu. CLI kısmı `process.argv[1]` karşılaştırmasıyla
+  korumaya alındı. Yeni script'lerde aynı kalıbı kullan.

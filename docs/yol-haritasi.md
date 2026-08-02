@@ -1,7 +1,25 @@
-# BERACORE — Yol Haritası ve Durum
+# BERACORE — Yol Haritası ve Durum (SİTE / SEO)
 
-**Tek kaynak dosya.** Sitenin mevcut durumu, yapılacaklar ve nasıl yapılacağı burada.
-Git ile taşınır — hangi bilgisayarda olursan ol aynı listeyi görürsün.
+> ⚠️ **2 Ağustos 2026 — kapsam daraldı.** Bu dosya artık **site ve görünürlük** tarafının
+> kaydıdır. Yönetim paneli, CRM ve AI iş gücü programı ayrı bir doküman setine taşındı:
+>
+> | Konu | Dosya |
+> |---|---|
+> | **Program yol haritası (fazlar, kararlar)** | `BERACORE_ADMIN_ROADMAP.md` ← **önce bunu oku** |
+> | Ne inşa ediliyor, neden | `BERACORE_ADMIN_BPDD_v0.1.md` |
+> | Denetim bulguları (18 madde) | `BERACORE_SYSTEM_AUDIT.md` |
+> | Veri modeli | `BERACORE_DATA_MODEL.md` |
+> | Güvenlik modeli | `BERACORE_SECURITY_MODEL.md` |
+> | AI çalışanları ve yetki sınırları | `BERACORE_AI_WORKFORCE.md` |
+> | Entegrasyonlar | `BERACORE_INTEGRATIONS.md` |
+> | Test planı | `BERACORE_TEST_PLAN.md` |
+> | Yapılanların kaydı | `BERACORE_CHANGELOG.md` |
+>
+> `docs/panel-crm-plani.md` kaldırıldı; yerini `BERACORE_ADMIN_ROADMAP.md` aldı.
+> Aşağıdaki §2 "sıradaki adımlar" listesi program başladığı için **kısmen geçersizdir**;
+> site/SEO maddeleri geçerli, panel maddeleri yeni yol haritasında.
+
+**Site ve görünürlük durumu.** Git ile taşınır — hangi bilgisayarda olursan ol aynı listeyi görürsün.
 
 **Son denetim:** 2 Ağustos 2026 (tam site denetimi + LCP/deploy/SSH + **Panel Faz A** — hepsi canlıda)
 
