@@ -35,6 +35,12 @@ if (capture('git', ['status', '--porcelain']).trim()) {
   run('git', ['commit', '-m', msg])
 }
 
+// Sir taramasi PUSH'TAN ONCE. Push geri alinamaz: herkese acik bir depoya giden deger
+// silinse bile sizmis sayilir (klon/onbellek/dizin). 2 Agu 2026'da `uretim-kimlik.tmp`
+// tam boyle sizdi. Bulgu varsa deploy burada durur.
+console.log('[local] sir taramasi')
+run('node', ['scripts/secret-scan.mjs'])
+
 console.log('[local] git push origin main')
 run('git', ['push', 'origin', 'main'])
 

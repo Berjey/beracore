@@ -12,6 +12,18 @@ out/
 .env.*
 !.env.example
 
+# Gecici / karalama dosyalari.
+# 2 Agu 2026: `uretim-kimlik.tmp` canli panel parolasini ve AUTH_SECRET'i tasiyordu ve
+# HERKESE ACIK depoya commit'lenmisti (e4e00a6). `.env*` kaliplari onu kapsamiyordu.
+# Gecmis `git filter-repo` ile temizlendi, kimlikler rotasyona sokuldu.
+# Ikinci savunma hatti: `scripts/secret-scan.mjs` (deploy.mjs push'tan once calistirir).
+*.tmp
+*.bak
+*.orig
+uretim-kimlik*
+kimlik-*.env
+secrets.*
+
 # IDE / lokal araç dosyaları
 .claude/
 .vscode/
