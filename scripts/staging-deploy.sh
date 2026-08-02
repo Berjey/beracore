@@ -62,11 +62,14 @@ if [ "$LOCK_HASH" != "$ONCEKI" ] || [ ! -d node_modules ]; then
   echo "$LOCK_HASH" > .lock-hash
 fi
 
-echo "[staging] build"
-npm run build
-
+# Migration BUILD'DEN ONCE — server-deploy.sh ile ayni gerekce: statik sayfalar
+# derleme aninda `company_settings` tablosunu okuyor. Tablo yokken build kod
+# varsayilanlarina duser (kirilmaz) ama panelden girilen degerler siteye yansimaz.
 echo "[staging] migrationlar"
 node --env-file=.env scripts/migrate.mjs
+
+echo "[staging] build"
+npm run build
 
 # ── pm2 ──────────────────────────────────────────────────────────────────────
 if pm2 describe beracore-staging > /dev/null 2>&1; then

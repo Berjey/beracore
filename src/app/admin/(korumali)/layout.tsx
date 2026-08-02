@@ -42,6 +42,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link href="/admin" className="font-body text-[0.85rem] text-white/60 transition-colors hover:text-white">
                 Gelen Kutusu
               </Link>
+              <Link href="/admin/ayarlar" className="font-body text-[0.85rem] text-white/60 transition-colors hover:text-white">
+                Şirket Ayarları
+              </Link>
               <Link href="/" className="font-body text-[0.85rem] text-white/60 transition-colors hover:text-white">
                 Siteye Dön
               </Link>
