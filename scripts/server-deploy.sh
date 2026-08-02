@@ -54,6 +54,20 @@ fi
 echo "[deploy] atomik takas"
 rm -rf .next-eski
 [ -d .next ] && mv .next .next-eski
+
+# ISR/fetch onbellegini yeni build'e TASI.
+# Atomik takas `.next`i komple degistirdigi icin `.next/cache` de gidiyordu; her
+# deploy sonrasi onbellek sifirlaniyordu. Bugun bedeli kucuk (sayfalar zaten build
+# aninda uretiliyor), ama Faz 2'de icerik veritabanina tasinip sayfalar on-demand
+# revalidation ile uretilmeye baslayinca her deploy TUM sayfalari soguturdu:
+# ilk ziyaretci her sayfada yeniden uretim beklerdi.
+# Build ciktisiyla birlikte gelen cache varsa (Next kendi yaziyor) uzerine yazmayiz;
+# yalnizca eski calisma onbellegini geri koyariz.
+if [ -d .next-eski/cache ] && [ ! -d .next-build/cache ]; then
+  mv .next-eski/cache .next-build/cache
+  echo "[deploy] ISR onbellegi korundu"
+fi
+
 mv .next-build .next
 
 echo "[deploy] pm2 restart"
