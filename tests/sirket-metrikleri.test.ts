@@ -191,3 +191,40 @@ test('hizmet sayfalarında kuruluş yılıyla çelişen deneyim iddiası yok', (
   assert.ok(!/\d\+'?\s*'?,?\s*label:\s*'Yıl Deneyim'/.test(kod));
   assert.ok(!kod.includes("label: 'Yıl Deneyim'"));
 });
+
+// ────────────── hizmet sayfaları ve kayan şerit ──────────────
+
+test('hizmet sayfası istatistikleri kanıtsız SAYI taşımaz', async () => {
+  // Öncesinde 23 alt hizmet sayfası toplam 92 sayı basıyordu: "120+ Web Projesi",
+  // "80+ Özel Proje", "180+ Tasarım Projesi", "2500+ Tasarım"... Toplamı 500'ü
+  // aşıyordu, ana sayfa ise "25+ proje" diyordu. Aynı ziyaretçi ikisini de görebiliyordu.
+  //
+  // Yerlerine, doğruluğu şirketin kendi çalışma biçiminden gelen ifadeler kondu.
+  // Teknik standart adları (256-bit, 3D Secure, ERC-20, 360°) ve sözleşmeye bağlı
+  // taahhütler (3+ revizyon hakkı) sayı içerse de iddia değildir; muaf tutulur.
+  const { services } = await import('@/lib/services-data');
+  const MUAF = new Set(['256-bit', '3D Secure', 'ERC-20', '360°', '3+']);
+
+  const ihlaller: string[] = [];
+  for (const s of services) {
+    for (const alt of s.subServices) {
+      for (const st of alt.stats) {
+        if (MUAF.has(st.value)) continue;
+        if (/\d/.test(st.value)) ihlaller.push(`${alt.slug}: ${st.value} ${st.label}`);
+      }
+    }
+  }
+  assert.deepEqual(ihlaller, []);
+});
+
+test('kayan şeritte sertifika veya hizmet seviyesi iddiası yok', async () => {
+  // 'PCI DSS Uyumlu' ve 'ISO Standartları' sertifika iddiasıydı; elde böyle bir
+  // belge yok. '7/24 Destek' ve '%99.9 Uptime' ise karşılığı olmayan taahhütlerdi.
+  const kaynak = readFileSync('src/components/TechMarquee.tsx', 'utf8');
+  const kod = kodSuz(kaynak);
+  for (const yasak of ['PCI DSS', 'ISO Standartları', '7/24 Destek', '%99.9', '120+', '50+']) {
+    assert.ok(!kod.includes(yasak), `kayan şeritte savunulamaz iddia: ${yasak}`);
+  }
+  // KVKK sertifika değil yasal yükümlülük — kalmalı.
+  assert.ok(kod.includes('KVKK Uyumlu'));
+});

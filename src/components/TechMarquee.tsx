@@ -21,9 +21,18 @@ const ROW2 = [
 ];
 
 // Satır 3 — Şirket Özellikleri & Değerler
+// Bu satırda dört iddia daha vardı ve hiçbiri savunulabilir değildi (bulgu A-07):
+//   '7/24 Destek'    → beş kişilik bir ekip için karşılığı olmayan bir taahhüt
+//   '%99.9 Uptime'   → ölçülmeyen bir hizmet seviyesi sayısı
+//   'PCI DSS Uyumlu' → SERTİFİKA iddiası; PCI DSS'i ödeme sağlayıcısı taşır, biz değil
+//   'ISO Standartları' → yine sertifika iddiası, elde böyle bir belge yok
+// Sertifikası olmayan bir sertifika rozetini yayınlamak, kanıtsız proje sayısından
+// daha ağır bir sorumluluk doğurur. Yerlerine, doğruluğu şirketin kendi çalışma
+// biçiminden gelen ifadeler kondu. 'KVKK Uyumlu' KALDI: sertifika değil, yasal
+// yükümlülük ve sitede karşılığı olan bir uyum çalışması var.
 const ROW3 = [
-  'Uçtan Uca Çözüm', '7/24 Destek', 'Agile Metodoloji', 'Şeffaf Süreç',
-  '%99.9 Uptime', 'PCI DSS Uyumlu', 'KVKK Uyumlu', 'ISO Standartları',
+  'Uçtan Uca Çözüm', 'Sürekli Bakım Desteği', 'Agile Metodoloji', 'Şeffaf Süreç',
+  'İzlenen Altyapı', 'Güvenli Ödeme Entegrasyonu', 'KVKK Uyumlu', 'Kod İnceleme Süreci',
   // Burada '120+ Tamamlanan Proje' ve '50+ Kurumsal Müşteri' yazıyordu (bulgu A-07).
   // İki sorun birdendi: sayılar kanıtsızdı VE aynı sayfadaki sayaç bölümünün
   // söylediğinden (25+ / 15+) farklıydı — ziyaretçi ikisini yan yana görebiliyordu.

@@ -354,3 +354,72 @@ anlık görüntü kullanılır (şu an okunabiliyor; tek tıkla geri yükleme he
 
 **Faz 1.3b:** hizmet ve şehir sayfalarının aynı yöntemle taşınması (her adımda
 öncesi/sonrası HTML denkliği).
+
+---
+
+## Faz 1.2b — Dürüstlük taraması: 92 hizmet istatistiği + sertifika iddiaları (2 Ağustos 2026)
+
+Faz 1.2'de ana sayfa metrikleri kanıta bağlanmıştı ama iki soru kullanıcıya
+bırakılmıştı. Kullanıcı kararı bana devretti; ikisi de kapatıldı.
+
+### 1. Hizmet sayfalarındaki 92 sayı
+
+23 alt hizmet sayfası dört sayı basıyordu. Toplandığında ortaya çıkan tablo:
+**120+ web projesi · 80+ özel proje · 180+ tasarım projesi · 2500+ tasarım ·
+60+ e-ticaret projesi · 45+ mobil uygulama · 35+ AI projesi...** — toplamı 500 proje
+sınırını çoktan aşıyordu. Ana sayfa ise "25+ Tamamlanan Proje" diyordu. Aynı ziyaretçi
+iki sayfayı da görebiliyordu.
+
+Yanında duran diğer iddialar da savunulabilir değildi: `%99.9 Uptime`, `%99.95 İşlem
+Başarısı`, `%35 Dönüşüm Artışı`, `3x Ortalama ROI`, `₺5M+ Yönetilen Bütçe`,
+`Top 10 Google Sıralaması`. Sonuncusu ayrıca sıralama garantisi anlamına geliyordu —
+sitenin KENDİ şehir sayfası SSS'inde "hiçbir dürüst SEO ajansı 1 numara garantisi
+veremez" yazarken.
+
+**Karar:** 92 istatistiğin tamamı, doğruluğu şirketin kendi çalışma biçiminden gelen
+ifadelerle değiştirildi. Tasarım korundu — aynı 4'lü ızgara, aynı görsel dil, yalnızca
+içerik doğru hale getirildi. Örnek: `120+ Web Projesi` → `Next.js · Modern Altyapı`,
+`%99.9 Uptime` → `Responsive · Tüm Ekran Boyutları`.
+
+Teknik standart adları (`256-bit`, `3D Secure`, `ERC-20`, `360°`) ve sözleşmeye bağlı
+taahhütler (`3+ Revizyon Hakkı`) korundu: bunlar iddia değil, tanım.
+
+### 2. Sertifika iddiaları
+
+Kayan şeritte dört savunulamaz ifade vardı:
+
+| İfade | Sorun |
+|---|---|
+| `PCI DSS Uyumlu` | **Sertifika iddiası.** PCI DSS'i ödeme sağlayıcısı taşır, entegrasyonu yapan değil |
+| `ISO Standartları` | **Sertifika iddiası.** Elde böyle bir belge yok |
+| `7/24 Destek` | Beş kişilik ekip için karşılığı olmayan taahhüt |
+| `%99.9 Uptime` | Ölçülmeyen hizmet seviyesi sayısı |
+
+Sertifikası olmayan bir sertifika rozetini yayınlamak, kanıtsız proje sayısından daha
+ağır sorumluluk doğurur — bu yüzden ikisi de kaldırıldı.
+
+`KVKK Uyumlu` **kaldı**: sertifika değil yasal yükümlülük, ve sitede karşılığı olan
+bir uyum çalışması (KVKK sayfası, aydınlatma metni, çerez onayı) var.
+
+### Testler
+
+`tests/sirket-metrikleri.test.ts`'e iki test eklendi: hizmet istatistiklerinde muaf
+liste dışında sayı bulunursa ve kayan şeritte kaldırılan ifadeler geri gelirse test
+patlar. Bu tür içerik, gözden kaçarak geri gelmeye en açık olan türdür.
+
+### Kalite kapıları
+
+`npm run lint` 0 uyarı · `npm test` **127 → 129** · `npm run build` 119 sayfa ·
+`npm run seo-audit` ✅ TEMİZ
+
+### Değişen dosyalar
+
+`src/lib/services-data.ts` (23 `stats` satırı) · `src/components/TechMarquee.tsx` ·
+`tests/sirket-metrikleri.test.ts`
+
+### Not
+
+Ana sayfadaki `25+ proje`, `15+ müşteri`, `%97 memnuniyet` metrikleri **taslak**
+durumunda kalmaya devam ediyor (sitede görünmüyor). Kanıt geldiğinde panelden
+yayına alınabilir. `memnuniyet-orani` için özel not: anket yapılmadıysa bu metrik
+hiç yayınlanmamalı — oran uydurulamaz.
