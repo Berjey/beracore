@@ -23,7 +23,7 @@
 | A-09 | Animasyonlu sayaçlar JS olmadan gerçek değeri göstermiyor | Medium | 🔲 Faz 1 |
 | A-10 | Sunucu ve istemci mesaj uzunluk limitleri uyuşmuyor (4000 / 2000) | Low | 🔲 Faz 1 |
 | A-11 | Hukuki metinler versiyonsuz, yürürlük tarihi izlenmiyor | Medium | 🔲 Faz 1 |
-| A-12 | Staging / preview ortamı yok | **High** | 🔲 Faz 0 (kalan) |
+| A-12 | Staging / preview ortamı yok | **High** | ✅ Kapatıldı (DNS bekliyor) |
 | A-13 | Nodemailer transporter singleton env değişiminde yenilenmiyor | Low | 🔲 Faz 3 |
 | A-14 | Rate limit belleğe bağlı — ikinci süreçte çöker | Medium | 🔲 Faz 3 |
 | A-15 | `CITY_CONTENT_UPDATED` elle güncelleniyor | Low | 🔲 Faz 2 |
@@ -126,11 +126,15 @@
 - **Önerilen çözüm:** `LegalDocument` + `LegalDocumentVersion`. `kvkk-data.ts` bu çıkarımın hazır örneğidir.
 - **Sınır:** AI taslak hazırlayabilir; "hukuken uygundur" kararı veremez.
 
-### A-12 — Staging / preview ortamı yok · **High** · Faz 0 (kalan)
+### A-12 — Staging / preview ortamı yok · **High** · ✅ Kapatıldı (kısmi)
 
 - **Bulgu:** Tek ortam production. Spec "branch → test → preview → onay → merge → deploy → rollback" akışı istiyor.
-- **Önerilen çözüm:** İkinci PM2 uygulaması (`beracore-staging`), ayrı port, alt alan adı, `noindex`, ayrı veritabanı kopyası. İçerik önizlemesi için Next.js Draft Mode.
-- **Maliyet:** Yok — aynı VPS.
+- **Uygulanan çözüm:** `beracore-staging` PM2 uygulaması, `/var/www/beracore-staging`, port 3001, **ayrı veritabanı** (`/var/www/beracore-data-staging`). `scripts/staging-deploy.sh` herhangi bir dalı yayınlar (`DAL=ozellik/xyz`).
+- **Yinelenen içerik koruması — çift katman:** `BERACORE_ORTAM=staging` tek değişkeni hem `robots.txt`'yi `Disallow: /` yapar hem de her yanıta `X-Robots-Tag: noindex, nofollow, noarchive` ekler. İkisi birden bilinçli: robots.txt taramayı engeller ama **zaten bilinen** bir URL'in indekslenmesini kesin durdurmaz.
+- **Erişim:** `127.0.0.1:3001` — dışarıdan erişilemez (doğrulandı: harici istek `000`). Erişim SSH tüneli ile: `ssh -L 3001:127.0.0.1:3001 beracore`. Gerçek veri kopyası taşıyan bir ortamın internete açık durmaması bilinçli.
+- **Test yöntemi (fiilen çalıştırıldı):** staging `robots.txt` = `Disallow: /` ✅ · `X-Robots-Tag` mevcut ✅ · üretim ikisinden de etkilenmedi ✅ · DB'ler ayrı (0 vs 1 kayıt) ✅ · dış port kapalı ✅ · 4 sayfa 200 ✅
+- **Kalan:** Alt alan adı + TLS için `staging.beracore.com` DNS A kaydı gerekiyor (👤 kullanıcı). O zamana kadar SSH tüneli yeterli.
+- **Durum:** ✅ Kapatıldı (DNS bekliyor)
 
 ### A-13 — SMTP transporter singleton'ı env değişimini görmüyor · Low · Faz 3
 `api/contact/route.ts` transporter'ı modül seviyesinde bir kez kurar. `.env` değişip `pm2 restart` yapılmazsa eski ayar kullanılır. Faz 3'te `src/lib/mail/smtp.ts`'e çıkarılırken yapılandırma imzası değişince yeniden kurulmalı.

@@ -80,6 +80,28 @@ Ayrıca: test dosyalarındaki sabit `AUTH_SECRET` literali sır tarayıcıyı te
 muafiyet eklemek test dosyasında gerçek sır saklanabilecek bir kör nokta açacağı için,
 literal kaldırılıp anahtar çalışma anında üretilir yapıldı.
 
+### Staging / ön izleme ortamı
+
+Tek ortam production'dı. `beracore-staging` PM2 uygulaması kuruldu:
+`/var/www/beracore-staging`, port 3001, **ayrı veritabanı** (`/var/www/beracore-data-staging`).
+`scripts/staging-deploy.sh` herhangi bir dalı yayınlar (`DAL=ozellik/xyz`).
+
+**Yinelenen içerik koruması çift katman.** Staging üretimin birebir kopyasıdır; aynı metnin
+iki yerde bulunması üretim sayfalarının sıralamasını zayıflatabilir. `BERACORE_ORTAM=staging`
+tek değişkeni hem `robots.txt`'yi `Disallow: /` yapar hem de `X-Robots-Tag: noindex, nofollow,
+noarchive` başlığı ekler — robots.txt taramayı engeller ama **zaten bilinen** bir URL'in
+indekslenmesini kesin durdurmaz.
+
+**Dışarıdan erişilemez.** `127.0.0.1:3001`'e bağlanır; harici istek `000` döndü (doğrulandı).
+Erişim SSH tüneli ile: `ssh -L 3001:127.0.0.1:3001 beracore`. Gerçek veri kopyası taşıyan bir
+ortamın internete açık durmaması bilinçli. Staging'den müşteriye mail gitmemesi için `SMTP_TO`
+kendi adresimize sabitlenir; IndexNow **çalıştırılmaz**.
+
+Doğrulama: staging robots `Disallow: /` ✅ · `X-Robots-Tag` var ✅ · üretim ikisinden de
+etkilenmedi ✅ · DB'ler ayrı (0 vs 1 kayıt) ✅ · dış port kapalı ✅ · 4 sayfa 200 ✅
+
+**Kalan:** `staging.beracore.com` DNS A kaydı (👤 kullanıcı) → sonra nginx + TLS + basic auth.
+
 ### Dokümantasyon
 
 `BERACORE_ADMIN_BPDD_v0.1.md` · `BERACORE_SYSTEM_AUDIT.md` (18 bulgu) ·
@@ -92,12 +114,13 @@ literal kaldırılıp anahtar çalışma anında üretilir yapıldı.
 ### Değişen dosyalar
 
 ```
-yeni:   scripts/secret-scan.mjs · scripts/vps-yedek.sh
-        src/lib/db/flags.ts · src/lib/db/activity.ts
+yeni:   scripts/secret-scan.mjs · scripts/vps-yedek.sh · scripts/staging-deploy.sh
+        src/lib/db/flags.ts · src/lib/db/activity.ts · src/lib/ortam.ts
         src/lib/db/migrations/002_feature_flags_ve_audit.sql
         tests/yardim/test-db.ts · tests/{db-leads,auth-oturum,db-flags-activity,secret-scan}.test.ts
         docs/BERACORE_*.md (9 dosya)
 değişti: .gitignore · scripts/deploy.mjs · scripts/server-deploy.sh
+        next.config.ts · src/app/robots.ts · CLAUDE.md · docs/yol-haritasi.md
 silindi: uretim-kimlik.tmp (tüm geçmişten)
 ```
 
@@ -108,7 +131,10 @@ Idempotent, yerelde iki kez çalıştırılarak doğrulandı, üretimde uyguland
 
 ### Yeni ortam değişkeni
 
-Yok. (`ADMIN_PASSWORD_HASH` ve `AUTH_SECRET` **değerleri** değişti, anahtar adları aynı.)
+`BERACORE_ORTAM` — yalnızca staging `.env`'inde `staging` olarak tanımlıdır. Üretimde
+**tanımlanmaz**; tanımsızken tüm staging davranışları kapalıdır (varsayılan güvenli).
+
+`ADMIN_PASSWORD_HASH` ve `AUTH_SECRET` **değerleri** değişti; anahtar adları aynı.
 
 ### Kalite kapıları
 
@@ -116,10 +142,11 @@ Yok. (`ADMIN_PASSWORD_HASH` ve `AUTH_SECRET` **değerleri** değişti, anahtar a
 Canlı: `/`, `/blog`, `/iletisim`, `/hizmetler/ai`, `/istanbul/yazilim`, `/admin/login` → 200
 Senkron: `local = GitHub = VPS`
 
-### Bilinen eksikler (Faz 0 kalan)
+### Bilinen eksikler
 
-- Staging/preview ortamı henüz kurulmadı (A-12)
-- `CLAUDE.md` ve `docs/yol-haritasi.md` yeni doküman yapısına henüz bağlanmadı
+- `staging.beracore.com` DNS A kaydı yok → staging'e erişim şimdilik SSH tüneliyle (👤 kullanıcı)
+- Sunucu dışı yedek kopyası yok — tek VPS (Faz 9)
+- Bağımlılık zafiyet taraması deploy zincirinde değil (Faz 2)
 
 ### Sonraki faz
 

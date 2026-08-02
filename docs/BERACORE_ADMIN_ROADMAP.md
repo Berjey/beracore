@@ -1,7 +1,7 @@
 # BERACORE — Yol Haritası (Business Operating System)
 
 **Onaylı plan.** `docs/panel-crm-plani.md`'nin yerini alır.
-**Son güncelleme:** 2 Ağustos 2026 — Faz 0 büyük ölçüde tamamlandı
+**Son güncelleme:** 2 Ağustos 2026 — **Faz 0 tamamlandı**, Faz 1 sıradaki
 
 ---
 
@@ -19,7 +19,7 @@ Her faz tek başına canlıya alınabilir ve tek başına değer üretir.
 
 | Faz | Kapsam | Durum |
 |---|---|---|
-| **0** | Audit, dokümanlar, güvenlik onarımı, yedek doğrulaması, test altyapısı, feature flag, staging | 🔵 %85 |
+| **0** | Audit, dokümanlar, güvenlik onarımı, yedek doğrulaması, test altyapısı, feature flag, staging | ✅ |
 | **1** | Merkezi şirket ayarları · kanıtlı metrikler · içerik DB'ye · referans · vaka çalışması · hukuki versiyonlama · SEO/erişilebilirlik | 🔲 |
 | **2** | Auth, MFA, kullanıcı, rol, yetki, denetim, bildirim, dosya, global arama | 🔲 |
 | **3** | CRM (şirket/kişi/lead/pipeline) · **birleşik gelen kutusu (IMAP+SMTP)** · AI özet · atama · SLA | 🔲 |
@@ -87,8 +87,9 @@ dili korunur. Yeni UI framework yok. Çalışan bileşenler gereksiz yere yenide
 | `feature_flags` + `activity_log` | ✅ |
 | Test altyapısı (36 → 82) | ✅ |
 | 9 doküman | ✅ |
-| Staging / preview ortamı | 🔲 |
-| `CLAUDE.md` + `yol-haritasi.md` bağlama | 🔲 |
+| Staging / preview ortamı (ayrı DB + çift noindex + yerel bağlama) | ✅ |
+| `CLAUDE.md` + `yol-haritasi.md` bağlama | ✅ |
+| `staging.beracore.com` DNS A kaydı | 🔲 👤 |
 
 Ayrıntılı bulgular: `BERACORE_SYSTEM_AUDIT.md` · Yapılanların kaydı: `BERACORE_CHANGELOG.md`
 
@@ -129,6 +130,7 @@ durumu ve güvenlik etkisi dokümante edilir (`BERACORE_INTEGRATIONS.md`).
 
 | Faz | Ne |
 |---|---|
+| 0 | `staging.beracore.com` için DNS A kaydı → `187.124.181.213` (Hostinger DNS paneli) |
 | 1 | Ticari unvan, vergi/MERSİS, adres, çalışma saatleri |
 | 1 | Sayısal iddiaların kanıtı (25+ proje, 15+ müşteri, %97 memnuniyet) |
 | 1 | Vaka çalışması için müşteri yayın izni |
