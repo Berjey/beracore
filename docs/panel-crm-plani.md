@@ -1,6 +1,11 @@
 # BERACORE — Admin Panel + CRM Mimarisi (Onaylı Plan)
 
-**Durum:** Mimari kilitli (28 Tem 2026 onayı). **Uygulama sırası: görünürlük + UI'dan SONRA.**
+**Durum:** ✅ **Faz A 2 Ağu 2026'da tamamlandı ve canlıya alındı.** Sıradaki: Faz B (GA4+GSC).
+
+> **Plandan tek sapma:** DB sürücüsü `better-sqlite3` yerine Node 24'ün yerleşik `node:sqlite`'ı.
+> Gerekçe: yerel (native) modül ABI'ye bağlı; Node 20→24 yükseltmesinde `sharp` tam da bu yüzden
+> yeniden kurulmak zorunda kaldı. Yerleşik modül sıfır bağımlılık ve sıfır ABI riski.
+> Mimarinin geri kalanı plandaki gibi uygulandı. Uygulama notları ve tuzaklar `CLAUDE.md`'de.
 Bu dosya panele geçildiğinde doğru kurmak içindir. İçerik (blog/sayfa) **statik kalır, kodda güncellenir** — panel CMS değildir.
 
 ## Kilitli kararlar
@@ -34,7 +39,7 @@ talepler kaydedilmiyor, sadece e-postalanıp kayboluyor**. Panelin ilk ve en de�
   Gece SQLite `.backup` cron + off-box kopya. Tek seferlik VPS bootstrap (klasörler, cron) elle.
 
 ## Faz kırılımı (her faz tek başına değer üretir)
-- **Faz A — Temel + lead yakalama + gelen kutusu** (en büyük): DB modülü + ilk migration
+- ✅ **Faz A — TAMAMLANDI (2 Ağu 2026)**: DB modülü + ilk migration
   (`leads`, `notes`, `sessions`, `login_attempts`), `migrate.mjs` + deploy kancası, auth, `route.ts`
   düzenlemesi, leads gelen kutusu UI. **Getiri:** lead kaybolmaz + güvenli admin. İlk yapılır.
 - **Faz B — Analitik (GA4 + GSC):** Google Cloud servis hesabı, önbellekli server-side çekim, kartlar.

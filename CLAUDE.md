@@ -3,7 +3,7 @@
 Bu dosya, yeni bir sohbette veya farklı bir bilgisayarda çalışmaya başlandığında
 projenin durumunu ve devam edilecek noktayı aktarır. Git ile taşındığı için her makinede bulunur.
 
-**Son güncelleme:** 30 Temmuz 2026
+**Son güncelleme:** 2 Ağustos 2026
 
 ---
 
@@ -80,8 +80,9 @@ yapar; testler local kalite kapısıdır.
   **Parola ile giriş artık mümkün değil** — yeni makine eklerken public key'i mevcut bir
   makineden `authorized_keys`'e eklemek ZORUNLU (parolayla ekleme yolu kapandı).
 - `fail2ban` aktif (sshd jail, 5 deneme / 10 dk → 1 saat ban)
-- ⚠️ `authorized_keys` içinde **`emirhan`** yorumlu, sahibi doğrulanmamış bir anahtar var.
-  Root erişimi verir. Kullanıcıya soruldu, karar bekleniyor.
+- `authorized_keys`'te 3 anahtar: `hostinger-managed` (panel kurtarma), `beracore-local-deploy`,
+  `beracore-vps-deploy`. Sahibi doğrulanmamış `emirhan` anahtarı 2 Ağu 2026'da kullanıcı
+  onayıyla KALDIRILDI (yedek: `/root/ssh-yedek-20260802/authorized_keys.emirhan-oncesi`).
 - Proje yolu `/var/www/beracore`, PM2 app adı `beracore`, Nginx + Let's Encrypt
 - pm2-root servisi enabled (reboot'ta site kendiliğinden kalkar), certbot timer aktif
 - Nginx config `sites-available/beracore.com`: güvenlik başlıkları (CSP/HSTS/…),
@@ -132,7 +133,7 @@ Sırayla çalıştırılır — hepsi hızlı, build öncesi ilk üçü saniyele
 
 ```
 npm run lint     # ESLint 9 flat config (eslint.config.mjs) — 0 uyarı toleransı
-npm test         # node:test, 25 test, ~0.2 sn — SIFIR ek bağımlılık
+npm test         # node:test, 36 test, ~0.5 sn — SIFIR ek bağımlılık
 npm run build    # tip kontrolü + 119 sayfa SSG
 npm run seo-audit
 ```
@@ -325,3 +326,55 @@ Ancak geri döndürülmesi zor veya dışa dönük işlerde (sunucu güvenlik ay
 4. **Haftalık rutin + her içerik/iş oturumu:** `npm run seo-audit` (scripts/seo-audit.mjs — A-Z denetim:
    meta uzunlukları, tek H1, canonical, JSON-LD, iç link, SSS, yinelenen, ince içerik) → `npm run build`
    → `npm run deploy` → yeni sayfalar canlıda 200 mü → ara ara GSC indeks sayısı + GA4 çalışıyor mu.
+
+---
+
+## Yönetim Paneli (Faz A — 2 Ağu 2026, canlıda)
+
+`/admin` — gelen kutusu + lead yönetimi. **CMS değildir**; blog/sayfa içeriği kodda kalır.
+Public site %100 statik ve SEO-bütün; panel aynı Next.js süreci içinde dinamik olarak yaşar
+(PM2/nginx/TLS değişmedi).
+
+**Veritabanı:** `node:sqlite` (Node 24 yerleşiği) — `better-sqlite3` yerine bilinçli tercih.
+Yerel (native) modül ABI'ye bağlıdır ve Node yükseltmesinde `sharp` yüzünden tam da bu sorun
+yaşandı; yerleşik modül sıfır bağımlılık ve sıfır ABI riski demek.
+Konum **repo DIŞINDA**: `/var/www/beracore-data/beracore.db` (chmod 700) — `git reset --hard`
+dokunamaz. Dev'de `./.data/` (gitignore).
+
+**Şema:** `leads` · `notes` (polimorfik) · `sessions` · `login_attempts` · `schema_migrations`.
+Migration'lar `src/lib/db/migrations/*.sql`, çalıştırıcı `scripts/migrate.mjs` (idempotent,
+her dosya tek transaction). Deploy'da build sonrası / restart öncesi otomatik çalışır.
+
+**Kimlik doğrulama:** tek yönetici. Parola `scrypt` hash'i `.env`'de, oturum çerezi HMAC imzalı,
+oturum kaydı DB'de (silinince erişim ANINDA biter). `middleware.ts` edge'de imzayı,
+`(korumali)/layout.tsx` DB'den asıl yetkiyi doğrular. Kilit: IP başına 15 dk'da 8 başarısız.
+
+### Panelde öğrenilen tuzaklar (tekrar düşmemek için)
+
+- **`.env` değerlerinde `$` KULLANMAYIN.** Next dotenv-expand ile okur; `scrypt$tuz$hash`
+  biçimindeki hash'te `$tuz` değişken referansı sanılıp boşa çevriliyor ve DOĞRU parola bile
+  reddediliyordu. Ayırıcı `:` yapıldı, `tests/auth.test.ts` bunu kilitliyor.
+- **Oturum çerezi kuran işlem Server Action OLMAMALI.** Server Action içinde
+  `cookies().set()` + `redirect()` yapıldığında `Set-Cookie` yanıtta görünüyor ama tarayıcı
+  saklamıyor. Kontrol deneyiyle doğrulandı (aynı tarayıcıda rota işleyicisinin çerezi saklandı).
+  Giriş/çıkış/mutasyonların hepsi klasik form POST + rota işleyicisi — yan faydası panelin
+  JavaScript kapalıyken de çalışması ve düz HTTP ile test edilebilmesi.
+- **Yönlendirme hedefi `new URL(yol, req.url)` ile kurulmamalı.** `req.url` isteğin gerçek
+  ana makinesini taşımayabiliyor (`127.0.0.1`'e gelen isteğe `localhost` hedefli yönlendirme
+  döndü); çerez farklı host'ta gönderilmediği için sonsuz giriş döngüsü oluştu. Hedef `Host`
+  başlığından kurulur (nginx `proxy_set_header Host $host` yazar).
+- **Çerezin `Secure` bayrağı `NODE_ENV`'den değil `X-Forwarded-Proto`'dan türetilir.**
+  Aksi halde üretim build'i yerelde http üzerinde hiç oturum açamıyor (Secure çerez sessizce atılır).
+- **`(korumali)` rota grubu şart:** giriş sayfası korumalı düzenin İÇİNDE olursa
+  login → düzen → login sonsuz yönlendirmesi oluşur.
+- **Kabuk script'leri LF olmalı** — `.gitattributes` zorluyor. CRLF, VPS'te
+  `set: pipefail: invalid option name` verip deploy'u kırar.
+- **Sunucu çalışırken DB'yi dışarıdan okumayın.** WAL modunda başka bir süreç taahhüt edilmiş
+  satırları göremiyor (Windows'ta doğrulandı) — testler yanlış "veri yok" sonucu verir.
+  Doğrulama sunucunun kendi sayfaları üzerinden yapılmalı.
+
+### Panel bakımı
+- Parola değiştirme: `node scripts/hash-password.mjs 'yeni-parola'` → çıktıyı VPS `.env`'e yaz → deploy
+- Yedek: her gece 03:30 `/usr/local/bin/beracore-db-yedek.sh` (sqlite `.backup`, gzip, 30 gün saklama)
+  → `/var/backups/beracore/`. Log: `/var/log/beracore-yedek.log`
+- Oturumları toptan iptal: VPS'te `sqlite3 /var/www/beracore-data/beracore.db "DELETE FROM sessions"`

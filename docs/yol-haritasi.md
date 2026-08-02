@@ -3,7 +3,7 @@
 **Tek kaynak dosya.** Sitenin mevcut durumu, yapılacaklar ve nasıl yapılacağı burada.
 Git ile taşınır — hangi bilgisayarda olursan ol aynı listeyi görürsün.
 
-**Son denetim:** 2 Ağustos 2026 (tam site denetimi + LCP/deploy/SSH düzeltmeleri — hepsi canlıda)
+**Son denetim:** 2 Ağustos 2026 (tam site denetimi + LCP/deploy/SSH + **Panel Faz A** — hepsi canlıda)
 
 Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalısın · 🛠 Claude yapar
 
@@ -13,7 +13,7 @@ Notasyon: 🔴 kritik · 🟡 önemli · 🟢 iyileştirme · 👤 sen yapmalıs
 
 **Kod tarafı bitti.** 2 Ağu 2026'da tam site denetimi yapıldı ve bulunan her şey düzeltilip
 canlıya alındı (bkz. §2.7). Local + GitHub + canlı aynı commit'te. Kalite kapıları:
-`npm run lint` (0/0) · `npm test` (30/30) · `npm run build` (119 sayfa) · `npm run seo-audit` (✅ temiz).
+`npm run lint` (0/0) · `npm test` (36/36) · `npm run build` · `npm run seo-audit` (✅ temiz).
 
 **2 Ağu 2026 — CRM öncesi son tur tamamlandı:** sitemap `lastmod` hatası düzeltildi,
 6 hizmet kategorisi sayfası ince içerikten çıkarıldı (252-299 → 1005-1233 kelime + FAQPage),
@@ -27,9 +27,13 @@ Faz 2 dizin profil metinleri hazırlandı. Tam tarama: **111 sayfa, 0 bulgu.**
 | 2 | **Node 20 → 24 yükseltme kararı** (VPS'in Node'u destek dışı) | 👤 karar senin | §2 Adım 1.5 |
 | 3 | Sosyal/dizin profilleri aç (LinkedIn, Instagram, X, Clutch…) | 👤 sen | `docs/dijital-varlik-plani.md` |
 
-Bunlardan sonra 🛠 Claude'un sırada bekleyen iki büyük işi:
-1. **Admin Panel + CRM Faz A** (`docs/panel-crm-plani.md`) — şu an gelen form talepleri
-   hiçbir yere kaydedilmiyor; tek kayıt e-posta kutusu.
+✅ **Admin Panel Faz A tamamlandı (2 Ağu 2026).** Gelen form talepleri artık veritabanına
+kaydediliyor ve `/admin` üzerinden yönetiliyor — e-posta artık tek kayıt değil. SMTP çökse
+bile talep kaybolmuyor (panelde "mail ✕" rozetiyle işaretlenir).
+
+Sıradaki 🛠 işler:
+1. **Panel Faz B — GA4 + Search Console API** (`docs/panel-crm-plani.md`): SEO ve trafik
+   verisini panele taşır, "sürekli güncel olma" hedefinin teknik karşılığı budur.
 2. **İçerik fazı** (kullanıcı açtığında) — 6 hizmet kategorisi sayfası 2 Ağu'da çözüldü
    (1005-1233 kelime). Kalan: **24 şehir sayfası 246-302 kelime**; aynı `overview`/`faq`
    kalıbı `CityPage` tipine taşınarak çözülebilir.
