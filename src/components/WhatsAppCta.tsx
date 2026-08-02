@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 // Kalıcı WhatsApp iletişim butonu — her sayfada görünür.
 // Sağ altta ScrollToTop olduğu için sol altta konumlanır.
@@ -9,14 +10,21 @@ const MESSAGE = 'Merhaba, BERACORE ile bir projem hakkında görüşmek istiyoru
 const HREF = `https://wa.me/${PHONE}?text=${encodeURIComponent(MESSAGE)}`;
 
 export default function WhatsAppCta() {
+  const pathname = usePathname();
   const [hovering, setHovering] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // Yönetim paneli bir müşteri yüzeyi değil: kendi kendine WhatsApp yazmanın anlamı yok
+  // ve panelin üstünü kapatıyor. Kök düzende olduğu için burada eleniyor.
+  const panelde = pathname?.startsWith('/admin') ?? false;
 
   // İlk ekranda dikkat dağıtmamak için kısa bir gecikmeyle belirir.
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 1200);
     return () => clearTimeout(t);
   }, []);
+
+  if (panelde) return null;
 
   return (
     <a

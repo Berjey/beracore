@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import Link from 'next/link';
 import { readCookieDecision, writeCookieDecision } from '@/lib/cookie-consent';
@@ -13,6 +14,7 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
  * - Tanımlıysa: kullanıcı "Kabul Et" demeden GA YÜKLENMEZ (onay öncesi çerez set edilmez).
  */
 export default function CookieConsent() {
+  const pathname = usePathname();
   const [decision, setDecision] = useState<'accepted' | 'rejected' | 'pending' | null>(null);
 
   useEffect(() => {
@@ -20,8 +22,10 @@ export default function CookieConsent() {
     setDecision(readCookieDecision() ?? 'pending');
   }, []);
 
-  // GA yapılandırılmamış → tamamen pasif (banner da GA da yok)
-  if (!GA_ID) return null;
+  // GA yapılandırılmamış → tamamen pasif (banner da GA da yok).
+  // Yönetim paneli ziyaretçi yüzeyi değildir: orada ne çerez bandı gösterilir
+  // ne de analitik yüklenir (panel trafiği ölçüme karışmamalı).
+  if (!GA_ID || pathname?.startsWith('/admin')) return null;
 
   /** Kararı hem depolamaya hem <html data-cc> özniteliğine yazar.
    *  Öznitelik CSS'i sürdüğü için band aynı karede gizlenir — React state'i

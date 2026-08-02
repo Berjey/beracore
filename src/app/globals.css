@@ -47,6 +47,24 @@ h1, h2, h3, h4, h5, h6 {
   a, button { cursor: pointer !important; }
 }
 
+/* ===== Yönetim paneli: yerleşik imleç =====
+   `body.cursor-custom` imleci TÜM sitede gizler ve yerine `CustomCursor` bileşeni
+   çizer. O bileşen yalnızca herkese açık sayfalarda render ediliyor; `/admin`
+   altında render edilmediği için imleç kayboluyordu (fare tamamen görünmez oluyordu).
+   Panelde özel imleç istemiyoruz — bir çalışma aracı, gösteri yüzeyi değil.
+   `!important` gerekli: `.cursor-custom a` ile aynı özgüllükteyiz. */
+/* Gövdenin kendisi de sıfırlanmalı: `.panel-alan` gövdenin ÇOCUĞU olduğu için
+   alt kurallar `body`yi kapsamıyor ve kenar boşluklarında imleç yine kayboluyordu.
+   `:has()` desteklenmeyen tarayıcıda aşağıdaki kurallar zaten görünür alanı kaplar. */
+body:has(.panel-alan) { cursor: auto !important; }
+
+.panel-alan, .panel-alan * { cursor: auto !important; }
+.panel-alan a, .panel-alan button, .panel-alan summary, .panel-alan label,
+.panel-alan [role='button'] { cursor: pointer !important; }
+.panel-alan input, .panel-alan textarea, .panel-alan select { cursor: text !important; }
+.panel-alan input[type='submit'], .panel-alan input[type='checkbox'],
+.panel-alan input[type='radio'] { cursor: pointer !important; }
+
 /* ===== Gradient Text ===== */
 .gradient-text {
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent2));

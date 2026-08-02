@@ -37,7 +37,7 @@ export default async function LoginPage({
   const mesaj = sp.hata ? mesajlar[sp.hata] : null;
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 py-16" style={{ background: '#0f0d16' }}>
+    <main className="panel-alan min-h-screen flex items-center justify-center px-6 py-16" style={{ background: '#0f0d16' }}>
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <p className="font-body text-[0.68rem] font-semibold tracking-[0.4em] uppercase text-accent2/60">

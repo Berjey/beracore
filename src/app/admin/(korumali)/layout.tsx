@@ -31,7 +31,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!oturum) redirect('/admin/login');
 
   return (
-    <div className="min-h-screen" style={{ background: '#0f0d16' }}>
+    <div className="panel-alan min-h-screen" style={{ background: '#0f0d16' }}>
       <header className="border-b border-white/[0.07] bg-white/[0.015]">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
           <div className="flex items-center gap-6">
