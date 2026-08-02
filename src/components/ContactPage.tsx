@@ -4,12 +4,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useServices } from '@/components/ServicesProvider';
 import { FORM_LIMITS } from '@/lib/form-limits';
+import type { LegalDoc } from '@/lib/legal-data';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollText from '@/components/ScrollText';
 import { telHref, mailtoHref, konumMetni, type SirketBilgisi } from '@/lib/sirket';
 import { useSirket } from '@/components/SirketProvider';
-import { kvkkMeta, kvkkSections } from '@/lib/kvkk-data';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -162,7 +162,14 @@ const INITIAL_FORM: FormState = {
 // MAIN COMPONENT
 // ============================================================
 
-export default function ContactPage() {
+/**
+ * KVKK metni PROP olarak gelir, `kvkk-data.ts`'ten import EDİLMEZ.
+ *
+ * İçerik Faz 1.5'te veritabanına taşındı; modal koddaki kopyayı okumaya devam
+ * etseydi panelden düzenlenen KVKK metni burada ESKİ hâliyle kalırdı — üstelik
+ * bu, kullanıcının onay verdiği metnin gösterildiği yer.
+ */
+export default function ContactPage({ kvkk }: { kvkk: LegalDoc }) {
   // Hizmet listesi kök düzenden bağlamla gelir (Faz 1.3c). Doğrudan import
   // edilseydi 23 alt hizmetin tüm uzun metni bu sayfanın paketine girerdi.
   const services = useServices();
@@ -1306,17 +1313,17 @@ export default function ContactPage() {
           <div className="relative flex items-start justify-between gap-4 px-8 pt-7 pb-6 shrink-0 max-md:px-5 max-md:pt-6 max-md:pb-5">
             <div className="min-w-0">
               <span className="inline-block font-body text-[0.68rem] font-semibold tracking-[0.5em] uppercase text-accent2/60 mb-3">
-                {kvkkMeta.accent}
+                {kvkk.accent}
               </span>
               <h3
                 id="kvkk-modal-title"
                 className="font-heading text-[clamp(1.4rem,2.6vw,1.85rem)] font-bold tracking-tight leading-[1.15] gradient-text"
               >
-                {kvkkMeta.title}
+                {kvkk.title}
               </h3>
               <div className="mt-3 inline-flex items-center gap-2 font-body text-[0.72rem] text-t3 tracking-wide">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent2/60" aria-hidden="true" />
-                Son güncelleme: {kvkkMeta.lastUpdated}
+                Son güncelleme: {kvkk.lastUpdated}
               </div>
             </div>
             <button
@@ -1355,11 +1362,11 @@ export default function ContactPage() {
             className="kvkk-scroll relative flex-1 overflow-y-auto px-8 py-7 max-md:px-5 max-md:py-6"
           >
             <p className="font-body text-[0.92rem] text-t2 font-light leading-[1.85] mb-9 max-md:text-[0.88rem] max-md:mb-7">
-              {kvkkMeta.intro}
+              {kvkk.intro}
             </p>
 
             <div className="space-y-9 max-md:space-y-7">
-              {kvkkSections.map((s, i) => {
+              {kvkk.sections.map((s, i) => {
                 const dot = i % 2 === 0 ? '#ffa9f9' : '#fff7ad';
                 return (
                   <section key={i}>

@@ -6,6 +6,8 @@ import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ScrollProgress from '@/components/ScrollProgress';
 import ContactPage from '@/components/ContactPage';
+import { getLegalDoc } from '@/lib/db/content';
+import { legalDocs } from '@/lib/legal-data';
 import { ogImages, twitterImages } from '@/lib/seo';
 
 const CONTACT_SECTIONS = [
@@ -45,7 +47,7 @@ export default function IletisimPage() {
       <Navbar />
       <ScrollProgress sections={CONTACT_SECTIONS} />
       <main id="main" className="relative z-[1]">
-        <ContactPage />
+        <ContactPage kvkk={getLegalDoc('kvkk') ?? legalDocs[0]} />
       </main>
       <Footer />
       <ScrollToTop />

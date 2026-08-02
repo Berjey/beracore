@@ -649,7 +649,8 @@ kilitler — değerlerin eşitliğini değil, **kaynağın tekliğini**.
 
 ### Bilinen eksikler
 
-- `kvkk-data.ts` hâlâ duruyor ve `ContactPage` içindeki KVKK modali onu okuyor;
-  yani panelden düzenlenen KVKK metni iletişim sayfasındaki modalde eski kalır.
-  Modal istemci tarafında olduğu için düzeltmesi prop/bağlam gerektiriyor → sıradaki.
+- ~~`kvkk-data.ts` hâlâ duruyor~~ → **aynı oturumda kapatıldı.** İletişim sayfasındaki
+  KVKK modali koddaki kopyayı okuyordu; panelden düzenlenen metin orada eski kalırdı —
+  üstelik burası kullanıcının onay verdiği metnin gösterildiği yer. Metin artık sunucudan
+  prop olarak geçiyor, `kvkk-data.ts` SİLİNDİ. `/iletisim` HTML'i birebir aynı.
 - Eski hukuki sürümlerin TAM METNİ public erişime açık değil (yalnızca revizyon listesi).
