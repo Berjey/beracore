@@ -49,9 +49,9 @@ domain yaşı 15 yıla varıyor. Kısa vadede kazanılacak yer uzun kuyruk sorgu
 Gerçekçi takvim: **4-6 ayda düzenli organik trafik.**
 
 **Bilinen, kabul edilmiş açıklar:** CSP'de `script-src 'unsafe-inline'` (kaldırmak sayfaları
-statik olmaktan çıkarır) · 4 sayfa tipinde gsap duruyor · şehir sayfaları 246-302 kelime
-(içerik fazı işi — hizmet kategorileri 2 Ağu'da çözüldü) · bileşen (JSX) render testi yok ·
-Lighthouse skoru henüz ölçülmedi (👤) · **dış bağlantı ve sosyal profil YOK** (asıl darboğaz).
+statik olmaktan çıkarır) · 4 sayfa tipinde gsap duruyor · bileşen (JSX) render testi yok ·
+Lighthouse skoru henüz ölçülmedi (👤) · **dış bağlantı ve sosyal profil YOK** (asıl darboğaz,
+kullanıcı şimdilik açmama kararı aldı) · SMTP şifresi rotasyonu yapılmayacak (kullanıcı kararı).
 
 ---
 
@@ -86,20 +86,19 @@ ve 5 regresyon testiyle kilitlendi (`tests/sitemap.test.ts`).
 **Sıradaki ölçüm 👤:** ~2 hafta sonra aynı ekranı tekrar oku. Beklenti: "Dizine eklendi"
 artmalı, toplam bilinen sayfa 45'ten yukarı çıkmalı.
 
-### 🔴 Adım 1.5 — VPS Node sürümü: KARAR SENİN 👤
-**Durum:** VPS Node **20.20.2** / npm 10.8.2 çalıştırıyor. Node 20'nin destek ömrü
-**Nisan 2026'da doldu** → üretim sunucusu artık güvenlik yaması almıyor.
+### ✅ Adım 1.5 — VPS Node 20 → 24 (2 Ağu 2026 — TAMAMLANDI)
+VPS artık **Node 24.18.1 / npm 11.16.0** çalıştırıyor; local ile aynı hat.
+İki sorun birden kapandı: (1) destek dışı çalışma zamanı güvenlik yaması alıyor,
+(2) npm 10↔11 lockfile sürtünmesi bitti — `npx npm@10.8.2 install --package-lock-only`
+geçici çözümü artık **kullanılmamalı**.
 
-**İki somut sorun yaratıyor:**
-1. **Güvenlik:** Yamalanmayan bir çalışma zamanı.
-2. **Deploy sürtünmesi:** Local'de npm 11 var, VPS'te npm 10. npm 11 `sharp`'ın WASM alt
-   bağımlılıklarını lockfile'a yazmıyor, VPS'te `npm ci` EUSAGE ile patlıyor (30 Tem'de bir
-   deploy'u yarıda kesti). Şu anki çözüm elle: bağımlılık değişince deploy'dan önce
-   `npx -y npm@10.8.2 install --package-lock-only` çalıştırmak (ayrıntı `CLAUDE.md`).
+Yöntem: NodeSource deposu `node_24.x` → `apt install nodejs` → `node_modules` silinip
+`npm ci` (sharp yerel bağımlılık, ABI değişti) → build → pm2.
+Süreçte `pm2 update` uygulamayı pm2 listesinden düşürdü; orijinal tanımıyla
+(`pm2 start npm --name beracore -- start`) yeniden kaydedildi. Planlı kesinti ~6 dakika.
+Doğrulama: 8 sayfa tipi 200, görsel optimizasyonu (sharp) 200, API 422/405, yeni hata logu yok.
+Geri alma: `/root/NODE-GERI-ALMA.txt`
 
-**Node 24'e yükseltmek ikisini de bitirir.** Ama üretim çalışma zamanını değiştirdiği ve
-geri alması zahmetli olduğu için **Claude bunu sormadan yapmaz.** "Yükselt" dersen yapılır
-(önce pm2 dump + build doğrulaması, sonra nvm ile geçiş, sonra deploy testi).
 
 ### ✅ Adım 2 — Google Analytics 4 (28 Tem 2026 — TAMAMLANDI)
 GA4 mülkü açıldı, ölçüm kimliği **`G-NX5SRKJT2M`** VPS `/var/www/beracore/.env`'e eklendi ve
@@ -360,8 +359,11 @@ ve 8 sayfada tek gerçek ihlal kaldı.
   (4 bölüm) + `faq` (5 soru) eklendi, hub sayfasında render edilip FAQPage şemasına bağlandı.
   Ölçüm: 252-299 → **1005-1233 kelime**, h2 sayısı 2 → 7. İçerik tavsiye/yöntem odaklı;
   uydurma müşteri metriği veya referans yok.
-- 🟢 **Şehir sayfalarının içerik hacmi** (246-302 kelime) — 24 sayfa, aynı kalıp uygulanabilir.
-  Kategori sayfalarındaki `overview`/`faq` yaklaşımı `CityPage` tipine de taşınabilir.
+- ✅ **Şehir sayfalarının içerik hacmi** — 2 Ağu 2026'da çözüldü: 24 sayfanın her birine
+  şehrin ekonomik kimliği ile hizmetin gerçekliğini birleştiren 2 bölüm + 2 SSS eklendi
+  (İstanbul: rekabet yoğunluğu/maliyet · Ankara: kamu, teknokent, ihale · İzmir: ihracat,
+  çok dilli yapı, üretim · Bursa: otomotiv yan sanayi, izlenebilirlik, B2B).
+  Ölçüm: **246-302 → 712-799 kelime**, h2 3 → 5, SSS 3 → 5. 24 blok da birbirinden farklı.
 - 🟢 **SMTP şifresi rotasyonu** 👤 — `emirhan` anahtarı geçmişte root erişimine sahipti,
   yani VPS'teki `.env` (SMTP şifresi) görülmüş olabilir. Hostinger panelinden
   `info@beracore.com` şifresi değiştirilirse VPS `.env` güncellenmeli (🛠 Claude yapar).

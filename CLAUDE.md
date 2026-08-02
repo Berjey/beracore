@@ -42,28 +42,33 @@ içermediği için iki yol birbirinden ayrışmıştı. `scripts/server-deploy.s
 
 Local + GitHub + canlı **her zaman aynı commit'te tutulur**. Kullanıcı bunu böyle istiyor.
 
-### ⚠️ Node/npm sürüm farkı — lockfile tuzağı (30 Tem 2026'da bir deploy'u patlattı)
+### ✅ Node sürümü — 2 Ağu 2026'da VPS Node 24'e yükseltildi
 
-**VPS: Node 20.20.2 / npm 10.8.2 · Local (bu makine): Node 24.12 / npm 11.6.2**
+**VPS: Node 24.18.1 / npm 11.16.0 · Local: Node 24.18.0 / npm 11.16.0 → artık AYNI hat.**
 
-npm 11 ile `npm install` çalıştırmak, `sharp`'ın WASM alt bağımlılıklarını
-(`@emnapi/core`, `@emnapi/wasi-threads`) lockfile'a YAZMIYOR. npm 10 bunları bekliyor ve
-VPS'te `npm ci` **EUSAGE** ("package.json and package-lock.json are not in sync") ile
-patlıyor → deploy git push'tan sonra, build'den önce yarıda kalıyor.
+Bu, 30 Tem'de bir deploy'u patlatan lockfile tuzağını **kökten bitirdi**: npm 11 `sharp`'ın
+WASM alt bağımlılıklarını lockfile'a yazmıyordu, VPS'in npm 10'u bunları bekleyip `npm ci`'da
+EUSAGE veriyordu. İki taraf da npm 11 olduğu için `npx npm@10.8.2 install --package-lock-only`
+geçici çözümü **artık gereksiz — kullanmayın**, lockfile'ı bozar.
 
-**Kural:** Local'de bağımlılık ekledikten/güncelledikten sonra, deploy'dan ÖNCE:
-```
-npx -y npm@10.8.2 install --package-lock-only --no-audit --no-fund
-npx -y npm@10.8.2 ci --dry-run --no-audit --no-fund   # doğrulama
-```
+Yükseltme yöntemi: NodeSource deposu `node_20.x` → `node_24.x`, ardından `apt install nodejs`.
+`sharp` yerel (native) bağımlılık olduğu için ABI değişiminde **`node_modules` silinip
+`npm ci` yeniden çalıştırılmalıdır** — aksi halde görsel optimizasyonu çöker.
 
-Ayrıca `npm test` Node'un yerleşik TypeScript çalıştırmasına dayanır (Node ≥22.6) →
-**VPS'in Node 20'sinde çalışmaz.** Sorun değil: testler local kalite kapısıdır, deploy
-adımı yalnızca `npm ci` + `next build` yapar. Ama VPS'te test çalıştırmayı denemeyin.
+> ⚠️ **`pm2 update` tuzağı:** pm2 daemon'ını yeni Node ile yenilerken kayıtlı uygulama
+> listeden düşebilir; sonrasında `pm2 start beracore` "app not found" verir. Bu durumda
+> uygulama orijinal tanımıyla yeniden kaydedilir:
+> ```
+> cd /var/www/beracore && pm2 start npm --name beracore -- start && pm2 save
+> ```
+> (script `/usr/bin/npm`, args `start`, cwd `/var/www/beracore`, fork mode)
 
-> 🔴 **Kullanıcıya sorulacak:** Node 20 destek ömrünü tamamladı (Nisan 2026). VPS'i
-> Node 24'e yükseltmek hem bu lockfile sürtünmesini bitirir hem güvenlik yamalarını
-> geri getirir. Üretim çalışma zamanını değiştirdiği için **karar kullanıcınındır.**
+Geri alma yönergesi sunucuda: `/root/NODE-GERI-ALMA.txt` · pm2 yedeği:
+`/root/pm2-dump-yedek-20260802.json`
+
+`npm test` Node'un yerleşik TypeScript çalıştırmasına dayanır (Node ≥22.6) — VPS artık
+Node 24 olduğu için orada da çalışabilir. Yine de deploy adımı yalnızca `npm ci` + `next build`
+yapar; testler local kalite kapısıdır.
 
 ### VPS
 - Host `187.124.181.213`, user `root`, SSH alias `beracore` (Hostinger, Ubuntu)
