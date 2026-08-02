@@ -30,6 +30,23 @@ before(async () => {
 
 after(async () => { await temizle(); });
 
+/**
+ * YALNIZCA blog SSS'lerini sayar.
+ *
+ * `content_faq` artık şehir sayfalarının sorularını da tutuyor (Faz 1.3b);
+ * tablonun tamamını saymak, blog aktarımıyla ilgisi olmayan bir sayı üretir.
+ */
+function sssSayisi(): number {
+  const r = testDb()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM content_faq f
+         JOIN content_pages p ON p.id = f.content_id
+        WHERE p.tip = 'blog'`
+    )
+    .get() as { n: number };
+  return Number(r.n);
+}
+
 test('tablo BOŞKEN koddaki içeriğe düşülür', () => {
   // Aktarım henüz çalışmadı. Site içeriksiz kalmamalı.
   const posts = C.getBlogPosts();
@@ -46,8 +63,7 @@ test('aktarım 50 yazıyı ve SSS kayıtlarını yazar', async () => {
   assert.equal(Number(n.n), 50);
 
   const sssKod = blogPosts.reduce((t, p) => t + (p.faq?.length ?? 0), 0);
-  const sss = db.prepare('SELECT COUNT(*) AS n FROM content_faq').get() as { n: number };
-  assert.equal(Number(sss.n), sssKod);
+  assert.equal(sssSayisi(), sssKod);
 });
 
 test('aktarım İDEMPOTENT — ikinci çalıştırma hiçbir şey eklemez', async () => {
@@ -56,10 +72,9 @@ test('aktarım İDEMPOTENT — ikinci çalıştırma hiçbir şey eklemez', asyn
   assert.equal(r.atlanan, 50);
 
   const db = testDb();
-  const sss = db.prepare('SELECT COUNT(*) AS n FROM content_faq').get() as { n: number };
   const sssKod = blogPosts.reduce((t, p) => t + (p.faq?.length ?? 0), 0);
   // SSS çiftlenmemeli — en kolay gözden kaçacak hata bu.
-  assert.equal(Number(sss.n), sssKod);
+  assert.equal(sssSayisi(), sssKod);
 });
 
 test('aktarım var olan kaydı EZMEZ (panel düzenlemesi korunur)', async () => {

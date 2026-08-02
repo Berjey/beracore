@@ -1,7 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { cityPages, getCityPage } from '@/lib/city-pages-data';
+// İçerik veritabanından okunur; tablo boşsa/okunamazsa koddaki içeriğe düşer.
+import { getCityPages, getCityPage } from '@/lib/db/content';
+import { getSirket } from '@/lib/db/settings';
 import ScrollProgress from '@/components/ScrollProgress';
 import { SITE_URL, ogImages, twitterImages } from '@/lib/seo';
 
@@ -18,7 +20,7 @@ interface Props {
 }
 
 export function generateStaticParams() {
-  return cityPages.map((p) => ({ sehir: p.citySlug, hizmet: p.slug }));
+  return getCityPages().map((p) => ({ sehir: p.citySlug, hizmet: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -55,7 +57,7 @@ export default async function CityServicePage({ params }: Props) {
   if (!page) notFound();
 
   const url = `${SITE_URL}/${sehir}/${hizmet}`;
-  const others = cityPages.filter((p) => p.citySlug === sehir && p.slug !== hizmet);
+  const others = getCityPages().filter((p) => p.citySlug === sehir && p.slug !== hizmet);
 
   const serviceJsonLd = {
     '@context': 'https://schema.org',
@@ -67,7 +69,9 @@ export default async function CityServicePage({ params }: Props) {
       '@type': 'ProfessionalService',
       name: 'BERACORE',
       url: SITE_URL,
-      telephone: '+905539862306',
+      // Merkezi şirket ayarlarından (bulgu A-08). Burada sabit kalmıştı;
+      // numara değişince yerel SEO için en kritik 24 sayfada eski kalırdı.
+      telephone: getSirket().telefonE164,
       areaServed: { '@type': 'City', name: page.city },
       address: { '@type': 'PostalAddress', addressLocality: page.city, addressCountry: 'TR' },
     },

@@ -423,3 +423,72 @@ Ana sayfadaki `25+ proje`, `15+ müşteri`, `%97 memnuniyet` metrikleri **taslak
 durumunda kalmaya devam ediyor (sitede görünmüyor). Kanıt geldiğinde panelden
 yayına alınabilir. `memnuniyet-orani` için özel not: anket yapılmadıysa bu metrik
 hiç yayınlanmamalı — oran uydurulamaz.
+
+---
+
+## Faz 1.3b — Şehir sayfaları veritabanına taşındı (2 Ağustos 2026)
+
+24 yerel SEO sayfası (`/[sehir]/[hizmet]` — İstanbul, Ankara, İzmir, Bursa × 6 hizmet)
+`content_pages` tablosuna girdi ve `/admin/sehirler` üzerinden düzenlenebilir hale geldi.
+
+**HTML denkliği: 24/24 sayfa birebir aynı. Sitemap birebir aynı.**
+
+### Blogdan farklı çözülen kısım
+
+Şehir sayfasının alan kümesi (`intro`, `sections`, `bullets`, `serviceHref`, `keyword`)
+blog kolonlarına oturmuyor. Bu alanlar tek bir JSON yükü olarak `govde`ye yazılıyor —
+ayrı tablolara bölmenin karşılığı yoktu, çünkü yapı sabit ve sorgulanmıyor.
+
+`slug` kolonunda `sehir/hizmet` birleşik duruyor (ör. `istanbul/web-tasarim`); UNIQUE
+kısıt sayesinde iki şehirdeki aynı hizmet çakışmıyor.
+
+### `citySlug` ve `city` panelden DEĞİŞTİRİLEMEZ
+
+Rota `/[sehir]/[hizmet]` bu iki alandan türüyor. Panelden değiştirilebilseydi kaydetme
+anında URL değişir ve sayfa 404 olurdu — 301 yönlendirme altyapısı henüz yok. Yazma
+katmanı bu alanları formdan değil MEVCUT KAYITTAN alıyor; `tests/sehir-db.test.ts`
+formda farklı değer göndererek bunu doğruluyor.
+
+### Sitemap `lastmod` artık sayfa başına
+
+Önceden 24 sayfanın hepsi elle yönetilen tek bir sabiti (`CITY_CONTENT_UPDATED`)
+paylaşıyordu: bir şehri düzenleyince diğer 23'ü de "güncellendi" görünüyordu. Google
+güvenilmez bulduğu `lastmod`'u tamamen yok sayar — tam da bu sayfaların "Discovered,
+currently not indexed" durumunda olduğu bir dönemde harcanacak son sinyal.
+
+İçerik panele taşındığı için her sayfa artık kendi tarihini taşıyor. Aktarım tüm
+sayfalara eski sabitin değerini yazdı → **sitemap çıktısı bu deploy'da değişmedi**,
+ama bundan sonra yalnızca gerçekten düzenlenen sayfa güncel görünecek.
+
+### Yol boyunca kapatılan bir A-08 kalıntısı
+
+`/[sehir]/[hizmet]` sayfasının `ProfessionalService` yapısal verisinde telefon numarası
+hâlâ SABİTTİ. Faz 1.1'de 6 dosya merkezileştirilmişti ama bu atlanmıştı: numara
+değişse yerel SEO için en kritik 24 sayfada eski kalacaktı. Artık `getSirket()`'ten geliyor.
+
+### Değişen dosyalar
+
+**Yeni:** `src/app/admin/(korumali)/sehirler/page.tsx` ·
+`src/app/admin/(korumali)/sehirler/[id]/page.tsx` ·
+`src/app/admin/sehirler/[id]/kaydet/route.ts` · `tests/sehir-db.test.ts`
+
+**Değişen:** `scripts/icerik-aktar.mjs` (şehir aktarımı) · `src/lib/db/content.ts`
+(şehir okuma + `getCityLastMod`) · `src/lib/db/content-admin.ts` (`guncelleSehir`) ·
+`src/app/[sehir]/[hizmet]/page.tsx` · `src/app/blog/[slug]/page.tsx` ·
+`src/app/sitemap.ts` · `src/app/admin/(korumali)/layout.tsx` · `tests/icerik-db.test.ts`
+
+`tests/icerik-db.test.ts` neden değişti: SSS sayımı tüm `content_faq` tablosunu
+sayıyordu; şehir soruları eklenince blog aktarımıyla ilgisi olmayan bir sayı üretmeye
+başladı. Sayım `tip='blog'` ile daraltıldı.
+
+### Kalite kapıları
+
+`npm run lint` 0 uyarı · `npm test` **129 → 138** · `npm run build` 119 sayfa ·
+`npm run seo-audit` ✅ TEMİZ · `secret-scan` temiz ·
+HTML denkliği **24/24 birebir aynı** · sitemap birebir aynı
+
+### Bilinen eksikler
+
+- Yeni şehir ekleme panelde yok (rota ve iç link yapısı koddan türüyor) → kod tarafı.
+- Hizmet sayfaları (6 kategori + 23 alt hizmet) hâlâ kodda → sırada.
+- Hukuki sayfalar (4) hâlâ kodda; versiyonlama ile birlikte ele alınacak (Faz 1.5).

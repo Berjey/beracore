@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getBlogPosts, getPostBySlug } from '@/lib/db/content';
+import { getBlogPosts, getPostBySlug, getCityPages } from '@/lib/db/content';
 import { getRelatedPosts } from '@/lib/related-posts';
-import { cityPages } from '@/lib/city-pages-data';
+
 import BlogArticle from '@/components/BlogArticle';
 import { SITE_URL, OG_IMAGE_ABSOLUTE, ogImages, twitterImages } from '@/lib/seo';
 
@@ -58,7 +58,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   // Bu yazıya bağlı şehir sayfası varsa bağlamsal iç link (yerel SEO).
   // Birden çok şehir aynı yazıya bağlı olabilir; ilk eşleşen (İstanbul) kullanılır.
-  const cityMatch = cityPages.find((c) => c.blogHref === `/blog/${slug}`);
+  const cityMatch = getCityPages().find((c) => c.blogHref === `/blog/${slug}`);
   const cityLink = cityMatch ? { href: `/${cityMatch.citySlug}/${cityMatch.slug}`, title: cityMatch.title } : null;
 
   const articleJsonLd = {

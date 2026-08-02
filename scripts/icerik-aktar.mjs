@@ -28,6 +28,9 @@ export async function aktar(db) {
   // `pathToFileURL` şart — Windows'ta `C:\...` mutlak yolu ESM yükleyicisine
   // "c:" protokolü gibi görünür ve ERR_UNSUPPORTED_ESM_URL_SCHEME verir.
   const { blogPosts } = await import(pathToFileURL(join(kok, 'src', 'lib', 'blog-data.ts')).href)
+  const { cityPages, CITY_CONTENT_UPDATED } = await import(
+    pathToFileURL(join(kok, 'src', 'lib', 'city-pages-data.ts')).href
+  )
 
   const ekle = db.prepare(`
     INSERT OR IGNORE INTO content_pages
@@ -83,7 +86,83 @@ export async function aktar(db) {
     throw err
   }
 
-  return { yeni, atlanan, toplam: blogPosts.length }
+  const sehir = await aktarSehirler(db, cityPages, CITY_CONTENT_UPDATED)
+
+  return { yeni, atlanan, toplam: blogPosts.length, sehir }
+}
+
+/**
+ * Şehir sayfaları.
+ *
+ * Blogdan farkı: şehir sayfasının alan kümesi (intro, sections, bullets,
+ * serviceHref/blogHref, keyword) blog kolonlarına oturmuyor. Bu alanlar tek bir
+ * JSON yükü olarak `govde`ye yazılır — bloklara bölmenin karşılığı yok, çünkü
+ * yapı sabit ve sorgulanmıyor.
+ *
+ * `slug` = `sehir/hizmet` (ör. `istanbul/web-tasarim`). UNIQUE kısıt (tip, slug, dil)
+ * olduğu için iki şehirdeki aynı hizmet çakışmaz.
+ */
+async function aktarSehirler(db, cityPages, contentUpdated) {
+  const ekle = db.prepare(`
+    INSERT OR IGNORE INTO content_pages
+      (tip, slug, dil, baslik, meta_title, meta_description, ozet, govde,
+       kategori, yayin_tarihi, guncelleme_tarihi, sira, durum)
+    VALUES ('sehir', ?, 'tr', ?, ?, ?, ?, ?, ?, ?, ?, ?, 'yayinda')
+  `)
+  const idBul = db.prepare("SELECT id FROM content_pages WHERE tip='sehir' AND slug=? AND dil='tr'")
+  const sssEkle = db.prepare('INSERT INTO content_faq (content_id, soru, cevap, sira) VALUES (?, ?, ?, ?)')
+  const sssVar = db.prepare('SELECT COUNT(*) AS n FROM content_faq WHERE content_id = ?')
+
+  let yeni = 0
+  let atlanan = 0
+
+  db.exec('BEGIN')
+  try {
+    for (const [i, c] of cityPages.entries()) {
+      const yuk = {
+        citySlug: c.citySlug,
+        city: c.city,
+        keyword: c.keyword,
+        intro: c.intro,
+        sections: c.sections,
+        bullets: c.bullets,
+        serviceHref: c.serviceHref,
+        serviceLabel: c.serviceLabel,
+        blogHref: c.blogHref,
+        blogLabel: c.blogLabel,
+      }
+
+      const sonuc = ekle.run(
+        `${c.citySlug}/${c.slug}`,
+        c.title,
+        c.metaTitle,
+        c.metaDescription,
+        c.intro,
+        JSON.stringify(yuk),
+        c.city,
+        // Sehir sayfalarinin yayin tarihi yok; sitemap `lastmod` icin elle
+        // yonetilen CITY_CONTENT_UPDATED kullanilir. Ikisi de ayni deger olur ki
+        // aktarim sitemap ciktisini DEGISTIRMESIN.
+        contentUpdated,
+        contentUpdated,
+        i,
+      )
+
+      if (Number(sonuc.changes) === 0) { atlanan++; continue }
+      yeni++
+
+      const { id } = idBul.get(`${c.citySlug}/${c.slug}`)
+      if (Number(sssVar.get(id).n) === 0) {
+        ;(c.faq ?? []).forEach((f, k) => sssEkle.run(id, f.question, f.answer, k))
+      }
+    }
+    db.exec('COMMIT')
+  } catch (err) {
+    db.exec('ROLLBACK')
+    throw err
+  }
+
+  return { yeni, atlanan, toplam: cityPages.length }
 }
 
 async function main() {
@@ -92,7 +171,8 @@ async function main() {
   db.exec('PRAGMA foreign_keys = ON')
   try {
     const r = await aktar(db)
-    console.log(`[icerik] blog: ${r.yeni} eklendi, ${r.atlanan} zaten vardi (toplam ${r.toplam})`)
+    console.log(`[icerik] blog:  ${r.yeni} eklendi, ${r.atlanan} zaten vardi (toplam ${r.toplam})`)
+    console.log(`[icerik] sehir: ${r.sehir.yeni} eklendi, ${r.sehir.atlanan} zaten vardi (toplam ${r.sehir.toplam})`)
   } finally {
     db.close()
   }

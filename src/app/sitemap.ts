@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 import { services } from '@/lib/services-data';
 // Sitemap de veritabanindan okur: panelden eklenen bir yazi sitemap'e
 // girmezse arama motoru onu gec kesfeder.
-import { getBlogPosts } from '@/lib/db/content';
-import { cityPages, CITY_CONTENT_UPDATED } from '@/lib/city-pages-data';
+import { getBlogPosts, getCityPages, getCityLastMod } from '@/lib/db/content';
+import { CITY_CONTENT_UPDATED } from '@/lib/city-pages-data';
 import { SITE_URL } from '@/lib/seo';
 
 /**
@@ -61,9 +61,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  const cityEntries: MetadataRoute.Sitemap = cityPages.map((p) => ({
+  // `lastmod` artık SAYFA BAŞINA. Önceden 24 sayfa elle yönetilen tek bir sabiti
+  // paylaşıyordu; bir şehri düzenleyince diğer 23'ü de "güncellendi" görünüyordu.
+  // İçerik panele taşındığı için her sayfa kendi tarihini taşıyabilir; veritabanı
+  // okunamazsa eski sabite düşülür.
+  const cityEntries: MetadataRoute.Sitemap = getCityPages().map((p) => ({
     url: `${SITE_URL}/${p.citySlug}/${p.slug}`,
-    lastModified: CITY_CONTENT_UPDATED,
+    lastModified: getCityLastMod(p.citySlug, p.slug) ?? CITY_CONTENT_UPDATED,
     changeFrequency: 'monthly',
     priority: 0.8,
   }));

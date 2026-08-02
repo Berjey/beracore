@@ -44,6 +44,92 @@ export interface IcerikOzet {
 
 export const ICERIK_DURUMLARI = ['taslak', 'yayinda', 'arsiv'] as const;
 
+/** Şehir sayfasının `govde` JSON'undaki yükü. */
+export interface SehirYuku {
+  citySlug: string;
+  city: string;
+  keyword: string;
+  intro: string;
+  sections: { h2: string; body: string }[];
+  bullets: { title: string; items: string[] };
+  serviceHref: string;
+  serviceLabel: string;
+  blogHref: string;
+  blogLabel: string;
+}
+
+export interface SehirGuncelleme {
+  baslik: string;
+  meta_title: string;
+  meta_description: string;
+  durum: string;
+  guncelleme_tarihi: string;
+  yuk: SehirYuku;
+  sss: { soru: string; cevap: string }[];
+}
+
+/**
+ * Şehir sayfasını kaydeder. Blogla aynı kurallar: önce sürüm, sonra güncelleme,
+ * tamamı tek transaction.
+ *
+ * `citySlug` ve `city` panelden DEĞİŞTİRİLEMEZ — rota `/[sehir]/[hizmet]`
+ * bunlardan türer ve slug değişimi URL'i kırar (301 yönlendirme altyapısı henüz yok).
+ * Yeni şehir eklemek hâlâ kod tarafının işi.
+ */
+export function guncelleSehir(
+  id: number,
+  g: SehirGuncelleme,
+  actor: string
+): { ok: boolean; hata?: string } {
+  if (!ICERIK_DURUMLARI.includes(g.durum as (typeof ICERIK_DURUMLARI)[number])) {
+    return { ok: false, hata: 'gecersiz-durum' };
+  }
+  if (!g.baslik.trim()) return { ok: false, hata: 'baslik-bos' };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(g.guncelleme_tarihi)) return { ok: false, hata: 'gecersiz-tarih' };
+
+  const db = getDb();
+  const mevcut = getIcerik(id);
+  if (!mevcut || mevcut.tip !== 'sehir') return { ok: false, hata: 'bulunamadi' };
+
+  // Kimlik alanları mevcut kayıttan alınır, formdan DEĞİL.
+  const eski = JSON.parse(mevcut.govde) as SehirYuku;
+  const yuk: SehirYuku = { ...g.yuk, citySlug: eski.citySlug, city: eski.city };
+
+  const oncekiSss = getSss(id);
+  const sonSurum = db
+    .prepare('SELECT COALESCE(MAX(surum), 0) AS s FROM content_versions WHERE content_id = ?')
+    .get(id) as { s: number };
+
+  db.exec('BEGIN');
+  try {
+    db.prepare('INSERT INTO content_versions (content_id, surum, anlik, actor) VALUES (?, ?, ?, ?)')
+      .run(id, Number(sonSurum.s) + 1, JSON.stringify({ ...mevcut, sss: oncekiSss }), actor);
+
+    db.prepare(
+      `UPDATE content_pages
+          SET baslik = ?, meta_title = ?, meta_description = ?, ozet = ?, govde = ?,
+              guncelleme_tarihi = ?, durum = ?, updated_at = datetime('now')
+        WHERE id = ?`
+    ).run(
+      g.baslik, g.meta_title, g.meta_description, yuk.intro, JSON.stringify(yuk),
+      g.guncelleme_tarihi, g.durum, id
+    );
+
+    db.prepare('DELETE FROM content_faq WHERE content_id = ?').run(id);
+    const ekle = db.prepare('INSERT INTO content_faq (content_id, soru, cevap, sira) VALUES (?, ?, ?, ?)');
+    g.sss.forEach((f, i) => {
+      if (f.soru.trim() && f.cevap.trim()) ekle.run(id, f.soru, f.cevap, i);
+    });
+
+    db.exec('COMMIT');
+    return { ok: true };
+  } catch (err) {
+    db.exec('ROLLBACK');
+    console.error('[icerik] sehir kaydetme basarisiz', err);
+    return { ok: false, hata: 'kaydedilemedi' };
+  }
+}
+
 /** Panel listesi — gövde OKUNMAZ (50 yazının tam metnini listelemek gereksiz). */
 export function listIcerik(tip = 'blog'): IcerikOzet[] {
   return getDb()

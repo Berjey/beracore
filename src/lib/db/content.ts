@@ -20,6 +20,7 @@ import {
   type CategoryMeta,
   type ContentBlock,
 } from '../blog-data';
+import { cityPages as cityPagesKod, type CityPage } from '../city-pages-data';
 
 interface SatirBlog {
   id: number;
@@ -133,4 +134,109 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
 export function getUsedCategories(): CategoryMeta[] {
   const kullanilan = new Set(getBlogPosts().map((p) => p.category));
   return Object.values(CATEGORY_META).filter((c) => kullanilan.has(c.name));
+}
+
+// ─────────────────────────── şehir sayfaları ───────────────────────────
+
+interface SatirSehir {
+  id: number;
+  slug: string;
+  baslik: string;
+  meta_title: string;
+  meta_description: string;
+  govde: string;
+  guncelleme_tarihi: string;
+}
+
+/** `govde` JSON'undaki şehir yükü — blog kolonlarına oturmayan alanlar. */
+interface SehirYuku {
+  citySlug: string;
+  city: string;
+  keyword: string;
+  intro: string;
+  sections: { h2: string; body: string }[];
+  bullets: { title: string; items: string[] };
+  serviceHref: string;
+  serviceLabel: string;
+  blogHref: string;
+  blogLabel: string;
+}
+
+const okuSehir = cache((): CityPage[] => {
+  try {
+    const db = getDb();
+    const satirlar = db
+      .prepare(
+        `SELECT id, slug, baslik, meta_title, meta_description, govde, guncelleme_tarihi
+           FROM content_pages
+          WHERE tip = 'sehir' AND dil = 'tr' AND durum = 'yayinda'
+          ORDER BY sira`
+      )
+      .all() as unknown as SatirSehir[];
+
+    if (satirlar.length === 0) return cityPagesKod;
+
+    const sss = db
+      .prepare('SELECT content_id, soru, cevap FROM content_faq ORDER BY content_id, sira')
+      .all() as unknown as { content_id: number; soru: string; cevap: string }[];
+
+    const sssHarita = new Map<number, { question: string; answer: string }[]>();
+    for (const f of sss) {
+      const liste = sssHarita.get(f.content_id) ?? [];
+      liste.push({ question: f.soru, answer: f.cevap });
+      sssHarita.set(f.content_id, liste);
+    }
+
+    return satirlar.map((s) => {
+      const y = JSON.parse(s.govde) as SehirYuku;
+      return {
+        // `slug` kolonunda `sehir/hizmet` duruyor; rota iki parçayı ayrı bekliyor.
+        citySlug: y.citySlug,
+        slug: s.slug.slice(y.citySlug.length + 1),
+        city: y.city,
+        title: s.baslik,
+        metaTitle: s.meta_title,
+        metaDescription: s.meta_description,
+        keyword: y.keyword,
+        intro: y.intro,
+        sections: y.sections,
+        bullets: y.bullets,
+        serviceHref: y.serviceHref,
+        serviceLabel: y.serviceLabel,
+        blogHref: y.blogHref,
+        blogLabel: y.blogLabel,
+        faq: sssHarita.get(s.id) ?? [],
+      };
+    });
+  } catch (err) {
+    console.error('[icerik] sehir sayfalari okunamadi, koddaki icerik kullaniliyor', err);
+    return cityPagesKod;
+  }
+});
+
+export function getCityPages(): CityPage[] {
+  return okuSehir();
+}
+
+export function getCityPage(citySlug: string, slug: string): CityPage | undefined {
+  return getCityPages().find((p) => p.citySlug === citySlug && p.slug === slug);
+}
+
+/**
+ * Sitemap `lastmod` için sayfa başına güncelleme tarihi.
+ *
+ * Önceden 24 sayfanın hepsi elle yönetilen tek bir sabiti (`CITY_CONTENT_UPDATED`)
+ * paylaşıyordu; bir şehri düzenleyince diğer 23'ü de "güncellendi" görünüyordu.
+ * İçerik panele taşındığı için artık her sayfa kendi tarihini taşır.
+ * Veritabanı okunamazsa koddaki sabite düşülür (kod yolunda tarih zaten tekti).
+ */
+export function getCityLastMod(citySlug: string, slug: string): string | undefined {
+  try {
+    const satir = getDb()
+      .prepare("SELECT guncelleme_tarihi FROM content_pages WHERE tip='sehir' AND slug=? AND dil='tr'")
+      .get(`${citySlug}/${slug}`) as unknown as { guncelleme_tarihi: string } | undefined;
+    return satir?.guncelleme_tarihi || undefined;
+  } catch {
+    return undefined;
+  }
 }
