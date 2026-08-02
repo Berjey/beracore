@@ -68,6 +68,9 @@ fi
 echo "[staging] migrationlar"
 node --env-file=.env scripts/migrate.mjs
 
+echo "[staging] icerik aktarimi"
+node --env-file=.env scripts/icerik-aktar.mjs
+
 echo "[staging] build"
 npm run build
 

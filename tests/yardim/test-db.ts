@@ -26,7 +26,14 @@ const MIGRATION_DIZINI = join(
   'migrations',
 );
 
+type Baglanti = Awaited<ReturnType<typeof acBaglanti>>;
+async function acBaglanti() {
+  const { getDb } = await import('@/lib/db');
+  return getDb();
+}
+
 let dizin: string | null = null;
+let baglanti: Baglanti | null = null;
 
 /** Geçici bir DB oluşturur, migration'ları uygular ve `DB_PATH`'i ona yöneltir. */
 export function hazirla(): string {
@@ -44,12 +51,24 @@ export function hazirla(): string {
  * veritabanını doğrulamaya başlar.
  */
 export async function migrasyonlariUygula(): Promise<void> {
-  const { getDb } = await import('@/lib/db');
-  const db = getDb();
+  const db = await acBaglanti();
+  baglanti = db;
   const dosyalar = readdirSync(MIGRATION_DIZINI).filter((f) => f.endsWith('.sql')).sort();
   for (const d of dosyalar) {
     db.exec(readFileSync(join(MIGRATION_DIZINI, d), 'utf8'));
   }
+}
+
+/**
+ * Testin doğrudan sorgu çalıştırabilmesi için AÇIK bağlantı.
+ *
+ * `migrasyonlariUygula()` çağrıldıktan sonra kullanılabilir. Sunucu çalışırken
+ * veritabanını dışarıdan ikinci bir bağlantıyla okumak WAL modunda yanlış sonuç
+ * verir; bu yüzden yeni bağlantı AÇILMAZ, `getDb()` singleton'ının kendisi döner.
+ */
+export function testDb(): Baglanti {
+  if (!baglanti) throw new Error('testDb(): önce migrasyonlariUygula() çağrılmalı');
+  return baglanti;
 }
 
 export async function temizle(): Promise<void> {
@@ -59,6 +78,7 @@ export async function temizle(): Promise<void> {
   } catch {
     /* bağlantı hiç açılmamış olabilir */
   }
+  baglanti = null;
   if (dizin) {
     rmSync(dizin, { recursive: true, force: true });
     dizin = null;

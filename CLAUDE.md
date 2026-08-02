@@ -154,8 +154,20 @@ ilgili-yazı dağılımı, OG görsel ölçüsü ↔ sabit uyumu, doğrulama dos
 
 ## Blog / içerik modeli
 
-Tüm içerik tek dosyada: **`src/lib/blog-data.ts`**. `blogPosts` dizisine `BlogPost` nesnesi eklenir,
-sayfalar SSG ile otomatik üretilir (`/blog/[slug]`). Başka dosyaya dokunmak gerekmez.
+**Faz 1.3a'dan itibaren blog içeriği VERİTABANINDA.** Sayfalar `src/lib/db/content.ts`
+üzerinden okur; `src/lib/blog-data.ts` artık **tohum ve geri düşme** kaynağıdır.
+
+- **Yeni yazı eklemek:** yine `blog-data.ts`'teki `blogPosts` dizisine `BlogPost` nesnesi
+  eklenir. Deploy'da `scripts/icerik-aktar.mjs` onu veritabanına tohumlar.
+- **Var olan yazıyı düzenlemek:** `/admin/icerik` üzerinden. Kod tarafına DOKUNMAZ.
+- ⚠️ **Aktarım `INSERT OR IGNORE`'dur ve var olan kaydı EZMEZ.** Bunu "senkronizasyona"
+  çevirmeyin: panelden yapılan her düzenleme bir sonraki deploy'da sessizce geri alınırdı.
+- **Sıralamanın eşitlik bozucusu `sira` kolonudur, slug DEĞİL.** 13 yazı aynı yayın gününü
+  paylaşıyor; slug'a göre sıralamak `/blog` listesinin öne çıkan yazısını değiştiriyor.
+- Gövde düzenleme biçimi: boş satır paragraf ayırır, `##`/`###` başlık, `-` madde,
+  `>` alıntı. Satır içi biçimlendirme YOK (render katmanı desteklemiyor).
+  `tests/icerik-bicim.test.ts` 50 yazının tamamı için gidiş-dönüş denkliğini kilitler.
+- Her kaydetme önceki hâli `content_versions`'a yazar — git geçmişinin yerini bu tutar.
 
 Her yazıda zorunlu standart:
 - `metaTitle` / `metaDescription`

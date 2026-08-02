@@ -2759,7 +2759,9 @@ export interface CategoryMeta {
   serviceKey?: string;
 }
 
-const CATEGORY_META: Record<string, CategoryMeta> = {
+// Dışa açık: `src/lib/db/content.ts` veritabanından okunan yazıların
+// kategorilerini de bu sıraya göre listeler (tek kaynak).
+export const CATEGORY_META: Record<string, CategoryMeta> = {
   'Yapay Zeka': { name: 'Yapay Zeka', color: '#a78bfa', serviceKey: 'ai' },
   'Blockchain': { name: 'Blockchain', color: '#7dd3fc', serviceKey: 'blockchain' },
   'Yazılım Geliştirme': { name: 'Yazılım Geliştirme', color: '#f0abfc', serviceKey: 'software' },

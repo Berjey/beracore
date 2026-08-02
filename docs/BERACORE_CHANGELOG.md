@@ -246,3 +246,111 @@ için panelden durum "yayında" yapmak yeterli; deploy gerekmez.
 
 **Faz 1.3 — içeriğin veritabanına taşınması:** blog (50) → hizmetler (6+23) →
 şehirler (24) → hukuki (4). Her adımda öncesi/sonrası HTML denkliği doğrulanacak.
+
+---
+
+## Faz 1.3a — Blog içeriği veritabanına taşındı (2 Ağustos 2026)
+
+50 blog yazısı `src/lib/blog-data.ts` içindeki 2821 satırlık diziden çıktı,
+`content_pages` tablosuna girdi ve `/admin/icerik` üzerinden düzenlenebilir hale geldi.
+
+### Ne DEĞİŞMEDİ
+
+Sayfalar hâlâ **statik üretiliyor**. İçerik veritabanından geliyor ama panelde
+kaydetme `revalidatePath` tetikliyor → HTML yeniden üretiliyor ve ziyaretçiye yine
+hazır dosya servis ediliyor. SEO açısından hiçbir şey kaybedilmedi.
+
+**Kanıt:** taşıma öncesi ve sonrası build çıktısı karşılaştırıldı —
+**51 sayfanın 51'i birebir aynı** (blog listesi + 50 yazı).
+
+### Taşımanın yakaladığı gerçek hata: sıralama
+
+İlk karşılaştırmada `/blog` listesinde 1624 fark çıktı; öne çıkan yazı değişmişti.
+Sebep: **13 yazı aynı yayın gününü paylaşıyor** (2026-07-28) ve veritabanı sorgusu
+eşitliği slug'a göre bozuyordu. Koddaki dizi ise ekleme sırasındaydı.
+
+Çözüm: aktarım `sira` alanına koddaki ekleme sırasını yazıyor, sorgu
+`ORDER BY yayin_tarihi DESC, sira` kullanıyor. Tekrar karşılaştırıldı: **0 fark.**
+
+Bu fark, HTML denklik kontrolü olmasa sessizce yayına giderdi.
+
+### Aktarım tek yönlüdür ve var olanı EZMEZ
+
+`scripts/icerik-aktar.mjs` `INSERT OR IGNORE` kullanır. Kritik: aksi halde
+panelden yapılan her düzenleme, bir sonraki deploy'da koddaki eski hâliyle
+sessizce geri alınırdı. Script bir "senkronizasyon" değil, "eksikse tohumla" aracı.
+`tests/icerik-db.test.ts` bunu kilitler (panel düzenlemesi aktarımdan sağ çıkmalı).
+
+Kod tarafı silinmedi: `blog-data.ts` tohum **ve geri düşme** kaynağı olarak duruyor.
+Tablo boşsa veya okunamıyorsa site koddaki içerikle çalışmaya devam eder.
+
+### Gövde düzenleme: JSON değil düz metin
+
+Gövde veritabanında `ContentBlock[]` JSON'u. Panelde ham JSON düzenletmek, tek bir
+eksik virgülün yazıyı boşaltması demekti. Bunun yerine kayıpsız gidip gelen basit
+bir biçim: boş satır paragrafı ayırır, `##` başlık, `###` alt başlık, `-` madde,
+`>` alıntı. Satır içi biçimlendirme (kalın/link) **bilerek yok** — render katmanı
+desteklemiyor, destekliyormuş gibi görünen bir editör yazarın `**kalın**` yazıp
+siteye düz metin çıkmasına yol açardı.
+
+`tests/icerik-bicim.test.ts` **50 yazının hepsi** için gidiş-dönüş denkliğini
+doğrular; örnek birkaç yazı değil. Sebebi: kullanıcı bir yazıyı açıp hiçbir şey
+değiştirmeden kaydettiğinde içerik bozulmamalı.
+
+### Sürüm geçmişi — git commit'lerinin yerine
+
+İçerik koddan çıkınca her düzenlemenin commit'i de kayboldu. Yerine
+`content_versions`: her kaydetmede **önceki** hâl (meta + gövde + SSS) saklanır.
+Sürüm kaydı güncellemeden ÖNCE alınır — sonra alınsaydı "önceki hâl" diye saklanan
+şey yeni hâlin kopyası olurdu. Tamamı tek transaction. Silme fonksiyonu bilerek yok.
+
+### Değişen dosyalar
+
+**Yeni:** `src/lib/db/migrations/005_icerik.sql` · `scripts/icerik-aktar.mjs` ·
+`src/lib/db/content.ts` (okuma) · `src/lib/db/content-admin.ts` (yazma) ·
+`src/lib/icerik-bicim.ts` · `src/app/admin/(korumali)/icerik/page.tsx` ·
+`src/app/admin/(korumali)/icerik/[id]/page.tsx` · `src/app/admin/icerik/[id]/kaydet/route.ts` ·
+`tests/icerik-db.test.ts` · `tests/icerik-bicim.test.ts` · `tests/icerik-kaydet.test.ts`
+
+**Değişen:** `src/app/blog/page.tsx` · `src/app/blog/[slug]/page.tsx` · `src/app/sitemap.ts` ·
+`src/lib/related-posts.ts` (yazı listesi artık enjekte edilebilir) · `src/lib/blog-data.ts`
+(`CATEGORY_META` dışa açıldı) · `src/app/admin/(korumali)/layout.tsx` ·
+`scripts/server-deploy.sh` · `scripts/staging-deploy.sh` · `tests/yardim/test-db.ts`
+
+`related-posts.ts` neden değişti: grafik modül düzeyinde tek sefer önbelleğe
+alınıyordu. İçerik artık her render'da okunduğu için bu, panelden düzenlemeden
+sonra ESKİ grafiği döndürürdü. Önbellek `WeakMap` ile yazı listesinin kendisine
+bağlandı.
+
+### Veritabanı değişikliği
+
+`content_pages` (UNIQUE tip+slug+dil) · `content_faq` · `content_versions` + 5 indeks.
+50 yazı + SSS kayıtları tohumlandı. Yeni env değişkeni yok.
+
+### Kalite kapıları
+
+`npm run lint` 0 uyarı · `npm test` **104 → 127** · `npm run build` 119 sayfa ·
+`npm run seo-audit` ✅ TEMİZ · `secret-scan` temiz · HTML denkliği 51/51 birebir aynı
+
+### Geri alma
+
+Kod: `git revert`. Veritabanı: `content_pages` boşaltılırsa okuma katmanı koddaki
+içeriğe düşer, site kırılmaz. Tek bir yazıyı geri almak için sürüm geçmişindeki
+anlık görüntü kullanılır (şu an okunabiliyor; tek tıkla geri yükleme henüz yok).
+
+### Bilinen eksikler
+
+- **Panelden yeni yazı EKLEME ve silme yok.** Yeni içerik `blog-data.ts` üzerinden
+  eklenir ve deploy'da tohumlanır. Bilinçli ara adım: slug üretimi, sitemap ve iç
+  link grafiği etkileri ayrı ele alınmalı.
+- **Sürüm geri yükleme tek tıkla değil** — anlık görüntü saklanıyor ve okunabiliyor,
+  ama panelden "bu sürüme dön" düğmesi yok.
+- `npm run seo-audit` veri katmanında hâlâ `blog-data.ts`'i denetliyor; panelden
+  düzenlenen içerik yalnızca HTML katmanında denetleniyor. Panel düzenlemesi
+  yaygınlaşınca veri katmanı denetimi de veritabanına bağlanmalı.
+- Hizmet (6+23), şehir (24) ve hukuki (4) sayfalar hâlâ kodda → Faz 1.3b.
+
+### Sonraki adım
+
+**Faz 1.3b:** hizmet ve şehir sayfalarının aynı yöntemle taşınması (her adımda
+öncesi/sonrası HTML denkliği).

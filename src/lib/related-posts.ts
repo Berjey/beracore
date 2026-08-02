@@ -52,12 +52,20 @@ function relevance(from: BlogPost, to: BlogPost): number {
   return score;
 }
 
-/** Tüm yazılar için ilgili-yazı ataması. Modül başına bir kez hesaplanır. */
-let cache: Map<string, BlogPostSummary[]> | null = null;
+/**
+ * Grafik, verilen yazı DİZİSİ başına bir kez hesaplanır.
+ *
+ * NEDEN DİZİ REFERANSINA GÖRE: Faz 1.3'te içerik veritabanına taşındı ve yazı
+ * listesi artık modül sabiti değil, her render'da okunan bir değer. Tek bir
+ * modül düzeyi önbellek, panelden yapılan düzenlemeden sonra ESKİ grafiği
+ * döndürürdü. `WeakMap` ile önbellek listenin kendisine bağlanır: liste
+ * yenilenince grafik de yenilenir, aynı render içinde ise tekrar hesaplanmaz.
+ */
+const cache = new WeakMap<BlogPost[], Map<string, BlogPostSummary[]>>();
 
-function build(): Map<string, BlogPostSummary[]> {
+function build(posts: BlogPost[]): Map<string, BlogPostSummary[]> {
   // En yeni üstte — atama sırası da buradan gelir (deterministik).
-  const ordered = [...blogPosts].sort((a, b) =>
+  const ordered = [...posts].sort((a, b) =>
     a.publishedAt === b.publishedAt
       ? a.slug.localeCompare(b.slug)
       : a.publishedAt < b.publishedAt
@@ -94,19 +102,25 @@ function build(): Map<string, BlogPostSummary[]> {
   return result;
 }
 
-export function getRelatedPosts(slug: string): BlogPostSummary[] {
-  cache ??= build();
-  return cache.get(slug) ?? [];
+/**
+ * `posts` verilmezse KODDAKİ liste kullanılır. Sayfalar veritabanından okuyup
+ * listeyi geçirir; testler ve araçlar varsayılanla çalışmaya devam eder.
+ */
+export function getRelatedPosts(slug: string, posts: BlogPost[] = blogPosts): BlogPostSummary[] {
+  let graf = cache.get(posts);
+  if (!graf) { graf = build(posts); cache.set(posts, graf); }
+  return graf.get(slug) ?? [];
 }
 
 /**
  * İç link dağılımı — her yazının kaç "ilgili yazı" linki aldığı.
  * Denetim/test amaçlıdır: yetim (0 link alan) yazı kalmadığını doğrular.
  */
-export function getInboundLinkCounts(): Map<string, number> {
-  cache ??= build();
-  const counts = new Map<string, number>(blogPosts.map((p) => [p.slug, 0]));
-  for (const related of cache.values()) {
+export function getInboundLinkCounts(posts: BlogPost[] = blogPosts): Map<string, number> {
+  let graf = cache.get(posts);
+  if (!graf) { graf = build(posts); cache.set(posts, graf); }
+  const counts = new Map<string, number>(posts.map((p) => [p.slug, 0]));
+  for (const related of graf.values()) {
     for (const r of related) counts.set(r.slug, (counts.get(r.slug) ?? 0) + 1);
   }
   return counts;

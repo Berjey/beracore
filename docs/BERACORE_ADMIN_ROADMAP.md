@@ -1,7 +1,7 @@
 # BERACORE — Yol Haritası (Business Operating System)
 
 **Onaylı plan.** `docs/panel-crm-plani.md`'nin yerini alır.
-**Son güncelleme:** 2 Ağustos 2026 — **Faz 0 tamamlandı**, **Faz 1.1 ve 1.2 canlıda**, sırada Faz 1.3
+**Son güncelleme:** 2 Ağustos 2026 — **Faz 0 tamamlandı**, **Faz 1.1, 1.2 ve 1.3a canlıda**, sırada Faz 1.3b
 
 ---
 
@@ -106,7 +106,8 @@ Ayrıntılı bulgular: `BERACORE_SYSTEM_AUDIT.md` · Yapılanların kaydı: `BER
    kanıt gelene kadar sitede **görünmüyor**; `2024` ve `5+ ekip` yayında kaldı.
    Taşıma sırasında aynı iddianın üç ek kopyası bulundu ve düzeltildi (kayan şerit `120+`/`50+`,
    zaman çizelgesi düz metni, hizmet sayfasında `8+ Yıl Deneyim` ↔ kuruluş 2024 çelişkisi).
-3. **İçeriğin veritabanına taşınması** ← **sıradaki** — blog (50) → hizmet (6+23) → şehir (24) → hukuki (4).
+3. 🔄 **İçeriğin veritabanına taşınması** — ✅ blog (50 yazı, 51/51 sayfa HTML birebir aynı,
+   `/admin/icerik` + sürüm geçmişi). ← **sırada: hizmet (6+23), şehir (24), hukuki (4)** — blog (50) → hizmet (6+23) → şehir (24) → hukuki (4).
    Her adımda **aktarım öncesi/sonrası HTML birebir karşılaştırılır**.
 4. **Referanslar + vaka çalışmaları** — yalnızca yayın izni olan ve doğrulanmış kayıtlar.
 5. **Hukuki versiyonlama** (A-11) — versiyon, yürürlük tarihi, onaylayan, revizyon geçmişi.

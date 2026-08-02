@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { blogPosts, getPostBySlug } from '@/lib/blog-data';
+import { getBlogPosts, getPostBySlug } from '@/lib/db/content';
 import { getRelatedPosts } from '@/lib/related-posts';
 import { cityPages } from '@/lib/city-pages-data';
 import BlogArticle from '@/components/BlogArticle';
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }));
+  return getBlogPosts().map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -53,7 +53,8 @@ export default async function BlogPostPage({ params }: Props) {
 
   // İlgili yazılar: alaka + iç link eşitliği + tazelik (bkz. lib/related-posts.ts).
   // Yalnızca özet döner — yazı gövdeleri client payload'una girmez.
-  const relatedPosts = getRelatedPosts(slug);
+  // Liste geçilir: grafik veritabanındaki GÜNCEL yazı kümesine göre kurulmalı.
+  const relatedPosts = getRelatedPosts(slug, getBlogPosts());
 
   // Bu yazıya bağlı şehir sayfası varsa bağlamsal iç link (yerel SEO).
   // Birden çok şehir aynı yazıya bağlı olabilir; ilk eşleşen (İstanbul) kullanılır.

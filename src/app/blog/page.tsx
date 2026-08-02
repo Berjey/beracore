@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
-import { getSortedPosts, getUsedCategories, toSummary, type BlogPost } from '@/lib/blog-data';
+import { toSummary, type BlogPost } from '@/lib/blog-data';
+// İçerik veritabanından okunur; tablo boşsa/okunamazsa koddaki içeriğe düşer.
+import { getSortedPosts, getUsedCategories } from '@/lib/db/content';
 import BlogHome from '@/components/blog/BlogHome';
 import ScrollProgress from '@/components/ScrollProgress';
 import { SITE_URL, ogImages, twitterImages } from '@/lib/seo';

@@ -56,6 +56,20 @@ else
   node scripts/migrate.mjs
 fi
 
+echo "[deploy] icerik aktarimi (eksikse tohumla)"
+# Migration'dan SONRA, build'den ONCE. Build sirasinda sayfalar icerigi
+# veritabanindan okuyor; tablo bos olsaydi kod icerigine duserdi (site kirilmaz
+# ama panelden yapilan duzenlemeler yayina cikmazdi).
+#
+# `INSERT OR IGNORE` — var olan kayda DOKUNMAZ. Bu sart: aksi halde panelden
+# yapilan her duzenleme bir sonraki deploy'da koddaki eski haliyle sessizce
+# geri alinirdi.
+if [ -f .env ]; then
+  node --env-file=.env scripts/icerik-aktar.mjs
+else
+  node scripts/icerik-aktar.mjs
+fi
+
 echo "[deploy] build -> .next-build (calisan .next'e dokunulmaz)"
 rm -rf .next-build
 NEXT_DIST_DIR=.next-build npm run build

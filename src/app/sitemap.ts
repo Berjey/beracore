@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { services } from '@/lib/services-data';
-import { blogPosts } from '@/lib/blog-data';
+// Sitemap de veritabanindan okur: panelden eklenen bir yazi sitemap'e
+// girmezse arama motoru onu gec kesfeder.
+import { getBlogPosts } from '@/lib/db/content';
 import { cityPages, CITY_CONTENT_UPDATED } from '@/lib/city-pages-data';
 import { SITE_URL } from '@/lib/seo';
 
@@ -52,7 +54,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   });
 
-  const blogEntries: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+  const blogEntries: MetadataRoute.Sitemap = getBlogPosts().map((post) => ({
     url: `${SITE_URL}/blog/${post.slug}`,
     lastModified: post.updatedAt ?? post.publishedAt,
     changeFrequency: 'monthly',
